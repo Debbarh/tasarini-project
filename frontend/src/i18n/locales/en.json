@@ -1,0 +1,247 @@
+{
+  "navigation": {
+    "createTrip": "Plan your trip",
+    "exploreWorld": "Be inspired",
+    "travelStories": "Travel stories",
+    "myTreasures": "My treasures",
+    "partnerSpace": "Partner Space",
+    "administration": "Administration",
+    "myProfile": "My Profile",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "home": {
+    "heroTitle": "Your next adventure awaits",
+    "heroSubtitle": "Discover extraordinary destinations, create personalized itineraries, and live unforgettable experiences. Let us guide you to your dream journey.",
+    "startAdventure": "Start the adventure",
+    "discoverTreasures": "Discover treasures",
+    "planTrip": "Plan your perfect getaway",
+    "planTripDesc": "Create custom itineraries with our smart AI that adapts to your tastes, budget, and adventure dreams.",
+    "exploreWorld": "Explore the world",
+    "exploreWorldDesc": "Discover magical places, authentic experiences, and well-kept secrets shared by our community of travelers.",
+    "shareStories": "Share your stories",
+    "shareStoriesDesc": "Immortalize your adventures and inspire other traveling souls with your discoveries and precious moments.",
+    "statsDestinations": "Destinations explored",
+    "statsAdventurers": "Adventurers",
+    "statsDreams": "Dreams fulfilled"
+  },
+  "planTrip": {
+    "title": "Plan your perfect getaway",
+    "subtitle": "Create a custom itinerary with our AI assistant that understands your adventure desires",
+    "startPlanning": "Start planning",
+    "smartRecommendations": "Smart recommendations",
+    "smartRecommendationsDesc": "Our AI analyzes your preferences to suggest unique experiences"
+  },
+  "beInspired": {
+    "title": "Get inspired",
+    "subtitle": "Discover extraordinary places and authentic experiences that will awaken your adventurous soul",
+    "aiGuide": "AI Guide",
+    "shareDiscovery": "Share a treasure",
+    "exploreMap": "Explore the map",
+    "findInspiration": "Find inspiration"
+  },
+  "travelStories": {
+    "title": "Travel Stories",
+    "subtitle": "Discover captivating tales from adventurers and share your own experiences to inspire the community",
+    "shareStory": "Tell my journey",
+    "myAdventures": "My adventures"
+  },
+  "partnerApplication": {
+    "title": "Become a Partner",
+    "subtitle": "Join our partner network and showcase your exceptional places to a passionate community of travelers from around the world.",
+    "benefits": {
+      "visibility": {
+        "title": "Premium Visibility",
+        "description": "Showcase your places with a distinctive partner badge and priority positioning on our platform."
+      },
+      "priority": {
+        "title": "Featured Placement",
+        "description": "Benefit from priority positioning on the map and in personalized recommendations."
+      },
+      "analytics": {
+        "title": "Advanced Analytics",
+        "description": "Access detailed performance statistics and insights about your visitors."
+      }
+    },
+    "stats": {
+      "travelers": "Active travelers",
+      "pois": "Points of interest",
+      "destinations": "Destinations"
+    },
+    "process": {
+      "title": "How to become a partner?",
+      "step1": {
+        "title": "Create your account",
+        "description": "Sign up on our platform with just a few clicks"
+      },
+      "step2": {
+        "title": "Submit your application",
+        "description": "Fill out the partner form with your information"
+      },
+      "step3": {
+        "title": "Validation & Activation",
+        "description": "Our team reviews your application within 48 hours"
+      }
+    }
+  },
+  "partnerRegistration": {
+    "title": "Partner Registration",
+    "subtitle": "Create your account and join our partner network",
+    "accountTab": "Account",
+    "poiTab": "Point of Interest",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters long",
+    "selectPartnerType": "Please select your establishment type",
+    "accountCreated": "Partner account created successfully! Check your email to confirm your registration.",
+    "error": "Error",
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "continue": "Continue",
+      "back": "Back",
+      "poiName": "Point of Interest Name",
+      "poiNamePlaceholder": "Ex: Le Gourmand Restaurant, Modern Art Museum",
+      "partnerType": "Partner Type",
+      "partnerTypePlaceholder": "Select your establishment type",
+      "partnerTypeHelp": "This helps us better categorize your point of interest",
+      "description": "Description of your point of interest",
+      "descriptionPlaceholder": "Describe your place, its specialties and what makes it unique...",
+      "categories": "Point of Interest Categories",
+      "categoriesHelp": "Select one or more categories that match your point of interest",
+      "address": "Point of Interest Address",
+      "addressPlaceholder": "123 Peace Street, 75001 Paris, France",
+      "addressHelp": "Enter the complete address or use the map below",
+      "mapLocation": "Location on Map",
+      "mapHelp": "Click on the map to refine the position or use the address field above",
+      "photos": "Point of Interest Photos",
+      "photosHelp": "Add photos to showcase your point of interest",
+      "photosNote": "Maximum 10MB per image. Accepted formats: JPG, PNG, WebP",
+      "addPhotos": "Add Photos",
+      "uploading": "Uploading...",
+      "contactEmail": "Professional Email",
+      "contactPhone": "Phone",
+      "website": "Website",
+      "subscriptionType": "Desired Subscription Type",
+      "important": "Important:",
+      "importantNote": "Your application will be reviewed by our team. You will receive a notification once approved.",
+      "createAccount": "Create My Partner Account",
+      "creating": "Creating...",
+      "types": {
+        "restaurant": "Restaurant",
+        "hotel": "Hotel / Accommodation",
+        "activity": "Activity / Leisure"
+      },
+      "subscriptions": {
+        "basic": {
+          "name": "Basic - Free",
+          "description": "Partner badge, 1 point of interest"
+        },
+        "premium": {
+          "name": "Premium - €19/month",
+          "description": "Featured placement, 5 points of interest, statistics"
+        },
+        "enterprise": {
+          "name": "Enterprise - €49/month",
+          "description": "Unlimited points, priority support, API"
+        }
+      }
+    }
+  },
+  "auth": {
+    "title": "Authentication",
+    "welcome": "Welcome to",
+    "subtitle": "Sign in to access your personalized features",
+    "description": "Sign in or create an account to continue",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "••••••••",
+    "firstNamePlaceholder": "First Name",
+    "lastNamePlaceholder": "Last Name",
+    "signInButton": "Sign In",
+    "signUpButton": "Create Account",
+    "signInWithGoogle": "Continue with Google",
+    "signInWithFacebook": "Continue with Facebook",
+    "signingIn": "Signing in...",
+    "signingUp": "Signing up...",
+    "signInSuccess": "Successfully signed in",
+    "signUpSuccess": "Check your email to confirm your registration",
+    "signInError": "Invalid email or password",
+    "signOutSuccess": "Successfully signed out",
+    "signOutError": "Error signing out",
+    "termsText": "By signing in, you accept our terms of service",
+    "or": "or",
+    "gdpr": {
+      "dateOfBirth": "Date of birth",
+      "dateOfBirthPlaceholder": "DD/MM/YYYY",
+      "dateOfBirthHelp": "You must be at least 13 years old to create an account.",
+      "ageVerificationFailed": "You must be at least 13 years old to sign up.",
+      "termsAccepted": "I accept the Terms of Service",
+      "privacyAccepted": "I accept the Privacy Policy and understand how my data will be processed",
+      "marketingConsent": "I wish to receive promotional offers and news by email (optional)",
+      "termsLink": "Terms of Service",
+      "privacyLink": "Privacy Policy",
+      "gdprNotice": "In accordance with GDPR, you have the right to access, rectify, delete and port your data. You can withdraw your consent at any time from your profile.",
+      "required": "required",
+      "optional": "optional",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "passwordsDontMatch": "Passwords do not match",
+      "mustAcceptTerms": "You must accept the Terms of Service and Privacy Policy",
+      "consents": "Consents",
+      "passwordRequirements": {
+        "title": "Password requirements:",
+        "minLength": "At least 8 characters",
+        "uppercase": "At least one uppercase letter",
+        "lowercase": "At least one lowercase letter",
+        "number": "At least one number",
+        "special": "At least one special character",
+        "strength": {
+          "veryWeak": "Very weak",
+          "weak": "Weak",
+          "medium": "Medium",
+          "strong": "Strong",
+          "veryStrong": "Very strong"
+        }
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 TASARINI. All rights reserved.",
+    "becomePartner": "Become a partner",
+    "madeWith": "Made with",
+    "by": "by"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "close": "Close",
+    "back": "Back"
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
+    }
+  }
+}

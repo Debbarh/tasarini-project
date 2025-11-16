@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue sur Tasarini!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
+
+                    <!-- Header avec gradient -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Bienvenue sur Tasarini!</h1>
+                            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">Votre aventure commence ici</p>
+                        </td>
+                    </tr>
+
+                    <!-- Contenu principal -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="color: #333; margin: 0 0 20px 0; font-size: 24px;">Félicitations {% if user.display_name %}{{ user.display_name }}{% else %}{{ user.username }}{% endif %}! 🌟</h2>
+
+                            <p style="color: #666; line-height: 1.6; margin: 0 0 20px 0; font-size: 16px;">
+                                Votre email a été vérifié avec succès! Vous êtes maintenant membre de la communauté <strong>Tasarini</strong>.
+                            </p>
+
+                            <div style="background: linear-gradient(135deg, #e0f7fa 0%, #e1bee7 100%); padding: 25px; border-radius: 8px; margin: 30px 0;">
+                                <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">🚀 Que pouvez-vous faire maintenant?</h3>
+                                <ul style="color: #555; line-height: 1.8; margin: 0; padding-left: 20px;">
+                                    <li><strong>Découvrir</strong> des milliers de points d'intérêt dans le monde entier</li>
+                                    <li><strong>Créer</strong> vos itinéraires de voyage personnalisés</li>
+                                    <li><strong>Sauvegarder</strong> vos lieux favoris pour plus tard</li>
+                                    <li><strong>Partager</strong> vos aventures avec la communauté</li>
+                                    <li><strong>Laisser</strong> des avis et des photos de vos expériences</li>
+                                </ul>
+                            </div>
+
+                            <!-- Bouton CTA -->
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="{{ frontend_url }}"
+                                   style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);">
+                                    🌍 Commencer à explorer
+                                </a>
+                            </div>
+
+                            <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                                <p style="color: #2e7d32; margin: 0; font-size: 14px;">
+                                    💡 <strong>Astuce:</strong> Complétez votre profil pour une expérience personnalisée! Ajoutez une photo, parlez-nous de vos préférences de voyage et découvrez des recommandations sur mesure.
+                                </p>
+                            </div>
+
+                            <p style="color: #666; line-height: 1.6; margin: 30px 0 0 0; font-size: 14px; text-align: center;">
+                                Besoin d'aide? Consultez notre <a href="{{ frontend_url }}/aide" style="color: #667eea; text-decoration: none;">centre d'aide</a> ou contactez notre équipe.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e9ecef;">
+                            <p style="color: #6c757d; margin: 0 0 10px 0; font-size: 14px;">
+                                <strong>Tasarini</strong> - Votre compagnon de voyage
+                            </p>
+                            <p style="color: #6c757d; margin: 0 0 15px 0; font-size: 12px;">
+                                Découvrez, planifiez et partagez vos aventures
+                            </p>
+                            <div style="margin: 15px 0;">
+                                <a href="{{ frontend_url }}" style="color: #667eea; text-decoration: none; margin: 0 10px; font-size: 12px;">Accueil</a>
+                                <a href="{{ frontend_url }}/destinations" style="color: #667eea; text-decoration: none; margin: 0 10px; font-size: 12px;">Destinations</a>
+                                <a href="{{ frontend_url }}/profil" style="color: #667eea; text-decoration: none; margin: 0 10px; font-size: 12px;">Mon Profil</a>
+                            </div>
+                            <p style="color: #adb5bd; margin: 0; font-size: 11px;">
+                                © 2025 Tasarini. Tous droits réservés.<br>
+                                Cet email a été envoyé depuis <a href="mailto:no-reply@tasarini.com" style="color: #667eea; text-decoration: none;">no-reply@tasarini.com</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

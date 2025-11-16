@@ -1,0 +1,232 @@
+{
+  "navigation": {
+    "createTrip": "旅行を作成",
+    "exploreWorld": "世界を探索",
+    "travelStories": "冒険の物語",
+    "myTreasures": "私の宝物",
+    "partnerSpace": "パートナーエリア",
+    "administration": "管理",
+    "myProfile": "マイプロフィール",
+    "logout": "ログアウト",
+    "login": "ログイン"
+  },
+  "home": {
+    "heroTitle": "あなたの次の冒険が待っています",
+    "heroSubtitle": "特別な目的地を発見し、パーソナライズされた旅程を作成し、忘れられない体験を生きてください。あなたの夢の旅へとご案内いたします。",
+    "startAdventure": "冒険を始める",
+    "discoverTreasures": "宝物を発見",
+    "planTrip": "完璧な休暇を計画",
+    "planTripDesc": "あなたの好み、予算、冒険の夢に適応するスマートAIでカスタム旅程を作成します。",
+    "exploreWorld": "世界を探索",
+    "exploreWorldDesc": "旅行者コミュニティが共有する魔法の場所、本物の体験、よく守られた秘密を発見してください。",
+    "shareStories": "あなたの物語を共有",
+    "shareStoriesDesc": "あなたの冒険を不滅にし、あなたの発見と貴重な瞬間で他の旅する魂を刺激してください。",
+    "statsDestinations": "探索された目的地",
+    "statsAdventurers": "冒険者",
+    "statsDreams": "実現した夢"
+  },
+  "planTrip": {
+    "title": "完璧な休暇を計画",
+    "subtitle": "あなたの冒険への欲求を理解するAIアシスタントでカスタム旅程を作成",
+    "startPlanning": "計画を始める",
+    "smartRecommendations": "スマート推奨",
+    "smartRecommendationsDesc": "私たちのAIはあなたの好みを分析して、ユニークな体験を提案します"
+  },
+  "beInspired": {
+    "title": "インスピレーションを得る",
+    "subtitle": "あなたの冒険的な魂を目覚めさせる特別な場所と本物の体験を発見してください",
+    "aiGuide": "AIガイド",
+    "shareDiscovery": "宝物を共有",
+    "exploreMap": "地図を探索",
+    "findInspiration": "インスピレーションを見つける"
+  },
+  "travelStories": {
+    "title": "旅行の物語",
+    "subtitle": "冒険者の魅力的な物語を発見し、コミュニティを刺激するためにあなた自身の体験を共有してください",
+    "shareStory": "私の旅を語る",
+    "myAdventures": "私の冒険"
+  },
+  "partnerApplication": {
+    "title": "パートナーになる",
+    "subtitle": "私たちのパートナーネットワークに参加し、世界中の情熱的な旅行者コミュニティにあなたの特別な場所を紹介してください。",
+    "benefits": {
+      "visibility": {
+        "title": "プレミアム視認性",
+        "description": "独特のパートナーバッジと私たちのプラットフォームでの優先配置であなたの場所を紹介します。"
+      },
+      "priority": {
+        "title": "注目配置",
+        "description": "地図とパーソナライズされた推奨での優先配置の恩恵を受けます。"
+      },
+      "analytics": {
+        "title": "高度な分析",
+        "description": "詳細なパフォーマンス統計とあなたの訪問者に関する洞察にアクセスします。"
+      }
+    },
+    "stats": {
+      "travelers": "アクティブな旅行者",
+      "pois": "興味のあるポイント",
+      "destinations": "目的地"
+    },
+    "process": {
+      "title": "パートナーになるには？",
+      "step1": {
+        "title": "アカウントを作成",
+        "description": "数回のクリックで私たちのプラットフォームにサインアップ"
+      },
+      "step2": {
+        "title": "申請を提出",
+        "description": "あなたの情報でパートナーフォームを記入"
+      },
+      "step3": {
+        "title": "検証と有効化",
+        "description": "私たちのチームは48時間以内にあなたの申請を審査します"
+      }
+    }
+  },
+  "partnerRegistration": {
+    "title": "パートナー登録",
+    "subtitle": "アカウントを作成し、私たちのパートナーネットワークに参加してください",
+    "accountTab": "アカウント",
+    "poiTab": "興味のあるポイント",
+    "passwordMismatch": "パスワードが一致しません",
+    "passwordTooShort": "パスワードは6文字以上である必要があります",
+    "selectPartnerType": "施設の種類を選択してください",
+    "accountCreated": "パートナーアカウントが正常に作成されました！登録を確認するためにメールをチェックしてください。",
+    "error": "エラー",
+    "form": {
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "メール",
+      "password": "パスワード",
+      "confirmPassword": "パスワードの確認",
+      "continue": "続行",
+      "back": "戻る",
+      "poiName": "興味のあるポイントの名前",
+      "poiNamePlaceholder": "例：ル・グルマンレストラン、現代美術館",
+      "partnerType": "パートナータイプ",
+      "partnerTypePlaceholder": "施設の種類を選択",
+      "partnerTypeHelp": "これにより、興味のあるポイントをより良く分類できます",
+      "description": "興味のあるポイントの説明",
+      "descriptionPlaceholder": "あなたの場所、その特徴、ユニークな点を説明してください...",
+      "categories": "興味のあるポイントのカテゴリ",
+      "categoriesHelp": "興味のあるポイントに一致する1つ以上のカテゴリを選択",
+      "address": "興味のあるポイントの住所",
+      "addressPlaceholder": "123 平和通り、75001 パリ、フランス",
+      "addressHelp": "完全な住所を入力するか、下の地図を使用してください",
+      "mapLocation": "地図上の位置",
+      "mapHelp": "位置を調整するために地図をクリックするか、上の住所フィールドを使用してください",
+      "photos": "興味のあるポイントの写真",
+      "photosHelp": "興味のあるポイントを紹介するために写真を追加",
+      "photosNote": "画像あたり最大10MB。受け入れられる形式：JPG、PNG、WebP",
+      "addPhotos": "写真を追加",
+      "uploading": "アップロード中...",
+      "contactEmail": "業務用メール",
+      "contactPhone": "電話",
+      "website": "ウェブサイト",
+      "subscriptionType": "希望するサブスクリプションタイプ",
+      "important": "重要：",
+      "importantNote": "あなたの申請は私たちのチームによって審査されます。承認されたら通知を受け取ります。",
+      "createAccount": "私のパートナーアカウントを作成",
+      "creating": "作成中...",
+      "types": {
+        "restaurant": "レストラン",
+        "hotel": "ホテル / 宿泊施設",
+        "activity": "アクティビティ / レジャー"
+      },
+      "subscriptions": {
+        "basic": {
+          "name": "ベーシック - 無料",
+          "description": "パートナーバッジ、1つの興味のあるポイント"
+        },
+        "premium": {
+          "name": "プレミアム - €19/月",
+          "description": "注目配置、5つの興味のあるポイント、統計"
+        },
+        "enterprise": {
+          "name": "エンタープライズ - €49/月",
+          "description": "無制限のポイント、優先サポート、API"
+        }
+      }
+    }
+  },
+  "auth": {
+    "title": "認証",
+    "welcome": "ようこそ",
+    "subtitle": "パーソナライズされた機能にアクセスするためにサインインしてください",
+    "description": "続行するためにサインインまたはアカウントを作成してください",
+    "signIn": "サインイン",
+    "signUp": "サインアップ",
+    "email": "メール",
+    "password": "パスワード",
+    "firstName": "名",
+    "lastName": "姓",
+    "emailPlaceholder": "あなたの@email.com",
+    "passwordPlaceholder": "••••••••",
+    "firstNamePlaceholder": "名",
+    "lastNamePlaceholder": "姓",
+    "signInButton": "サインイン",
+    "signUpButton": "アカウントを作成",
+    "signInWithGoogle": "Googleで続行",
+    "signInWithFacebook": "Facebookで続行",
+    "signingIn": "サインイン中...",
+    "signingUp": "サインアップ中...",
+    "signInSuccess": "正常にサインインしました",
+    "signUpSuccess": "登録を確認するためメールをチェックしてください",
+    "signInError": "無効なメールまたはパスワード",
+    "signOutSuccess": "正常にサインアウトしました",
+    "signOutError": "サインアウト時にエラーが発生しました",
+    "termsText": "サインインすることで、利用規約に同意したものとみなされます",
+    "or": "または",
+    "gdpr": {
+      "dateOfBirth": "生年月日",
+      "dateOfBirthPlaceholder": "日/月/年",
+      "dateOfBirthHelp": "アカウントを作成するには13歳以上である必要があります。",
+      "ageVerificationFailed": "登録するには13歳以上である必要があります。",
+      "termsAccepted": "利用規約に同意します",
+      "privacyAccepted": "プライバシーポリシーに同意し、データの処理方法を理解しています",
+      "marketingConsent": "プロモーションオファーとニュースをメールで受け取りたい（任意）",
+      "termsLink": "利用規約",
+      "privacyLink": "プライバシーポリシー",
+      "gdprNotice": "GDPRに従い、データへのアクセス、訂正、削除、移植の権利があります。プロフィールからいつでも同意を撤回できます。",
+      "required": "必須",
+      "optional": "任意",
+      "confirmPassword": "パスワードの確認",
+      "confirmPasswordPlaceholder": "パスワードを確認してください",
+      "passwordsDontMatch": "パスワードが一致しません",
+      "mustAcceptTerms": "利用規約とプライバシーポリシーに同意する必要があります",
+      "consents": "同意",
+      "passwordRequirements": {
+        "title": "パスワード要件：",
+        "minLength": "8文字以上",
+        "uppercase": "大文字を1文字以上",
+        "lowercase": "小文字を1文字以上",
+        "number": "数字を1文字以上",
+        "special": "特殊文字を1文字以上",
+        "strength": {
+          "veryWeak": "非常に弱い",
+          "weak": "弱い",
+          "medium": "中程度",
+          "strong": "強い",
+          "veryStrong": "非常に強い"
+        }
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 TASARINI. 全ての権利を保有しています。",
+    "becomePartner": "パートナーになる",
+    "madeWith": "で作られた",
+    "by": "による"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "search": "検索"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "navigation": {
+    "createTrip": "Criar minha viagem",
+    "exploreWorld": "Explorar o mundo",
+    "travelStories": "Histórias de aventura",
+    "myTreasures": "Meus tesouros",
+    "partnerSpace": "Área do Parceiro",
+    "administration": "Administração",
+    "myProfile": "Meu Perfil",
+    "logout": "Sair",
+    "login": "Entrar"
+  },
+  "home": {
+    "heroTitle": "Sua próxima aventura te espera",
+    "heroSubtitle": "Descubra destinos extraordinários, crie roteiros personalizados e viva experiências inesquecíveis. Deixe-nos guiá-lo para a viagem dos seus sonhos.",
+    "startAdventure": "Começar a aventura",
+    "discoverTreasures": "Descobrir tesouros",
+    "planTrip": "Planeje sua fuga perfeita",
+    "planTripDesc": "Crie roteiros personalizados com nossa IA inteligente que se adapta aos seus gostos, orçamento e sonhos de aventura.",
+    "exploreWorld": "Explore o mundo",
+    "exploreWorldDesc": "Descubra lugares mágicos, experiências autênticas e segredos bem guardados compartilhados por nossa comunidade de viajantes.",
+    "shareStories": "Compartilhe suas histórias",
+    "shareStoriesDesc": "Imoralize suas aventuras e inspire outras almas viajantes com suas descobertas e momentos preciosos.",
+    "statsDestinations": "Destinos explorados",
+    "statsAdventurers": "Aventureiros",
+    "statsDreams": "Sonhos realizados"
+  },
+  "planTrip": {
+    "title": "Planeje sua fuga perfeita",
+    "subtitle": "Crie um roteiro personalizado com nosso assistente IA que entende seus desejos de aventura",
+    "startPlanning": "Começar a planejar",
+    "smartRecommendations": "Recomendações inteligentes",
+    "smartRecommendationsDesc": "Nossa IA analisa suas preferências para sugerir experiências únicas"
+  },
+  "beInspired": {
+    "title": "Deixe-se inspirar",
+    "subtitle": "Descubra lugares extraordinários e experiências autênticas que despertarão sua alma aventureira",
+    "aiGuide": "Guia IA",
+    "shareDiscovery": "Compartilhar um tesouro",
+    "exploreMap": "Explorar o mapa",
+    "findInspiration": "Encontrar inspiração"
+  },
+  "travelStories": {
+    "title": "Histórias de Viagem",
+    "subtitle": "Descubra relatos cativantes de aventureiros e compartilhe suas próprias experiências para inspirar a comunidade",
+    "shareStory": "Contar minha jornada",
+    "myAdventures": "Minhas aventuras"
+  },
+  "partnerApplication": {
+    "title": "Torne-se Parceiro",
+    "subtitle": "Junte-se à nossa rede de parceiros e apresente seus lugares excepcionais a uma comunidade apaixonada de viajantes de todo o mundo.",
+    "benefits": {
+      "visibility": {
+        "title": "Visibilidade Premium",
+        "description": "Destaque seus lugares com um distintivo de parceiro e posicionamento prioritário em nossa plataforma."
+      },
+      "priority": {
+        "title": "Destaque Prioritário",
+        "description": "Beneficie-se de posicionamento prioritário no mapa e nas recomendações personalizadas."
+      },
+      "analytics": {
+        "title": "Analytics Avançadas",
+        "description": "Acesse estatísticas detalhadas de desempenho e insights sobre seus visitantes."
+      }
+    },
+    "stats": {
+      "travelers": "Viajantes ativos",
+      "pois": "Pontos de interesse",
+      "destinations": "Destinos"
+    },
+    "process": {
+      "title": "Como se tornar parceiro?",
+      "step1": {
+        "title": "Crie sua conta",
+        "description": "Registre-se em nossa plataforma com apenas alguns cliques"
+      },
+      "step2": {
+        "title": "Envie sua candidatura",
+        "description": "Preencha o formulário de parceiro com suas informações"
+      },
+      "step3": {
+        "title": "Validação e Ativação",
+        "description": "Nossa equipe analisa sua candidatura em 48 horas"
+      }
+    }
+  },
+  "partnerRegistration": {
+    "title": "Registro de Parceiro",
+    "subtitle": "Crie sua conta e junte-se à nossa rede de parceiros",
+    "accountTab": "Conta",
+    "poiTab": "Ponto de Interesse",
+    "passwordMismatch": "As senhas não coincidem",
+    "passwordTooShort": "A senha deve ter pelo menos 6 caracteres",
+    "selectPartnerType": "Por favor selecione o tipo do seu estabelecimento",
+    "accountCreated": "Conta de parceiro criada com sucesso! Verifique seu email para confirmar o registro.",
+    "error": "Erro",
+    "form": {
+      "firstName": "Nome",
+      "lastName": "Sobrenome",
+      "email": "Email",
+      "password": "Senha",
+      "confirmPassword": "Confirmar Senha",
+      "continue": "Continuar",
+      "back": "Voltar",
+      "poiName": "Nome do Ponto de Interesse",
+      "poiNamePlaceholder": "Ex: Restaurante Le Gourmand, Museu de Arte Moderna",
+      "partnerType": "Tipo de Parceiro",
+      "partnerTypePlaceholder": "Selecione o tipo do seu estabelecimento",
+      "partnerTypeHelp": "Isso nos ajuda a categorizar melhor seu ponto de interesse",
+      "description": "Descrição do seu ponto de interesse",
+      "descriptionPlaceholder": "Descreva seu local, suas especialidades e o que o torna único...",
+      "categories": "Categorias do Ponto de Interesse",
+      "categoriesHelp": "Selecione uma ou mais categorias que correspondam ao seu ponto de interesse",
+      "types": {
+        "restaurant": "Restaurante",
+        "hotel": "Hotel / Hospedagem",
+        "activity": "Atividade / Lazer"
+      }
+    }
+  },
+  "auth": {
+    "title": "Autenticação",
+    "welcome": "Bem-vindo ao",
+    "subtitle": "Faça login para acessar suas funcionalidades personalizadas",
+    "description": "Faça login ou crie uma conta para continuar",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "email": "Email",
+    "password": "Senha",
+    "firstName": "Nome",
+    "lastName": "Sobrenome",
+    "emailPlaceholder": "seu@email.com",
+    "passwordPlaceholder": "••••••••",
+    "firstNamePlaceholder": "Nome",
+    "lastNamePlaceholder": "Sobrenome",
+    "signInButton": "Entrar",
+    "signUpButton": "Criar Conta",
+    "signInWithGoogle": "Continuar com Google",
+    "signInWithFacebook": "Continuar com Facebook",
+    "signingIn": "Entrando...",
+    "signingUp": "Cadastrando...",
+    "signInSuccess": "Login realizado com sucesso",
+    "signUpSuccess": "Verifique seu email para confirmar o registro",
+    "signInError": "Email ou senha incorretos",
+    "signOutSuccess": "Logout realizado com sucesso",
+    "signOutError": "Erro ao fazer logout",
+    "termsText": "Ao fazer login, você aceita nossos termos de serviço",
+    "or": "ou",
+    "gdpr": {
+      "dateOfBirth": "Data de nascimento",
+      "dateOfBirthPlaceholder": "DD/MM/AAAA",
+      "dateOfBirthHelp": "Você deve ter pelo menos 13 anos para criar uma conta.",
+      "ageVerificationFailed": "Você deve ter pelo menos 13 anos para se registrar.",
+      "termsAccepted": "Aceito os Termos e Condições Gerais de Uso",
+      "privacyAccepted": "Aceito a Política de Privacidade e compreendo como meus dados serão processados",
+      "marketingConsent": "Desejo receber ofertas promocionais e notícias por email (opcional)",
+      "termsLink": "Termos e Condições Gerais de Uso",
+      "privacyLink": "Política de Privacidade",
+      "gdprNotice": "De acordo com o RGPD, você tem direito de acesso, retificação, exclusão e portabilidade de seus dados. Você pode retirar seu consentimento a qualquer momento em seu perfil.",
+      "required": "obrigatório",
+      "optional": "opcional",
+      "confirmPassword": "Confirmar senha",
+      "confirmPasswordPlaceholder": "Confirme sua senha",
+      "passwordsDontMatch": "As senhas não coincidem",
+      "mustAcceptTerms": "Você deve aceitar os Termos de Uso e a Política de Privacidade",
+      "consents": "Consentimentos",
+      "passwordRequirements": {
+        "title": "Requisitos da senha:",
+        "minLength": "Pelo menos 8 caracteres",
+        "uppercase": "Pelo menos uma letra maiúscula",
+        "lowercase": "Pelo menos uma letra minúscula",
+        "number": "Pelo menos um número",
+        "special": "Pelo menos um caractere especial",
+        "strength": {
+          "veryWeak": "Muito fraca",
+          "weak": "Fraca",
+          "medium": "Média",
+          "strong": "Forte",
+          "veryStrong": "Muito forte"
+        }
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 TASARINI. Todos os direitos reservados.",
+    "becomePartner": "Tornar-se parceiro",
+    "madeWith": "Feito com",
+    "by": "por"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "create": "Criar",
+    "search": "Pesquisar"
+  }
+}

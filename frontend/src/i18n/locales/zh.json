@@ -1,0 +1,232 @@
+{
+  "navigation": {
+    "createTrip": "创建我的旅行",
+    "exploreWorld": "探索世界",
+    "travelStories": "冒险故事",
+    "myTreasures": "我的珍宝",
+    "partnerSpace": "合作伙伴区域",
+    "administration": "管理",
+    "myProfile": "我的档案",
+    "logout": "登出",
+    "login": "登录"
+  },
+  "home": {
+    "heroTitle": "您的下一次冒险等待着您",
+    "heroSubtitle": "发现非凡的目的地，创建个性化的行程，体验难忘的经历。让我们引导您踏上梦想之旅。",
+    "startAdventure": "开始冒险",
+    "discoverTreasures": "发现珍宝",
+    "planTrip": "计划您的完美度假",
+    "planTripDesc": "使用我们的智能AI创建定制行程，它会适应您的品味、预算和冒险梦想。",
+    "exploreWorld": "探索世界",
+    "exploreWorldDesc": "发现我们旅行者社区分享的神奇地方、真实体验和珍藏秘密。",
+    "shareStories": "分享您的故事",
+    "shareStoriesDesc": "让您的冒险永垂不朽，用您的发现和珍贵时刻激励其他旅行的灵魂。",
+    "statsDestinations": "探索的目的地",
+    "statsAdventurers": "冒险者",
+    "statsDreams": "实现的梦想"
+  },
+  "planTrip": {
+    "title": "计划您的完美度假",
+    "subtitle": "使用理解您冒险欲望的AI助手创建定制行程",
+    "startPlanning": "开始规划",
+    "smartRecommendations": "智能推荐",
+    "smartRecommendationsDesc": "我们的AI分析您的偏好，为您推荐独特的体验"
+  },
+  "beInspired": {
+    "title": "获得灵感",
+    "subtitle": "发现将唤醒您冒险灵魂的非凡地方和真实体验",
+    "aiGuide": "AI向导",
+    "shareDiscovery": "分享珍宝",
+    "exploreMap": "探索地图",
+    "findInspiration": "寻找灵感"
+  },
+  "travelStories": {
+    "title": "旅行故事",
+    "subtitle": "发现冒险者的精彩故事，分享您自己的经历来激励社区",
+    "shareStory": "讲述我的旅程",
+    "myAdventures": "我的冒险"
+  },
+  "partnerApplication": {
+    "title": "成为合作伙伴",
+    "subtitle": "加入我们的合作伙伴网络，向来自世界各地的热情旅行者社区展示您的特色地点。",
+    "benefits": {
+      "visibility": {
+        "title": "高级可见性",
+        "description": "通过独特的合作伙伴徽章和在我们平台上的优先定位展示您的地点。"
+      },
+      "priority": {
+        "title": "特色展示",
+        "description": "在地图和个性化推荐中享受优先定位的好处。"
+      },
+      "analytics": {
+        "title": "高级分析",
+        "description": "访问详细的性能统计信息和有关您访客的洞察。"
+      }
+    },
+    "stats": {
+      "travelers": "活跃旅行者",
+      "pois": "兴趣点",
+      "destinations": "目的地"
+    },
+    "process": {
+      "title": "如何成为合作伙伴？",
+      "step1": {
+        "title": "创建您的账户",
+        "description": "只需几次点击即可在我们的平台上注册"
+      },
+      "step2": {
+        "title": "提交您的申请",
+        "description": "填写包含您信息的合作伙伴表格"
+      },
+      "step3": {
+        "title": "验证和激活",
+        "description": "我们的团队在48小时内审核您的申请"
+      }
+    }
+  },
+  "partnerRegistration": {
+    "title": "合作伙伴注册",
+    "subtitle": "创建您的账户并加入我们的合作伙伴网络",
+    "accountTab": "账户",
+    "poiTab": "兴趣点",
+    "passwordMismatch": "密码不匹配",
+    "passwordTooShort": "密码必须至少6个字符",
+    "selectPartnerType": "请选择您的机构类型",
+    "accountCreated": "合作伙伴账户创建成功！请检查您的邮箱以确认注册。",
+    "error": "错误",
+    "form": {
+      "firstName": "名字",
+      "lastName": "姓氏",
+      "email": "邮箱",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "continue": "继续",
+      "back": "返回",
+      "poiName": "兴趣点名称",
+      "poiNamePlaceholder": "例：Le Gourmand餐厅，现代艺术博物馆",
+      "partnerType": "合作伙伴类型",
+      "partnerTypePlaceholder": "选择您的机构类型",
+      "partnerTypeHelp": "这有助于我们更好地分类您的兴趣点",
+      "description": "您兴趣点的描述",
+      "descriptionPlaceholder": "描述您的地点、特色以及使其独特的地方...",
+      "categories": "兴趣点类别",
+      "categoriesHelp": "选择一个或多个与您的兴趣点匹配的类别",
+      "address": "兴趣点地址",
+      "addressPlaceholder": "123和平街，75001巴黎，法国",
+      "addressHelp": "输入完整地址或使用下面的地图",
+      "mapLocation": "地图上的位置",
+      "mapHelp": "点击地图以细化位置或使用上面的地址字段",
+      "photos": "兴趣点照片",
+      "photosHelp": "添加照片以展示您的兴趣点",
+      "photosNote": "每张图片最大10MB。接受的格式：JPG、PNG、WebP",
+      "addPhotos": "添加照片",
+      "uploading": "上传中...",
+      "contactEmail": "专业邮箱",
+      "contactPhone": "电话",
+      "website": "网站",
+      "subscriptionType": "所需订阅类型",
+      "important": "重要：",
+      "importantNote": "您的申请将由我们的团队审核。获得批准后您将收到通知。",
+      "createAccount": "创建我的合作伙伴账户",
+      "creating": "创建中...",
+      "types": {
+        "restaurant": "餐厅",
+        "hotel": "酒店/住宿",
+        "activity": "活动/休闲"
+      },
+      "subscriptions": {
+        "basic": {
+          "name": "基础 - 免费",
+          "description": "合作伙伴徽章，1个兴趣点"
+        },
+        "premium": {
+          "name": "高级 - €19/月",
+          "description": "特色展示，5个兴趣点，统计信息"
+        },
+        "enterprise": {
+          "name": "企业 - €49/月",
+          "description": "无限制点，优先支持，API"
+        }
+      }
+    }
+  },
+  "auth": {
+    "title": "身份验证",
+    "welcome": "欢迎来到",
+    "subtitle": "登录以访问您的个性化功能",
+    "description": "登录或创建账户以继续",
+    "signIn": "登录",
+    "signUp": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "firstName": "名字",
+    "lastName": "姓氏",
+    "emailPlaceholder": "您的@邮箱.com",
+    "passwordPlaceholder": "••••••••",
+    "firstNamePlaceholder": "名字",
+    "lastNamePlaceholder": "姓氏",
+    "signInButton": "登录",
+    "signUpButton": "创建账户",
+    "signInWithGoogle": "使用Google继续",
+    "signInWithFacebook": "使用Facebook继续",
+    "signingIn": "登录中...",
+    "signingUp": "注册中...",
+    "signInSuccess": "登录成功",
+    "signUpSuccess": "请检查您的邮箱以确认注册",
+    "signInError": "无效的邮箱或密码",
+    "signOutSuccess": "登出成功",
+    "signOutError": "登出时出错",
+    "termsText": "登录即表示您同意我们的服务条款",
+    "or": "或",
+    "gdpr": {
+      "dateOfBirth": "出生日期",
+      "dateOfBirthPlaceholder": "日/月/年",
+      "dateOfBirthHelp": "您必须年满13岁才能创建账户。",
+      "ageVerificationFailed": "您必须年满13岁才能注册。",
+      "termsAccepted": "我接受通用使用条款",
+      "privacyAccepted": "我接受隐私政策并了解我的数据将如何处理",
+      "marketingConsent": "我希望通过电子邮件接收促销优惠和新闻（可选）",
+      "termsLink": "通用使用条款",
+      "privacyLink": "隐私政策",
+      "gdprNotice": "根据GDPR，您有权访问、更正、删除和转移您的数据。您可以随时从您的个人资料中撤回您的同意。",
+      "required": "必填",
+      "optional": "可选",
+      "confirmPassword": "确认密码",
+      "confirmPasswordPlaceholder": "确认您的密码",
+      "passwordsDontMatch": "密码不匹配",
+      "mustAcceptTerms": "您必须接受使用条款和隐私政策",
+      "consents": "同意",
+      "passwordRequirements": {
+        "title": "密码要求：",
+        "minLength": "至少8个字符",
+        "uppercase": "至少一个大写字母",
+        "lowercase": "至少一个小写字母",
+        "number": "至少一个数字",
+        "special": "至少一个特殊字符",
+        "strength": {
+          "veryWeak": "非常弱",
+          "weak": "弱",
+          "medium": "中等",
+          "strong": "强",
+          "veryStrong": "非常强"
+        }
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 TASARINI. 版权所有。",
+    "becomePartner": "成为合作伙伴",
+    "madeWith": "制作于",
+    "by": "由"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索"
+  }
+}

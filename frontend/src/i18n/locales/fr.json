@@ -1,0 +1,260 @@
+{
+  "navigation": {
+    "createTrip": "Créer mon voyage",
+    "exploreWorld": "Explorer le monde",
+    "travelStories": "Récits d'aventure",
+    "myTreasures": "Mes trésors",
+    "partnerSpace": "Espace Partenaire",
+    "administration": "Administration",
+    "myProfile": "Mon Profil",
+    "logout": "Déconnexion",
+    "login": "Connexion"
+  },
+  "home": {
+    "heroTitle": "Votre prochaine aventure vous attend",
+    "heroSubtitle": "Découvrez des destinations extraordinaires, créez des itinéraires personnalisés et vivez des expériences inoubliables. Laissez-nous vous guider vers votre voyage de rêve.",
+    "startAdventure": "Commencer l'aventure",
+    "discoverTreasures": "Découvrir des trésors",
+    "planTrip": "Planifiez votre échappée parfaite",
+    "planTripDesc": "Créez des itinéraires sur mesure avec notre IA intelligente qui s'adapte à vos goûts, votre budget et vos rêves d'aventure.",
+    "exploreWorld": "Explorez le monde",
+    "exploreWorldDesc": "Découvrez des lieux magiques, des expériences authentiques et des secrets bien gardés partagés par notre communauté de voyageurs.",
+    "shareStories": "Partagez vos récits",
+    "shareStoriesDesc": "Immortalisez vos aventures et inspirez d'autres âmes voyageuses avec vos découvertes et moments précieux.",
+    "statsDestinations": "Destinations explorées",
+    "statsAdventurers": "Aventuriers",
+    "statsDreams": "Rêves réalisés"
+  },
+  "planTrip": {
+    "title": "Planifiez votre échappée parfaite",
+    "subtitle": "Créez un itinéraire sur mesure avec notre assistant IA qui comprend vos envies d'aventure",
+    "startPlanning": "Commencer à planifier",
+    "smartRecommendations": "Recommandations intelligentes",
+    "smartRecommendationsDesc": "Notre IA analyse vos préférences pour vous proposer des expériences uniques"
+  },
+  "beInspired": {
+    "title": "Laissez-vous inspirer",
+    "subtitle": "Découvrez des lieux extraordinaires et des expériences authentiques qui éveilleront votre âme d'aventurier",
+    "aiGuide": "Guide IA",
+    "shareDiscovery": "Partager un trésor",
+    "exploreMap": "Explorer la carte",
+    "findInspiration": "Trouver l'inspiration"
+  },
+  "travelStories": {
+    "title": "Histoires de Voyage",
+    "subtitle": "Découvrez des récits captivants d'aventuriers et partagez vos propres expériences pour inspirer la communauté",
+    "shareStory": "Raconter mon voyage",
+    "myAdventures": "Mes aventures"
+  },
+  "partnerApplication": {
+    "title": "Devenez Partenaire",
+    "subtitle": "Rejoignez notre réseau de partenaires et faites découvrir vos lieux exceptionnels à une communauté passionnée de voyageurs du monde entier.",
+    "benefits": {
+      "visibility": {
+        "title": "Visibilité Premium",
+        "description": "Mettez en avant vos lieux avec un badge partenaire distinctif et un positionnement prioritaire sur notre plateforme."
+      },
+      "priority": {
+        "title": "Mise en Avant",
+        "description": "Bénéficiez d'un positionnement prioritaire sur la carte et dans les recommandations personnalisées."
+      },
+      "analytics": {
+        "title": "Analytics Avancées",
+        "description": "Accédez aux statistiques détaillées de performance et aux insights sur vos visiteurs."
+      }
+    },
+    "stats": {
+      "travelers": "Voyageurs actifs",
+      "pois": "Points d'intérêt",
+      "destinations": "Destinations"
+    },
+    "process": {
+      "title": "Comment devenir partenaire ?",
+      "step1": {
+        "title": "Créez votre compte",
+        "description": "Inscrivez-vous sur notre plateforme en quelques clics"
+      },
+      "step2": {
+        "title": "Soumettez votre candidature",
+        "description": "Remplissez le formulaire partenaire avec vos informations"
+      },
+      "step3": {
+        "title": "Validation & Activation",
+        "description": "Notre équipe examine votre candidature sous 48h"
+      }
+    }
+  },
+  "partnerRegistration": {
+    "title": "Inscription Partenaire",
+    "subtitle": "Créez votre compte et rejoignez notre réseau de partenaires",
+    "accountTab": "Compte",
+    "poiTab": "Point d'intérêt",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+    "selectPartnerType": "Veuillez sélectionner le type de votre établissement",
+    "accountCreated": "Compte partenaire créé avec succès ! Vérifiez votre email pour confirmer votre inscription.",
+    "error": "Erreur",
+    "form": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "continue": "Continuer",
+      "back": "Retour",
+      "poiName": "Nom du point d'intérêt",
+      "poiNamePlaceholder": "Ex: Restaurant Le Gourmand, Musée d'Art Moderne",
+      "partnerType": "Type de partenaire",
+      "partnerTypePlaceholder": "Sélectionnez le type de votre établissement",
+      "partnerTypeHelp": "Cela nous aide à mieux catégoriser votre point d'intérêt",
+      "description": "Description de votre point d'intérêt",
+      "descriptionPlaceholder": "Décrivez votre lieu, ses spécialités et ce qui le rend unique...",
+      "categories": "Catégories du point d'intérêt",
+      "categoriesHelp": "Sélectionnez une ou plusieurs catégories qui correspondent à votre point d'intérêt",
+      "address": "Adresse du point d'intérêt",
+      "addressPlaceholder": "123 Rue de la Paix, 75001 Paris, France",
+      "addressHelp": "Saisissez l'adresse complète ou utilisez la carte ci-dessous",
+      "mapLocation": "Localisation sur la carte",
+      "mapHelp": "Cliquez sur la carte pour affiner la position ou utilisez le champ d'adresse ci-dessus",
+      "photos": "Photos du point d'intérêt",
+      "photosHelp": "Ajoutez des photos pour mettre en valeur votre point d'intérêt",
+      "photosNote": "Maximum 10MB par image. Formats acceptés: JPG, PNG, WebP",
+      "addPhotos": "Ajouter des photos",
+      "uploading": "Upload en cours...",
+      "contactEmail": "Email professionnel",
+      "contactPhone": "Téléphone",
+      "website": "Site web",
+      "subscriptionType": "Type d'abonnement souhaité",
+      "important": "Important :",
+      "importantNote": "Votre candidature sera examinée par notre équipe. Vous recevrez une notification une fois approuvée.",
+      "createAccount": "Créer mon compte partenaire",
+      "creating": "Création en cours...",
+      "types": {
+        "restaurant": "Restaurant",
+        "hotel": "Hôtel / Hébergement", 
+        "activity": "Activité / Loisirs"
+      },
+      "subscriptions": {
+        "basic": {
+          "name": "Basic - Gratuit",
+          "description": "Badge partenaire, 1 point d'intérêt"
+        },
+        "premium": {
+          "name": "Premium - 19€/mois",
+          "description": "Mise en avant, 5 points d'intérêt, statistiques"
+        },
+        "enterprise": {
+          "name": "Enterprise - 49€/mois",
+          "description": "Points illimités, support prioritaire, API"
+        }
+      }
+    }
+  },
+  "auth": {
+    "title": "Authentification", 
+    "welcome": "Bienvenue sur",
+    "subtitle": "Connectez-vous pour accéder à vos fonctionnalités personnalisées",
+    "description": "Connectez-vous ou créez un compte pour continuer",
+    "signIn": "Connexion",
+    "signUp": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom", 
+    "emailPlaceholder": "votre@email.com",
+    "passwordPlaceholder": "••••••••",
+    "firstNamePlaceholder": "Prénom",
+    "lastNamePlaceholder": "Nom",
+    "signInButton": "Se connecter",
+    "signUpButton": "Créer un compte",
+    "signInWithGoogle": "Continuer avec Google",
+    "signInWithFacebook": "Continuer avec Facebook",
+    "signingIn": "Connexion...",
+    "signingUp": "Inscription...",
+    "signInSuccess": "Connexion réussie",
+    "signUpSuccess": "Vérifiez votre email pour confirmer votre inscription",
+    "signInError": "Email ou mot de passe incorrect",
+    "emailNotConfirmed": "Veuillez vérifier votre email et cliquer sur le lien de confirmation pour activer votre compte",
+    "invalidCredentials": "Email ou mot de passe incorrect",
+    "signOutSuccess": "Déconnexion réussie",
+    "signOutError": "Erreur lors de la déconnexion",
+    "termsText": "En vous connectant, vous acceptez nos conditions d'utilisation",
+    "or": "ou",
+    "forgotPassword": {
+      "link": "Mot de passe oublié ?",
+      "title": "Réinitialiser le mot de passe",
+      "description": "Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "sendButton": "Envoyer le lien",
+      "sending": "Envoi...",
+      "successTitle": "Email envoyé",
+      "successDescription": "Si votre adresse email est associée à un compte, vous recevrez un lien de réinitialisation.",
+      "emailSent": "Vérifiez votre boîte email (et vos spams) pour le lien de réinitialisation.",
+      "emailSentMessage": "Si votre email existe dans notre système, vous recevrez un lien de réinitialisation."
+    },
+    "gdpr": {
+      "dateOfBirth": "Date de naissance",
+      "dateOfBirthPlaceholder": "JJ/MM/AAAA",
+      "dateOfBirthHelp": "Vous devez avoir au moins 13 ans pour créer un compte.",
+      "ageVerificationFailed": "Vous devez avoir au moins 13 ans pour vous inscrire.",
+      "termsAccepted": "J'accepte les Conditions Générales d'Utilisation",
+      "privacyAccepted": "J'accepte la Politique de Confidentialité et comprends comment mes données seront traitées",
+      "marketingConsent": "Je souhaite recevoir des offres promotionnelles et actualités par email (optionnel)",
+      "termsLink": "Conditions Générales d'Utilisation",
+      "privacyLink": "Politique de Confidentialité",
+      "gdprNotice": "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Vous pouvez retirer votre consentement à tout moment depuis votre profil.",
+      "required": "obligatoire",
+      "optional": "optionnel",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+      "mustAcceptTerms": "Vous devez accepter les CGU et la Politique de Confidentialité",
+      "consents": "Consentements",
+      "passwordRequirements": {
+        "title": "Exigences du mot de passe :",
+        "minLength": "Au moins 8 caractères",
+        "uppercase": "Au moins une lettre majuscule",
+        "lowercase": "Au moins une lettre minuscule",
+        "number": "Au moins un chiffre",
+        "special": "Au moins un caractère spécial",
+        "strength": {
+          "veryWeak": "Très faible",
+          "weak": "Faible",
+          "medium": "Moyen",
+          "strong": "Fort",
+          "veryStrong": "Très fort"
+        }
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 TASARINI. Tous droits réservés.",
+    "becomePartner": "Devenir partenaire",
+    "madeWith": "Fait avec",
+    "by": "par"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "close": "Fermer",
+    "back": "Retour"
+  },
+  "legal": {
+    "lastUpdate": "Dernière mise à jour",
+    "terms": {
+      "title": "Conditions Générales d'Utilisation",
+      "description": "Consultez nos conditions générales d'utilisation",
+      "footer": "Ces conditions sont régies par le droit français"
+    },
+    "privacy": {
+      "title": "Politique de Confidentialité",
+      "description": "Découvrez comment nous protégeons vos données personnelles",
+      "footer": "Conforme au RGPD - Vos données sont protégées"
+    }
+  }
+}

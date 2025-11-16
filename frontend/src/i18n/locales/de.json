@@ -1,0 +1,200 @@
+{
+  "navigation": {
+    "createTrip": "Meine Reise erstellen",
+    "exploreWorld": "Die Welt erkunden",
+    "travelStories": "Abenteuergeschichten",
+    "myTreasures": "Meine Schätze",
+    "partnerSpace": "Partner-Bereich",
+    "administration": "Verwaltung",
+    "myProfile": "Mein Profil",
+    "logout": "Abmelden",
+    "login": "Anmelden"
+  },
+  "home": {
+    "heroTitle": "Ihr nächstes Abenteuer wartet",
+    "heroSubtitle": "Entdecken Sie außergewöhnliche Reiseziele, erstellen Sie personalisierte Reiserouten und erleben Sie unvergessliche Erfahrungen. Lassen Sie uns Sie zu Ihrer Traumreise führen.",
+    "startAdventure": "Das Abenteuer beginnen",
+    "discoverTreasures": "Schätze entdecken",
+    "planTrip": "Planen Sie Ihren perfekten Kurzurlaub",
+    "planTripDesc": "Erstellen Sie maßgeschneiderte Reiserouten mit unserer intelligenten KI, die sich an Ihre Vorlieben, Ihr Budget und Ihre Abenteuerträume anpasst.",
+    "exploreWorld": "Erkunden Sie die Welt",
+    "exploreWorldDesc": "Entdecken Sie magische Orte, authentische Erlebnisse und gut gehütete Geheimnisse, die von unserer Reisenden-Community geteilt werden.",
+    "shareStories": "Teilen Sie Ihre Geschichten",
+    "shareStoriesDesc": "Verewigen Sie Ihre Abenteuer und inspirieren Sie andere Reiseseelen mit Ihren Entdeckungen und kostbaren Momenten.",
+    "statsDestinations": "Erkundete Reiseziele",
+    "statsAdventurers": "Abenteurer",
+    "statsDreams": "Erfüllte Träume"
+  },
+  "planTrip": {
+    "title": "Planen Sie Ihren perfekten Kurzurlaub",
+    "subtitle": "Erstellen Sie eine maßgeschneiderte Reiseroute mit unserem KI-Assistenten, der Ihre Abenteuerwünsche versteht",
+    "startPlanning": "Mit der Planung beginnen",
+    "smartRecommendations": "Intelligente Empfehlungen",
+    "smartRecommendationsDesc": "Unsere KI analysiert Ihre Vorlieben, um einzigartige Erlebnisse vorzuschlagen"
+  },
+  "beInspired": {
+    "title": "Lassen Sie sich inspirieren",
+    "subtitle": "Entdecken Sie außergewöhnliche Orte und authentische Erlebnisse, die Ihre abenteuerlustige Seele erwecken werden",
+    "aiGuide": "KI-Leitfaden",
+    "shareDiscovery": "Einen Schatz teilen",
+    "exploreMap": "Die Karte erkunden",
+    "findInspiration": "Inspiration finden"
+  },
+  "travelStories": {
+    "title": "Reisegeschichten",
+    "subtitle": "Entdecken Sie fesselnde Geschichten von Abenteurern und teilen Sie Ihre eigenen Erfahrungen, um die Community zu inspirieren",
+    "shareStory": "Meine Reise erzählen",
+    "myAdventures": "Meine Abenteuer"
+  },
+  "partnerApplication": {
+    "title": "Partner werden",
+    "subtitle": "Treten Sie unserem Partnernetzwerk bei und zeigen Sie Ihre außergewöhnlichen Orte einer leidenschaftlichen Gemeinschaft von Reisenden aus der ganzen Welt.",
+    "benefits": {
+      "visibility": {
+        "title": "Premium-Sichtbarkeit",
+        "description": "Präsentieren Sie Ihre Orte mit einem markanten Partner-Abzeichen und bevorzugter Positionierung auf unserer Plattform."
+      },
+      "priority": {
+        "title": "Hervorgehobene Platzierung",
+        "description": "Profitieren Sie von einer bevorzugten Positionierung auf der Karte und in personalisierten Empfehlungen."
+      },
+      "analytics": {
+        "title": "Erweiterte Analysen",
+        "description": "Zugang zu detaillierten Leistungsstatistiken und Einblicken über Ihre Besucher."
+      }
+    },
+    "stats": {
+      "travelers": "Aktive Reisende",
+      "pois": "Sehenswürdigkeiten",
+      "destinations": "Reiseziele"
+    },
+    "process": {
+      "title": "Wie wird man Partner?",
+      "step1": {
+        "title": "Erstellen Sie Ihr Konto",
+        "description": "Registrieren Sie sich mit nur wenigen Klicks auf unserer Plattform"
+      },
+      "step2": {
+        "title": "Reichen Sie Ihre Bewerbung ein",
+        "description": "Füllen Sie das Partner-Formular mit Ihren Informationen aus"
+      },
+      "step3": {
+        "title": "Validierung & Aktivierung",
+        "description": "Unser Team prüft Ihre Bewerbung innerhalb von 48 Stunden"
+      }
+    }
+  },
+  "partnerRegistration": {
+    "title": "Partner-Registrierung",
+    "subtitle": "Erstellen Sie Ihr Konto und treten Sie unserem Partner-Netzwerk bei",
+    "accountTab": "Konto",
+    "poiTab": "Sehenswürdigkeit",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "passwordTooShort": "Passwort muss mindestens 6 Zeichen lang sein",
+    "selectPartnerType": "Bitte wählen Sie Ihren Etablissement-Typ",
+    "accountCreated": "Partner-Konto erfolgreich erstellt! Überprüfen Sie Ihre E-Mail zur Bestätigung.",
+    "error": "Fehler",
+    "form": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "continue": "Weiter",
+      "back": "Zurück",
+      "poiName": "Name der Sehenswürdigkeit",
+      "poiNamePlaceholder": "Z.B.: Restaurant Le Gourmand, Museum für Moderne Kunst",
+      "partnerType": "Partner-Typ",
+      "partnerTypePlaceholder": "Wählen Sie Ihren Etablissement-Typ",
+      "partnerTypeHelp": "Dies hilft uns, Ihre Sehenswürdigkeit besser zu kategorisieren",
+      "description": "Beschreibung Ihrer Sehenswürdigkeit",
+      "descriptionPlaceholder": "Beschreiben Sie Ihren Ort, seine Besonderheiten und was ihn einzigartig macht...",
+      "categories": "Kategorien der Sehenswürdigkeit",
+      "categoriesHelp": "Wählen Sie eine oder mehrere Kategorien, die zu Ihrer Sehenswürdigkeit passen",
+      "types": {
+        "restaurant": "Restaurant",
+        "hotel": "Hotel / Unterkunft",
+        "activity": "Aktivität / Freizeit"
+      }
+    }
+  },
+  "auth": {
+    "title": "Authentifizierung",
+    "welcome": "Willkommen bei",
+    "subtitle": "Melden Sie sich an, um auf Ihre personalisierten Funktionen zuzugreifen",
+    "description": "Melden Sie sich an oder erstellen Sie ein Konto, um fortzufahren",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "emailPlaceholder": "ihre@email.com",
+    "passwordPlaceholder": "••••••••",
+    "firstNamePlaceholder": "Vorname",
+    "lastNamePlaceholder": "Nachname",
+    "signInButton": "Anmelden",
+    "signUpButton": "Konto erstellen",
+    "signInWithGoogle": "Mit Google fortfahren",
+    "signInWithFacebook": "Mit Facebook fortfahren",
+    "signingIn": "Anmeldung...",
+    "signingUp": "Registrierung...",
+    "signInSuccess": "Erfolgreich angemeldet",
+    "signUpSuccess": "Überprüfen Sie Ihre E-Mail zur Bestätigung",
+    "signInError": "Ungültige E-Mail oder Passwort",
+    "signOutSuccess": "Erfolgreich abgemeldet",
+    "signOutError": "Fehler beim Abmelden",
+    "termsText": "Mit der Anmeldung akzeptieren Sie unsere Nutzungsbedingungen",
+    "or": "oder",
+    "gdpr": {
+      "dateOfBirth": "Geburtsdatum",
+      "dateOfBirthPlaceholder": "TT/MM/JJJJ",
+      "dateOfBirthHelp": "Sie müssen mindestens 13 Jahre alt sein, um ein Konto zu erstellen.",
+      "ageVerificationFailed": "Sie müssen mindestens 13 Jahre alt sein, um sich zu registrieren.",
+      "termsAccepted": "Ich akzeptiere die Allgemeinen Geschäftsbedingungen",
+      "privacyAccepted": "Ich akzeptiere die Datenschutzerklärung und verstehe, wie meine Daten verarbeitet werden",
+      "marketingConsent": "Ich möchte Werbeangebote und Neuigkeiten per E-Mail erhalten (optional)",
+      "termsLink": "Allgemeine Geschäftsbedingungen",
+      "privacyLink": "Datenschutzerklärung",
+      "gdprNotice": "Gemäß der DSGVO haben Sie das Recht auf Zugang, Berichtigung, Löschung und Übertragbarkeit Ihrer Daten. Sie können Ihre Einwilligung jederzeit in Ihrem Profil widerrufen.",
+      "required": "erforderlich",
+      "optional": "optional",
+      "confirmPassword": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Bestätigen Sie Ihr Passwort",
+      "passwordsDontMatch": "Passwörter stimmen nicht überein",
+      "mustAcceptTerms": "Sie müssen die AGB und die Datenschutzerklärung akzeptieren",
+      "consents": "Einwilligungen",
+      "passwordRequirements": {
+        "title": "Passwortanforderungen:",
+        "minLength": "Mindestens 8 Zeichen",
+        "uppercase": "Mindestens ein Großbuchstabe",
+        "lowercase": "Mindestens ein Kleinbuchstabe",
+        "number": "Mindestens eine Zahl",
+        "special": "Mindestens ein Sonderzeichen",
+        "strength": {
+          "veryWeak": "Sehr schwach",
+          "weak": "Schwach",
+          "medium": "Mittel",
+          "strong": "Stark",
+          "veryStrong": "Sehr stark"
+        }
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 TASARINI. Alle Rechte vorbehalten.",
+    "becomePartner": "Partner werden",
+    "madeWith": "Gemacht mit",
+    "by": "von"
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "search": "Suchen"
+  }
+}

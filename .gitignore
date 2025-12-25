@@ -21,6 +21,9 @@ staticfiles/
 .env.local
 .env.*.local
 *.env
+.env.production
+backend/.env.production
+.production.env
 
 # IDE
 .vscode/
@@ -43,3 +46,12 @@ postgres_data/
 # Backup
 *.bak
 *.backup
+backups/
+*.sql.gz
+
+# SSL/Certbot
+certbot/conf/
+certbot/www/
+
+# Production
+docker-compose.prod.override.yml

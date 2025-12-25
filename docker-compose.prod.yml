@@ -1,0 +1,116 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: tasarini_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - tasarini_network
+
+  certbot:
+    image: certbot/certbot
+    container_name: tasarini_certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - tasarini_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: tasarini_db
+    restart: always
+    environment:
+      POSTGRES_DB: tasarini_prod
+      POSTGRES_USER: tasarini_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d tasarini_prod -U tasarini_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tasarini_network
+    # NE PAS exposer le port en production!
+    # ports:
+    #   - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: tasarini_backend
+    restart: always
+    env_file:
+      - ./backend/.env.production
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tasarini_network
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             python manage.py check_ai_providers &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 tasarini_backend.wsgi:application"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - VITE_API_BASE_URL=https://tasarini.com/api/v1
+        - VITE_LIBRETRANSLATE_URL=https://tasarini.com/translate
+    container_name: tasarini_frontend
+    restart: always
+    networks:
+      - tasarini_network
+
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    container_name: tasarini_translate
+    restart: always
+    environment:
+      - LT_LOAD_ONLY=en,fr,es,de,it,pt,ru,ja,zh,hi,ar
+      - LT_THREADS=4
+      - LT_DISABLE_WEB_UI=false
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5000/languages || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - tasarini_network
+
+volumes:
+  postgres_data:
+    driver: local
+  static_volume:
+    driver: local
+  media_volume:
+    driver: local
+
+networks:
+  tasarini_network:
+    driver: bridge

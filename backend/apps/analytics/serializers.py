@@ -29,3 +29,6 @@ class TravelAnalyticsSerializer(serializers.ModelSerializer):
         model = TravelAnalytics
         fields = '__all__'
         read_only_fields = ('id', 'created_at', 'updated_at')
+        extra_kwargs = {
+            'session_id': {'validators': []},
+        }

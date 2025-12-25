@@ -30,12 +30,20 @@ export const InteractiveInspireMap = ({
 }: InteractiveInspireMapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
+  const [currentCenter, setCurrentCenter] = useState<{ lat: number; lon: number }>({
+    lat: centerLat,
+    lon: centerLon,
+  });
   const [pois, setPois] = useState<POI[]>([]);
   const [selectedPOI, setSelectedPOI] = useState<POI | null>(null);
   const [selectedPOIs, setSelectedPOIs] = useState<POI[]>([]); // Pour l'itinéraire
   const [loading, setLoading] = useState(false);
   const [userLocation, setUserLocation] = useState<{lat: number, lon: number} | null>(null);
+  const [geoError, setGeoError] = useState<string | null>(null);
   const markers = useRef<any[]>([]);
+  const circleRef = useRef<any>(null);
+  const centerMarkerRef = useRef<any>(null);
+  const hasRequestedLocation = useRef(false);
 
   // Charger Leaflet dynamiquement
   useEffect(() => {
@@ -63,7 +71,7 @@ export const InteractiveInspireMap = ({
         }
 
         // Initialiser la carte
-        const mapInstance = L.map(mapRef.current).setView([centerLat, centerLon], 12);
+        const mapInstance = L.map(mapRef.current).setView([currentCenter.lat, currentCenter.lon], 12);
 
         // Ajouter les tuiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,7 +79,7 @@ export const InteractiveInspireMap = ({
         }).addTo(mapInstance);
 
         // Ajouter un cercle pour visualiser le rayon
-        L.circle([centerLat, centerLon], {
+        circleRef.current = L.circle([currentCenter.lat, currentCenter.lon], {
           color: 'hsl(var(--primary))',
           fillColor: 'hsl(var(--primary))',
           fillOpacity: 0.1,
@@ -85,7 +93,7 @@ export const InteractiveInspireMap = ({
           iconAnchor: [16, 16]
         });
 
-        L.marker([centerLat, centerLon], { icon: centerIcon })
+        centerMarkerRef.current = L.marker([currentCenter.lat, currentCenter.lon], { icon: centerIcon })
           .addTo(mapInstance)
           .bindPopup('Centre de recherche');
 
@@ -105,8 +113,47 @@ export const InteractiveInspireMap = ({
         map.remove();
         setMap(null);
       }
+      circleRef.current = null;
+      centerMarkerRef.current = null;
     };
-  }, [centerLat, centerLon, radiusKm]);
+  }, []);
+
+  // Synchroniser le centre interne si les props changent
+  useEffect(() => {
+    setCurrentCenter({ lat: centerLat, lon: centerLon });
+  }, [centerLat, centerLon]);
+
+  // Mettre à jour la vue et le marqueur quand le centre change
+  useEffect(() => {
+    if (!map) return;
+    // @ts-ignore
+    const L = window.L;
+    if (!L) return;
+
+    map.setView([currentCenter.lat, currentCenter.lon], map.getZoom() || 12);
+
+    if (circleRef.current) {
+      map.removeLayer(circleRef.current);
+    }
+    circleRef.current = L.circle([currentCenter.lat, currentCenter.lon], {
+      color: 'hsl(var(--primary))',
+      fillColor: 'hsl(var(--primary))',
+      fillOpacity: 0.1,
+      radius: radiusKm * 1000,
+    }).addTo(map);
+
+    if (centerMarkerRef.current) {
+      map.removeLayer(centerMarkerRef.current);
+    }
+    const centerIcon = L.divIcon({
+      html: `<div style="background: hsl(var(--primary)); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">📍</div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
+    centerMarkerRef.current = L.marker([currentCenter.lat, currentCenter.lon], { icon: centerIcon })
+      .addTo(map)
+      .bindPopup(userLocation ? 'Votre position' : 'Centre de recherche');
+  }, [currentCenter, radiusKm, map, userLocation]);
 
   // Charger les POI
   useEffect(() => {
@@ -114,7 +161,7 @@ export const InteractiveInspireMap = ({
       setLoading(true);
       onLoadingChange?.(true);
       try {
-        const poisData = await getPOIsInRadius(centerLat, centerLon, radiusKm, filters);
+        const poisData = await getPOIsInRadius(currentCenter.lat, currentCenter.lon, radiusKm, filters);
         setPois(poisData);
         onPOICountChange?.(poisData.length);
         toast.success(`${poisData.length} points d'intérêt trouvés`);
@@ -128,7 +175,7 @@ export const InteractiveInspireMap = ({
     };
 
     loadPOIs();
-  }, [centerLat, centerLon, radiusKm, filters]);
+  }, [currentCenter, radiusKm, filters, onLoadingChange, onPOICountChange]);
 
   // Afficher les POI sur la carte
   useEffect(() => {
@@ -214,27 +261,44 @@ export const InteractiveInspireMap = ({
 
   // Obtenir la localisation de l'utilisateur
   const getUserLocation = () => {
+    setGeoError(null);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
           setUserLocation({ lat, lon });
-          
-          if (map) {
-            map.setView([lat, lon], 12);
-            toast.success('Position mise à jour');
-          }
+          setCurrentCenter({ lat, lon });
+          toast.success('Position mise à jour');
         },
         (error) => {
           console.error('Erreur de géolocalisation:', error);
-          toast.error('Impossible d\'obtenir votre position');
+          const message = error?.code === 1
+            ? 'Accès à la localisation refusé par le navigateur. Activez la géolocalisation pour centrer la carte.'
+            : error?.code === 2
+              ? 'Service de localisation indisponible. Vérifiez vos paramètres réseau ou essayez plus tard.'
+              : 'Impossible d\'obtenir votre position. Vérifiez vos paramètres navigateur.';
+          setGeoError(message);
+          toast.error(message);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 600000,
         }
       );
     } else {
       toast.error('Géolocalisation non supportée');
     }
   };
+
+  // Récupérer automatiquement la position utilisateur à l'ouverture de la carte
+  useEffect(() => {
+    if (map && !hasRequestedLocation.current) {
+      hasRequestedLocation.current = true;
+      getUserLocation();
+    }
+  }, [map]);
 
   return (
     <div className="relative w-full h-full">
@@ -272,6 +336,22 @@ export const InteractiveInspireMap = ({
           </CreateItineraryDialog>
         )}
       </div>
+
+      {/* Alerte géolocalisation */}
+      {geoError && (
+        <div className="absolute top-4 left-4 z-20 max-w-sm bg-white text-gray-800 border border-gray-200 shadow-lg rounded-md p-3 space-y-2">
+          <p className="text-sm font-semibold">Autoriser la géolocalisation</p>
+          <p className="text-xs text-gray-600">{geoError}</p>
+          <ul className="text-xs text-gray-600 list-disc list-inside space-y-1">
+            <li>Vérifiez que votre navigateur autorise la localisation sur ce site.</li>
+            <li>Si bloqué, cliquez sur l'icône cadenas ou le picto de localisation pour l'activer.</li>
+            <li>Vous pouvez aussi saisir manuellement un lieu dans les filtres.</li>
+          </ul>
+          <Button size="xs" variant="outline" onClick={getUserLocation}>
+            Réessayer
+          </Button>
+        </div>
+      )}
 
       {/* Indicateur de chargement */}
       {loading && (

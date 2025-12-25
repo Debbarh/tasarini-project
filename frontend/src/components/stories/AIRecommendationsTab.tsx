@@ -3,6 +3,7 @@ import { StoryCard } from "./StoryCard";
 import { Sparkles, Brain } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { storyService, Story } from "@/services/storyService";
+import { normalizeApiResponse } from "@/utils/apiHelpers";
 import { toast } from "sonner";
 
 interface AIRecommendationsTabProps {
@@ -18,11 +19,11 @@ export const AIRecommendationsTab = ({ currentUserId, onLike, onComment, onBookm
 
   const fetchAIRecommendations = async () => {
     if (!currentUserId) return;
-    
+
     try {
       setLoading(true);
       const data = await storyService.fetchRecommendations();
-      setRecommendations(data);
+      setRecommendations(normalizeApiResponse(data));
     } catch (error) {
       console.error('Erreur lors du chargement des recommandations:', error);
       toast.error('Impossible de charger les recommandations pour le moment.');

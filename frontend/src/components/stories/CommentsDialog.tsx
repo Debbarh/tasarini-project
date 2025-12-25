@@ -62,21 +62,24 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
   };
 
   const getAuthorName = (comment: StoryComment) => {
-    if (comment.author_name) {
+    if (comment.author_name && comment.author_name.trim()) {
       return comment.author_name;
     }
-    return 'Voyageur';
+    return comment.author ? `Utilisateur ${comment.author}` : 'Auteur inconnu';
   };
 
   const getAuthorInitials = (comment: StoryComment) => {
-    if (comment.author_name) {
-      const parts = comment.author_name.split(' ');
+    if (comment.author_name && comment.author_name.trim()) {
+      const parts = comment.author_name.trim().split(' ');
       if (parts.length >= 2) {
         return `${parts[0][0] || ''}${parts[1][0] || ''}` || 'V';
       }
       return parts[0][0] || 'V';
     }
-    return 'V';
+    if (comment.author) {
+      return `${String(comment.author)[0] || 'U'}`.toUpperCase();
+    }
+    return 'U';
   };
 
   return (

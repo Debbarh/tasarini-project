@@ -7,12 +7,19 @@ export interface HotelBedsHotel {
   name: string;
   description?: string;
   categoryCode: string;
+  categoryName?: string;        // Ajouté: nom de la catégorie (ex: "4 STARS")
   destinationCode: string;
+  destinationName?: string;      // Ajouté: nom de la destination
   zoneCode?: string;
+  zoneName?: string;             // Ajouté: nom de la zone
   coordinates?: {
     latitude: number;
     longitude: number;
   };
+  minRate?: number;              // Ajouté: prix minimum
+  maxRate?: number;              // Ajouté: prix maximum
+  currency?: string;             // Ajouté: devise (ex: "EUR")
+  rooms?: number;                // Ajouté: nombre de types de chambres disponibles
   images?: Array<{
     imageTypeCode: string;
     path: string;
@@ -472,6 +479,7 @@ export interface HotelBedsHotelSearchParams {
     hotelPackage?: string;
   };
   platform?: number;
+  fields?: string[];
 }
 
 export interface HotelBedsActivitySearchParams {
@@ -516,6 +524,36 @@ export interface HotelBedsTransferSearchParams {
 }
 
 class HotelBedsService {
+  private mapHotel(rawHotel: any): HotelBedsHotel {
+    return {
+      code: rawHotel.code,
+      name: rawHotel.name,
+      description: rawHotel.description,
+      categoryCode: rawHotel.categoryCode,
+      categoryName: rawHotel.categoryName,
+      destinationCode: rawHotel.destinationCode,
+      destinationName: rawHotel.destinationName,
+      zoneCode: rawHotel.zoneCode,
+      zoneName: rawHotel.zoneName,
+      coordinates: rawHotel.coordinates,
+      minRate: rawHotel.minRate,
+      maxRate: rawHotel.maxRate,
+      currency: rawHotel.currency,
+      rooms: rawHotel.rooms,
+      images: rawHotel.images || [],
+      facilities: rawHotel.facilities || [],
+      phones: rawHotel.phones || [],
+      address: rawHotel.address,
+      postalCode: rawHotel.postalCode,
+      city: rawHotel.city,
+      email: rawHotel.email,
+      web: rawHotel.web,
+      lastUpdate: rawHotel.lastUpdate,
+      S2C: rawHotel.S2C,
+      ranking: rawHotel.ranking
+    };
+  }
+
   private getServiceEndpoint(serviceType: 'hotels' | 'activities' | 'transfers'): string {
     const endpoints = {
       hotels: '/hotel-api/1.0',
@@ -527,7 +565,7 @@ class HotelBedsService {
 
   private async callHotelBedsAPI(endpoint: string, params: any, method: string = 'POST', serviceType: 'hotels' | 'activities' | 'transfers' = 'hotels') {
     try {
-      const response = await apiClient.post<{ hotels?: any; activities?: any }>('travel/hotelbeds/', {
+      const response = await apiClient.post<{ hotels?: any; activities?: any; services?: any }>('travel/hotelbeds/', {
         endpoint,
         params,
         method,
@@ -542,50 +580,35 @@ class HotelBedsService {
 
   // Recherche d'hôtels
   async searchHotels(searchParams: HotelBedsHotelSearchParams): Promise<HotelBedsHotel[]> {
-    try {
-      const response = await this.callHotelBedsAPI('/hotels', searchParams, 'POST', 'hotels');
-      
-      if (response?.hotels?.hotels) {
-        return response.hotels.hotels.map((hotel: any) => ({
-          code: hotel.code,
-          name: hotel.name,
-          description: hotel.description,
-          categoryCode: hotel.categoryCode,
-          destinationCode: hotel.destinationCode,
-          zoneCode: hotel.zoneCode,
-          coordinates: hotel.coordinates,
-          images: hotel.images || [],
-          facilities: hotel.facilities || [],
-          phones: hotel.phones || [],
-          address: hotel.address,
-          postalCode: hotel.postalCode,
-          city: hotel.city,
-          email: hotel.email,
-          web: hotel.web,
-          lastUpdate: hotel.lastUpdate,
-          S2C: hotel.S2C,
-          ranking: hotel.ranking
-        }));
-      }
+    const response = await this.callHotelBedsAPI('/hotels', searchParams, 'POST', 'hotels');
 
-      return [];
-    } catch (error) {
-      console.error('Erreur lors de la recherche d\'hôtels HotelBeds:', error);
-      return [];
+    if (response?.hotels?.hotels) {
+      const hotels = response.hotels.hotels.map((hotel: any) => this.mapHotel(hotel));
+
+      // Désactivation de l'enrichissement par appels de détail pour éviter les requêtes multiples
+      // Si besoin de réactiver, limiter fortement (ex: slice(0,3)) pour réduire la charge.
+
+      return hotels;
     }
+
+    return [];
   }
 
   // Détails d'un hôtel spécifique
   async getHotelDetails(hotelCode: string, checkIn: string, checkOut: string, occupancy: any): Promise<HotelBedsHotel | null> {
     try {
-      const searchParams: HotelBedsHotelSearchParams = {
+      const detailParams: HotelBedsHotelSearchParams = {
         stay: { checkIn, checkOut },
         occupancies: [occupancy],
-        hotels: { hotel: [hotelCode] }
+        hotels: { hotel: [hotelCode] },
+        fields: ['all']
       };
 
-      const hotels = await this.searchHotels(searchParams);
-      return hotels.length > 0 ? hotels[0] : null;
+      const response = await this.callHotelBedsAPI('/hotels', detailParams, 'POST', 'hotels');
+      if (response?.hotels?.hotels?.length) {
+        return this.mapHotel(response.hotels.hotels[0]);
+      }
+      return null;
     } catch (error) {
       console.error('Erreur lors de la récupération des détails de l\'hôtel:', error);
       return null;

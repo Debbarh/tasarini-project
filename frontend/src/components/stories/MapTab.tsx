@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { storyService, Story } from "@/services/storyService";
+import { normalizeApiResponse } from "@/utils/apiHelpers";
 import { InteractiveInspireMap } from "@/components/inspire/InteractiveInspireMap";
 import { StoryCard } from "./StoryCard";
 import { MapPin, Globe } from "lucide-react";
@@ -28,7 +29,7 @@ export const MapTab = ({ currentUserId, onLike, onComment, onBookmark }: MapTabP
         sort: 'newest',
         limit: 100,
       });
-      setMapStories(data);
+      setMapStories(normalizeApiResponse(data));
     } catch (error) {
       console.error('Erreur lors du chargement des histoires géolocalisées:', error);
     } finally {

@@ -1,30 +1,502 @@
-import { useState } from "react";
+import type React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTypingEffect } from "@/hooks/useTypingEffect";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save, ShoppingCart, ChevronDown, ChevronUp, Euro, Sparkles, ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { DetailedItinerary } from "@/types/trip";
+import { DetailedItinerary, UnsplashImage } from "@/types/trip";
 import { exportItineraryToPDF, shareItinerary, copyItineraryLink } from "@/utils/itineraryExport";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedItineraries } from "@/hooks/useSavedItineraries";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 import SaveItineraryDialog from "@/components/itinerary/SaveItineraryDialog";
+import { UnifiedBookingDialog } from "@/components/booking/UnifiedBookingDialog";
+import { BookingItem, BookingType } from "@/types/booking";
+import { BookingEnrichmentPanel } from "./BookingEnrichmentPanel";
+import { EnrichmentOptions } from "@/services/tripEnrichmentService";
+import { apiClient } from "@/integrations/api/client";
+import {
+  WhyVisitSection,
+  BestTimeToVisitSection,
+  VisaAndEntrySection,
+  HealthAndSafetySection,
+  MustTryDishesSection,
+  GiftIdeasSection,
+  SimilarDestinationsSection,
+  TransportationAdviceSection,
+  CulturalTipsSection,
+  LocalEventsSection,
+  SustainabilityTipsSection,
+  MustSeeSection,
+} from "@/components/itinerary/EnrichedSections";
 
 interface DetailedItineraryViewProps {
-  itinerary: DetailedItinerary;
+  itinerary: DetailedItinerary | null;  // Now nullable for partial streaming data
   onStartOver: () => void;
+  enrichmentData?: EnrichmentOptions | null;
+  isEnriching?: boolean;
+  isStreaming?: boolean;  // NEW: Enables typing effects during streaming
 }
 
-export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItineraryViewProps) => {
+type GalleryImage = UnsplashImage & { city?: string };
+
+const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const total = images.length;
+
+  useEffect(() => {
+    if (total < 2 || isPaused) return;
+    const timer = window.setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % total);
+    }, 5500);
+    return () => window.clearInterval(timer);
+  }, [isPaused, total]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowRight') {
+        setLightboxIndex((prev) => {
+          if (prev === null) return null;
+          return (prev + 1) % total;
+        });
+      }
+      if (event.key === 'ArrowLeft') {
+        setLightboxIndex((prev) => {
+          if (prev === null) return null;
+          return (prev - 1 + total) % total;
+        });
+      }
+      if (event.key === 'Escape') {
+        setLightboxIndex(null);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [lightboxIndex, total]);
+
+  if (!total) return null;
+
+  const goTo = (next: number) => {
+    if (total === 0) return;
+    const safeIndex = (next + total) % total;
+    setCurrentIndex(safeIndex);
+  };
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = event.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current === null) return;
+    const delta = event.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 40) {
+      goTo(delta > 0 ? currentIndex - 1 : currentIndex + 1);
+    }
+    touchStartX.current = null;
+  };
+
+  const activeImage = images[currentIndex];
+
+  return (
+    <>
+      <Card className="overflow-hidden shadow-lg border border-border/60">
+        <CardContent className="p-0">
+          <div
+            className="relative w-full overflow-hidden rounded-none md:rounded-xl bg-muted"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="relative aspect-[16/9] w-full">
+              {images.map((image, index) => (
+                <div
+                  key={`${image.id}-${index}`}
+                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                >
+                  <img
+                    src={image.url || image.thumbnailUrl}
+                    alt={image.description || `Photo de ${image.city || 'destination'}`}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white space-y-2">
+                    <div className="text-xs uppercase tracking-wide text-white/80">
+                      {image.city ? image.city : 'Destination'} • Inspirez votre voyage
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-semibold leading-tight drop-shadow">
+                      {image.description || "Vue emblématique à ne pas manquer"}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
+                      <span>📷 {image.photographer}</span>
+                      {image.photographerUsername && (
+                        <span className="rounded-full bg-white/15 px-3 py-1 text-xs">
+                          @{image.photographerUsername}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <Button size="sm" variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-white/30" onClick={() => setLightboxIndex(currentIndex)}>
+                        <Maximize2 className="h-4 w-4 mr-2" />
+                        Voir en grand
+                      </Button>
+                      {isPaused && (
+                        <span className="text-xs text-white/80 self-center">Lecture en pause</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {total > 1 && (
+              <>
+                <button
+                  aria-label="Image précédente"
+                  onClick={() => goTo(currentIndex - 1)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 text-white p-2 hover:bg-black/60 transition"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  aria-label="Image suivante"
+                  onClick={() => goTo(currentIndex + 1)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 text-white p-2 hover:bg-black/60 transition"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/30 px-3 py-2 rounded-full backdrop-blur">
+                  {images.map((image, index) => (
+                    <button
+                      key={`${image.id}-dot-${index}`}
+                      onClick={() => goTo(index)}
+                      className={`h-2.5 rounded-full transition-all ${index === currentIndex ? 'w-7 bg-white' : 'w-2.5 bg-white/50 hover:bg-white/70'}`}
+                      aria-label={`Aller à l'image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {total > 1 && (
+            <div className="flex gap-3 overflow-x-auto px-4 py-3 bg-card/70 backdrop-blur">
+              {images.map((image, index) => (
+                <button
+                  key={`${image.id}-thumb-${index}`}
+                  onClick={() => goTo(index)}
+                  className={`relative h-16 w-28 flex-shrink-0 overflow-hidden rounded-lg border transition ${index === currentIndex ? 'border-primary shadow-md' : 'border-border/70'}`}
+                >
+                  <img
+                    src={image.thumbnailUrl || image.url}
+                    alt={image.description || `Miniature ${index + 1}`}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-1 left-2 right-2 text-[10px] text-white truncate">
+                    {image.city || 'Destination'}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={lightboxIndex !== null} onOpenChange={(open) => setLightboxIndex(open ? currentIndex : null)}>
+        <DialogContent className="max-w-6xl p-0">
+          <DialogHeader className="px-6 pt-6 pb-2">
+            <DialogTitle className="flex items-center justify-between text-lg">
+              <span>
+                {activeImage.city || 'Destination'} — {activeImage.description || 'Inspiration de voyage'}
+              </span>
+              <Button size="icon" variant="ghost" onClick={() => setLightboxIndex(null)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="relative bg-black">
+            <div className="relative aspect-[16/9] w-full">
+              <img
+                src={lightboxIndex !== null ? images[lightboxIndex].url || images[lightboxIndex].thumbnailUrl : activeImage.url}
+                alt={lightboxIndex !== null ? images[lightboxIndex].description : activeImage.description}
+                className="h-full w-full object-contain bg-black"
+              />
+              {total > 1 && (
+                <>
+                  <button
+                    aria-label="Image précédente"
+                    onClick={() => setLightboxIndex((prev) => {
+                      if (prev === null) return 0;
+                      return (prev - 1 + total) % total;
+                    })}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/15 text-white p-3 hover:bg-white/25 transition"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+                  <button
+                    aria-label="Image suivante"
+                    onClick={() => setLightboxIndex((prev) => {
+                      if (prev === null) return 0;
+                      return (prev + 1) % total;
+                    })}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/15 text-white p-3 hover:bg-white/25 transition"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
+                </>
+              )}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 text-white space-y-1">
+                <p className="text-sm font-semibold">{lightboxIndex !== null ? images[lightboxIndex].city || 'Destination' : activeImage.city || 'Destination'}</p>
+                <p className="text-xs text-white/80">
+                  {lightboxIndex !== null ? images[lightboxIndex].description || 'Instantané inspirant' : activeImage.description || 'Instantané inspirant'}
+                </p>
+                <p className="text-xs text-white/70">📷 {lightboxIndex !== null ? images[lightboxIndex].photographer : activeImage.photographer}</p>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+// Component wrapper for activity title with typing effect
+interface ActivityTitleProps {
+  title: string;
+  isStreaming: boolean;
+}
+
+const ActivityTitle: React.FC<ActivityTitleProps> = ({ title, isStreaming }) => {
+  const { displayedText, isTyping } = useTypingEffect(title, {
+    // Always animate when new text arrives (streaming ou final)
+    enabled: true,
+    speed: 1,
+    delayMs: 50,
+  });
+
+  return (
+    <h5 className="font-medium">
+      {displayedText}
+      {isTyping && <span className="animate-blink ml-1">|</span>}
+    </h5>
+  );
+};
+
+// Generic typed text for paragraphs (keeps layout identical)
+const TypedText: React.FC<{ text: string; isStreaming: boolean; delay?: number; speed?: number; className?: string }> = ({
+  text,
+  isStreaming,
+  delay = 30,
+  speed = 2,
+  className,
+}) => {
+  const { displayedText, isTyping } = useTypingEffect(text, {
+    enabled: isStreaming,
+    speed,
+    delayMs: delay,
+  });
+
+  return (
+    <span className={className}>
+      {displayedText}
+      {isTyping && <span className="animate-blink ml-1 align-baseline">|</span>}
+    </span>
+  );
+};
+
+export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, isEnriching = false, isStreaming = false }: DetailedItineraryViewProps) => {
+  // State for lazy-loaded images
+  const [destinationImages, setDestinationImages] = useState<Record<string, UnsplashImage[]>>(itinerary?.destinationImages || {});
+  const [isLoadingImages, setIsLoadingImages] = useState(false);
+  const imagesPollingRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Safety check for itinerary structure
+  // During streaming, itinerary can be null or partial - show loading state
+  if (!itinerary || !itinerary.trip) {
+    if (isStreaming) {
+      // Show loading state during streaming
+      return (
+        <div className="container mx-auto px-4 py-8">
+          <Card className="max-w-2xl mx-auto">
+            <CardContent className="pt-6">
+              <div className="text-center space-y-4">
+                <Sparkles className="h-12 w-12 animate-pulse text-primary mx-auto" />
+                <h3 className="text-lg font-semibold">Génération de votre itinéraire...</h3>
+                <p className="text-muted-foreground">
+                  L'IA prépare votre programme personnalisé. Les sections apparaîtront progressivement.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    // Not streaming and no valid itinerary - show error
+    console.error('❌ Itinerary structure error:', {
+      hasItinerary: !!itinerary,
+      hasTrip: !!itinerary?.trip,
+      itineraryKeys: itinerary ? Object.keys(itinerary) : [],
+      itinerary: itinerary
+    });
+
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card className="max-w-2xl mx-auto">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <div className="text-4xl">⚠️</div>
+              <h3 className="text-lg font-semibold">Problème de chargement</h3>
+              <p className="text-muted-foreground">
+                L'itinéraire n'a pas pu être chargé correctement. Cela peut être dû à un problème temporaire.
+              </p>
+              <div className="flex gap-2 justify-center pt-4">
+                <Button onClick={onStartOver} variant="default">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Créer un nouvel itinéraire
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const { trip, totalCost, practicalInfo, recommendations } = itinerary;
+  const hasEnrichedSections = Boolean(
+    itinerary.whyVisit ||
+    itinerary.bestTimeToVisit ||
+    itinerary.visaAndEntry ||
+    itinerary.healthAndSafety ||
+    itinerary.mustSee ||
+    itinerary.mustTryDishes ||
+    itinerary.giftIdeas ||
+    itinerary.similarDestinations ||
+    itinerary.transportationAdvice ||
+    itinerary.culturalTips ||
+    itinerary.localEvents ||
+    itinerary.sustainabilityTips
+  );
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1]));
+  const [bookingDialog, setBookingDialog] = useState<{
+    isOpen: boolean;
+    item: BookingItem | null;
+    type: BookingType;
+    dates?: { start?: string; end?: string; time?: string };
+  }>({
+    isOpen: false,
+    item: null,
+    type: 'activity'
+  });
   const { toast } = useToast();
   const { user } = useAuth();
   const { saveItinerary } = useSavedItineraries();
+  const { settings } = useSystemSettings();
+
+  // Lazy load destination images
+  useEffect(() => {
+    const sessionId = sessionStorage.getItem('travel_analytics_session');
+
+    // If images are already present, no need to poll
+    if (Object.keys(destinationImages).length > 0 || !sessionId) {
+      return;
+    }
+
+    // Start polling for images
+    setIsLoadingImages(true);
+
+    const pollImages = async () => {
+      try {
+        const response = await apiClient.get<{ images: Record<string, UnsplashImage[]> }>(
+          `travel/destination-images/?sessionId=${sessionId}`
+        );
+
+        if (response.images && Object.keys(response.images).length > 0) {
+          setDestinationImages(response.images);
+          setIsLoadingImages(false);
+
+          // Stop polling when images are loaded
+          if (imagesPollingRef.current) {
+            clearInterval(imagesPollingRef.current);
+            imagesPollingRef.current = null;
+          }
+        }
+      } catch (error) {
+        console.error('Error polling destination images:', error);
+      }
+    };
+
+    // Initial poll
+    pollImages();
+
+    // Poll every 2 seconds
+    imagesPollingRef.current = setInterval(pollImages, 2000);
+
+    // Cleanup on unmount
+    return () => {
+      if (imagesPollingRef.current) {
+        clearInterval(imagesPollingRef.current);
+        imagesPollingRef.current = null;
+      }
+    };
+  }, [destinationImages]);
+
+  const galleryImages = useMemo<GalleryImage[]>(() => {
+    if (!destinationImages || Object.keys(destinationImages).length === 0) return [];
+    return Object.entries(destinationImages).flatMap(([city, images]) =>
+      (images || []).map((image) => ({ ...image, city }))
+    );
+  }, [destinationImages]);
+
+  // Helper functions
+  const toggleDay = (dayNumber: number) => {
+    const newExpanded = new Set(expandedDays);
+    if (newExpanded.has(dayNumber)) {
+      newExpanded.delete(dayNumber);
+    } else {
+      newExpanded.add(dayNumber);
+    }
+    setExpandedDays(newExpanded);
+  };
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'restaurant': return '🍽️';
+      case 'activity': return '🎯';
+      case 'transport': return '🚗';
+      case 'accommodation': return '🏨';
+      case 'culture': return '🏛️';
+      case 'sport': return '⚽';
+      case 'nature': return '🌲';
+      default: return '📍';
+    }
+  };
+
+  const formatBudget = (amount: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+  };
 
   const handleExportPDF = async () => {
     try {
@@ -74,6 +546,68 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
     return await saveItinerary(title, itinerary, description);
   };
 
+  const handleBookActivity = (activity: any, date: string, destination: string) => {
+    const bookingItem: BookingItem = {
+      id: activity.id || `activity-${Date.now()}`,
+      name: activity.title,
+      description: activity.description,
+      price: {
+        amount: activity.cost || 0,
+        currency: 'EUR'
+      },
+      bookingUrl: activity.bookingUrl,
+      sourceType: activity.bookingUrl ? 'external' : 'internal',
+      sourceProvider: activity.provider || 'partner',
+      location: typeof activity.location === 'string' ? activity.location : activity.location?.name || destination,
+      duration: activity.duration,
+      images: activity.images || [],
+      ...activity
+    };
+
+    setBookingDialog({
+      isOpen: true,
+      item: bookingItem,
+      type: 'activity',
+      dates: {
+        start: date,
+        time: activity.time
+      }
+    });
+  };
+
+  const handleBookMeal = (meal: any, mealType: 'breakfast' | 'lunch' | 'dinner', date: string, destination: string) => {
+    const mealTimes = {
+      breakfast: '08:00',
+      lunch: '12:30',
+      dinner: '19:30'
+    };
+
+    const bookingItem: BookingItem = {
+      id: `meal-${mealType}-${Date.now()}`,
+      name: meal.title,
+      description: `${mealType === 'breakfast' ? 'Petit-déjeuner' : mealType === 'lunch' ? 'Déjeuner' : 'Dîner'} à ${typeof meal.location === 'string' ? meal.location : meal.location?.name || destination}`,
+      price: {
+        amount: meal.cost || 0,
+        currency: 'EUR'
+      },
+      bookingUrl: meal.bookingUrl,
+      sourceType: meal.bookingUrl ? 'external' : 'internal',
+      sourceProvider: meal.provider || 'partner',
+      location: typeof meal.location === 'string' ? meal.location : meal.location?.name || destination,
+      ...meal
+    };
+
+    setBookingDialog({
+      isOpen: true,
+      item: bookingItem,
+      type: 'restaurant',
+      dates: {
+        start: date,
+        time: mealTimes[mealType]
+      }
+    });
+  };
+
   const calculateTotalDuration = () => {
     if (trip.startDate && trip.endDate) {
       try {
@@ -117,7 +651,12 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
         <div>
           <h1 className="text-3xl font-bold mb-2">Votre itinéraire personnalisé</h1>
           <p className="text-muted-foreground">
-            Voyage généré avec vos préférences personnelles
+            <TypedText
+              text="Voyage généré avec vos préférences personnelles"
+              isStreaming={isStreaming}
+              delay={20}
+              speed={2}
+            />
           </p>
         </div>
         <div className="flex gap-2">
@@ -165,44 +704,28 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
       </div>
 
       {/* Destination Images Gallery */}
-      {itinerary.destinationImages && Object.keys(itinerary.destinationImages).length > 0 ? (
-        <Card className="overflow-hidden">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              📸 Vos destinations
-            </CardTitle>
-          </CardHeader>
+      {isLoadingImages ? (
+        <Card className="overflow-hidden shadow-lg border border-border/60">
           <CardContent className="p-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-              {Object.entries(itinerary.destinationImages).map(([city, images]) => (
-                <div key={city} className="space-y-3">
-                  <h4 className="font-semibold text-center">{city}</h4>
-                  <div className="grid gap-2">
-                    {images.slice(0, 3).map((image) => (
-                      <div key={image.id} className="relative group overflow-hidden rounded-lg">
-                        <img 
-                          src={image.thumbnailUrl} 
-                          alt={image.description}
-                          className="w-full h-48 object-cover transition-transform group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                          <div className="text-white text-xs">
-                            <p className="font-medium">{image.description}</p>
-                            <p className="text-white/80">📷 {image.photographer}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            <Skeleton className="w-full aspect-[16/9] rounded-none md:rounded-xl" />
+            <div className="flex gap-3 overflow-x-auto px-4 py-3 bg-card/70">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Skeleton key={i} className="h-16 w-28 flex-shrink-0 rounded-lg" />
               ))}
             </div>
           </CardContent>
         </Card>
+      ) : galleryImages.length > 0 ? (
+        <DestinationGallery images={galleryImages} />
       ) : (
-        <div className="text-center text-muted-foreground p-4">
-          <p>Aucune image disponible pour les destinations</p>
-        </div>
+        <Card className="overflow-hidden shadow-lg border border-border/60">
+          <CardContent className="p-6">
+            <div className="text-center text-muted-foreground">
+              <div className="mb-2">📸</div>
+              <p className="text-sm">Chargement des images des destinations...</p>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Trip Overview */}
@@ -239,7 +762,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
                 <Users className="h-4 w-4" />
                 Groupe
               </div>
-              <p className="font-medium">{getTravelGroupDescription()}</p>
+              <p className="font-medium">
+                <TypedText text={getTravelGroupDescription()} isStreaming={isStreaming} delay={20} speed={2} />
+              </p>
             </div>
 
             <div className="space-y-1">
@@ -261,7 +786,12 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
               <div className="space-y-1">
                 {trip.destinations.map((dest, index) => (
                   <p key={index} className="text-sm font-medium">
-                    {dest.city}, {dest.country} ({dest.duration}j)
+                    <TypedText
+                      text={`${dest.city}, ${dest.country} (${dest.duration}j)`}
+                      isStreaming={isStreaming}
+                      delay={20 + index * 10}
+                      speed={2}
+                    />
                   </p>
                 ))}
               </div>
@@ -270,12 +800,46 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
         </CardContent>
       </Card>
 
+      {/* Budget Breakdown Grid */}
+      {itinerary.budgetBreakdown && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Euro className="h-5 w-5 text-primary" />
+              Répartition du budget
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {Object.entries(itinerary.budgetBreakdown).map(([category, amount]) => (
+                <div key={category} className="text-center p-4 rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+                  <div className="text-2xl font-bold text-primary mb-1">
+                    {formatBudget(amount as number)}
+                  </div>
+                  <div className="text-xs text-muted-foreground capitalize">
+                    {category === 'accommodation' ? 'Hébergement' :
+                     category === 'food' ? 'Nourriture' :
+                     category === 'activities' ? 'Activités' :
+                     category === 'transport' ? 'Transport' :
+                     category === 'shopping' ? 'Shopping' :
+                     category === 'miscellaneous' ? 'Divers' : category}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Detailed Itinerary */}
       {itinerary.days && itinerary.days.length > 0 ? (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Itinéraire détaillé</h2>
-            <Badge variant="secondary">{itinerary.days.length} jour{itinerary.days.length > 1 ? 's' : ''}</Badge>
+            <Badge variant="secondary">
+              {itinerary.days.length} jour{itinerary.days.length > 1 ? 's' : ''}
+              {isStreaming && <Sparkles className="h-3 w-3 ml-1 inline animate-pulse" />}
+            </Badge>
           </div>
           
           <div className="space-y-4">
@@ -290,7 +854,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
                       </CardTitle>
                       <div className="flex items-center gap-4 mt-2">
                         <Badge variant="outline">{day.destination}</Badge>
-                        <Badge variant="secondary">{day.theme}</Badge>
+                        <Badge variant="secondary">
+                          <TypedText text={day.theme || ''} isStreaming={isStreaming} delay={50} speed={3} />
+                        </Badge>
                       </div>
                     </div>
                     <div className="text-right">
@@ -318,7 +884,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
                             </div>
                             <div className="flex-1 space-y-2">
                               <div className="flex items-start justify-between">
-                                <h5 className="font-medium">{activity.title}</h5>
+                                <ActivityTitle title={activity.title} isStreaming={isStreaming} />
                                 <div className="flex items-center gap-2">
                                   <Badge variant="secondary" className="text-xs">
                                     {activity.type}
@@ -326,7 +892,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
                                   <span className="text-sm font-medium">{activity.cost}€</span>
                                 </div>
                               </div>
-                              <p className="text-sm text-muted-foreground">{activity.description}</p>
+                              <p className="text-sm text-muted-foreground">
+                                <TypedText text={activity.description || ''} isStreaming={isStreaming} delay={60} speed={3} />
+                              </p>
                               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <MapPin className="h-3 w-3" />
@@ -357,6 +925,16 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
                                   </details>
                                 </div>
                               )}
+
+                              {/* Booking Button */}
+                              <Button
+                                onClick={() => handleBookActivity(activity, day.date, day.destination)}
+                                className="w-full sm:w-auto mt-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md"
+                                size="sm"
+                              >
+                                <ShoppingCart className="w-4 h-4 mr-2" />
+                                Réserver cette activité
+                              </Button>
                             </div>
                           </div>
                         ))}
@@ -376,24 +954,75 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
                       </h4>
                       <div className="grid gap-3 md:grid-cols-3">
                         {day.meals?.breakfast && (
-                          <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800">
+                          <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 space-y-2">
                             <h5 className="font-medium text-sm mb-1">🌅 Petit-déjeuner</h5>
-                            <p className="text-sm">{day.meals.breakfast.title}</p>
-                            <p className="text-xs text-muted-foreground">{typeof day.meals.breakfast.location === 'string' ? day.meals.breakfast.location : day.meals.breakfast.location?.name || 'Lieu non spécifié'} • {day.meals.breakfast.cost}€</p>
+                            <p className="text-sm">
+                              <TypedText text={day.meals.breakfast.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              <TypedText
+                                text={`${typeof day.meals.breakfast.location === 'string' ? day.meals.breakfast.location : day.meals.breakfast.location?.name || 'Lieu non spécifié'} • ${day.meals.breakfast.cost}€`}
+                                isStreaming={isStreaming}
+                                delay={50}
+                                speed={2}
+                              />
+                            </p>
+                            <Button
+                              onClick={() => handleBookMeal(day.meals.breakfast, 'breakfast', day.date, day.destination)}
+                              className="w-full mt-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-sm"
+                              size="sm"
+                            >
+                              <Utensils className="w-3 h-3 mr-1" />
+                              Réserver
+                            </Button>
                           </div>
                         )}
                         {day.meals?.lunch && (
-                          <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800">
+                          <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 space-y-2">
                             <h5 className="font-medium text-sm mb-1">☀️ Déjeuner</h5>
-                            <p className="text-sm">{day.meals.lunch.title}</p>
-                            <p className="text-xs text-muted-foreground">{typeof day.meals.lunch.location === 'string' ? day.meals.lunch.location : day.meals.lunch.location?.name || 'Lieu non spécifié'} • {day.meals.lunch.cost}€</p>
+                            <p className="text-sm">
+                              <TypedText text={day.meals.lunch.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              <TypedText
+                                text={`${typeof day.meals.lunch.location === 'string' ? day.meals.lunch.location : day.meals.lunch.location?.name || 'Lieu non spécifié'} • ${day.meals.lunch.cost}€`}
+                                isStreaming={isStreaming}
+                                delay={50}
+                                speed={2}
+                              />
+                            </p>
+                            <Button
+                              onClick={() => handleBookMeal(day.meals.lunch, 'lunch', day.date, day.destination)}
+                              className="w-full mt-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-sm"
+                              size="sm"
+                            >
+                              <Utensils className="w-3 h-3 mr-1" />
+                              Réserver
+                            </Button>
                           </div>
                         )}
                         {day.meals?.dinner && (
-                          <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800">
+                          <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 space-y-2">
                             <h5 className="font-medium text-sm mb-1">🌙 Dîner</h5>
-                            <p className="text-sm">{day.meals.dinner.title}</p>
-                            <p className="text-xs text-muted-foreground">{typeof day.meals.dinner.location === 'string' ? day.meals.dinner.location : day.meals.dinner.location?.name || 'Lieu non spécifié'} • {day.meals.dinner.cost}€</p>
+                            <p className="text-sm">
+                              <TypedText text={day.meals.dinner.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              <TypedText
+                                text={`${typeof day.meals.dinner.location === 'string' ? day.meals.dinner.location : day.meals.dinner.location?.name || 'Lieu non spécifié'} • ${day.meals.dinner.cost}€`}
+                                isStreaming={isStreaming}
+                                delay={50}
+                                speed={2}
+                              />
+                            </p>
+                            <Button
+                              onClick={() => handleBookMeal(day.meals.dinner, 'dinner', day.date, day.destination)}
+                              className="w-full mt-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-sm"
+                              size="sm"
+                            >
+                              <Utensils className="w-3 h-3 mr-1" />
+                              Réserver
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -410,7 +1039,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
                         </h4>
                         <div className="space-y-2">
                           <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
-                            <p className="text-sm">{day.transportation}</p>
+                            <p className="text-sm">
+                              <TypedText text={day.transportation || ''} isStreaming={isStreaming} delay={50} speed={2} />
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -432,6 +1063,30 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
             ))}
           </div>
         </div>
+      ) : isStreaming ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 animate-pulse text-primary" />
+              Génération de l'itinéraire jour par jour...
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              L'IA crée votre programme personnalisé avec toutes les activités
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-12">
+              <div className="mb-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                  <Calendar className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  Les journées de votre itinéraire apparaîtront progressivement ci-dessus avec l'effet typing...
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <Card>
           <CardHeader>
@@ -456,6 +1111,31 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
           </CardContent>
         </Card>
       )}
+
+      {/* Enriched Sections */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Informations complémentaires</h2>
+        {hasEnrichedSections ? (
+          <>
+            <WhyVisitSection whyVisit={itinerary.whyVisit} title={itinerary.title} />
+            <BestTimeToVisitSection bestTimeToVisit={itinerary.bestTimeToVisit} />
+            <VisaAndEntrySection visaAndEntry={itinerary.visaAndEntry} />
+            <HealthAndSafetySection healthAndSafety={itinerary.healthAndSafety} />
+            <MustSeeSection mustSee={itinerary.mustSee} title={itinerary.title} />
+            <MustTryDishesSection mustTryDishes={itinerary.mustTryDishes} />
+            <GiftIdeasSection giftIdeas={itinerary.giftIdeas} />
+            <TransportationAdviceSection transportationAdvice={itinerary.transportationAdvice} />
+            <CulturalTipsSection culturalTips={itinerary.culturalTips} />
+            <SimilarDestinationsSection similarDestinations={itinerary.similarDestinations} />
+            <LocalEventsSection localEvents={itinerary.localEvents} />
+            <SustainabilityTipsSection sustainabilityTips={itinerary.sustainabilityTips} />
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Ces informations s'afficheront dès que l'itinéraire inclura des contenus enrichis.
+          </p>
+        )}
+      </div>
 
       {/* Recommendations */}
       {(recommendations?.mustTryDishes || recommendations?.giftIdeas || recommendations?.packingList || recommendations?.culturalTips) && (
@@ -815,11 +1495,28 @@ export const DetailedItineraryView = ({ itinerary, onStartOver }: DetailedItiner
         </div>
       )}
 
+      {/* Booking Enrichment Panel - Controlled by admin settings */}
+      {settings.bookingCenterEnabled && (
+        <BookingEnrichmentPanel
+          itinerary={itinerary}
+          tripData={trip}
+        />
+      )}
+
       {/* Dialog de sauvegarde */}
       <SaveItineraryDialog
         open={showSaveDialog}
         onOpenChange={setShowSaveDialog}
         onSave={handleSaveItinerary}
+      />
+
+      {/* Dialog de réservation */}
+      <UnifiedBookingDialog
+        isOpen={bookingDialog.isOpen}
+        onClose={() => setBookingDialog(prev => ({ ...prev, isOpen: false }))}
+        item={bookingDialog.item}
+        bookingType={bookingDialog.type}
+        defaultDates={bookingDialog.dates}
       />
     </div>
   );

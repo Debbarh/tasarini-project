@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { systemSettingsService, SystemSetting } from '@/services/systemSettingsService';
+import { extractArrayFromResponse } from '@/integrations/api/client';
 
 export interface SystemSettingsState {
   siteName: string;
@@ -18,38 +19,50 @@ export interface SystemSettingsState {
   defaultLanguage: string;
   currency: string;
   timeZone: string;
+  bookingCenterEnabled: boolean;
+  planYourTripEnabled: boolean;
+  beInspiredEnabled: boolean;
+  travelStoriesEnabled: boolean;
 }
 
 const mapSettingsToState = (settings: SystemSetting[]): SystemSettingsState => {
   const settingsMap = settings.reduce((acc, setting) => {
     let value: any = setting.setting_value;
-    
+
     if (setting.setting_type === 'boolean') {
       value = setting.setting_value === 'true';
     } else if (setting.setting_type === 'number') {
       value = setting.setting_value;
     }
-    
+
     acc[setting.setting_key] = value;
     return acc;
   }, {} as any);
+
+  // Debug logging
+  console.log('🔧 Settings from backend:', settingsMap);
+  console.log('🎯 booking_center_enabled raw value:', settingsMap.booking_center_enabled);
 
   return {
     siteName: settingsMap.site_name || 'Voyage AI',
     siteDescription: settingsMap.site_description || 'Plateforme de recommandations touristiques',
     maintenanceMode: settingsMap.maintenance_mode || false,
-    registrationEnabled: settingsMap.registration_enabled || true,
-    emailNotifications: settingsMap.email_notifications || true,
-    partnerRegistration: settingsMap.partner_registration || true,
+    registrationEnabled: settingsMap.registration_enabled !== false,
+    emailNotifications: settingsMap.email_notifications !== false,
+    partnerRegistration: settingsMap.partner_registration !== false,
     automaticVerification: settingsMap.automatic_verification || false,
     maxFileSize: settingsMap.max_file_size || '10',
     sessionTimeout: settingsMap.session_timeout || '24',
     apiRateLimit: settingsMap.api_rate_limit || '1000',
-    enableAnalytics: settingsMap.enable_analytics || true,
-    enableGeolocation: settingsMap.enable_geolocation || true,
+    enableAnalytics: settingsMap.enable_analytics !== false,
+    enableGeolocation: settingsMap.enable_geolocation !== false,
     defaultLanguage: settingsMap.default_language || 'fr',
     currency: settingsMap.currency || 'EUR',
-    timeZone: settingsMap.time_zone || 'Europe/Paris'
+    timeZone: settingsMap.time_zone || 'Europe/Paris',
+    bookingCenterEnabled: settingsMap.booking_center_enabled !== false,
+    planYourTripEnabled: settingsMap.plan_your_trip_enabled !== false,
+    beInspiredEnabled: settingsMap.be_inspired_enabled !== false,
+    travelStoriesEnabled: settingsMap.travel_stories_enabled !== false
   };
 };
 
@@ -69,7 +82,11 @@ export const useSystemSettings = () => {
     enableGeolocation: true,
     defaultLanguage: 'fr',
     currency: 'EUR',
-    timeZone: 'Europe/Paris'
+    timeZone: 'Europe/Paris',
+    bookingCenterEnabled: true,
+    planYourTripEnabled: true,
+    beInspiredEnabled: true,
+    travelStoriesEnabled: true
   });
 
   const [loading, setLoading] = useState(false);
@@ -79,8 +96,9 @@ export const useSystemSettings = () => {
     setLoading(true);
     try {
       const data = await systemSettingsService.list();
-      if (data) {
-        const mappedSettings = mapSettingsToState(data);
+      const settingsArray = extractArrayFromResponse<SystemSetting>(data);
+      if (settingsArray.length > 0) {
+        const mappedSettings = mapSettingsToState(settingsArray);
         setSettings(mappedSettings);
       }
     } catch (error) {
@@ -121,10 +139,20 @@ export const useSystemSettings = () => {
         { key: 'enable_geolocation', value: settings.enableGeolocation },
         { key: 'default_language', value: settings.defaultLanguage },
         { key: 'currency', value: settings.currency },
-        { key: 'time_zone', value: settings.timeZone }
+        { key: 'time_zone', value: settings.timeZone },
+        { key: 'booking_center_enabled', value: settings.bookingCenterEnabled },
+        { key: 'plan_your_trip_enabled', value: settings.planYourTripEnabled },
+        { key: 'be_inspired_enabled', value: settings.beInspiredEnabled },
+        { key: 'travel_stories_enabled', value: settings.travelStoriesEnabled }
       ];
 
+      // Debug logging
+      console.log('💾 Saving settings. booking_center_enabled value:', settings.bookingCenterEnabled);
+
       await Promise.all(settingsToUpdate.map((setting) => updateSetting(setting.key, setting.value)));
+
+      // Refetch settings from backend to ensure consistency
+      await fetchSettings();
 
       toast.success('Paramètres sauvegardés avec succès');
     } catch (error) {
@@ -158,7 +186,11 @@ export const useSystemSettings = () => {
       enableGeolocation: true,
       defaultLanguage: 'fr',
       currency: 'EUR',
-      timeZone: 'Europe/Paris'
+      timeZone: 'Europe/Paris',
+      bookingCenterEnabled: true,
+      planYourTripEnabled: true,
+      beInspiredEnabled: true,
+      travelStoriesEnabled: true
     };
 
     setSettings(defaultSettings);

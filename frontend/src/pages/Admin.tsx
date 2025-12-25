@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminDebugPanel } from "@/components/debug/AdminDebugPanel";
-import { Users, MapPin, Building2, Settings, Plane, BarChart3, Compass, Shield } from "lucide-react";
+import { Users, MapPin, Building2, Settings, Plane, BarChart3, Compass, Shield, Hotel } from "lucide-react";
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import { AdminPerformanceMonitor } from "@/components/admin/AdminPerformanceMonitor";
 
@@ -16,10 +16,13 @@ const UserManagement = lazy(() => import("@/components/admin/UserManagement"));
 const TouristPointsManagement = lazy(() => import("@/components/admin/TouristPointsManagement"));
 const SystemSettings = lazy(() => import("@/components/admin/SystemSettings"));
 const TripPlannerSettings = lazy(() => import("@/components/admin/TripPlannerSettings"));
+const APIProvidersManagement = lazy(() => import("@/components/admin/APIProvidersManagement"));
+const WidgetManagement = lazy(() => import("@/components/admin/WidgetManagement"));
 const TravelAnalytics = lazy(() => import("@/components/admin/TravelAnalytics").then(module => ({ default: module.TravelAnalytics })));
 const BeInspiredManagement = lazy(() => import("@/components/admin/BeInspiredManagement").then(module => ({ default: module.BeInspiredManagement })));
 const AdminSecurityDashboard = lazy(() => import("@/components/admin/AdminSecurityDashboard").then(module => ({ default: module.AdminSecurityDashboard })));
 const RLSSecurityDashboard = lazy(() => import("@/components/admin/RLSSecurityDashboard"));
+const BookingCenterManagement = lazy(() => import("@/components/admin/BookingCenterManagement"));
 
 // Loading component for suspense fallbacks
 const TabLoader = () => (
@@ -161,7 +164,7 @@ const Admin = () => {
       <DashboardStats />
 
       <Tabs defaultValue="security" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="grid w-full grid-cols-9">
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
             Sécurité
@@ -181,6 +184,10 @@ const Admin = () => {
           <TabsTrigger value="points" className="flex items-center gap-2">
             <MapPin className="w-4 h-4" />
             Points d'intérêt
+          </TabsTrigger>
+          <TabsTrigger value="bookings" className="flex items-center gap-2">
+            <Hotel className="w-4 h-4" />
+            Réservations
           </TabsTrigger>
           <TabsTrigger value="trip-planner" className="flex items-center gap-2">
             <Plane className="w-4 h-4" />
@@ -230,9 +237,18 @@ const Admin = () => {
           </Suspense>
         </TabsContent>
 
+        <TabsContent value="bookings">
+          <Suspense fallback={<TabLoader />}>
+            <BookingCenterManagement />
+          </Suspense>
+        </TabsContent>
+
         <TabsContent value="trip-planner">
           <Suspense fallback={<TabLoader />}>
-            <TripPlannerSettings />
+            <div className="space-y-6">
+              <TripPlannerSettings />
+              <APIProvidersManagement />
+            </div>
           </Suspense>
         </TabsContent>
 
@@ -250,9 +266,13 @@ const Admin = () => {
 
         <TabsContent value="settings">
           <Suspense fallback={<TabLoader />}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <SystemSettings />
-              <AdminPerformanceMonitor />
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <SystemSettings />
+                <AdminPerformanceMonitor />
+              </div>
+              <APIProvidersManagement />
+              <WidgetManagement />
             </div>
           </Suspense>
         </TabsContent>

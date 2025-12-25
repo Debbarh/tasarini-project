@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+import csv
 import copy
+import io
 import uuid
 
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -109,12 +113,12 @@ class TagViewSet(BaseReadOnlyViewSet):
 
 class AdminManageableViewSet(viewsets.ModelViewSet):
     """
-    Allows read access to authenticated users but restricts mutations to admins.
+    Allows read access to all users (including unauthenticated) but restricts mutations to admins.
     """
 
     def get_permissions(self):  # type: ignore[override]
         if self.request.method in permissions.SAFE_METHODS:
-            return [permissions.IsAuthenticated()]
+            return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
 
 
@@ -123,11 +127,81 @@ class BudgetLevelViewSet(AdminManageableViewSet):
     serializer_class = BudgetLevelSerializer
     search_fields = ['code', 'label_fr', 'label_en']
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a budget level using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        budget_level = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                budget_level,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                budget_level,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(budget_level)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'budget_level': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class BudgetCurrencyViewSet(AdminManageableViewSet):
     queryset = BudgetCurrency.objects.all().order_by('display_order', 'code')
     serializer_class = BudgetCurrencySerializer
     search_fields = ['code', 'name_fr', 'name_en']
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing name fields for a budget currency using LibreTranslate"""
+        from .admin import fill_missing_field_translations
+
+        budget_currency = self.get_object()
+
+        try:
+            count, languages = fill_missing_field_translations(
+                budget_currency,
+                field_prefix='name',
+                base_field='name_fr',
+                is_location=False
+            )
+
+            serializer = self.get_serializer(budget_currency)
+
+            return Response({
+                'message': f'{count} traductions ajoutées',
+                'languages': languages,
+                'budget_currency': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BudgetFlexibilityOptionViewSet(AdminManageableViewSet):
@@ -135,11 +209,162 @@ class BudgetFlexibilityOptionViewSet(AdminManageableViewSet):
     serializer_class = BudgetFlexibilityOptionSerializer
     search_fields = ['code', 'label_fr', 'label_en']
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a budget flexibility option using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        budget_flexibility = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                budget_flexibility,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                budget_flexibility,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(budget_flexibility)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'budget_flexibility_option': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class CountryViewSet(AdminManageableViewSet):
     queryset = Country.objects.all().order_by('name')
     serializer_class = CountrySerializer
     search_fields = ['name', 'code']
+
+    @action(detail=False, methods=['get'], url_path='export-csv')
+    def export_csv(self, request):
+        """Export countries as CSV"""
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="countries.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['name', 'code', 'is_active'])
+
+        for country in self.get_queryset():
+            writer.writerow([
+                country.name,
+                country.code,
+                country.is_active,
+            ])
+
+        return response
+
+    @action(detail=False, methods=['post'], url_path='import-csv', parser_classes=[MultiPartParser])
+    def import_csv(self, request):
+        """Import countries from CSV"""
+        if 'file' not in request.FILES:
+            return Response(
+                {'error': 'No file provided'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        csv_file = request.FILES['file']
+
+        # Validate file type
+        if not csv_file.name.endswith('.csv'):
+            return Response(
+                {'error': 'File must be a CSV'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            decoded_file = csv_file.read().decode('utf-8')
+            io_string = io.StringIO(decoded_file)
+            reader = csv.DictReader(io_string)
+
+            created_count = 0
+            updated_count = 0
+            errors = []
+
+            for row_num, row in enumerate(reader, start=2):  # start=2 because row 1 is header
+                try:
+                    # Validate required fields
+                    if not row.get('name') or not row.get('code'):
+                        errors.append(f"Row {row_num}: 'name' and 'code' are required")
+                        continue
+
+                    # Convert is_active to boolean
+                    is_active = row.get('is_active', 'true').lower() in ['true', '1', 'yes', 'oui']
+
+                    # Update or create country
+                    country, created = Country.objects.update_or_create(
+                        code=row['code'].upper(),
+                        defaults={
+                            'name': row['name'],
+                            'is_active': is_active,
+                        }
+                    )
+
+                    if created:
+                        created_count += 1
+                    else:
+                        updated_count += 1
+
+                except Exception as e:
+                    errors.append(f"Row {row_num}: {str(e)}")
+
+            return Response({
+                'message': 'Import completed',
+                'created': created_count,
+                'updated': updated_count,
+                'errors': errors,
+            })
+
+        except Exception as e:
+            return Response(
+                {'error': f'Error processing CSV: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing fields for a country using LibreTranslate"""
+        from .admin import fill_missing_translations
+
+        country = self.get_object()
+
+        try:
+            count, languages = fill_missing_translations(country)
+
+            # Serialize the updated country
+            serializer = self.get_serializer(country)
+
+            return Response({
+                'message': f'{count} traductions ajoutées',
+                'languages': languages,
+                'country': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class CityViewSet(AdminManageableViewSet):
@@ -151,11 +376,202 @@ class CityViewSet(AdminManageableViewSet):
         'is_active': ['exact'],
     }
 
+    @action(detail=False, methods=['get'], url_path='export-csv')
+    def export_csv(self, request):
+        """Export cities as CSV"""
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="cities.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['name', 'country_code', 'country_name', 'latitude', 'longitude', 'is_active'])
+
+        for city in self.get_queryset():
+            writer.writerow([
+                city.name,
+                city.country.code,
+                city.country.name,
+                city.latitude if city.latitude else '',
+                city.longitude if city.longitude else '',
+                city.is_active,
+            ])
+
+        return response
+
+    @action(detail=False, methods=['post'], url_path='import-csv', parser_classes=[MultiPartParser])
+    def import_csv(self, request):
+        """Import cities from CSV"""
+        if 'file' not in request.FILES:
+            return Response(
+                {'error': 'No file provided'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        csv_file = request.FILES['file']
+
+        # Validate file type
+        if not csv_file.name.endswith('.csv'):
+            return Response(
+                {'error': 'File must be a CSV'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            decoded_file = csv_file.read().decode('utf-8')
+            io_string = io.StringIO(decoded_file)
+            reader = csv.DictReader(io_string)
+
+            created_count = 0
+            updated_count = 0
+            errors = []
+
+            for row_num, row in enumerate(reader, start=2):  # start=2 because row 1 is header
+                try:
+                    # Validate required fields
+                    if not row.get('name'):
+                        errors.append(f"Row {row_num}: 'name' is required")
+                        continue
+
+                    if not row.get('country_code') and not row.get('country_name'):
+                        errors.append(f"Row {row_num}: Either 'country_code' or 'country_name' is required")
+                        continue
+
+                    # Find country by code or name
+                    country = None
+                    if row.get('country_code'):
+                        try:
+                            country = Country.objects.get(code=row['country_code'].upper())
+                        except Country.DoesNotExist:
+                            errors.append(f"Row {row_num}: Country with code '{row['country_code']}' not found")
+                            continue
+                    elif row.get('country_name'):
+                        try:
+                            country = Country.objects.get(name=row['country_name'])
+                        except Country.DoesNotExist:
+                            errors.append(f"Row {row_num}: Country with name '{row['country_name']}' not found")
+                            continue
+
+                    # Convert is_active to boolean
+                    is_active = row.get('is_active', 'true').lower() in ['true', '1', 'yes', 'oui']
+
+                    # Parse coordinates
+                    latitude = None
+                    longitude = None
+                    if row.get('latitude'):
+                        try:
+                            latitude = float(row['latitude'])
+                        except ValueError:
+                            errors.append(f"Row {row_num}: Invalid latitude value")
+                            continue
+                    if row.get('longitude'):
+                        try:
+                            longitude = float(row['longitude'])
+                        except ValueError:
+                            errors.append(f"Row {row_num}: Invalid longitude value")
+                            continue
+
+                    # Update or create city
+                    city, created = City.objects.update_or_create(
+                        name=row['name'],
+                        country=country,
+                        defaults={
+                            'latitude': latitude,
+                            'longitude': longitude,
+                            'is_active': is_active,
+                        }
+                    )
+
+                    if created:
+                        created_count += 1
+                    else:
+                        updated_count += 1
+
+                except Exception as e:
+                    errors.append(f"Row {row_num}: {str(e)}")
+
+            return Response({
+                'message': 'Import completed',
+                'created': created_count,
+                'updated': updated_count,
+                'errors': errors,
+            })
+
+        except Exception as e:
+            return Response(
+                {'error': f'Error processing CSV: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing fields for a city using LibreTranslate"""
+        from .admin import fill_missing_translations
+
+        city = self.get_object()
+
+        try:
+            count, languages = fill_missing_translations(city)
+
+            # Serialize the updated city
+            serializer = self.get_serializer(city)
+
+            return Response({
+                'message': f'{count} traductions ajoutées',
+                'languages': languages,
+                'city': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class AccommodationTypeViewSet(AdminManageableViewSet):
     queryset = AccommodationType.objects.all().order_by('display_order', 'label_fr')
     serializer_class = AccommodationTypeSerializer
     search_fields = ['code', 'label_fr', 'label_en']
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for an accommodation type using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        accommodation_type = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                accommodation_type,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                accommodation_type,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(accommodation_type)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'accommodation_type': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class AccommodationAmenityViewSet(AdminManageableViewSet):
@@ -164,11 +580,95 @@ class AccommodationAmenityViewSet(AdminManageableViewSet):
     search_fields = ['code', 'label_fr', 'label_en', 'category']
     filterset_fields = {'category': ['exact', 'icontains']}
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for an accommodation amenity using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        accommodation_amenity = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                accommodation_amenity,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                accommodation_amenity,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(accommodation_amenity)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'accommodation_amenity': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class AccommodationLocationViewSet(AdminManageableViewSet):
     queryset = AccommodationLocation.objects.all().order_by('display_order', 'label_fr')
     serializer_class = AccommodationLocationSerializer
     search_fields = ['code', 'label_fr', 'label_en']
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for an accommodation location using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        accommodation_location = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                accommodation_location,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                accommodation_location,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(accommodation_location)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'accommodation_location': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class AccommodationAccessibilityViewSet(AdminManageableViewSet):
@@ -176,17 +676,143 @@ class AccommodationAccessibilityViewSet(AdminManageableViewSet):
     serializer_class = AccommodationAccessibilitySerializer
     search_fields = ['code', 'label_fr', 'label_en']
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for an accommodation accessibility feature using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        accommodation_accessibility = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                accommodation_accessibility,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                accommodation_accessibility,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(accommodation_accessibility)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'accommodation_accessibility': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class AccommodationSecurityViewSet(AdminManageableViewSet):
     queryset = AccommodationSecurityFeature.objects.all().order_by('display_order', 'label_fr')
     serializer_class = AccommodationSecuritySerializer
     search_fields = ['code', 'label_fr', 'label_en']
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for an accommodation security feature using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        accommodation_security = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                accommodation_security,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                accommodation_security,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(accommodation_security)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'accommodation_security': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class AccommodationAmbianceViewSet(AdminManageableViewSet):
     queryset = AccommodationAmbiance.objects.all().order_by('display_order', 'label_fr')
     serializer_class = AccommodationAmbianceSerializer
     search_fields = ['code', 'label_fr', 'label_en']
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for an accommodation ambiance using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        accommodation_ambiance = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                accommodation_ambiance,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                accommodation_ambiance,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(accommodation_ambiance)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'accommodation_ambiance': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class LocationResolveView(APIView):
@@ -197,12 +823,16 @@ class LocationResolveView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        country = self._get_or_create_country(data['country_name'])
+        country = self._get_or_create_country(
+            data['country_name'],
+            data.get('country_translations', {})
+        )
         city = self._get_or_create_city(
             country,
             data['city_name'],
             data.get('latitude'),
             data.get('longitude'),
+            data.get('city_translations', {})
         )
         return Response(
             {
@@ -213,9 +843,19 @@ class LocationResolveView(APIView):
             }
         )
 
-    def _get_or_create_country(self, name: str) -> Country:
+    def _get_or_create_country(self, name: str, translations: dict = None) -> Country:
         country = Country.objects.filter(name__iexact=name.strip()).first()
         if country:
+            # Mettre à jour les traductions si elles sont fournies et que les champs sont vides
+            if translations:
+                updated = False
+                for key, value in translations.items():
+                    if key.startswith('name_') and hasattr(country, key):
+                        if not getattr(country, key) and value:
+                            setattr(country, key, value.strip())
+                            updated = True
+                if updated:
+                    country.save()
             return country
 
         code_base = slugify(name)[:3].upper() or 'CTR'
@@ -230,19 +870,53 @@ class LocationResolveView(APIView):
                 code = uuid.uuid4().hex[:8].upper()
                 break
 
-        return Country.objects.create(name=name.strip(), code=code)
+        # Créer le pays avec les traductions
+        country_data = {
+            'name': name.strip(),
+            'code': code
+        }
+        if translations:
+            for key, value in translations.items():
+                if key.startswith('name_') and value:
+                    country_data[key] = value.strip()
 
-    def _get_or_create_city(self, country: Country, name: str, latitude, longitude) -> City:
+        return Country.objects.create(**country_data)
+
+    def _get_or_create_city(self, country: Country, name: str, latitude, longitude, translations: dict = None) -> City:
         city = City.objects.filter(country=country, name__iexact=name.strip()).first()
         if city:
+            # Mettre à jour les traductions et coordonnées si elles sont fournies et que les champs sont vides
+            if translations or latitude or longitude:
+                updated = False
+                if translations:
+                    for key, value in translations.items():
+                        if key.startswith('name_') and hasattr(city, key):
+                            if not getattr(city, key) and value:
+                                setattr(city, key, value.strip())
+                                updated = True
+                if latitude and not city.latitude:
+                    city.latitude = latitude
+                    updated = True
+                if longitude and not city.longitude:
+                    city.longitude = longitude
+                    updated = True
+                if updated:
+                    city.save()
             return city
 
-        return City.objects.create(
-            country=country,
-            name=name.strip(),
-            latitude=latitude,
-            longitude=longitude,
-        )
+        # Créer la ville avec les traductions
+        city_data = {
+            'country': country,
+            'name': name.strip(),
+            'latitude': latitude,
+            'longitude': longitude,
+        }
+        if translations:
+            for key, value in translations.items():
+                if key.startswith('name_') and value:
+                    city_data[key] = value.strip()
+
+        return City.objects.create(**city_data)
 
 
 class ActivityCategoryViewSet(AdminManageableViewSet):
@@ -282,11 +956,87 @@ class DietaryRestrictionViewSet(AdminManageableViewSet):
     serializer_class = DietaryRestrictionSerializer
     search_fields = ['code', 'label_fr', 'label_en']
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a dietary restriction using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        dietary_restriction = self.get_object()
+
+        try:
+            count_labels, languages_labels = fill_missing_field_translations(
+                dietary_restriction,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                dietary_restriction,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            serializer = self.get_serializer(dietary_restriction)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'dietary_restriction': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class CuisineTypeViewSet(AdminManageableViewSet):
     queryset = CuisineType.objects.all().order_by('display_order', 'label_fr')
     serializer_class = CuisineTypeSerializer
     search_fields = ['code', 'label_fr', 'label_en', 'region']
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a cuisine type using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        cuisine_type = self.get_object()
+
+        try:
+            count_labels, languages_labels = fill_missing_field_translations(
+                cuisine_type,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                cuisine_type,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            serializer = self.get_serializer(cuisine_type)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'cuisine_type': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class CulinaryAdventureLevelViewSet(AdminManageableViewSet):
@@ -294,11 +1044,87 @@ class CulinaryAdventureLevelViewSet(AdminManageableViewSet):
     serializer_class = CulinaryAdventureLevelSerializer
     search_fields = ['code', 'label_fr', 'label_en']
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a culinary adventure level using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        culinary_adventure_level = self.get_object()
+
+        try:
+            count_labels, languages_labels = fill_missing_field_translations(
+                culinary_adventure_level,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                culinary_adventure_level,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            serializer = self.get_serializer(culinary_adventure_level)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'culinary_adventure_level': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class RestaurantCategoryViewSet(AdminManageableViewSet):
     queryset = RestaurantCategory.objects.all().order_by('display_order', 'label_fr')
     serializer_class = RestaurantCategorySerializer
     search_fields = ['code', 'label_fr', 'label_en']
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a restaurant category using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        restaurant_category = self.get_object()
+
+        try:
+            count_labels, languages_labels = fill_missing_field_translations(
+                restaurant_category,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                restaurant_category,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            serializer = self.get_serializer(restaurant_category)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'restaurant_category': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TravelGroupTypeViewSet(AdminManageableViewSet):
@@ -306,12 +1132,96 @@ class TravelGroupTypeViewSet(AdminManageableViewSet):
     serializer_class = TravelGroupTypeSerializer
     search_fields = ['code', 'label_fr', 'label_en']
 
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a travel group type using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        travel_group_type = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                travel_group_type,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                travel_group_type,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(travel_group_type)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'travel_group_type': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class TravelGroupSubtypeViewSet(AdminManageableViewSet):
     queryset = TravelGroupSubtype.objects.select_related('travel_group_type').all().order_by('display_order', 'label_fr')
     serializer_class = TravelGroupSubtypeSerializer
     filterset_fields = {'travel_group_type': ['exact'], 'is_active': ['exact']}
     search_fields = ['code', 'label_fr', 'label_en', 'travel_group_type__label_fr']
+
+    @action(detail=True, methods=['post'], url_path='translate')
+    def translate(self, request, pk=None):
+        """Translate missing label and description fields for a travel group subtype using DeepL"""
+        from .admin import fill_missing_field_translations
+
+        travel_group_subtype = self.get_object()
+
+        try:
+            # Translate label fields
+            count_labels, languages_labels = fill_missing_field_translations(
+                travel_group_subtype,
+                field_prefix='label',
+                base_field='label_fr',
+                is_location=False
+            )
+
+            # Translate description fields
+            count_descriptions, languages_descriptions = fill_missing_field_translations(
+                travel_group_subtype,
+                field_prefix='description',
+                base_field='description_fr',
+                is_location=False
+            )
+
+            # Combine counts and languages
+            total_count = count_labels + count_descriptions
+            all_languages = list(set(languages_labels + languages_descriptions))
+
+            # Serialize the updated object
+            serializer = self.get_serializer(travel_group_subtype)
+
+            return Response({
+                'message': f'{total_count} traductions ajoutées',
+                'languages': all_languages,
+                'travel_group_subtype': serializer.data
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Erreur lors de la traduction: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TravelGroupConfigurationViewSet(AdminManageableViewSet):
@@ -329,7 +1239,7 @@ class DifficultyLevelViewSet(BaseReadOnlyViewSet):
 class TouristPointViewSet(viewsets.ModelViewSet):
     queryset = TouristPoint.objects.select_related('budget_level', 'difficulty_level').prefetch_related('tags', 'media')
     serializer_class = TouristPointSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filterset_fields = {
         'is_active': ['exact'],
         'is_verified': ['exact'],
@@ -356,11 +1266,11 @@ class TouristPointViewSet(viewsets.ModelViewSet):
                 if owner_filter.isdigit():
                     return qs.filter(owner_id=int(owner_filter))
                 return qs.filter(owner__public_id=owner_filter)
-            if user.is_staff or user.role in {'admin', 'editor'}:
+            if user.is_staff or (user.is_authenticated and user.role in {'admin', 'editor'}):
                 return qs
             return qs.filter(is_active=True)
 
-        if user.is_staff or user.role in {'admin', 'editor'}:
+        if user.is_staff or (user.is_authenticated and user.role in {'admin', 'editor'}):
             return qs
         return qs.filter(owner=user)
 

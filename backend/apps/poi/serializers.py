@@ -40,7 +40,11 @@ from .models import (
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ['id', 'code', 'label_fr', 'label_en']
+        fields = [
+            'id', 'code', 'label_fr', 'label_en', 'label_es', 'label_de', 
+            'label_it', 'label_pt', 'label_ru', 'label_ja', 'label_zh', 
+            'label_hi', 'label_ar'
+        ]
 
 
 class BudgetLevelSerializer(serializers.ModelSerializer):
@@ -64,7 +68,12 @@ class BudgetFlexibilityOptionSerializer(serializers.ModelSerializer):
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
-        fields = ['id', 'name', 'code', 'is_active', 'created_at', 'updated_at']
+        fields = [
+            'id', 'name', 'code', 'is_active',
+            'name_fr', 'name_en', 'name_es', 'name_de', 'name_it', 'name_pt',
+            'name_ru', 'name_ja', 'name_zh', 'name_hi', 'name_ar',
+            'created_at', 'updated_at'
+        ]
         read_only_fields = ('id', 'created_at', 'updated_at')
 
 
@@ -82,6 +91,8 @@ class CitySerializer(serializers.ModelSerializer):
             'latitude',
             'longitude',
             'is_active',
+            'name_fr', 'name_en', 'name_es', 'name_de', 'name_it', 'name_pt',
+            'name_ru', 'name_ja', 'name_zh', 'name_hi', 'name_ar',
             'created_at',
             'updated_at',
         ]
@@ -107,20 +118,7 @@ class ActivityInterestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ActivityInterest
-        fields = [
-            'id',
-            'code',
-            'label_fr',
-            'label_en',
-            'description_fr',
-            'description_en',
-            'category',
-            'category_detail',
-            'is_active',
-            'display_order',
-            'created_at',
-            'updated_at',
-        ]
+        fields = '__all__'
         read_only_fields = ('id', 'created_at', 'updated_at', 'category_detail')
 
 
@@ -129,20 +127,7 @@ class ActivityAvoidanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ActivityAvoidance
-        fields = [
-            'id',
-            'code',
-            'label_fr',
-            'label_en',
-            'description_fr',
-            'description_en',
-            'category',
-            'category_detail',
-            'is_active',
-            'display_order',
-            'created_at',
-            'updated_at',
-        ]
+        fields = '__all__'
         read_only_fields = ('id', 'created_at', 'updated_at', 'category_detail')
 
 
@@ -186,8 +171,26 @@ class TravelGroupSubtypeSerializer(serializers.ModelSerializer):
             'code',
             'label_fr',
             'label_en',
+            'label_es',
+            'label_de',
+            'label_it',
+            'label_pt',
+            'label_ru',
+            'label_ja',
+            'label_zh',
+            'label_hi',
+            'label_ar',
             'description_fr',
             'description_en',
+            'description_es',
+            'description_de',
+            'description_it',
+            'description_pt',
+            'description_ru',
+            'description_ja',
+            'description_zh',
+            'description_hi',
+            'description_ar',
             'icon',
             'is_active',
             'display_order',
@@ -269,6 +272,22 @@ class LocationResolveSerializer(serializers.Serializer):
     latitude = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
     longitude = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
 
+    # Traductions multilingues pour le pays
+    country_translations = serializers.DictField(
+        child=serializers.CharField(max_length=150),
+        required=False,
+        allow_null=True,
+        help_text="Traductions du nom du pays (name_fr, name_en, name_es, etc.)"
+    )
+
+    # Traductions multilingues pour la ville
+    city_translations = serializers.DictField(
+        child=serializers.CharField(max_length=150),
+        required=False,
+        allow_null=True,
+        help_text="Traductions du nom de la ville (name_fr, name_en, name_es, etc.)"
+    )
+
     def validate_country_name(self, value):
         return value.strip()
 
@@ -286,8 +305,26 @@ class TravelGroupTypeSerializer(serializers.ModelSerializer):
             'code',
             'label_fr',
             'label_en',
+            'label_es',
+            'label_de',
+            'label_it',
+            'label_pt',
+            'label_ru',
+            'label_ja',
+            'label_zh',
+            'label_hi',
+            'label_ar',
             'description_fr',
             'description_en',
+            'description_es',
+            'description_de',
+            'description_it',
+            'description_pt',
+            'description_ru',
+            'description_ja',
+            'description_zh',
+            'description_hi',
+            'description_ar',
             'icon',
             'color',
             'is_active',

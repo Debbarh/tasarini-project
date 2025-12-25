@@ -24,7 +24,9 @@ export class PartnerBookingAdapter {
         touristPointId: touristPointId
       };
     } catch (error) {
-      console.error('Error checking partner booking system:', error);
+      // Silently handle: partner booking is optional
+      // Only log in verbose mode (console.debug)
+      console.debug('Partner booking not available:', error);
       return null;
     }
   }

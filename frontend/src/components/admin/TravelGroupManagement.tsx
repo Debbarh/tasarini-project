@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Users, UserCheck } from "lucide-react";
+import { Plus, Edit, Trash2, Users, UserCheck, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { travelGroupService, TravelGroupType, TravelGroupSubtype, TravelGroupConfiguration } from "@/services/travelGroupService";
+import { getLocalizedLabel } from "@/utils/multilingualHelpers";
+import { useTranslation } from "react-i18next";
 
 type TypeFormState = Omit<TravelGroupType, "id" | "configuration">;
 type SubtypeFormState = Omit<TravelGroupSubtype, "id" | "travel_group_type_detail">;
@@ -20,8 +22,26 @@ const defaultTypeForm: TypeFormState = {
   code: "",
   label_fr: "",
   label_en: "",
+  label_es: "",
+  label_de: "",
+  label_it: "",
+  label_pt: "",
+  label_ru: "",
+  label_ja: "",
+  label_zh: "",
+  label_hi: "",
+  label_ar: "",
   description_fr: "",
   description_en: "",
+  description_es: "",
+  description_de: "",
+  description_it: "",
+  description_pt: "",
+  description_ru: "",
+  description_ja: "",
+  description_zh: "",
+  description_hi: "",
+  description_ar: "",
   icon: "Users",
   color: "#3B82F6",
   is_active: true,
@@ -33,12 +53,56 @@ const defaultSubtypeForm: SubtypeFormState = {
   code: "",
   label_fr: "",
   label_en: "",
+  label_es: "",
+  label_de: "",
+  label_it: "",
+  label_pt: "",
+  label_ru: "",
+  label_ja: "",
+  label_zh: "",
+  label_hi: "",
+  label_ar: "",
   description_fr: "",
   description_en: "",
+  description_es: "",
+  description_de: "",
+  description_it: "",
+  description_pt: "",
+  description_ru: "",
+  description_ja: "",
+  description_zh: "",
+  description_hi: "",
+  description_ar: "",
   icon: "UserCheck",
   is_active: true,
   display_order: 0,
 };
+
+type LanguageOption = { code: string; label: string; required?: boolean };
+
+const ADDITIONAL_LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'es', label: 'Espagnol' },
+  { code: 'de', label: 'Allemand' },
+  { code: 'it', label: 'Italien' },
+  { code: 'pt', label: 'Portugais' },
+  { code: 'ru', label: 'Russe' },
+  { code: 'ja', label: 'Japonais' },
+  { code: 'zh', label: 'Chinois' },
+  { code: 'hi', label: 'Hindi' },
+  { code: 'ar', label: 'Arabe' },
+];
+
+const LABEL_LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'fr', label: 'Français', required: true },
+  { code: 'en', label: 'Anglais' },
+  ...ADDITIONAL_LANGUAGE_OPTIONS,
+];
+
+const DESCRIPTION_LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'fr', label: 'Français' },
+  { code: 'en', label: 'Anglais' },
+  ...ADDITIONAL_LANGUAGE_OPTIONS,
+];
 
 const defaultConfigForm: ConfigFormState = {
   travel_group_type: "",
@@ -55,6 +119,7 @@ const defaultConfigForm: ConfigFormState = {
 
 export const TravelGroupManagement = () => {
   const { toast } = useToast();
+  const { i18n } = useTranslation();
   const [types, setTypes] = useState<TravelGroupType[]>([]);
   const [subtypes, setSubtypes] = useState<TravelGroupSubtype[]>([]);
   const [configurations, setConfigurations] = useState<TravelGroupConfiguration[]>([]);
@@ -72,6 +137,14 @@ export const TravelGroupManagement = () => {
   const [subtypeDialogOpen, setSubtypeDialogOpen] = useState(false);
   const [configDialogOpen, setConfigDialogOpen] = useState(false);
 
+  const updateTypeForm = <K extends keyof TypeFormState>(field: K, value: TypeFormState[K]) => {
+    setTypeForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateSubtypeForm = <K extends keyof SubtypeFormState>(field: K, value: SubtypeFormState[K]) => {
+    setSubtypeForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -84,9 +157,21 @@ export const TravelGroupManagement = () => {
         travelGroupService.listSubtypes(),
         travelGroupService.listConfigs(),
       ]);
-      setTypes(typeData || []);
-      setSubtypes(subtypeData || []);
-      setConfigurations(configData || []);
+
+      // Handle both array and paginated response formats
+      const typesArray = Array.isArray(typeData)
+        ? typeData
+        : (typeData as any)?.results || [];
+      const subtypesArray = Array.isArray(subtypeData)
+        ? subtypeData
+        : (subtypeData as any)?.results || [];
+      const configurationsArray = Array.isArray(configData)
+        ? configData
+        : (configData as any)?.results || [];
+
+      setTypes(typesArray);
+      setSubtypes(subtypesArray);
+      setConfigurations(configurationsArray);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -100,7 +185,7 @@ export const TravelGroupManagement = () => {
 
   const startCreateType = () => {
     setEditingTypeId(null);
-    setTypeForm(defaultTypeForm);
+    setTypeForm({ ...defaultTypeForm });
     setTypeDialogOpen(true);
   };
 
@@ -110,8 +195,26 @@ export const TravelGroupManagement = () => {
       code: type.code,
       label_fr: type.label_fr,
       label_en: type.label_en ?? "",
+      label_es: type.label_es ?? "",
+      label_de: type.label_de ?? "",
+      label_it: type.label_it ?? "",
+      label_pt: type.label_pt ?? "",
+      label_ru: type.label_ru ?? "",
+      label_ja: type.label_ja ?? "",
+      label_zh: type.label_zh ?? "",
+      label_hi: type.label_hi ?? "",
+      label_ar: type.label_ar ?? "",
       description_fr: type.description_fr ?? "",
       description_en: type.description_en ?? "",
+      description_es: type.description_es ?? "",
+      description_de: type.description_de ?? "",
+      description_it: type.description_it ?? "",
+      description_pt: type.description_pt ?? "",
+      description_ru: type.description_ru ?? "",
+      description_ja: type.description_ja ?? "",
+      description_zh: type.description_zh ?? "",
+      description_hi: type.description_hi ?? "",
+      description_ar: type.description_ar ?? "",
       icon: type.icon ?? "Users",
       color: type.color ?? "#3B82F6",
       is_active: type.is_active,
@@ -156,8 +259,26 @@ export const TravelGroupManagement = () => {
       code: subtype.code,
       label_fr: subtype.label_fr,
       label_en: subtype.label_en ?? "",
+      label_es: subtype.label_es ?? "",
+      label_de: subtype.label_de ?? "",
+      label_it: subtype.label_it ?? "",
+      label_pt: subtype.label_pt ?? "",
+      label_ru: subtype.label_ru ?? "",
+      label_ja: subtype.label_ja ?? "",
+      label_zh: subtype.label_zh ?? "",
+      label_hi: subtype.label_hi ?? "",
+      label_ar: subtype.label_ar ?? "",
       description_fr: subtype.description_fr ?? "",
       description_en: subtype.description_en ?? "",
+      description_es: subtype.description_es ?? "",
+      description_de: subtype.description_de ?? "",
+      description_it: subtype.description_it ?? "",
+      description_pt: subtype.description_pt ?? "",
+      description_ru: subtype.description_ru ?? "",
+      description_ja: subtype.description_ja ?? "",
+      description_zh: subtype.description_zh ?? "",
+      description_hi: subtype.description_hi ?? "",
+      description_ar: subtype.description_ar ?? "",
       icon: subtype.icon ?? "UserCheck",
       is_active: subtype.is_active,
       display_order: subtype.display_order,
@@ -272,6 +393,106 @@ export const TravelGroupManagement = () => {
     }
   };
 
+  const handleTranslateType = async (typeId: string) => {
+    try {
+      const result = await travelGroupService.translateType(typeId);
+
+      // Update the form with the translated values
+      const translatedType = result.travel_group_type;
+      setTypeForm({
+        code: translatedType.code,
+        label_fr: translatedType.label_fr,
+        label_en: translatedType.label_en ?? "",
+        label_es: translatedType.label_es ?? "",
+        label_de: translatedType.label_de ?? "",
+        label_it: translatedType.label_it ?? "",
+        label_pt: translatedType.label_pt ?? "",
+        label_ru: translatedType.label_ru ?? "",
+        label_ja: translatedType.label_ja ?? "",
+        label_zh: translatedType.label_zh ?? "",
+        label_hi: translatedType.label_hi ?? "",
+        label_ar: translatedType.label_ar ?? "",
+        description_fr: translatedType.description_fr ?? "",
+        description_en: translatedType.description_en ?? "",
+        description_es: translatedType.description_es ?? "",
+        description_de: translatedType.description_de ?? "",
+        description_it: translatedType.description_it ?? "",
+        description_pt: translatedType.description_pt ?? "",
+        description_ru: translatedType.description_ru ?? "",
+        description_ja: translatedType.description_ja ?? "",
+        description_zh: translatedType.description_zh ?? "",
+        description_hi: translatedType.description_hi ?? "",
+        description_ar: translatedType.description_ar ?? "",
+        icon: translatedType.icon ?? "Users",
+        color: translatedType.color ?? "#3B82F6",
+        is_active: translatedType.is_active,
+        display_order: translatedType.display_order,
+      });
+
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire le type",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTranslateSubtype = async (subtypeId: string) => {
+    try {
+      const result = await travelGroupService.translateSubtype(subtypeId);
+
+      // Update the form with the translated values
+      const translatedSubtype = result.travel_group_subtype;
+      setSubtypeForm({
+        travel_group_type: translatedSubtype.travel_group_type,
+        code: translatedSubtype.code,
+        label_fr: translatedSubtype.label_fr,
+        label_en: translatedSubtype.label_en ?? "",
+        label_es: translatedSubtype.label_es ?? "",
+        label_de: translatedSubtype.label_de ?? "",
+        label_it: translatedSubtype.label_it ?? "",
+        label_pt: translatedSubtype.label_pt ?? "",
+        label_ru: translatedSubtype.label_ru ?? "",
+        label_ja: translatedSubtype.label_ja ?? "",
+        label_zh: translatedSubtype.label_zh ?? "",
+        label_hi: translatedSubtype.label_hi ?? "",
+        label_ar: translatedSubtype.label_ar ?? "",
+        description_fr: translatedSubtype.description_fr ?? "",
+        description_en: translatedSubtype.description_en ?? "",
+        description_es: translatedSubtype.description_es ?? "",
+        description_de: translatedSubtype.description_de ?? "",
+        description_it: translatedSubtype.description_it ?? "",
+        description_pt: translatedSubtype.description_pt ?? "",
+        description_ru: translatedSubtype.description_ru ?? "",
+        description_ja: translatedSubtype.description_ja ?? "",
+        description_zh: translatedSubtype.description_zh ?? "",
+        description_hi: translatedSubtype.description_hi ?? "",
+        description_ar: translatedSubtype.description_ar ?? "",
+        icon: translatedSubtype.icon ?? "UserCheck",
+        is_active: translatedSubtype.is_active,
+        display_order: translatedSubtype.display_order,
+      });
+
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire le sous-type",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center py-8">Chargement des groupes de voyage…</div>;
   }
@@ -292,25 +513,69 @@ export const TravelGroupManagement = () => {
                 Ajouter un type
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-4xl w-[95vw] h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editingTypeId ? "Modifier le type" : "Nouveau type"}</DialogTitle>
+                <DialogDescription>
+                  Définissez les informations principales d’un groupe de voyageurs.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-3">
-                <InputField label="Code" value={typeForm.code} onChange={(value) => setTypeForm((prev) => ({ ...prev, code: value }))} required />
-                <InputField label="Label FR" value={typeForm.label_fr} onChange={(value) => setTypeForm((prev) => ({ ...prev, label_fr: value }))} required />
-                <InputField label="Label EN" value={typeForm.label_en} onChange={(value) => setTypeForm((prev) => ({ ...prev, label_en: value }))} />
-                <TextareaField label="Description FR" value={typeForm.description_fr} onChange={(value) => setTypeForm((prev) => ({ ...prev, description_fr: value }))} />
-                <TextareaField label="Description EN" value={typeForm.description_en} onChange={(value) => setTypeForm((prev) => ({ ...prev, description_en: value }))} />
-                <InputField label="Icône" value={typeForm.icon || ""} onChange={(value) => setTypeForm((prev) => ({ ...prev, icon: value }))} />
-                <InputField label="Couleur hex" value={typeForm.color || ""} onChange={(value) => setTypeForm((prev) => ({ ...prev, color: value }))} />
+                <InputField label="Code" value={typeForm.code} onChange={(value) => updateTypeForm('code', value)} required />
+
+                {editingTypeId && (
+                  <div className="border rounded-lg p-3 bg-blue-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium">Traduction automatique</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Remplir automatiquement les champs de traduction vides via LibreTranslate
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleTranslateType(editingTypeId)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Globe className="w-4 h-4 mr-1" />
+                        Traduire
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <TranslationFieldGrid
+                  title="Labels (toutes langues)"
+                  description="Complétez les traductions pour les langues disponibles."
+                  languages={LABEL_LANGUAGE_OPTIONS}
+                  valueGetter={(code) => (typeForm[`label_${code}` as keyof TypeFormState] as string) || ""}
+                  onChange={(code, value) => {
+                    const field = `label_${code}` as keyof TypeFormState;
+                    updateTypeForm(field, value as TypeFormState[typeof field]);
+                  }}
+                />
+                <TranslationFieldGrid
+                  title="Descriptions (toutes langues)"
+                  description="Décrivez le type dans chaque langue utile."
+                  languages={DESCRIPTION_LANGUAGE_OPTIONS}
+                  textarea
+                  valueGetter={(code) => (typeForm[`description_${code}` as keyof TypeFormState] as string) || ""}
+                  onChange={(code, value) => {
+                    const field = `description_${code}` as keyof TypeFormState;
+                    updateTypeForm(field, value as TypeFormState[typeof field]);
+                  }}
+                />
+                <InputField label="Icône" value={typeForm.icon || ""} onChange={(value) => updateTypeForm('icon', value)} />
+                <InputField label="Couleur hex" value={typeForm.color || ""} onChange={(value) => updateTypeForm('color', value)} />
                 <InputField
                   label="Ordre d'affichage"
                   type="number"
                   value={typeForm.display_order}
-                  onChange={(value) => setTypeForm((prev) => ({ ...prev, display_order: Number(value) }))}
+                  onChange={(value) => updateTypeForm('display_order', Number(value))}
                 />
-                <SwitchField label="Actif" checked={typeForm.is_active} onChange={(checked) => setTypeForm((prev) => ({ ...prev, is_active: checked }))} />
+                <SwitchField label="Actif" checked={typeForm.is_active} onChange={(checked) => updateTypeForm('is_active', checked)} />
                 <DialogActions
                   onCancel={() => setTypeDialogOpen(false)}
                   onSave={handleSaveType}
@@ -335,7 +600,7 @@ export const TravelGroupManagement = () => {
               {types.map((type) => (
                 <TableRow key={type.id}>
                   <TableCell>{type.code}</TableCell>
-                  <TableCell>{type.label_fr}</TableCell>
+                  <TableCell>{getLocalizedLabel(type, i18n.language) || type.label_fr}</TableCell>
                   <TableCell className="max-w-md">{type.description_fr}</TableCell>
                   <TableCell>
                     <Badge variant={type.is_active ? "default" : "secondary"}>{type.is_active ? "Actif" : "Inactif"}</Badge>
@@ -374,9 +639,12 @@ export const TravelGroupManagement = () => {
                 Ajouter un sous-type
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-4xl w-[95vw] h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editingSubtypeId ? "Modifier le sous-type" : "Nouveau sous-type"}</DialogTitle>
+                <DialogDescription>
+                  Choisissez le type parent et précisez les détails liés à ce sous-groupe.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-3">
                 <div>
@@ -393,19 +661,60 @@ export const TravelGroupManagement = () => {
                     ))}
                   </select>
                 </div>
-                <InputField label="Code" value={subtypeForm.code} onChange={(value) => setSubtypeForm((prev) => ({ ...prev, code: value }))} required />
-                <InputField label="Label FR" value={subtypeForm.label_fr} onChange={(value) => setSubtypeForm((prev) => ({ ...prev, label_fr: value }))} required />
-                <InputField label="Label EN" value={subtypeForm.label_en} onChange={(value) => setSubtypeForm((prev) => ({ ...prev, label_en: value }))} />
-                <TextareaField label="Description FR" value={subtypeForm.description_fr} onChange={(value) => setSubtypeForm((prev) => ({ ...prev, description_fr: value }))} />
-                <TextareaField label="Description EN" value={subtypeForm.description_en} onChange={(value) => setSubtypeForm((prev) => ({ ...prev, description_en: value }))} />
-                <InputField label="Icône" value={subtypeForm.icon || ""} onChange={(value) => setSubtypeForm((prev) => ({ ...prev, icon: value }))} />
+                <InputField label="Code" value={subtypeForm.code} onChange={(value) => updateSubtypeForm('code', value)} required />
+
+                {editingSubtypeId && (
+                  <div className="border rounded-lg p-3 bg-blue-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium">Traduction automatique</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Remplir automatiquement les champs de traduction vides via LibreTranslate
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleTranslateSubtype(editingSubtypeId)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Globe className="w-4 h-4 mr-1" />
+                        Traduire
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <TranslationFieldGrid
+                  title="Labels (toutes langues)"
+                  description="Ajoutez les traductions spécifiques à ce sous-type."
+                  languages={LABEL_LANGUAGE_OPTIONS}
+                  valueGetter={(code) => (subtypeForm[`label_${code}` as keyof SubtypeFormState] as string) || ""}
+                  onChange={(code, value) => {
+                    const field = `label_${code}` as keyof SubtypeFormState;
+                    updateSubtypeForm(field, value as SubtypeFormState[typeof field]);
+                  }}
+                />
+                <TranslationFieldGrid
+                  title="Descriptions (toutes langues)"
+                  description="Précisez les descriptions dans les autres langues disponibles."
+                  languages={DESCRIPTION_LANGUAGE_OPTIONS}
+                  textarea
+                  valueGetter={(code) => (subtypeForm[`description_${code}` as keyof SubtypeFormState] as string) || ""}
+                  onChange={(code, value) => {
+                    const field = `description_${code}` as keyof SubtypeFormState;
+                    updateSubtypeForm(field, value as SubtypeFormState[typeof field]);
+                  }}
+                />
+                <InputField label="Icône" value={subtypeForm.icon || ""} onChange={(value) => updateSubtypeForm('icon', value)} />
                 <InputField
                   label="Ordre d'affichage"
                   type="number"
                   value={subtypeForm.display_order}
-                  onChange={(value) => setSubtypeForm((prev) => ({ ...prev, display_order: Number(value) }))}
+                  onChange={(value) => updateSubtypeForm('display_order', Number(value))}
                 />
-                <SwitchField label="Actif" checked={subtypeForm.is_active} onChange={(checked) => setSubtypeForm((prev) => ({ ...prev, is_active: checked }))} />
+                <SwitchField label="Actif" checked={subtypeForm.is_active} onChange={(checked) => updateSubtypeForm('is_active', checked)} />
                 <DialogActions
                   onCancel={() => setSubtypeDialogOpen(false)}
                   onSave={handleSaveSubtype}
@@ -431,9 +740,9 @@ export const TravelGroupManagement = () => {
                 const parentType = types.find((type) => type.id === subtype.travel_group_type);
                 return (
                   <TableRow key={subtype.id}>
-                    <TableCell>{parentType?.label_fr || "-"}</TableCell>
+                    <TableCell>{getLocalizedLabel(parentType, i18n.language) || parentType?.label_fr || "-"}</TableCell>
                     <TableCell>{subtype.code}</TableCell>
-                    <TableCell>{subtype.label_fr}</TableCell>
+                    <TableCell>{getLocalizedLabel(subtype, i18n.language) || subtype.label_fr}</TableCell>
                     <TableCell>
                       <Badge variant={subtype.is_active ? "default" : "secondary"}>{subtype.is_active ? "Actif" : "Inactif"}</Badge>
                     </TableCell>
@@ -469,9 +778,12 @@ export const TravelGroupManagement = () => {
                 Ajouter une configuration
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-4xl w-[95vw] h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editingConfigId ? "Modifier la configuration" : "Nouvelle configuration"}</DialogTitle>
+                <DialogDescription>
+                  Définissez les tailles, contraintes et règles propres à ce groupe de voyageurs.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-3">
                 <div>
@@ -630,6 +942,54 @@ export const TravelGroupManagement = () => {
     </div>
   );
 };
+
+interface TranslationFieldGridProps {
+  title: string;
+  description?: string;
+  languages: ReadonlyArray<LanguageOption>;
+  valueGetter: (code: string) => string;
+  onChange: (code: string, value: string) => void;
+  textarea?: boolean;
+}
+
+const TranslationFieldGrid = ({
+  title,
+  description,
+  languages,
+  valueGetter,
+  onChange,
+  textarea = false,
+}: TranslationFieldGridProps) => (
+  <div className="rounded-lg border p-3 space-y-3">
+    <div>
+      <p className="text-sm font-medium">{title}</p>
+      {description && <p className="text-xs text-muted-foreground">{description}</p>}
+    </div>
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      {languages.map(({ code, label, required }) => (
+        <div key={code} className="space-y-1">
+          <Label className="text-xs font-medium text-muted-foreground uppercase flex items-center gap-1">
+            {label}
+            {required && <span className="text-destructive">*</span>}
+          </Label>
+          {textarea ? (
+            <Textarea
+              value={valueGetter(code)}
+              required={required}
+              onChange={(e) => onChange(code, e.target.value)}
+            />
+          ) : (
+            <Input
+              value={valueGetter(code)}
+              required={required}
+              onChange={(e) => onChange(code, e.target.value)}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 interface InputFieldProps {
   label: string;

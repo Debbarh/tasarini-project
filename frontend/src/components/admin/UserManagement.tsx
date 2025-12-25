@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { usePagination } from '@/hooks/usePagination';
 import { adminService } from '@/services/adminService';
 import { ApiUser } from '@/services/authService';
+import { extractArrayFromResponse } from '@/integrations/api/client';
 
 interface RoleAssignment {
   id: number;
@@ -95,7 +96,9 @@ const UserManagement = () => {
     try {
       setLoading(true);
       const data = await adminService.listUsers();
-      const mapped = (data || []).map(mapUser).sort((a, b) => {
+      // Handle both array and paginated response formats
+      const usersArray = extractArrayFromResponse<ApiUser>(data);
+      const mapped = usersArray.map(mapUser).sort((a, b) => {
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateB - dateA;

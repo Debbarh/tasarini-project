@@ -105,10 +105,11 @@ export class ApiClient {
 
     if (!response.ok) {
       if (response.status === 401 && attempt === 0) {
-        const refreshed = await this.tryRefreshToken();
-        if (refreshed) {
-          return this.request<T>(endpoint, options, attempt + 1);
-        }
+        // Try to refresh the token (will clear tokens if refresh fails)
+        await this.tryRefreshToken();
+        // Retry the request whether refresh succeeded or not
+        // If refresh failed, tokens were cleared, so retry without auth for public endpoints
+        return this.request<T>(endpoint, options, attempt + 1);
       }
       throw new ApiError(response.statusText || 'API Error', response.status, responseBody);
     }
@@ -155,6 +156,20 @@ export class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+
+/**
+ * Utility function to extract array data from potentially paginated responses
+ * Handles both direct array responses and Django REST Framework paginated responses
+ */
+export function extractArrayFromResponse<T>(data: any): T[] {
+  if (Array.isArray(data)) {
+    return data;
+  }
+  if (data && typeof data === 'object' && 'results' in data) {
+    return Array.isArray(data.results) ? data.results : [];
+  }
+  return [];
+}
 
 const clearListeners = new Set<() => void>();
 

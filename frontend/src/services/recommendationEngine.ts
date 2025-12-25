@@ -36,11 +36,15 @@ export class RecommendationEngine {
     items: any[],
     category: 'hotels' | 'flights' | 'restaurants' | 'activities',
     tripData: TripFormData,
-    userLocation?: { lat: number; lng: number }
+    userLocation?: { lat: number; lng: number },
+    options?: { useUserContext?: boolean }
   ): Promise<ScoredItem[]> {
     if (!items?.length) return [];
 
-    const userProfile = await this.getUserProfile(tripData);
+    const useUserContext = options?.useUserContext ?? true;
+    const userProfile = useUserContext
+      ? await this.getUserProfile(tripData)
+      : this.createAnonymousProfile(tripData);
     const scoredItems: ScoredItem[] = [];
 
     for (const item of items) {
@@ -82,7 +86,7 @@ export class RecommendationEngine {
     item: any,
     category: string,
     tripData: TripFormData,
-    userProfile: UserProfile,
+    userProfile: RecommendationUserProfile,
     userLocation?: { lat: number; lng: number }
   ): RecommendationScore {
     const budgetScore = this.calculateBudgetScore(item, tripData, userProfile) * 0.4;
@@ -107,7 +111,7 @@ export class RecommendationEngine {
   /**
    * Score basé sur l'adéquation avec le budget
    */
-  private calculateBudgetScore(item: any, tripData: TripFormData, userProfile: UserProfile): number {
+  private calculateBudgetScore(item: any, tripData: TripFormData, userProfile: RecommendationUserProfile): number {
     const itemPrice = this.extractPrice(item);
     if (!itemPrice) return 0.5; // Score neutre si pas de prix
 
@@ -247,7 +251,7 @@ export class RecommendationEngine {
   /**
    * Récupère ou crée le profil utilisateur
    */
-  private async getUserProfile(tripData: TripFormData): Promise<UserProfile> {
+  private async getUserProfile(tripData: TripFormData): Promise<RecommendationUserProfile> {
     const preferenceProfile = await userPreferencesService.getUserProfile();
     const userId = preferenceProfile?.userId || 'anonymous';
 
@@ -255,8 +259,20 @@ export class RecommendationEngine {
       return this.userProfiles.get(userId)!;
     }
 
-    // Créer un profil basique ou le récupérer depuis la DB
-    const profile: RecommendationUserProfile = {
+    const profile = this.createAnonymousProfile(tripData, userId);
+
+    // TODO: Récupérer l'historique réel depuis la base de données
+    await this.loadUserHistory(profile);
+
+    this.userProfiles.set(userId, profile);
+    return profile;
+  }
+
+  /**
+   * Crée un profil générique pour un utilisateur anonyme ou nouvellement connecté
+   */
+  private createAnonymousProfile(tripData: TripFormData, userId = 'anonymous'): RecommendationUserProfile {
+    return {
       userId,
       budgetHistory: [tripData.budget.dailyBudget],
       preferredCategories: [],
@@ -264,12 +280,6 @@ export class RecommendationEngine {
       bookingHistory: [],
       lastPreferences: tripData
     };
-
-    // TODO: Récupérer l'historique réel depuis la base de données
-    await this.loadUserHistory(profile);
-
-    this.userProfiles.set(userId, profile);
-    return profile;
   }
 
   /**

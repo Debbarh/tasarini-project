@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { favoritePoiService, FavoritePOIEntry } from '@/services/favoritePoiService';
+import { normalizeApiResponse } from '@/utils/apiHelpers';
 
 export const useFavoritePOIs = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [favorites, setFavorites] = useState<FavoritePOIEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -16,14 +19,14 @@ export const useFavoritePOIs = () => {
 
   const fetchFavorites = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
       const data = await favoritePoiService.list();
-      setFavorites(data || []);
+      setFavorites(normalizeApiResponse(data));
     } catch (error: any) {
       console.error('Erreur lors du chargement des favoris:', error);
-      toast.error('Erreur lors du chargement des favoris');
+      toast.error(t('toast.hooks.favorites.loadError'));
     } finally {
       setLoading(false);
     }
@@ -31,18 +34,18 @@ export const useFavoritePOIs = () => {
 
   const addToFavorites = async (touristPointId: string) => {
     if (!user) {
-      toast.error('Vous devez être connecté pour ajouter des favoris');
+      toast.error(t('toast.hooks.favorites.loginRequired'));
       return;
     }
 
     try {
       await favoritePoiService.add(touristPointId);
 
-      toast.success('Point d\'intérêt ajouté aux favoris !');
+      toast.success(t('toast.hooks.favorites.added'));
       fetchFavorites(); // Refresh the list
     } catch (error: any) {
       console.error('Erreur lors de l\'ajout aux favoris:', error);
-      toast.error('Erreur lors de l\'ajout aux favoris');
+      toast.error(t('toast.hooks.favorites.addError'));
     }
   };
 
@@ -57,11 +60,11 @@ export const useFavoritePOIs = () => {
 
       await favoritePoiService.remove(existing.id);
 
-      toast.success('Point d\'intérêt retiré des favoris');
+      toast.success(t('toast.hooks.favorites.removed'));
       fetchFavorites(); // Refresh the list
     } catch (error: any) {
       console.error('Erreur lors de la suppression des favoris:', error);
-      toast.error('Erreur lors de la suppression des favoris');
+      toast.error(t('toast.hooks.favorites.removeError'));
     }
   };
 

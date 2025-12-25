@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,18 +41,20 @@ interface ExtendedInfoFormProps {
   onUpdate?: () => void;
 }
 
-const travelStyles = [
-  { value: 'adventure', label: 'Aventure' },
-  { value: 'luxury', label: 'Luxe' },
-  { value: 'budget', label: 'Budget' },
-  { value: 'cultural', label: 'Culturel' },
-  { value: 'relaxation', label: 'Détente' },
-  { value: 'family', label: 'Famille' },
-  { value: 'solo', label: 'Solo' },
-  { value: 'group', label: 'Groupe' },
-];
-
 export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onUpdate }) => {
+  const { t } = useTranslation();
+  
+  const travelStyles = [
+    { value: 'adventure', label: t('profile.extendedInfo.travelStyles.adventure') },
+    { value: 'luxury', label: t('profile.extendedInfo.travelStyles.luxury') },
+    { value: 'budget', label: t('profile.extendedInfo.travelStyles.budget') },
+    { value: 'cultural', label: t('profile.extendedInfo.travelStyles.cultural') },
+    { value: 'relaxation', label: t('profile.extendedInfo.travelStyles.relaxation') },
+    { value: 'family', label: t('profile.extendedInfo.travelStyles.family') },
+    { value: 'solo', label: t('profile.extendedInfo.travelStyles.solo') },
+    { value: 'group', label: t('profile.extendedInfo.travelStyles.group') },
+  ];
+  
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -92,14 +95,14 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
 
     try {
       await apiClient.patch('accounts/profiles/me/', formData);
-      toast.success('Informations mises à jour avec succès');
+      toast.success(t('profile.extendedInfo.toast.updateSuccess'));
       setIsEditing(false);
       if (onUpdate) {
         onUpdate();
       }
     } catch (error) {
       console.error('Error updating extended info:', error);
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('profile.extendedInfo.toast.updateError'));
     } finally {
       setLoading(false);
     }
@@ -130,15 +133,15 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Informations complémentaires</CardTitle>
+            <CardTitle>{t('profile.extendedInfo.title')}</CardTitle>
             <CardDescription>
-              Complétez votre profil avec des informations supplémentaires
+              {t('profile.extendedInfo.description')}
             </CardDescription>
           </div>
           {!isEditing && (
             <Button variant="outline" onClick={() => setIsEditing(true)}>
               <Edit className="w-4 h-4 mr-2" />
-              Modifier
+              {t('profile.edit')}
             </Button>
           )}
         </div>
@@ -149,27 +152,27 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold">Localisation</h3>
+              <h3 className="text-lg font-semibold">{t('profile.extendedInfo.location')}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="city">Ville</Label>
+                <Label htmlFor="city">{t('profile.extendedInfo.city')}</Label>
                 <Input
                   id="city"
                   value={formData.city}
                   onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
                   disabled={!isEditing}
-                  placeholder="Ex: Paris"
+                  placeholder={t('profile.extendedInfo.cityPlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="country">Pays</Label>
+                <Label htmlFor="country">{t('profile.extendedInfo.country')}</Label>
                 <Input
                   id="country"
                   value={formData.country}
                   onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
                   disabled={!isEditing}
-                  placeholder="Ex: France"
+                  placeholder={t('profile.extendedInfo.countryPlaceholder')}
                 />
               </div>
             </div>
@@ -181,21 +184,21 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Briefcase className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold">Informations professionnelles</h3>
+              <h3 className="text-lg font-semibold">{t('profile.extendedInfo.professionalInfo')}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="occupation">Profession</Label>
+                <Label htmlFor="occupation">{t('profile.extendedInfo.occupation')}</Label>
                 <Input
                   id="occupation"
                   value={formData.occupation}
                   onChange={(e) => setFormData(prev => ({ ...prev, occupation: e.target.value }))}
                   disabled={!isEditing}
-                  placeholder="Ex: Développeur web"
+                  placeholder={t('profile.extendedInfo.occupationPlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="website_url">Site web</Label>
+                <Label htmlFor="website_url">{t('profile.extendedInfo.website')}</Label>
                 <div className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-muted-foreground" />
                   <Input
@@ -204,7 +207,7 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
                     value={formData.website_url}
                     onChange={(e) => setFormData(prev => ({ ...prev, website_url: e.target.value }))}
                     disabled={!isEditing}
-                    placeholder="https://exemple.com"
+                    placeholder={t('profile.extendedInfo.websitePlaceholder')}
                   />
                 </div>
               </div>
@@ -217,7 +220,7 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Globe className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold">Réseaux sociaux</h3>
+              <h3 className="text-lg font-semibold">{t('profile.extendedInfo.socialNetworks')}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -230,7 +233,7 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
                     value={formData.facebook_url}
                     onChange={(e) => setFormData(prev => ({ ...prev, facebook_url: e.target.value }))}
                     disabled={!isEditing}
-                    placeholder="https://facebook.com/username"
+                    placeholder={t('profile.extendedInfo.facebookPlaceholder')}
                   />
                 </div>
               </div>
@@ -244,7 +247,7 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
                     value={formData.instagram_url}
                     onChange={(e) => setFormData(prev => ({ ...prev, instagram_url: e.target.value }))}
                     disabled={!isEditing}
-                    placeholder="https://instagram.com/username"
+                    placeholder={t('profile.extendedInfo.instagramPlaceholder')}
                   />
                 </div>
               </div>
@@ -258,7 +261,7 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
                     value={formData.twitter_url}
                     onChange={(e) => setFormData(prev => ({ ...prev, twitter_url: e.target.value }))}
                     disabled={!isEditing}
-                    placeholder="https://twitter.com/username"
+                    placeholder={t('profile.extendedInfo.twitterPlaceholder')}
                   />
                 </div>
               </div>
@@ -272,7 +275,7 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
                     value={formData.linkedin_url}
                     onChange={(e) => setFormData(prev => ({ ...prev, linkedin_url: e.target.value }))}
                     disabled={!isEditing}
-                    placeholder="https://linkedin.com/in/username"
+                    placeholder={t('profile.extendedInfo.linkedinPlaceholder')}
                   />
                 </div>
               </div>
@@ -285,18 +288,18 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Plane className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold">Préférences de voyage</h3>
+              <h3 className="text-lg font-semibold">{t('profile.extendedInfo.travelPreferences')}</h3>
             </div>
             <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="travel_style">Style de voyage</Label>
+                <Label htmlFor="travel_style">{t('profile.extendedInfo.travelStyle')}</Label>
                 <Select
                   value={formData.travel_style}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, travel_style: value }))}
                   disabled={!isEditing}
                 >
                   <SelectTrigger id="travel_style">
-                    <SelectValue placeholder="Sélectionnez votre style de voyage" />
+                    <SelectValue placeholder={t('profile.extendedInfo.selectTravelStyle')} />
                   </SelectTrigger>
                   <SelectContent>
                     {travelStyles.map((style) => (
@@ -308,30 +311,30 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="favorite_destinations">Destinations favorites</Label>
+                <Label htmlFor="favorite_destinations">{t('profile.extendedInfo.favoriteDestinations')}</Label>
                 <Textarea
                   id="favorite_destinations"
                   value={formData.favorite_destinations}
                   onChange={(e: any) => setFormData(prev => ({ ...prev, favorite_destinations: e.target.value }))}
                   disabled={!isEditing}
-                  placeholder="Ex: Tokyo, New York, Marrakech (séparées par des virgules)"
+                  placeholder={t('profile.extendedInfo.favoriteDestinationsPlaceholder')}
                   rows={2}
                   className="resize-none"
                 />
-                <p className="text-xs text-muted-foreground">Séparez les destinations par des virgules</p>
+                <p className="text-xs text-muted-foreground">{t('profile.extendedInfo.favoriteDestinationsHelp')}</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="travel_interests">Centres d'intérêt</Label>
+                <Label htmlFor="travel_interests">{t('profile.extendedInfo.travelInterests')}</Label>
                 <Textarea
                   id="travel_interests"
                   value={formData.travel_interests}
                   onChange={(e: any) => setFormData(prev => ({ ...prev, travel_interests: e.target.value }))}
                   disabled={!isEditing}
-                  placeholder="Ex: plongée, randonnée, gastronomie, photographie"
+                  placeholder={t('profile.extendedInfo.travelInterestsPlaceholder')}
                   rows={3}
                   className="resize-none"
                 />
-                <p className="text-xs text-muted-foreground">Décrivez vos activités et intérêts de voyage préférés</p>
+                <p className="text-xs text-muted-foreground">{t('profile.extendedInfo.travelInterestsHelp')}</p>
               </div>
             </div>
           </div>
@@ -342,11 +345,11 @@ export const ExtendedInfoForm: React.FC<ExtendedInfoFormProps> = ({ profile, onU
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={handleCancel} disabled={loading}>
                   <X className="w-4 h-4 mr-2" />
-                  Annuler
+                  {t('profile.cancel')}
                 </Button>
                 <Button type="submit" disabled={loading}>
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Enregistrement...' : 'Enregistrer'}
+                  {loading ? t('profile.saving') : t('profile.save')}
                 </Button>
               </div>
             </>

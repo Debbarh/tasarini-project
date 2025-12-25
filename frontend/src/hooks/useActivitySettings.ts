@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
-import { activityAdminService } from '@/services/activityAdminService';
+import {
+  activityAdminService,
+  ActivityCategory,
+  ActivityIntensityLevel,
+  ActivityInterest,
+  ActivityAvoidance,
+} from '@/services/activityAdminService';
+import { extractArrayFromResponse } from '@/integrations/api/client';
 
-// Types for activity settings
+// Re-export types for convenience
 export type {
   ActivityCategory,
   ActivityIntensityLevel,
@@ -29,10 +36,11 @@ export const useActivitySettings = () => {
         activityAdminService.listAvoidances(),
       ]);
 
-      setCategories(categoryData || []);
-      setIntensityLevels(intensityData || []);
-      setInterests(interestData || []);
-      setAvoidances(avoidanceData || []);
+      // Handle both array and paginated response formats
+      setCategories(extractArrayFromResponse(categoryData));
+      setIntensityLevels(extractArrayFromResponse(intensityData));
+      setInterests(extractArrayFromResponse(interestData));
+      setAvoidances(extractArrayFromResponse(avoidanceData));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {

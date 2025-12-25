@@ -56,7 +56,7 @@ export const MediaSection: React.FC<MediaSectionProps> = ({
       handleMediaUploadResults(successes, errors, type);
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error(`Erreur lors de l'upload: ${error.message}`);
+      toast.error(t('toast.media.uploadError', { error: error.message }));
     } finally {
       setUploading(false);
       // Reset input
@@ -74,13 +74,13 @@ export const MediaSection: React.FC<MediaSectionProps> = ({
         } else {
           updateField('media_videos', formData.media_videos.filter(vid => vid !== url));
         }
-        toast.success('Fichier supprimé');
+        toast.success(t('toast.media.deleteSuccess'));
       } else {
-        toast.error(result.error || 'Erreur lors de la suppression');
+        toast.error(result.error || t('toast.media.deleteError'));
       }
     } catch (error) {
       console.error('Error removing media:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('toast.media.deleteError'));
     }
   };
 

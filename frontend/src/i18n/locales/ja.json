@@ -10,6 +10,12 @@
     "logout": "ログアウト",
     "login": "ログイン"
   },
+  "notFound": {
+    "title": "404",
+    "message": "あれ！ページが見つかりません",
+    "description": "お探しのページは存在しないか、移動されました。",
+    "backToHome": "ホームに戻る"
+  },
   "home": {
     "heroTitle": "あなたの次の冒険が待っています",
     "heroSubtitle": "特別な目的地を発見し、パーソナライズされた旅程を作成し、忘れられない体験を生きてください。あなたの夢の旅へとご案内いたします。",
@@ -26,11 +32,192 @@
     "statsDreams": "実現した夢"
   },
   "planTrip": {
-    "title": "完璧な休暇を計画",
-    "subtitle": "あなたの冒険への欲求を理解するAIアシスタントでカスタム旅程を作成",
+    "title": "完璧な休暧を計画",
+    "subtitle": "あなたの冒険の願いを理解するAIアシスタントと一緒にカスタム旅程を作成",
     "startPlanning": "計画を始める",
-    "smartRecommendations": "スマート推奨",
-    "smartRecommendationsDesc": "私たちのAIはあなたの好みを分析して、ユニークな体験を提案します"
+    "smartRecommendations": "スマートな推奨",
+    "smartRecommendationsDesc": "私たちのAIはあなたの好みを分析してユニークな体験を提案します",
+    "pageTitle": "完璧な休暧を計画 | AI旅行",
+    "pageDescription": "数クリックで夢の旅程を作成しましょう。私たちのAIは、あなたの願いを魔法のような思い出に変えるオーダーメイドの冒険をデザインします。",
+    "itineraryGenerated": "旅程が正常に生成されました！",
+    "personalizedTravel": "AIが作成したあなた専用の旅行が準備できました。",
+    "withPreferences": "✨ あなたの好みに基づいて！",
+    "withLocalPlaces": "📍 本格的な地元の場所と一緒に！",
+    "generationError": "旅程生成エラー",
+    "tryAgainLater": "後でもう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。",
+    "enrichmentComplete": "旅行のエンリッチメントが完了しました！",
+    "enrichmentError": "旅行エンリッチメント中のエラー",
+    "createNewTrip": "新しい旅行を作成",
+    "newTrip": "新しい旅行",
+    "wizard": {
+      "title": "旅行を計画してください",
+      "stepOf": "ステップ{{current}}/{{total}}",
+      "previous": "前へ",
+      "next": "次へ",
+      "generating": "生成中...",
+      "createItinerary": "旅程を作成",
+      "steps": {
+        "destinations": {
+          "title": "目的地",
+          "description": "どちらに行きたいですか？"
+        },
+        "details": {
+          "title": "同行者",
+          "description": "どなたと旅行しますか？"
+        },
+        "budget": {
+          "title": "予算",
+          "description": "旅行予算を設定してください"
+        },
+        "culinary": {
+          "title": "料理",
+          "description": "あなたの料理の好み"
+        },
+        "accommodation": {
+          "title": "宿泊施設",
+          "description": "宿泊施設のタイプと基準"
+        },
+        "activities": {
+          "title": "アクティビティ",
+          "description": "体験と興味"
+        }
+      }
+    },
+    "destinationStep": {
+      "selectCountry": "国を選択",
+      "selectCity": "都市を選択",
+      "numberOfDays": "日数",
+      "exactDates": "正確な日付",
+      "start": "開始",
+      "end": "終了",
+      "day": "日",
+      "days": "日間",
+      "selectedCountry": "選択された国",
+      "selectedCity": "選択された都市",
+      "addDestination": "+ 目的地を追加",
+      "mapSearch": "📍 地図で検索",
+      "totalDuration": "総旅行期間",
+      "selectDescription": "訪れたい国と都市を選択してください",
+      "destination": "目的地",
+      "country": "国",
+      "city": "都市",
+      "title": "目的地はどこですか？",
+      "duration": "期間",
+      "startDate": "開始日",
+      "endDate": "終了日",
+      "chooseOnMap": "地図で選択",
+      "addFirstDestination": "まず目的地を追加してください",
+      "selectOnMap": "地図で目的地を選択してください",
+      "mapDescription": "地図をクリックするか、住所を検索して目的地を選択してください",
+      "itinerary": "旅程：",
+      "locationSaved": "目的地が正常に保存されました。",
+      "locationSaveError": "この場所を保存できませんでした。情報を確認してください。",
+      "invalidAddress": "地図上で有効な住所を選択してください。"
+    },
+    "travelDetailsStep": {
+      "title": "旅の仕間",
+      "description": "旅行グループの構成を指定してください",
+      "travelerType": "旅行者タイプ",
+      "subtype": "サブタイプ",
+      "chooseSubtype": "サブタイプを選択（オプション）",
+      "groupSize": "グループサイズ",
+      "people": "人",
+      "person": "人",
+      "children": "子供",
+      "child": "子供",
+      "addChild": "子供を追加",
+      "year": "歳",
+      "years": "歳",
+      "summary": "概要",
+      "impactOnRecommendations": "おすすめへの影響：",
+      "maxLevel": "最大レベル",
+      "veryEasy": "非常に簡単",
+      "easy": "簡単",
+      "moderate": "中程度",
+      "difficult": "難しい",
+      "veryDifficult": "非常に難しい",
+      "compatiblePOIsFound": "互換性のあるPOIが見つかりました",
+      "compatiblePOIsFoundPlural": "互換性のあるPOIが見つかりました",
+      "inRegion": "地域内",
+      "inYourBudget": "予算内",
+      "noPOIFound": "互換性のあるPOIが見つかりません",
+      "adjustCriteria": "より多くのオプションを得るために基準の調整を検討してください",
+      "available": "利用可能",
+      "availablePlural": "利用可能",
+      "remains": "残り",
+      "remainsPlural": "残り",
+      "error": "エラー"
+    },
+    "budgetStep": {
+      "title": "旅行予算",
+      "description": "予算を設定して旅行をカスタマイズしましょう",
+      "budgetLevel": "予算レベル",
+      "dailyBudget": "日々の予算",
+      "perDay": "日",
+      "currency": "通貨",
+      "flexibility": "柔軟性",
+      "selectedLevel": "選択されたレベル",
+      "summary": "予算の概要",
+      "budget": "予算",
+      "error": "エラー"
+    },
+    "culinaryStep": {
+      "title": "料理の好み",
+      "description": "パーソナライズされた推奨事項のために好みを共有してください",
+      "loading": "読み込み中...",
+      "cuisineTypes": "好きな料理の種類",
+      "restaurantCategories": "好みのレストランカテゴリー",
+      "adventureLevel": "料理の冒険レベル",
+      "consumeAlcohol": "アルコールを消費します",
+      "dietaryRestrictions": "食事制限",
+      "summary": "料理の好みの概要",
+      "restriction": "制限",
+      "restrictionsPlural": "制限",
+      "cuisineType": "料理の種類",
+      "cuisineTypesPlural": "料理の種類",
+      "restaurantCategory": "レストランカテゴリー",
+      "restaurantCategoriesPlural": "レストランカテゴリー",
+      "culinaryAdventure": "料理の冒険",
+      "conservative": "保守的",
+      "moderate": "中程度",
+      "adventurous": "冒険的",
+      "consumesAlcohol": "アルコールを飲む"
+    },
+    "accommodationStep": {
+      "title": "宿泊施設の設定",
+      "description": "重要な宿泊施設の種類と設備を選択してください",
+      "loading": "読み込み中...",
+      "accommodationType": "宿泊施設の種類",
+      "amenities": "サービスと設備",
+      "location": "希望する場所",
+      "accessibility": "アクセシビリティ",
+      "security": "セキュリティ",
+      "ambiance": "雰囲気",
+      "summary": "宿泊施設の設定の概要",
+      "types": "タイプ",
+      "services": "サービス",
+      "locations": "場所",
+      "others": "その他"
+    },
+    "activitiesStep": {
+      "title": "アクティビティと体験",
+      "description": "旅程をカスタマイズするために興味を選択してください",
+      "loading": "データを読み込み中...",
+      "categories": "希望するアクティビティのカテゴリー",
+      "intensity": "アクティビティの強度",
+      "specificInterests": "特定の興味",
+      "avoidances": "避けたいこと",
+      "avoidancesDescription": "旅行中に避けたいことを選択してください",
+      "specialRequests": "特別なリクエスト",
+      "specialRequestsDescription": "旅行のための特定の情報を追加してください",
+      "specialRequestsPlaceholder": "誕生日のお祝い、医療上の制約、特別な機会、特定のリクエスト...",
+      "summary": "アクティビティの設定の概要",
+      "summaryCategories": "カテゴリー：",
+      "summaryIntensity": "強度：",
+      "summaryInterests": "興味：",
+      "moderate": "中程度",
+      "others": "その他"
+    }
   },
   "beInspired": {
     "title": "インスピレーションを得る",
@@ -40,11 +227,218 @@
     "exploreMap": "地図を探索",
     "findInspiration": "インスピレーションを見つける"
   },
+  "beInspired": {
+    "pageTitle": "インスピレーションを得る | AIトラベル",
+    "pageDescription": "あなたの周りに隠された不思議の世界を探索しましょう。秘密の宝石、本物の味、魔法のような体験があなたを待っています。",
+    "title": "✨ インスピレーションを得る",
+    "subtitle": "{{radius}}km内の隠された宝物を発見しましょう。すべての場所には物語があり、すべての体験が忘れられない思い出を作ります。",
+    "searchHotels": "🏨 ホテル",
+    "searchHotelsShort": "🏨",
+    "aiGuide": "🤖 AIガイド",
+    "aiGuideShort": "🤖 ガイド",
+    "shareDiscovery": "🌟 宝物を共有",
+    "shareDiscoveryShort": "🌟 共有",
+    "dialogTitle": "🌟 あなたの発見を共有",
+    "dialogDescription": "あなたが愛する魔法の場所を探検者コミュニティに公開してください",
+    "exploreMap": "地図を探索",
+    "findInspiration": "インスピレーションを見つける",
+    "radiusLabel": "🎯 探索半径",
+    "radius10": "10 km",
+    "radius20": "20 km",
+    "radius30": "30 km",
+    "radius50": "50 km",
+    "legendTitle": "凡例",
+    "legendRestaurants": "レストランとカフェ",
+    "legendActivities": "アクティビティとレジャー",
+    "legendTourist": "観光名所",
+    "legendCenter": "検索センター",
+    "positionDetected": "位置が検出されました！",
+    "mustBeLoggedIn": "観光ポイントを追加するにはログインする必要があります",
+    "nameRequired": "観光ポイントの名前は必須です",
+    "successAdded": "観光ポイントが正常に追加されました！",
+    "errorAdding": "追加エラー: {{error}}",
+    "aiContext": "ユーザーは{{lat}}, {{lon}}周辺の地域を探索しています",
+    "smartRecommendations": {
+      "title": "スマートレコメンデーション",
+      "description": "あなたの好みと履歴に基づいたパーソナライズされた提案",
+      "loginRequired": "ログインして、あなたの好みに基づいたパーソナライズされたレコメンデーションを受け取りましょう",
+      "yourPreferences": "あなたの好み:",
+      "refresh": "更新",
+      "analyzing": "あなたの好みを分析中...",
+      "noRecommendationsTitle": "より多くのデータが必要です",
+      "noRecommendationsDesc": "お気に入りに場所を追加し、旅程を作成してパーソナライズされたレコメンデーションを受け取りましょう！",
+      "exploreMap": "地図を探索",
+      "match": "一致",
+      "excellentMatch": "優れた一致",
+      "goodMatch": "良い一致",
+      "toDiscover": "発見する",
+      "viewOnMap": "地図",
+      "retry": "再試行",
+      "error": "スマートレコメンデーションを読み込めません",
+      "noNewRecommendations": "新しいレコメンデーションが見つかりませんでした。もっと探索して提案を改善しましょう！",
+      "successGenerated": "{{count}}件のパーソナライズされたレコメンデーションが生成されました！",
+      "loadingError": "レコメンデーションの読み込みエラー"
+    },
+    "filters": {
+      "title": "フィルター",
+      "results": "件",
+      "searching": "検索中...",
+      "keywordSearch": "キーワード検索",
+      "keywordPlaceholder": "場所、アクティビティを検索...",
+      "categories": "カテゴリー",
+      "categoryRestaurants": "レストラン・カフェ",
+      "categoryActivities": "アクティビティ・レジャー",
+      "categoryTourist": "観光名所",
+      "categoryOther": "その他",
+      "minRating": "最低評価 ({{rating}}⭐)",
+      "allRatings": "すべて",
+      "priceRange": "価格帯",
+      "allPrices": "すべての価格",
+      "priceEconomical": "€ - 経済的",
+      "priceModerate": "€€ - 中程度",
+      "priceHigh": "€€€ - 高級",
+      "accessibility": "車椅子対応",
+      "reset": "リセット"
+    }
+  },
   "travelStories": {
-    "title": "旅行の物語",
-    "subtitle": "冒険者の魅力的な物語を発見し、コミュニティを刺激するためにあなた自身の体験を共有してください",
-    "shareStory": "私の旅を語る",
-    "myAdventures": "私の冒険"
+    "pageTitle": "旅行ソーシャルネットワーク | Travel Stories",
+    "pageDescription": "最も美しい旅の冒険を発見、共有、体験しましょう。情熱的な旅行者のコミュニティに参加してください。",
+    "title": "旅の物語",
+    "subtitle": "共有された冒険の世界を発見してください。作成、探索し、世界中の旅行者とつながりましょう。",
+    "shareStory": "私の旅を共有",
+    "myAdventures": "私の冒険",
+    "stats": {
+      "stories": "ストーリー",
+      "followers": "フォロワー",
+      "likes": "いいね",
+      "countries": "国"
+    },
+    "buttons": {
+      "viewPublicFeed": "公開フィードを表示",
+      "viewMyStories": "マイストーリーを表示",
+      "shareMyJourney": "私の旅を共有",
+      "shareFirstEpic": "最初のエピックを語る",
+      "start": "開始"
+    },
+    "dialog": {
+      "title": "あなたの冒険を共有",
+      "description": "旅行者コミュニティを刺激するストーリーを作成してください"
+    },
+    "tabs": {
+      "feed": "フィード",
+      "trending": "トレンド",
+      "map": "マップ",
+      "ai": "AI"
+    },
+    "empty": {
+      "myStoriesTitle": "あなたのエピックはありません",
+      "noStoriesTitle": "ストーリーが見つかりません",
+      "myStoriesDesc": "まだ冒険を共有していません。あなたの最初のストーリーが待っています！",
+      "noStoriesDesc": "先駆者になりましょう！コミュニティ全体を刺激する最初のエピックを共有してください。"
+    },
+    "statistics": {
+      "epics": "エピック",
+      "likes": "いいね",
+      "views": "閲覧数"
+    },
+    "toast": {
+      "storyCreated": "旅行ストーリーが作成されました！",
+      "errorLoading": "旅行ストーリーを読み込めません",
+      "loginToBookmark": "ストーリーを保存するにはログインしてください",
+      "bookmarkAdded": "ストーリーをお気に入りに追加しました",
+      "bookmarkRemoved": "ストーリーをお気に入りから削除しました"
+    },
+    "filters": {
+      "searchPlaceholder": "ストーリーを検索...",
+      "filtersButton": "フィルター",
+      "location": "場所",
+      "locationPlaceholder": "場所でフィルタリング...",
+      "linkType": "リンクタイプ",
+      "allTypes": "すべてのタイプ",
+      "touristPoints": "観光名所",
+      "itineraries": "旅程",
+      "activities": "アクティビティ",
+      "period": "期間",
+      "from": "開始",
+      "to": "終了",
+      "tags": "タグ",
+      "addTagPlaceholder": "フィルター用タグを追加...",
+      "addButton": "追加",
+      "loading": "読み込み中...",
+      "results": "件",
+      "resultsPlural": "件",
+      "clearFilters": "フィルターをクリア"
+    },
+    "createDialog": {
+      "tabs": {
+        "aiItinerary": "旅程から",
+        "aiInstant": "AI生成",
+        "manual": "手動"
+      },
+      "aiItinerary": {
+        "title": "旅程から生成",
+        "selectLabel": "旅程を選択",
+        "selectPlaceholder": "旅程を選ぶ...",
+        "generating": "生成中...",
+        "generate": "ストーリーを生成"
+      },
+      "aiInstant": {
+        "title": "AIインスタント生成",
+        "preparing": "AIがストーリーを準備中...",
+        "templates": {
+          "paris": {
+            "title": "ロマンチックパリ",
+            "description": "記念碑を巻るロマンチックな旅"
+          },
+          "mountain": {
+            "title": "山の冒険",
+            "description": "トレッキングと野生の景観"
+          },
+          "coastal": {
+            "title": "海岸ロードトリップ",
+            "description": "ビーチと夕日"
+          },
+          "urban": {
+            "title": "都市文化",
+            "description": "ストリートアートとガストロノミー"
+          }
+        }
+      },
+      "form": {
+        "title": "ストーリーのタイトル *",
+        "titlePlaceholder": "あなたの体験の魅力的なタイトル...",
+        "content": "あなたの物語 *",
+        "contentPlaceholder": "あなたの体験、感情、発見を語ってください...",
+        "media": "画像と動画",
+        "mediaHelp": "物語を豊かにするために写真と動画を追加",
+        "activities": "アクティビティカテゴリ",
+        "activitiesLoading": "カテゴリ読み込み中...",
+        "intensity": "強度レベル",
+        "intensityLoading": "レベル読み込み中...",
+        "tripDate": "旅行日",
+        "selectDate": "日付を選ぶ",
+        "date": "旅行日",
+        "datePlaceholder": "日付を選ぶ",
+        "location": "旅行場所",
+        "locationHelp": "地図をクリックして場所を選択するか、現在地を使用",
+        "tags": "カスタムタグ（オプション）",
+        "tagsPlaceholder": "カスタムタグを追加...",
+        "public": "公開ストーリー",
+        "private": "非公開ストーリー",
+        "cancel": "キャンセル",
+        "creating": "作成中...",
+        "create": "ストーリーを作成"
+      },
+      "toast": {
+        "aiGenerated": "AIでストーリーを生成しました！カスタマイズできます。",
+        "instantGenerated": "ストーリーを生成！お好みでカスタマイズしてください。",
+        "generationError": "自動生成中にエラーが発生しました",
+        "loginRequired": "ストーリーを作成するにはログインが必要です",
+        "fieldsRequired": "タイトルと内容は必須です",
+        "createError": "作成中にエラーが発生しました"
+      }
+    }
   },
   "partnerApplication": {
     "title": "パートナーになる",
@@ -228,5 +622,584 @@
     "edit": "編集",
     "create": "作成",
     "search": "検索"
+  },
+  "touristPoints": {
+    "pageTitle": "観光名所",
+    "pageDescription": "コミュニティとパートナーが推薦する特別な場所を発見してください",
+    "searchPlaceholder": "名前、説明、場所で検索...",
+    "filterByType": "タイプで絞り込む",
+    "sortBy": "並べ替え",
+    "filters": {
+      "all": "すべてのポイント",
+      "partnersOnly": "パートナーのみ",
+      "featured": "おすすめ",
+      "regular": "通常のポイント"
+    },
+    "sorting": {
+      "rating": "評価順",
+      "reviews": "レビュー数",
+      "recent": "最新",
+      "name": "アルファベット順"
+    },
+    "stats": {
+      "totalPoints": "総ポイント数",
+      "partners": "パートナー",
+      "featured": "おすすめ",
+      "averageRating": "平均評価"
+    },
+    "results": {
+      "found": "ポイントが見つかりました",
+      "foundPlural": "ポイントが見つかりました",
+      "for": "の検索結果",
+      "certifiedPartners": "認定パートナーのみ"
+    },
+    "empty": {
+      "title": "観光名所が見つかりません",
+      "noResults": "別のキーワードを試してください",
+      "noPoints": "現在、観光名所はありません"
+    }
+  },
+  "recommendations": {
+    "pageTitle": "レコメンデーション",
+    "pageDescription": "あなたの好みやインスピレーションに基づいたインテリジェントな推奨を受け取ります。",
+    "subtitle": "エンジンが計画の選択とインスピレーションからプログラムとアクティビティを細かく調整します。",
+    "suggestedProgram": {
+      "title": "提案プログラム",
+      "description": "3日間のバランスのとれたミックス",
+      "day1": "1日目：ガイドツアーとパノラマスポット",
+      "day2": "2日目：地元のガストロノミーと必見の博物館",
+      "day3": "3日目：自由時間、ビーチまたは自然公園"
+    },
+    "recommendedActivities": {
+      "title": "おすすめのアクティビティ",
+      "description": "あなたの興味に基づく",
+      "activity1": "地元料理教室（少人数グループ）",
+      "activity2": "日の出の穏やかなハイキング",
+      "activity3": "職人地区と独立系カフェ"
+    }
+  },
+  "profile": {
+    "pageTitle": "マイプロフィール - Voyage AI",
+    "pageDescription": "Voyage AIでユーザープロフィールと観光ポイントを管理する",
+    "accessRequired": "アクセスが必要です",
+    "accessRequiredDesc": "プロフィールにアクセスするにはログインが必要です。",
+    "signIn": "サインイン",
+    "tabs": {
+      "profile": "情報",
+      "content": "マイコンテンツ",
+      "statistics": "統計",
+      "social": "ネットワーク",
+      "privacy": "プライバシー",
+      "security": "セキュリティ",
+      "touristPoints": "POI",
+      "savedItineraries": "旅程",
+      "notifications": "通知",
+      "rgpd": "GDPR"
+    },
+    "personalInfo": "個人情報",
+    "personalInfoDesc": "以下でプロフィール情報を編集する",
+    "firstName": "名",
+    "lastName": "姓",
+    "email": "メール",
+    "emailCannotBeChanged": "このページからメールを変更することはできません",
+    "phoneNumber": "電話番号",
+    "phonePlaceholder": "+81 90 1234 5678",
+    "bio": "自己紹介",
+    "bioPlaceholder": "自己紹介を入力してください...",
+    "preferredLanguage": "希望言語",
+    "selectLanguage": "言語を選択",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "delete": "削除",
+    "confirm": "確認",
+    "myTouristPoints": "マイポイント",
+    "myTouristPointsDesc": "観光ポイントを管理する",
+    "addPoint": "ポイントを追加",
+    "editPoint": "ポイントを編集",
+    "addNewPoint": "ポイントを追加",
+    "noTouristPoints": "ポイントがありません",
+    "noTouristPointsDesc": "まだポイントを作成していません。追加してみましょう！",
+    "verified": "確認済み",
+    "hidden": "非表示",
+    "openingHours": "営業時間",
+    "amenities": "設備",
+    "uploadedPhotos": "アップロードされた写真",
+    "uploadedVideos": "アップロードされた動画",
+    "photo": "写真",
+    "backToList": "リストに戻る",
+    "destination": "目的地",
+    "day": "日",
+    "days": "日間",
+    "createdOn": "作成日",
+    "addToFavorites": "お気に入りに追加",
+    "removeFromFavorites": "お気に入りから削除",
+    "editItinerary": "旅程を編集",
+    "viewDetails": "詳細を表示",
+    "exportPdf": "PDFでエクスポート",
+    "share": "共有",
+    "shareWithOthers": "他のユーザーと共有",
+    "rgpdTitle": "GDPR とデータ管理",
+    "rgpdDesc": "一般データ保護規則に従って個人データを管理する",
+    "categories": {
+      "restaurant": "レストラン",
+      "hotel": "ホテル",
+      "museum": "博物館",
+      "monument": "記念碑",
+      "park": "公園",
+      "beach": "ビーチ",
+      "mountain": "山",
+      "shopping": "ショッピング",
+      "entertainment": "エンターテイメント",
+      "sport": "スポーツ",
+      "culture": "文化",
+      "nature": "自然"
+    },
+    "priceRanges": {
+      "budget": "￥ - 予算",
+      "moderate": "￥￥ - 中程度",
+      "elevated": "￥￥￥ - 高級",
+      "luxury": "￥￥￥￥ - 贅沢"
+    },
+    "toast": {
+      "loadError": "ポイントの読み込みエラー",
+      "updateSuccess": "プロフィールを更新しました",
+      "updateError": "プロフィールの更新エラー",
+      "pointUpdateSuccess": "ポイントを更新しました",
+      "pointCreateSuccess": "ポイントを作成しました",
+      "pointCreateSuccessPartner": "ポイントを作成しました - パートナーポイントとしてマークされました",
+      "saveError": "保存エラー",
+      "deleteSuccess": "ポイントを削除しました",
+      "deleteError": "削除エラー",
+      "activateSuccess": "ポイントを有効化しました",
+      "deactivateSuccess": "ポイントを無効化しました",
+      "modifyError": "変更エラー",
+      "exportSuccess": "PDFをエクスポートしました",
+      "exportError": "PDFエクスポートエラー",
+      "linkCopied": "リンクをコピーしました",
+      "shareError": "共有エラー",
+      "copyLink": "リンクをコピー"
+    },
+    "deleteConfirm": "このポイントを削除してもよろしいですか？",
+    "extendedInfo": {
+      "title": "追加情報",
+      "description": "追加情報でプロフィールを完成させましょう",
+      "location": "場所",
+      "city": "都市",
+      "cityPlaceholder": "例：パリ",
+      "country": "国",
+      "countryPlaceholder": "例：フランス",
+      "socialNetworks": "ソーシャルネットワーク",
+      "facebookPlaceholder": "https://facebook.com/username",
+      "instagramPlaceholder": "https://instagram.com/username",
+      "twitterPlaceholder": "https://twitter.com/username",
+      "linkedinPlaceholder": "https://linkedin.com/in/username",
+      "travelPreferences": "旅行の好み",
+      "travelStyle": "旅行スタイル",
+      "selectTravelStyle": "スタイルを選択",
+      "favoriteDestinations": "お気に入りの目的地",
+      "favoriteDestinationsPlaceholder": "例：東京、ニューヨーク、マラケシュ（カンマ区切り）",
+      "favoriteDestinationsHelp": "目的地をカンマで区切ってください",
+      "travelInterests": "興味",
+      "travelInterestsPlaceholder": "例：ダイビング、ハイキング、グルメ、写真",
+      "travelInterestsHelp": "お好きな旅行活動と興味を説明してください",
+      "professionalInfo": "職業情報",
+      "occupation": "職業",
+      "occupationPlaceholder": "例：Web開発者",
+      "website": "ウェブサイト",
+      "websitePlaceholder": "https://example.com",
+      "travelStyles": {
+        "adventure": "アドベンチャー",
+        "luxury": "ラグジュアリー",
+        "budget": "予算",
+        "cultural": "文化",
+        "relaxation": "リラクゼーション",
+        "family": "家族",
+        "solo": "ソロ",
+        "group": "グループ"
+      },
+      "toast": {
+        "updateSuccess": "情報が正常に更新されました",
+        "updateError": "情報の更新エラー"
+      }
+    }
+  },
+  "partnerCenter": {
+    "title": "パートナースペース",
+    "subtitle": "パートナーネットワークに参加して、情熱的な旅行者コミュニティにあなたの素晴らしい場所を紹介しましょう。",
+    "loginRequired": "パートナースペースにアクセスするにはログインしてください",
+    "benefits": {
+      "visibility": {
+        "title": "認知度向上",
+        "description": "独特のパートナーバッジで場所を目立たせます"
+      },
+      "premium": {
+        "title": "プレミアム表示",
+        "description": "地図上で優先的な配置を利用できます"
+      },
+      "analytics": {
+        "title": "詳細な統計",
+        "description": "観光スポットのパフォーマンス分析にアクセス"
+      }
+    },
+    "pending": {
+      "title": "申請審査中",
+      "message": "パートナー申請は送信され、現在チームによって審査されています。承認されると通知が届きます。",
+      "completeProfile": "検証を迅速化するために、必要なすべての情報でパートナープロフィールを完成させてください。",
+      "completeButton": "パートナープロフィールを完成させる",
+      "status": "ステータス",
+      "statusPending": "承認待ち"
+    },
+    "profile": {
+      "contactEmail": "連絡先メール",
+      "phone": "電話",
+      "website": "ウェブサイト",
+      "subscription": "サブスクリプション",
+      "description": "説明",
+      "notProvided": "未提供",
+      "updateButton": "プロフィールを更新",
+      "status": {
+        "pending": "保留中",
+        "approved": "承認済み",
+        "suspended": "停止中"
+      }
+    },
+    "dashboard": {
+      "title": "ダッシュボード",
+      "subtitle": "観光スポットを管理し、パフォーマンスを追跡する",
+      "overview": "概要",
+      "analytics": "分析",
+      "pois": "私のPOI",
+      "bookings": "予約",
+      "finances": "財務",
+      "subscription": "サブスクリプション",
+      "settings": "設定",
+      "notifications": "通知",
+      "notificationsShort": "通知",
+      "stats": {
+        "totalPois": "観光スポット",
+        "totalActive": "アクティブ合計",
+        "viewsThisMonth": "今月の閲覧数",
+        "totalBookings": "予約総数",
+        "totalRevenue": "総収益",
+        "averageRating": "平均評価",
+        "pendingPayments": "保留中の支払い"
+      },
+      "analytics": {
+        "realTimeMetrics": "リアルタイムパフォーマンスメトリクス",
+        "totalViews": "総閲覧数",
+        "conversionRate": "コンバージョン率",
+        "bookings": "予約",
+        "avgRevenue": "平均収益",
+        "totalRevenue": "総収益",
+        "vsLastMonth": "対先月比",
+        "topPOI": "トップPOI",
+        "none": "なし",
+        "bestPerformer": "ベストパフォーマー",
+        "viewsEvolution": "閲覧数の推移",
+        "viewsDescription": "30日間の閲覧数とコンバージョン率",
+        "financialPerformance": "財務パフォーマンス",
+        "financialDescription": "日次予約と収益",
+        "views": "閲覧数",
+        "revenue": "収益",
+        "autoInsights": "自動インサイト",
+        "autoInsightsDescription": "パフォーマンスの自動分析",
+        "excellentConversion": "素晴らしいコンバージョン率{rate}%！あなたのコンテンツは訪問者をうまく引き付けコンバートしています。",
+        "exceptionalGrowth": "今月は{growth}%の驚異的な成長！この調子で続けてください。",
+        "lowConversion": "コンバージョン率が低いです（{rate}%）。説明文と写真の最適化を検討してください。",
+        "loadError": "分析データを読み込めません。"
+      },
+      "pois": {
+        "title": "私の観光ポイント",
+        "subtitle": "観光ポイントを管理し、検証ステータスを追跡する",
+        "createButton": "POIを作成",
+        "createFirst": "最初のPOIを作成",
+        "loading": "読み込み中...",
+        "loadError": "観光ポイントを読み込めません",
+        "status": {
+          "draft": "下書き",
+          "pendingValidation": "検証待ち",
+          "underReview": "レビュー中",
+          "approved": "承認済み",
+          "rejected": "拒否",
+          "blocked": "ブロック済み",
+          "unknown": "不明なステータス"
+        },
+        "statusDescription": {
+          "draft": "この観光ポイントは作成中で、まだ検証に提出されていません。",
+          "pendingValidation": "この観光ポイントは提出され、チームによる検証待ちです。",
+          "underReview": "この観光ポイントはチームによってレビュー中です。まもなく回答があります。",
+          "approved": "この観光ポイントは承認され、一般公開されました。",
+          "rejected": "この観光ポイントは拒否されました。コメントを確認し、修正後に再提出してください。",
+          "blocked": "この観光ポイントは利用規約違反のためブロックされました。",
+          "unknown": "不明なステータス。"
+        },
+        "stats": {
+          "total": "合計",
+          "drafts": "下書き",
+          "pending": "待機中",
+          "underReview": "レビュー中",
+          "approved": "承認済み",
+          "rejected": "拒否"
+        },
+        "empty": {
+          "title": "観光ポイントがありません",
+          "description": "まだ観光ポイントを作成していません。作成を始めましょう！"
+        },
+        "actions": {
+          "edit": "編集",
+          "delete": "削除",
+          "resubmit": "再提出",
+          "conversation": "ディスカッション",
+          "hideConversation": "非表示",
+          "accommodation": "宿泊料金",
+          "activity": "アクティビティ料金",
+          "restaurant": "メニュー＆テーブル"
+        },
+        "details": {
+          "createdAt": "作成日",
+          "updatedAt": "更新日",
+          "resubmission": "再提出 #",
+          "rejectionReason": "拒否理由:",
+          "blockReason": "ブロック理由:",
+          "illustration": "イラスト"
+        },
+        "delete": {
+          "title": "観光ポイントを削除",
+          "itemType": "POI",
+          "warningApproved": "このPOIは現在一般公開されており、レビューまたは予約が関連付けられている可能性があります。",
+          "success": "POIが正常に削除されました",
+          "successDescription": "観光ポイント\"{name}\"は完全に削除されました",
+          "error": "削除エラー",
+          "errorDescription": "削除中にエラーが発生しました。もう一度お試しください。"
+        },
+        "resubmit": {
+          "success": "POIが再提出されました",
+          "successDescription": "観光ポイントが検証のために再提出されました",
+          "error": "エラー",
+          "errorDescription": "POIを再提出できません"
+        },
+        "edit": {
+          "success": "POIが変更されました",
+          "successDescription": "観光ポイントが正常に変更されました"
+        },
+        "management": {
+          "accommodationTitle": "宿泊料金管理 – {name}",
+          "activityTitle": "アクティビティ料金管理 – {name}",
+          "restaurantTitle": "レストラン管理 – {name}"
+        }
+      },
+      "finances": {
+        "stats": {
+          "availableBalance": "利用可能残高",
+          "readyForWithdrawal": "出金準備完了",
+          "processing": "処理中",
+          "paymentOn": "支払日",
+          "thisMonth": "今月",
+          "monthlyRevenue": "月間収益",
+          "avgCommission": "平均手数料",
+          "avgRate": "平均率"
+        },
+        "revenueChart": {
+          "title": "収益の推移",
+          "description": "過去12ヶ月間の月間収益",
+          "revenue": "収益"
+        },
+        "tabs": {
+          "commissions": "手数料",
+          "withdrawals": "出金",
+          "paymentMethods": "支払い方法"
+        },
+        "commissions": {
+          "title": "手数料履歴",
+          "description": "すべての手数料の詳細",
+          "export": "エクスポート",
+          "client": "クライアント",
+          "reference": "参照",
+          "commission": "手数料",
+          "rate": "率",
+          "date": "日付"
+        },
+        "withdrawals": {
+          "title": "出金リクエスト",
+          "description": "資金の出金を管理",
+          "request": "出金リクエスト",
+          "empty": "出金リクエストなし",
+          "noPaymentMethod": "まず支払い方法を追加してください",
+          "amountExceeds": "金額が利用可能残高を超えています",
+          "requestSuccess": "出金リクエストが正常に送信されました",
+          "requestError": "出金リクエストの処理エラー"
+        },
+        "paymentMethods": {
+          "title": "支払い方法",
+          "description": "銀行口座とウォレットを管理",
+          "add": "追加",
+          "empty": "支払い方法が設定されていません",
+          "emptyDescription": "銀行口座または電子ウォレットを追加",
+          "accountConfigured": "アカウント設定済み",
+          "default": "デフォルト",
+          "active": "アクティブ",
+          "inactive": "非アクティブ"
+        },
+        "status": {
+          "pending": "保留中",
+          "processing": "処理中",
+          "paid": "支払済み",
+          "completed": "完了",
+          "failed": "失敗",
+          "rejected": "拒否"
+        },
+        "errors": {
+          "loadError": "財務データの読み込みエラー"
+        }
+      },
+      "charts": {
+        "viewsOverTime": "閲覧数の推移",
+        "viewsDescription": "30日間の閲覧数とコンバージョン率",
+        "bookingsRevenue": "予約と収益",
+        "revenueDescription": "週次財務パフォーマンス",
+        "performance": "パフォーマンス",
+        "topPerformer": "トップパフォーマー"
+      },
+      "earnings": {
+        "title": "収益履歴",
+        "description": "予約ごとの収益詳細",
+        "amount": "金額",
+        "commission": "手数料",
+        "bookingDate": "予約日",
+        "paymentStatus": "支払いステータス",
+        "pending": "保留中",
+        "paid": "支払い済み",
+        "cancelled": "キャンセル済み"
+      },
+      "notificationPanel": {
+        "title": "最新の通知",
+        "description": "観光スポットのアクティビティについて最新情報を入手",
+        "markAsRead": "既読にする",
+        "noNotifications": "通知はありません",
+        "updateError": "通知の更新中にエラーが発生しました"
+      },
+      "export": "データをエクスポート",
+      "loadingError": "ダッシュボードの読み込み中にエラーが発生しました",
+      "subscription": {
+        "loading": "サブスクリプション情報を読み込んでいます...",
+        "loadError": "サブスクリプション情報の読み込み中にエラーが発生しました",
+        "currentPlan": {
+          "title": "{planName}プラン",
+          "description": "{description} - 手数料{commission}%",
+          "nextPayment": "次回支払日: {date}",
+          "monthly": "{price}€/月",
+          "yearly": "{price}€/年"
+        },
+        "usage": {
+          "pois": "観光スポット",
+          "bookings": "今月の予約",
+          "commission": "現在の手数料",
+          "commissionNote": "上位プランほど手数料が低くなります"
+        },
+        "alerts": {
+          "limitWarning": "プランの上限に近づいています。アップグレードをご検討ください。"
+        },
+        "plans": {
+          "title": "利用可能なプラン",
+          "current": "現在",
+          "monthly": "{price}€/月",
+          "yearly": "または {price}€/年 (2ヶ月無料)",
+          "unlimited": "無制限の観光スポット",
+          "limited": "{count}個の観光スポット",
+          "commissionRate": "手数料{rate}%",
+          "upgradeMonthly": "アップグレード - 月払い",
+          "upgradeYearly": "アップグレード - 年払い",
+          "changeMonthly": "変更 - 月払い",
+          "changeYearly": "変更 - 年払い",
+          "cancel": "サブスクリプションをキャンセル"
+        },
+        "actions": {
+          "upgradeSuccess": "サブスクリプションが正常に更新されました!",
+          "upgradeError": "サブスクリプションの更新中にエラーが発生しました",
+          "cancelSuccess": "サブスクリプションがキャンセルされました。請求期間の終了まで有効です。",
+          "cancelError": "サブスクリプションのキャンセル中にエラーが発生しました"
+        },
+        "billing": {
+          "title": "請求履歴",
+          "description": "最近の請求書と支払い",
+          "empty": "利用可能な請求書がありません",
+          "emptyDescription": "支払いが行われると請求書がここに表示されます"
+        },
+        "status": {
+          "active": "アクティブ",
+          "cancelled": "キャンセル済み",
+          "suspended": "停止中"
+        },
+        "planDetails": {
+          "basic": {
+            "name": "ベーシック",
+            "description": "観光スポットの公開を始めるのに最適",
+            "features": [
+              "最大5つの観光スポット",
+              "標準サポート",
+              "基本分析"
+            ]
+          },
+          "premium": {
+            "name": "プレミアム",
+            "description": "カタログを拡大し、可視性を向上",
+            "features": [
+              "25個の観光スポット",
+              "優先サポート",
+              "高度な分析",
+              "マーケティングキャンペーン"
+            ]
+          },
+          "enterprise": {
+            "name": "エンタープライズ",
+            "description": "ホテルチェーンや大規模POI運営向け",
+            "features": [
+              "無制限の観光スポット",
+              "専任アカウントマネージャー",
+              "カスタム統合",
+              "24/7サポート"
+            ]
+          }
+        }
+      },
+      "bookings": {
+        "loading": "予約データを読み込んでいます...",
+        "loadError": "予約データの読み込み中にエラーが発生しました",
+        "stats": {
+          "totalBookings": "予約総数",
+          "totalRevenue": "収益",
+          "commissions": "手数料",
+          "pending": "保留中"
+        },
+        "history": {
+          "title": "予約履歴",
+          "reference": "参照番号",
+          "amount": "金額",
+          "commission": "手数料",
+          "date": "日付",
+          "customer": "顧客",
+          "poi": "観光スポット",
+          "empty": "まだ予約がありません",
+          "emptyDescription": "観光スポットの予約がここに表示されます"
+        },
+        "status": {
+          "pending": "保留中",
+          "confirmed": "確認済み",
+          "cancelled": "キャンセル済み",
+          "completed": "完了"
+        }
+      },
+      "notifications": {
+        "title": "通知",
+        "markAllRead": "すべて既読にする",
+        "loading": "通知を読み込んでいます...",
+        "empty": "まだ通知はありません",
+        "loadError": "通知を読み込めません",
+        "markAllSuccess": "すべての通知を既読にしました",
+        "reference": "参照: {reference}"
+      }
+    }
   }
 }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { partnerService, PartnerNotificationDTO } from '@/services/partnerService';
+import { useTranslation } from 'react-i18next';
 
 interface PartnerNotificationSystemProps {
   className?: string;
@@ -14,6 +15,7 @@ interface PartnerNotificationSystemProps {
 export const PartnerNotificationSystem: React.FC<PartnerNotificationSystemProps> = ({
   className = ''
 }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<PartnerNotificationDTO[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -37,7 +39,7 @@ export const PartnerNotificationSystem: React.FC<PartnerNotificationSystemProps>
       setUnreadCount(data?.filter((n) => !n.is_read).length || 0);
     } catch (error) {
       console.error('Error fetching notifications:', error);
-      toast.error('Impossible de charger les notifications');
+      toast.error(t('partnerCenter.dashboard.notifications.loadError'));
     } finally {
       setLoading(false);
     }
@@ -61,7 +63,7 @@ export const PartnerNotificationSystem: React.FC<PartnerNotificationSystemProps>
       await Promise.all(unread.map((notif) => partnerService.markNotificationRead(notif.id)));
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setUnreadCount(0);
-      toast.success('Toutes les notifications ont été marquées comme lues');
+      toast.success(t('partnerCenter.dashboard.notifications.markAllSuccess'));
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
     }
@@ -103,7 +105,7 @@ export const PartnerNotificationSystem: React.FC<PartnerNotificationSystemProps>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Bell className="w-5 h-5" />
-            Notifications
+            {t('partnerCenter.dashboard.notifications.title')}
             {unreadCount > 0 && (
               <Badge variant="destructive" className="ml-2">
                 {unreadCount}
@@ -117,7 +119,7 @@ export const PartnerNotificationSystem: React.FC<PartnerNotificationSystemProps>
               size="sm"
               onClick={markAllAsRead}
             >
-              Tout marquer lu
+              {t('partnerCenter.dashboard.notifications.markAllRead')}
             </Button>
           )}
         </div>
@@ -126,12 +128,12 @@ export const PartnerNotificationSystem: React.FC<PartnerNotificationSystemProps>
       <CardContent>
         {loading ? (
           <div className="text-center py-4 text-muted-foreground">
-            Chargement des notifications...
+            {t('partnerCenter.dashboard.notifications.loading')}
           </div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>Aucune notification pour le moment</p>
+            <p>{t('partnerCenter.dashboard.notifications.empty')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -161,7 +163,7 @@ export const PartnerNotificationSystem: React.FC<PartnerNotificationSystemProps>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {notification.metadata.booking_reference && (
                             <Badge variant="outline" className="text-xs">
-                              Réf: {notification.metadata.booking_reference}
+                              {t('partnerCenter.dashboard.notifications.reference', { reference: notification.metadata.booking_reference })}
                             </Badge>
                           )}
                           {notification.metadata.amount && (

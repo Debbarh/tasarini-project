@@ -3,6 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { BookingEnrichmentPanel } from "@/components/trip/BookingEnrichmentPanel";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 import hero from "@/assets/hero-travel.jpg";
 import beach from "@/assets/inspire-beach.jpg";
@@ -12,6 +17,7 @@ import cultural from "@/assets/inspire-cultural.jpg";
 
 const Index = () => {
   const { t } = useTranslation();
+  const { settings } = useSystemSettings();
   const images = [
     { src: hero, alt: t('home.heroTitle') },
     { src: beach, alt: t('home.exploreWorldDesc') },
@@ -21,6 +27,11 @@ const Index = () => {
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Debug: log booking center setting
+  useEffect(() => {
+    console.log('🏠 Index page - bookingCenterEnabled:', settings.bookingCenterEnabled);
+  }, [settings.bookingCenterEnabled]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -165,7 +176,195 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
+
+      {/* How it works */}
+      <section className="py-12 sm:py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-2">
+                {t('home.howItWorksTitle', 'Comment ça marche ?')}
+              </h2>
+              <p className="text-muted-foreground">
+                {t('home.howItWorksSubtitle', '3 étapes simples pour passer de l’idée au voyage confirmé.')}
+              </p>
+            </div>
+            <Button asChild size="lg" className="hover-scale">
+              <Link to="/plan">
+                {t('home.planTrip')}
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
+            <Card className="border-primary/10">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">1</span>
+                  {t('home.howStep1Title', 'Inspirez-vous')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-2">
+                <p>{t('home.howStep1Desc', 'Parcourez les stories et les idées de voyage adaptées à vos envies.')}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-primary/10">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">2</span>
+                  {t('home.howStep2Title', 'Planifiez')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-2">
+                <p>{t('home.howStep2Desc', 'Utilisez notre assistant pour créer un itinéraire et réserver hôtels et transports.')}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-primary/10">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">3</span>
+                  {t('home.howStep3Title', 'Partez serein')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-2">
+                <p>{t('home.howStep3Desc', 'Recevez les confirmations, partagez vos stories et profitez du voyage.')}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Booking Engine Section - Controlled by admin settings */}
+      {settings.bookingCenterEnabled && (
+        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-primary/5">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
+                🏨 Centrale de Réservation
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Recherchez et réservez vos hôtels, vols et activités en quelques clics
+              </p>
+            </div>
+
+            <div className="max-w-7xl mx-auto">
+              <BookingEnrichmentPanel standalone={true} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Transport Section with Tabs */}
+      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-primary/5 to-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-6">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
+              🚗 Services de Transport
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Location de véhicules, transferts et transport urbain
+            </p>
+          </div>
+
+          <Tabs defaultValue="car-rental" className="max-w-7xl mx-auto">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-6">
+              <TabsTrigger value="car-rental">🚗 Location</TabsTrigger>
+              <TabsTrigger value="transfers">🚕 Transferts</TabsTrigger>
+              <TabsTrigger value="public">🚌 Bus & Train</TabsTrigger>
+              <TabsTrigger value="urban">🚖 Urbain</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="car-rental" className="mt-0">
+              <WidgetRenderer placement="home_transport_car" />
+            </TabsContent>
+
+            <TabsContent value="transfers" className="mt-0">
+              <WidgetRenderer placement="home_transport_transfers" />
+            </TabsContent>
+
+            <TabsContent value="public" className="mt-0">
+              <WidgetRenderer placement="home_transport_public" />
+            </TabsContent>
+
+            <TabsContent value="urban" className="mt-0">
+              <WidgetRenderer placement="home_transport_urban" />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
+
+      {/* Activities & Experiences Section with Tabs */}
+      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-background to-primary/5">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-6">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
+              🎯 Activités & Expériences
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Découvrez les meilleures activités et restaurants
+            </p>
+          </div>
+
+          <Tabs defaultValue="tours" className="max-w-7xl mx-auto">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="tours">🗺️ Tours & Visites</TabsTrigger>
+              <TabsTrigger value="dining">🍽️ Gastronomie</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="tours" className="mt-0">
+              <WidgetRenderer placement="home_activities_tours" />
+            </TabsContent>
+
+            <TabsContent value="dining" className="mt-0">
+              <WidgetRenderer placement="home_activities_dining" />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
+
+      {/* Services Section with Tabs */}
+      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-primary/5 to-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-6">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
+              💼 Services Voyageurs
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Connectivité et assistance
+            </p>
+          </div>
+
+          <Tabs defaultValue="booking" className="max-w-7xl mx-auto">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
+              <TabsTrigger value="booking">✈️ Réservation</TabsTrigger>
+              <TabsTrigger value="esim">📱 Cartes eSIM</TabsTrigger>
+              <TabsTrigger value="compensation">⚖️ Indemnisation</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="booking" className="mt-0">
+              <WidgetRenderer placement="home_services_booking" />
+            </TabsContent>
+
+            <TabsContent value="esim" className="mt-0">
+              <WidgetRenderer placement="home_services_esim" />
+            </TabsContent>
+
+            <TabsContent value="compensation" className="mt-0">
+              <WidgetRenderer placement="home_services_compensation" />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
+
+      {/* Dynamic Widgets Section - Managed from Admin */}
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-primary/5">
+        <div className="container mx-auto px-4">
+          <WidgetRenderer placement="home" className="max-w-7xl mx-auto" />
+        </div>
+      </section>
+
     </main>
   );
 };

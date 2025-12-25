@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +47,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
   radiusKm = 30,
   onPOISelect
 }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [recommendations, setRecommendations] = useState<SmartRecommendation[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -71,15 +73,15 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
       setUserProfile(data.userProfile || null);
 
       if (data.recommendations?.length === 0) {
-        toast.info('Aucune nouvelle recommandation trouvée. Explorez plus pour améliorer vos suggestions !');
+        toast.info(t('beInspired.smartRecommendations.noNewRecommendations'));
       } else {
-        toast.success(`${data.recommendations?.length || 0} recommandations personnalisées générées !`);
+        toast.success(t('beInspired.smartRecommendations.successGenerated', { count: data.recommendations?.length || 0 }));
       }
 
     } catch (error: any) {
-      console.error('Erreur lors du chargement des recommandations:', error);
-      setError('Impossible de charger les recommandations intelligentes');
-      toast.error('Erreur lors du chargement des recommandations');
+      console.error('Error loading recommendations:', error);
+      setError(t('beInspired.smartRecommendations.error'));
+      toast.error(t('beInspired.smartRecommendations.loadingError'));
     } finally {
       setLoading(false);
     }
@@ -92,9 +94,9 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 80) return 'Excellent match';
-    if (score >= 60) return 'Bon match';
-    return 'À découvrir';
+    if (score >= 80) return t('beInspired.smartRecommendations.excellentMatch');
+    if (score >= 60) return t('beInspired.smartRecommendations.goodMatch');
+    return t('beInspired.smartRecommendations.toDiscover');
   };
 
   if (!user) {
@@ -102,9 +104,9 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
       <Card>
         <CardContent className="text-center py-8">
           <Target className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Recommandations Intelligentes</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('beInspired.smartRecommendations.title')}</h3>
           <p className="text-muted-foreground">
-            Connectez-vous pour recevoir des recommandations personnalisées basées sur vos préférences
+            {t('beInspired.smartRecommendations.loginRequired')}
           </p>
         </CardContent>
       </Card>
@@ -117,11 +119,11 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            Recommandations Intelligentes
+            {t('beInspired.smartRecommendations.title')}
             <TrendingUp className="w-4 h-4 text-green-500" />
           </CardTitle>
           <CardDescription>
-            Suggestions personnalisées basées sur vos goûts et votre historique
+            {t('beInspired.smartRecommendations.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -129,7 +131,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
             <div className="text-sm text-muted-foreground">
               {userProfile && (
                 <div className="flex flex-wrap gap-2">
-                  <span>Vos préférences:</span>
+                  <span>{t('beInspired.smartRecommendations.yourPreferences')}</span>
                   {userProfile.preferredTags.slice(0, 3).map((tag, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
                       {tag}
@@ -154,7 +156,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
               ) : (
                 <Sparkles className="w-4 h-4 mr-2" />
               )}
-              Actualiser
+              {t('beInspired.smartRecommendations.refresh')}
             </Button>
           </div>
         </CardContent>
@@ -164,7 +166,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
         <Card>
           <CardContent className="text-center py-8">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Analyse de vos préférences en cours...</p>
+            <p className="text-muted-foreground">{t('beInspired.smartRecommendations.analyzing')}</p>
           </CardContent>
         </Card>
       )}
@@ -174,7 +176,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
           <CardContent className="text-center py-8">
             <div className="text-destructive mb-4">⚠️ {error}</div>
             <Button onClick={fetchRecommendations} variant="outline">
-              Réessayer
+              {t('beInspired.smartRecommendations.retry')}
             </Button>
           </CardContent>
         </Card>
@@ -184,12 +186,12 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
         <Card>
           <CardContent className="text-center py-8">
             <Target className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Besoin de plus de données</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('beInspired.smartRecommendations.noRecommendationsTitle')}</h3>
             <p className="text-muted-foreground mb-4">
-              Ajoutez des lieux à vos favoris et créez des itinéraires pour recevoir des recommandations personnalisées !
+              {t('beInspired.smartRecommendations.noRecommendationsDesc')}
             </p>
             <Button onClick={() => window.location.href = '/inspire'}>
-              Explorer la carte
+              {t('beInspired.smartRecommendations.exploreMap')}
             </Button>
           </CardContent>
         </Card>
@@ -207,7 +209,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge className={`${getScoreColor(recommendation.score)} text-white`}>
-                        {recommendation.score}% match
+                        {recommendation.score}% {t('beInspired.smartRecommendations.match')}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         {getScoreLabel(recommendation.score)}
@@ -269,7 +271,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
                     }}
                   >
                     <MapPin className="w-4 h-4 mr-2" />
-                    Carte
+                    {t('beInspired.smartRecommendations.viewOnMap')}
                   </Button>
 
                   {/* Add partner booking button if available */}

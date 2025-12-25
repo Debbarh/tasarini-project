@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ const iconMap = {
 } as const;
 
 export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsStepProps) => {
+  const { t } = useTranslation();
   const { types, configurations, getConfigurationForType, getSubtypesForType, loading, error } = useTravelGroupTypes();
   const [travelGroup, setTravelGroup] = useState<TravelGroup>(
     data.travelGroup || { type: 'solo', size: 1 }
@@ -188,7 +190,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
   if (error) {
     return (
       <div className="text-center text-red-500">
-        <p>Erreur: {error}</p>
+        <p>{t('planTrip.travelDetailsStep.error')}: {error}</p>
       </div>
     );
   }
@@ -200,9 +202,9 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Compagnons de voyage</h3>
+        <h3 className="text-lg font-semibold mb-2">{t('planTrip.travelDetailsStep.title')}</h3>
         <p className="text-muted-foreground">
-          Précisez la composition de votre groupe de voyage
+          {t('planTrip.travelDetailsStep.description')}
         </p>
       </div>
 
@@ -210,7 +212,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Users className="h-4 w-4 text-primary" />
-            Type de voyageur
+            {t('planTrip.travelDetailsStep.travelerType')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -237,13 +239,13 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
           {/* Sous-types */}
           {selectedSubtypes.length > 0 && (
             <div className="space-y-2 border-t pt-4">
-              <Label>Sous-type</Label>
+              <Label>{t('planTrip.travelDetailsStep.subtype')}</Label>
               <Select
                 value={travelGroup.subtype || ''}
                 onValueChange={(value) => updateTravelGroup({ subtype: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Choisir un sous-type (optionnel)" />
+                  <SelectValue placeholder={t('planTrip.travelDetailsStep.chooseSubtype')} />
                 </SelectTrigger>
                 <SelectContent>
                   {selectedSubtypes.map((subtype) => (
@@ -260,9 +262,9 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
           {selectedConfig && selectedConfig.requires_size_input && (
             <div className="space-y-2 border-t pt-4">
               <Label htmlFor="group-size">
-                Taille du groupe
+                {t('planTrip.travelDetailsStep.groupSize')}
                 {selectedConfig.min_size && selectedConfig.max_size && 
-                  ` (${selectedConfig.min_size}-${selectedConfig.max_size} personnes)`
+                  ` (${selectedConfig.min_size}-${selectedConfig.max_size} ${t('planTrip.travelDetailsStep.people')})`
                 }
               </Label>
               <Input
@@ -281,10 +283,10 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
           {selectedConfig?.allows_children && (
             <div className="space-y-4 border-t pt-4">
               <div className="flex items-center justify-between">
-                <Label>Enfants</Label>
+                <Label>{t('planTrip.travelDetailsStep.children')}</Label>
                 <Button variant="outline" size="sm" onClick={addChild}>
                   <Baby className="h-4 w-4 mr-1" />
-                  Ajouter un enfant
+                  {t('planTrip.travelDetailsStep.addChild')}
                 </Button>
               </div>
               
@@ -292,7 +294,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                 <div className="space-y-2">
                   {travelGroup.children.ages.map((age, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <Label className="min-w-fit">Enfant {index + 1} :</Label>
+                      <Label className="min-w-fit">{t('planTrip.travelDetailsStep.child')} {index + 1} :</Label>
                       <Select
                         value={age.toString()}
                         onValueChange={(value) => updateChildAge(index, parseInt(value))}
@@ -307,7 +309,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                             const ageValue = (selectedConfig.min_child_age || 0) + i;
                             return (
                               <SelectItem key={ageValue} value={ageValue.toString()}>
-                                {ageValue} an{ageValue > 1 ? 's' : ''}
+                                {ageValue} {ageValue > 1 ? t('planTrip.travelDetailsStep.years') : t('planTrip.travelDetailsStep.year')}
                               </SelectItem>
                             );
                           })}
@@ -333,7 +335,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
       <Card className="bg-secondary/50">
         <CardContent className="p-4">
           <div className="space-y-4">
-            <h4 className="font-medium">Récapitulatif</h4>
+            <h4 className="font-medium">{t('planTrip.travelDetailsStep.summary')}</h4>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline">
                 {selectedType?.label_fr}
@@ -343,24 +345,24 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
               </Badge>
               {(selectedConfig?.requires_size_input || travelGroup.size > 1) && (
                 <Badge variant="outline">
-                  {travelGroup.size} personne{travelGroup.size > 1 ? 's' : ''}
+                  {travelGroup.size} {travelGroup.size > 1 ? t('planTrip.travelDetailsStep.people') : t('planTrip.travelDetailsStep.person')}
                 </Badge>
               )}
               {travelGroup.children && travelGroup.children.count > 0 && (
                 <Badge variant="outline">
-                  {travelGroup.children.count} enfant{travelGroup.children.count > 1 ? 's' : ''}
+                  {travelGroup.children.count} {travelGroup.children.count > 1 ? t('planTrip.travelDetailsStep.children').toLowerCase() : t('planTrip.travelDetailsStep.child')}
                 </Badge>
               )}
             </div>
 
             {/* Impact sur les recommandations POI */}
             <div className="mt-4 p-3 bg-background rounded-lg border">
-              <h5 className="font-medium text-sm mb-2">Impact sur vos recommandations :</h5>
+              <h5 className="font-medium text-sm mb-2">{t('planTrip.travelDetailsStep.impactOnRecommendations')}</h5>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="text-xs">
-                    Niveau max: {(() => {
-                      const difficultyLabels = ['', 'Très facile', 'Facile', 'Modéré', 'Difficile', 'Très difficile'];
+                    {t('planTrip.travelDetailsStep.maxLevel')}: {(() => {
+                      const difficultyLabels = ['', t('planTrip.travelDetailsStep.veryEasy'), t('planTrip.travelDetailsStep.easy'), t('planTrip.travelDetailsStep.moderate'), t('planTrip.travelDetailsStep.difficult'), t('planTrip.travelDetailsStep.veryDifficult')];
                       return difficultyLabels[getMaxDifficultyForGroup(travelGroup)];
                     })()}
                   </Badge>
@@ -376,15 +378,15 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                     <div className="flex items-center gap-2">
                       <span className="text-green-600">✓</span>
                       <span className="text-green-700 font-medium">
-                        {compatiblePOIsCount} POI{compatiblePOIsCount > 1 ? 's' : ''} compatible{compatiblePOIsCount > 1 ? 's' : ''} trouvé{compatiblePOIsCount > 1 ? 's' : ''}
+                        {compatiblePOIsCount} {compatiblePOIsCount > 1 ? t('planTrip.travelDetailsStep.compatiblePOIsFoundPlural') : t('planTrip.travelDetailsStep.compatiblePOIsFound')}
                       </span>
                     </div>
                     <p className="text-green-600 text-sm mt-1">
-                      Sur {totalPOIsCount} POI{totalPOIsCount > 1 ? 's' : ''} dans la région
+                      {totalPOIsCount} POI{totalPOIsCount > 1 ? 's' : ''} {t('planTrip.travelDetailsStep.inRegion')}
                     </p>
                     {data.budget && affordablePOIsCount !== totalPOIsCount && (
                       <p className="text-green-600 text-sm">
-                        💰 {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} dans votre budget
+                        💰 {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} {t('planTrip.travelDetailsStep.inYourBudget')}
                       </p>
                     )}
                   </div>
@@ -395,15 +397,15 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                     <div className="flex items-center gap-2">
                       <span className="text-amber-600">⚠</span>
                       <span className="text-amber-700 font-medium">
-                        Aucun POI compatible trouvé
+                        {t('planTrip.travelDetailsStep.noPOIFound')}
                       </span>
                     </div>
                     <p className="text-amber-600 text-sm mt-1">
-                      Considérez ajuster vos critères pour plus d'options ({totalPOIsCount} POI{totalPOIsCount > 1 ? 's' : ''} disponible{totalPOIsCount > 1 ? 's' : ''})
+                      {t('planTrip.travelDetailsStep.adjustCriteria')} ({totalPOIsCount} POI{totalPOIsCount > 1 ? 's' : ''} {totalPOIsCount > 1 ? t('planTrip.travelDetailsStep.availablePlural') : t('planTrip.travelDetailsStep.available')})
                     </p>
                     {data.budget && affordablePOIsCount > 0 && (
                       <p className="text-amber-600 text-sm">
-                        💰 {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} reste{affordablePOIsCount > 1 ? 'nt' : ''} dans votre budget
+                        💰 {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} {affordablePOIsCount > 1 ? t('planTrip.travelDetailsStep.remainsPlural') : t('planTrip.travelDetailsStep.remains')} {t('planTrip.travelDetailsStep.inYourBudget')}
                       </p>
                     )}
                   </div>

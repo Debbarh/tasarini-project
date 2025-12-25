@@ -6,14 +6,33 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Globe } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCulinarySettings } from '@/hooks/useCulinarySettings';
 import { culinaryAdminService } from '@/services/culinaryAdminService';
+import { getLocalizedLabel } from '@/utils/multilingualHelpers';
+import { useTranslation } from 'react-i18next';
+
+const LABEL_LANGUAGE_OPTIONS = [
+  { code: 'fr', label: 'Français', required: true },
+  { code: 'en', label: 'Anglais' },
+  { code: 'es', label: 'Espagnol' },
+  { code: 'de', label: 'Allemand' },
+  { code: 'it', label: 'Italien' },
+  { code: 'pt', label: 'Portugais' },
+  { code: 'ru', label: 'Russe' },
+  { code: 'ja', label: 'Japonais' },
+  { code: 'zh', label: 'Chinois' },
+  { code: 'hi', label: 'Hindi' },
+  { code: 'ar', label: 'Arabe' },
+] as const;
+
+const DESCRIPTION_LANGUAGE_OPTIONS = LABEL_LANGUAGE_OPTIONS;
 
 export const CulinaryManagement = () => {
+  const { i18n } = useTranslation();
   const { toast } = useToast();
   const { 
     dietaryRestrictions, 
@@ -100,6 +119,22 @@ export const CulinaryManagement = () => {
     }
   };
 
+  const collectLabelTranslations = (formData: FormData) => {
+    const payload: Record<string, string> = {};
+    LABEL_LANGUAGE_OPTIONS.forEach(({ code }) => {
+      payload[`label_${code}`] = (formData.get(`label_${code}`) as string) || '';
+    });
+    return payload;
+  };
+
+  const collectDescriptionTranslations = (formData: FormData) => {
+    const payload: Record<string, string> = {};
+    DESCRIPTION_LANGUAGE_OPTIONS.forEach(({ code }) => {
+      payload[`description_${code}`] = (formData.get(`description_${code}`) as string) || '';
+    });
+    return payload;
+  };
+
   const handleToggleActive = async (type: CulinaryType, id: string, isActive: boolean) => {
     try {
       await updateMap[type](id, { is_active: !isActive });
@@ -129,20 +164,92 @@ export const CulinaryManagement = () => {
     }
   };
 
+  const handleTranslateDietary = async (id: string) => {
+    try {
+      const result = await culinaryAdminService.translateDietaryRestriction(id);
+      setEditingItem(result.dietary_restriction);
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      await refetch();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire la restriction alimentaire",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTranslateCuisine = async (id: string) => {
+    try {
+      const result = await culinaryAdminService.translateCuisineType(id);
+      setEditingItem(result.cuisine_type);
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      await refetch();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire le type de cuisine",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTranslateAdventure = async (id: string) => {
+    try {
+      const result = await culinaryAdminService.translateAdventureLevel(id);
+      setEditingItem(result.culinary_adventure_level);
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      await refetch();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire le niveau d'aventure",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTranslateRestaurant = async (id: string) => {
+    try {
+      const result = await culinaryAdminService.translateRestaurantCategory(id);
+      setEditingItem(result.restaurant_category);
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      await refetch();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire la catégorie de restaurant",
+        variant: "destructive",
+      });
+    }
+  };
+
   const DietaryRestrictionsForm = () => (
     <form onSubmit={(e) => {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
+      const labels = collectLabelTranslations(formData);
+      const descriptions = collectDescriptionTranslations(formData);
       handleSubmit('dietary', {
         id: editingItem?.id,
         code: formData.get('code'),
-        label_fr: formData.get('label_fr'),
-        label_en: formData.get('label_en'),
-        description_fr: formData.get('description_fr'),
-        description_en: formData.get('description_en'),
         icon_emoji: formData.get('icon_emoji'),
         is_active: editingItem?.is_active ?? true,
-        display_order: parseInt(formData.get('display_order') as string) || 0
+        display_order: parseInt(formData.get('display_order') as string) || 0,
+        ...labels,
+        ...descriptions,
       });
     }} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -155,26 +262,41 @@ export const CulinaryManagement = () => {
           <Input name="icon_emoji" defaultValue={editingItem?.icon_emoji} />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="label_fr">Label FR</Label>
-          <Input name="label_fr" defaultValue={editingItem?.label_fr} required />
+      {editingItem && (
+        <div className="border rounded-lg p-3 bg-blue-50 mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Traduction automatique</p>
+              <p className="text-xs text-gray-600 mt-1">
+                Remplir automatiquement les champs de traduction vides via LibreTranslate
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleTranslateDietary(editingItem.id)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Globe className="w-4 h-4 mr-1" />
+              Traduire
+            </Button>
+          </div>
         </div>
-        <div>
-          <Label htmlFor="label_en">Label EN</Label>
-          <Input name="label_en" defaultValue={editingItem?.label_en} required />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="description_fr">Description FR</Label>
-          <Input name="description_fr" defaultValue={editingItem?.description_fr} />
-        </div>
-        <div>
-          <Label htmlFor="description_en">Description EN</Label>
-          <Input name="description_en" defaultValue={editingItem?.description_en} />
-        </div>
-      </div>
+      )}
+      <TranslationInputGrid
+        title="Labels (toutes langues)"
+        languages={LABEL_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="label"
+      />
+      <TranslationInputGrid
+        title="Descriptions (toutes langues)"
+        languages={DESCRIPTION_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="description"
+        textarea
+      />
       <div>
         <Label htmlFor="display_order">Ordre d'affichage</Label>
         <Input name="display_order" type="number" defaultValue={editingItem?.display_order || 0} />
@@ -196,16 +318,16 @@ export const CulinaryManagement = () => {
     <form onSubmit={(e) => {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
+      const labels = collectLabelTranslations(formData);
+      const descriptions = collectDescriptionTranslations(formData);
       handleSubmit('cuisine', {
         id: editingItem?.id,
         code: formData.get('code'),
-        label_fr: formData.get('label_fr'),
-        label_en: formData.get('label_en'),
-        description_fr: formData.get('description_fr'),
-        description_en: formData.get('description_en'),
         region: formData.get('region'),
         is_active: editingItem?.is_active ?? true,
-        display_order: parseInt(formData.get('display_order') as string) || 0
+        display_order: parseInt(formData.get('display_order') as string) || 0,
+        ...labels,
+        ...descriptions,
       });
     }} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -218,26 +340,41 @@ export const CulinaryManagement = () => {
           <Input name="region" defaultValue={editingItem?.region} />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="label_fr">Label FR</Label>
-          <Input name="label_fr" defaultValue={editingItem?.label_fr} required />
+      {editingItem && (
+        <div className="border rounded-lg p-3 bg-blue-50 mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Traduction automatique</p>
+              <p className="text-xs text-gray-600 mt-1">
+                Remplir automatiquement les champs de traduction vides via LibreTranslate
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleTranslateCuisine(editingItem.id)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Globe className="w-4 h-4 mr-1" />
+              Traduire
+            </Button>
+          </div>
         </div>
-        <div>
-          <Label htmlFor="label_en">Label EN</Label>
-          <Input name="label_en" defaultValue={editingItem?.label_en} required />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="description_fr">Description FR</Label>
-          <Input name="description_fr" defaultValue={editingItem?.description_fr} />
-        </div>
-        <div>
-          <Label htmlFor="description_en">Description EN</Label>
-          <Input name="description_en" defaultValue={editingItem?.description_en} />
-        </div>
-      </div>
+      )}
+      <TranslationInputGrid
+        title="Labels (toutes langues)"
+        languages={LABEL_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="label"
+      />
+      <TranslationInputGrid
+        title="Descriptions (toutes langues)"
+        languages={DESCRIPTION_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="description"
+        textarea
+      />
       <div>
         <Label htmlFor="display_order">Ordre d'affichage</Label>
         <Input name="display_order" type="number" defaultValue={editingItem?.display_order || 0} />
@@ -259,16 +396,16 @@ export const CulinaryManagement = () => {
     <form onSubmit={(e) => {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
+      const labels = collectLabelTranslations(formData);
+      const descriptions = collectDescriptionTranslations(formData);
       handleSubmit('adventure', {
         id: editingItem?.id,
         code: formData.get('code'),
-        label_fr: formData.get('label_fr'),
-        label_en: formData.get('label_en'),
-        description_fr: formData.get('description_fr'),
-        description_en: formData.get('description_en'),
         level_value: parseInt(formData.get('level_value') as string),
         is_active: editingItem?.is_active ?? true,
-        display_order: parseInt(formData.get('display_order') as string) || 0
+        display_order: parseInt(formData.get('display_order') as string) || 0,
+        ...labels,
+        ...descriptions,
       });
     }} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -281,26 +418,41 @@ export const CulinaryManagement = () => {
           <Input name="level_value" type="number" defaultValue={editingItem?.level_value} required />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="label_fr">Label FR</Label>
-          <Input name="label_fr" defaultValue={editingItem?.label_fr} required />
+      {editingItem && (
+        <div className="border rounded-lg p-3 bg-blue-50 mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Traduction automatique</p>
+              <p className="text-xs text-gray-600 mt-1">
+                Remplir automatiquement les champs de traduction vides via LibreTranslate
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleTranslateAdventure(editingItem.id)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Globe className="w-4 h-4 mr-1" />
+              Traduire
+            </Button>
+          </div>
         </div>
-        <div>
-          <Label htmlFor="label_en">Label EN</Label>
-          <Input name="label_en" defaultValue={editingItem?.label_en} required />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="description_fr">Description FR</Label>
-          <Input name="description_fr" defaultValue={editingItem?.description_fr} />
-        </div>
-        <div>
-          <Label htmlFor="description_en">Description EN</Label>
-          <Input name="description_en" defaultValue={editingItem?.description_en} />
-        </div>
-      </div>
+      )}
+      <TranslationInputGrid
+        title="Labels (toutes langues)"
+        languages={LABEL_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="label"
+      />
+      <TranslationInputGrid
+        title="Descriptions (toutes langues)"
+        languages={DESCRIPTION_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="description"
+        textarea
+      />
       <div>
         <Label htmlFor="display_order">Ordre d'affichage</Label>
         <Input name="display_order" type="number" defaultValue={editingItem?.display_order || 0} />
@@ -322,18 +474,18 @@ export const CulinaryManagement = () => {
     <form onSubmit={(e) => {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
+      const labels = collectLabelTranslations(formData);
+      const descriptions = collectDescriptionTranslations(formData);
       handleSubmit('restaurant', {
         id: editingItem?.id,
         code: formData.get('code'),
-        label_fr: formData.get('label_fr'),
-        label_en: formData.get('label_en'),
-        description_fr: formData.get('description_fr'),
-        description_en: formData.get('description_en'),
         icon_emoji: formData.get('icon_emoji'),
         price_range_min: parseInt(formData.get('price_range_min') as string) || null,
         price_range_max: parseInt(formData.get('price_range_max') as string) || null,
         is_active: editingItem?.is_active ?? true,
-        display_order: parseInt(formData.get('display_order') as string) || 0
+        display_order: parseInt(formData.get('display_order') as string) || 0,
+        ...labels,
+        ...descriptions,
       });
     }} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -346,26 +498,41 @@ export const CulinaryManagement = () => {
           <Input name="icon_emoji" defaultValue={editingItem?.icon_emoji} />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="label_fr">Label FR</Label>
-          <Input name="label_fr" defaultValue={editingItem?.label_fr} required />
+      {editingItem && (
+        <div className="border rounded-lg p-3 bg-blue-50 mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Traduction automatique</p>
+              <p className="text-xs text-gray-600 mt-1">
+                Remplir automatiquement les champs de traduction vides via LibreTranslate
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleTranslateRestaurant(editingItem.id)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Globe className="w-4 h-4 mr-1" />
+              Traduire
+            </Button>
+          </div>
         </div>
-        <div>
-          <Label htmlFor="label_en">Label EN</Label>
-          <Input name="label_en" defaultValue={editingItem?.label_en} required />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="description_fr">Description FR</Label>
-          <Input name="description_fr" defaultValue={editingItem?.description_fr} />
-        </div>
-        <div>
-          <Label htmlFor="description_en">Description EN</Label>
-          <Input name="description_en" defaultValue={editingItem?.description_en} />
-        </div>
-      </div>
+      )}
+      <TranslationInputGrid
+        title="Labels (toutes langues)"
+        languages={LABEL_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="label"
+      />
+      <TranslationInputGrid
+        title="Descriptions (toutes langues)"
+        languages={DESCRIPTION_LANGUAGE_OPTIONS}
+        editingItem={editingItem}
+        prefix="description"
+        textarea
+      />
       <div className="grid grid-cols-3 gap-4">
         <div>
           <Label htmlFor="price_range_min">Prix min (€)</Label>
@@ -421,7 +588,7 @@ export const CulinaryManagement = () => {
                     Ajouter
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-3xl w-[90vw] max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
                       {editingItem ? 'Modifier' : 'Ajouter'} une restriction alimentaire
@@ -499,7 +666,7 @@ export const CulinaryManagement = () => {
                     Ajouter
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-3xl w-[90vw] max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
                       {editingItem ? 'Modifier' : 'Ajouter'} un type de cuisine
@@ -577,7 +744,7 @@ export const CulinaryManagement = () => {
                     Ajouter
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-3xl w-[90vw] max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
                       {editingItem ? 'Modifier' : 'Ajouter'} un niveau d'aventure
@@ -655,7 +822,7 @@ export const CulinaryManagement = () => {
                     Ajouter
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-3xl w-[90vw] max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
                       {editingItem ? 'Modifier' : 'Ajouter'} une catégorie de restaurant
@@ -734,3 +901,47 @@ export const CulinaryManagement = () => {
     </Card>
   );
 };
+
+interface TranslationInputGridProps {
+  title: string;
+  languages: ReadonlyArray<{ code: string; label: string; required?: boolean }>;
+  editingItem: any;
+  prefix: string;
+  textarea?: boolean;
+}
+
+const TranslationInputGrid = ({
+  title,
+  languages,
+  editingItem,
+  prefix,
+  textarea = false,
+}: TranslationInputGridProps) => (
+  <div className="rounded-lg border p-3 space-y-3">
+    <p className="text-sm font-medium">{title}</p>
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      {languages.map(({ code, label, required }) => (
+        <div key={`${prefix}-${code}`} className="space-y-1">
+          <Label className="text-xs font-medium text-muted-foreground uppercase flex items-center gap-1">
+            {label}
+            {required && <span className="text-destructive">*</span>}
+          </Label>
+          {textarea ? (
+            <textarea
+              name={`${prefix}_${code}`}
+              defaultValue={editingItem?.[`${prefix}_${code}`] || ''}
+              required={required}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+            />
+          ) : (
+            <Input
+              name={`${prefix}_${code}`}
+              defaultValue={editingItem?.[`${prefix}_${code}`] || ''}
+              required={required}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+);

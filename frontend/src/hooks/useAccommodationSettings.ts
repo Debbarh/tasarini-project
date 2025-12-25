@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { accommodationSettingsService, AccommodationTaxonomyEntry } from '@/services/accommodationSettingsService';
+import { extractArrayFromResponse } from '@/integrations/api/client';
 
 export const useAccommodationSettings = () => {
   const [accommodationTypes, setAccommodationTypes] = useState<AccommodationTaxonomyEntry[]>([]);
@@ -32,12 +33,13 @@ export const useAccommodationSettings = () => {
         accommodationSettingsService.listAmbiance(),
       ]);
 
-      setAccommodationTypes(types ?? []);
-      setAccommodationAmenities(amenities ?? []);
-      setAccommodationLocations(locations ?? []);
-      setAccommodationAccessibility(accessibility ?? []);
-      setAccommodationSecurity(security ?? []);
-      setAccommodationAmbiance(ambiance ?? []);
+      // Handle both array and paginated response formats
+      setAccommodationTypes(extractArrayFromResponse<AccommodationTaxonomyEntry>(types));
+      setAccommodationAmenities(extractArrayFromResponse<AccommodationTaxonomyEntry>(amenities));
+      setAccommodationLocations(extractArrayFromResponse<AccommodationTaxonomyEntry>(locations));
+      setAccommodationAccessibility(extractArrayFromResponse<AccommodationTaxonomyEntry>(accessibility));
+      setAccommodationSecurity(extractArrayFromResponse<AccommodationTaxonomyEntry>(security));
+      setAccommodationAmbiance(extractArrayFromResponse<AccommodationTaxonomyEntry>(ambiance));
     } catch (err: any) {
       setError(err.message);
     } finally {

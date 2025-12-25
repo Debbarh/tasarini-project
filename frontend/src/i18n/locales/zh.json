@@ -10,6 +10,12 @@
     "logout": "登出",
     "login": "登录"
   },
+  "notFound": {
+    "title": "404",
+    "message": "哎呀！找不到页面",
+    "description": "您要找的页面不存在或已被移动。",
+    "backToHome": "返回主页"
+  },
   "home": {
     "heroTitle": "您的下一次冒险等待着您",
     "heroSubtitle": "发现非凡的目的地，创建个性化的行程，体验难忘的经历。让我们引导您踏上梦想之旅。",
@@ -27,10 +33,191 @@
   },
   "planTrip": {
     "title": "计划您的完美度假",
-    "subtitle": "使用理解您冒险欲望的AI助手创建定制行程",
+    "subtitle": "与我们理解您冒险愿望的AI助手一起创建个性化旅程",
     "startPlanning": "开始规划",
     "smartRecommendations": "智能推荐",
-    "smartRecommendationsDesc": "我们的AI分析您的偏好，为您推荐独特的体验"
+    "smartRecommendationsDesc": "我们的AI分析您的偏好，为您推荐独特的体验",
+    "pageTitle": "计划您的完美度假 | AI旅行",
+    "pageDescription": "只需几次点击就能创建您的梦幻旅程。我们的AI设计个性化冒险，将您的愿望转化为神奇的回忆。",
+    "itineraryGenerated": "旅程生成成功！",
+    "personalizedTravel": "您的AI个性化旅行已经准备好。",
+    "withPreferences": "✨ 根据您的喜好！",
+    "withLocalPlaces": "📍 包含正宗的当地地点！",
+    "generationError": "生成旅程时出错",
+    "tryAgainLater": "请稍后再试，如果问题仍然存在，请联系客服支持。",
+    "enrichmentComplete": "旅行丰富化完成！",
+    "enrichmentError": "旅行丰富化过程中出错",
+    "createNewTrip": "创建新旅行",
+    "newTrip": "新旅行",
+    "wizard": {
+      "title": "计划您的旅行",
+      "stepOf": "第{{current}}步，共{{total}}步",
+      "previous": "上一步",
+      "next": "下一步",
+      "generating": "生成中...",
+      "createItinerary": "创建我的行程",
+      "steps": {
+        "destinations": {
+          "title": "目的地",
+          "description": "您想去哪里？"
+        },
+        "details": {
+          "title": "旅伴",
+          "description": "您和谁一起旅行？"
+        },
+        "budget": {
+          "title": "预算",
+          "description": "设定您的旅行预算"
+        },
+        "culinary": {
+          "title": "美食",
+          "description": "您的美食偏好"
+        },
+        "accommodation": {
+          "title": "住宿",
+          "description": "住宿类型和标准"
+        },
+        "activities": {
+          "title": "活动",
+          "description": "体验和兴趣爱好"
+        }
+      }
+    },
+    "destinationStep": {
+      "selectCountry": "选择国家",
+      "selectCity": "选择城市",
+      "numberOfDays": "天数",
+      "exactDates": "确切日期",
+      "start": "开始",
+      "end": "结束",
+      "day": "天",
+      "days": "天",
+      "selectedCountry": "已选国家",
+      "selectedCity": "已选城市",
+      "addDestination": "+ 添加目的地",
+      "mapSearch": "📍 地图搜索",
+      "totalDuration": "总旅程时长",
+      "selectDescription": "选择您希望访问的国家和城市",
+      "destination": "目的地",
+      "country": "国家",
+      "city": "城市",
+      "title": "您的目的地是哪里？",
+      "duration": "时长",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "chooseOnMap": "在地图上选择",
+      "addFirstDestination": "请先添加目的地",
+      "selectOnMap": "在地图上选择您的目的地",
+      "mapDescription": "通过点击地图或搜索地址选择目的地",
+      "itinerary": "行程：",
+      "locationSaved": "目的地保存成功。",
+      "locationSaveError": "无法保存此位置，请检查信息。",
+      "invalidAddress": "请在地图上选择有效地址。"
+    },
+    "travelDetailsStep": {
+      "title": "旅行伙伴",
+      "description": "指定您的旅行团组成",
+      "travelerType": "旅行者类型",
+      "subtype": "子类型",
+      "chooseSubtype": "选择子类型（可选）",
+      "groupSize": "团组大小",
+      "people": "人",
+      "person": "人",
+      "children": "儿童",
+      "child": "儿童",
+      "addChild": "添加儿童",
+      "year": "岁",
+      "years": "岁",
+      "summary": "摘要",
+      "impactOnRecommendations": "对您的推荐的影响：",
+      "maxLevel": "最大级别",
+      "veryEasy": "非常容易",
+      "easy": "容易",
+      "moderate": "中等",
+      "difficult": "困难",
+      "veryDifficult": "非常困难",
+      "compatiblePOIsFound": "找到兼容的POI",
+      "compatiblePOIsFoundPlural": "找到兼容的POI",
+      "inRegion": "在该地区",
+      "inYourBudget": "在您的预算内",
+      "noPOIFound": "未找到兼容的POI",
+      "adjustCriteria": "考虑调整您的标准以获得更多选项",
+      "available": "可用",
+      "availablePlural": "可用",
+      "remains": "剩余",
+      "remainsPlural": "剩余",
+      "error": "错误"
+    },
+    "budgetStep": {
+      "title": "旅行预算",
+      "description": "设置预算以个性化您的旅程",
+      "budgetLevel": "预算级别",
+      "dailyBudget": "每日预算",
+      "perDay": "天",
+      "currency": "货币",
+      "flexibility": "灵活性",
+      "selectedLevel": "选定级别",
+      "summary": "预算概要",
+      "budget": "预算",
+      "error": "错误"
+    },
+    "culinaryStep": {
+      "title": "饮食偏好",
+      "description": "分享您的口味以获得个性化推荐",
+      "loading": "加载中...",
+      "cuisineTypes": "喜好的菜系类型",
+      "restaurantCategories": "喜好的餐厅类别",
+      "adventureLevel": "烹饪冒险等级",
+      "consumeAlcohol": "我饮酒",
+      "dietaryRestrictions": "饮食限制",
+      "summary": "您的饮食偏好概要",
+      "restriction": "限制",
+      "restrictionsPlural": "限制",
+      "cuisineType": "菜系类型",
+      "cuisineTypesPlural": "菜系类型",
+      "restaurantCategory": "餐厅类别",
+      "restaurantCategoriesPlural": "餐厅类别",
+      "culinaryAdventure": "烹饪冒险",
+      "conservative": "保守",
+      "moderate": "中等",
+      "adventurous": "冒险",
+      "consumesAlcohol": "饮酒"
+    },
+    "accommodationStep": {
+      "title": "住宿偏好",
+      "description": "选择您关心的住宿类型和设施",
+      "loading": "加载中...",
+      "accommodationType": "住宿类型",
+      "amenities": "服务和设施",
+      "location": "首选位置",
+      "accessibility": "无障碍设施",
+      "security": "安全",
+      "ambiance": "氛围",
+      "summary": "您的住宿偏好摘要",
+      "types": "类型",
+      "services": "服务",
+      "locations": "位置",
+      "others": "其他"
+    },
+    "activitiesStep": {
+      "title": "活动和体验",
+      "description": "选择您的兴趣以个性化您的行程",
+      "loading": "加载数据中...",
+      "categories": "首选活动类别",
+      "intensity": "活动强度",
+      "specificInterests": "特定兴趣",
+      "avoidances": "避免",
+      "avoidancesDescription": "选择您在旅途中希望避免的事物",
+      "specialRequests": "特殊请求",
+      "specialRequestsDescription": "为您的旅行添加任何特定信息",
+      "specialRequestsPlaceholder": "庆祝生日、医疗限制、特殊场合、特定请求...",
+      "summary": "您的活动偏好摘要",
+      "summaryCategories": "类别：",
+      "summaryIntensity": "强度：",
+      "summaryInterests": "兴趣：",
+      "moderate": "中等",
+      "others": "其他"
+    }
   },
   "beInspired": {
     "title": "获得灵感",
@@ -40,11 +227,218 @@
     "exploreMap": "探索地图",
     "findInspiration": "寻找灵感"
   },
+  "beInspired": {
+    "pageTitle": "获得灵感 | AI旅行",
+    "pageDescription": "探索您周围隐藏的奇迹世界。发现秘密珍宝、正宗风味和等待您的神奇体验。",
+    "title": "✨ 获得灵感",
+    "subtitle": "在{{radius}}公里半径内发现隐藏的宝藏。每个地方都讲述一个故事，每次经历都创造一个难忘的回忆。",
+    "searchHotels": "🏨 酒店",
+    "searchHotelsShort": "🏨",
+    "aiGuide": "🤖 AI向导",
+    "aiGuideShort": "🤖 向导",
+    "shareDiscovery": "🌟 分享宝藏",
+    "shareDiscoveryShort": "🌟 分享",
+    "dialogTitle": "🌟 分享您的发现",
+    "dialogDescription": "向探索者社区展示您喜爱的神奇地方",
+    "exploreMap": "探索地图",
+    "findInspiration": "寻找灵感",
+    "radiusLabel": "🎯 探索半径",
+    "radius10": "10 公里",
+    "radius20": "20 公里",
+    "radius30": "30 公里",
+    "radius50": "50 公里",
+    "legendTitle": "图例",
+    "legendRestaurants": "餐厅和咖啡馆",
+    "legendActivities": "活动和休闲",
+    "legendTourist": "旅游景点",
+    "legendCenter": "搜索中心",
+    "positionDetected": "检测到位置！",
+    "mustBeLoggedIn": "您必须登录才能添加兴趣点",
+    "nameRequired": "兴趣点名称是必填项",
+    "successAdded": "兴趣点添加成功！",
+    "errorAdding": "添加错误: {{error}}",
+    "aiContext": "用户正在探索{{lat}}, {{lon}}周围的地区",
+    "smartRecommendations": {
+      "title": "智能推荐",
+      "description": "基于您的品味和历史记录的个性化建议",
+      "loginRequired": "登录以接收基于您偏好的个性化推荐",
+      "yourPreferences": "您的偏好：",
+      "refresh": "刷新",
+      "analyzing": "正在分析您的偏好...",
+      "noRecommendationsTitle": "需要更多数据",
+      "noRecommendationsDesc": "将地点添加到您的收藏夹并创建行程以接收个性化推荐！",
+      "exploreMap": "探索地图",
+      "match": "匹配",
+      "excellentMatch": "极好的匹配",
+      "goodMatch": "良好的匹配",
+      "toDiscover": "待发现",
+      "viewOnMap": "地图",
+      "retry": "重试",
+      "error": "无法加载智能推荐",
+      "noNewRecommendations": "未找到新推荐。探索更多以改善您的建议！",
+      "successGenerated": "已生成{{count}}条个性化推荐！",
+      "loadingError": "加载推荐时出错"
+    },
+    "filters": {
+      "title": "筛选",
+      "results": "结果",
+      "searching": "搜索中...",
+      "keywordSearch": "关键词搜索",
+      "keywordPlaceholder": "搜索地点、活动...",
+      "categories": "类别",
+      "categoryRestaurants": "餐厅与咖啡馆",
+      "categoryActivities": "活动与休闲",
+      "categoryTourist": "景点",
+      "categoryOther": "其他",
+      "minRating": "最低评分 ({{rating}}⭐)",
+      "allRatings": "全部",
+      "priceRange": "价格区间",
+      "allPrices": "所有价格",
+      "priceEconomical": "€ - 经济实惠",
+      "priceModerate": "€€ - 中等",
+      "priceHigh": "€€€ - 高端",
+      "accessibility": "轮椅无障碍",
+      "reset": "重置"
+    }
+  },
   "travelStories": {
+    "pageTitle": "旅行社交网络 | Travel Stories",
+    "pageDescription": "发现、分享和体验最美丽的旅行冒险。加入我们充满热情的旅行者社区。",
     "title": "旅行故事",
-    "subtitle": "发现冒险者的精彩故事，分享您自己的经历来激励社区",
-    "shareStory": "讲述我的旅程",
-    "myAdventures": "我的冒险"
+    "subtitle": "发现一个共享冒险的世界。创建、探索并与来自世界各地的旅行者联系。",
+    "shareStory": "分享我的旅程",
+    "myAdventures": "我的冒险",
+    "stats": {
+      "stories": "故事",
+      "followers": "粉丝",
+      "likes": "喜欢",
+      "countries": "国家"
+    },
+    "buttons": {
+      "viewPublicFeed": "查看公开动态",
+      "viewMyStories": "查看我的故事",
+      "shareMyJourney": "分享我的旅程",
+      "shareFirstEpic": "讲述我的第一个史诗",
+      "start": "开始"
+    },
+    "dialog": {
+      "title": "分享你的冒险",
+      "description": "创建一个能激励旅行者社区的故事"
+    },
+    "tabs": {
+      "feed": "动态",
+      "trending": "趋势",
+      "map": "地图",
+      "ai": "AI"
+    },
+    "empty": {
+      "myStoriesTitle": "没有你的史诗",
+      "noStoriesTitle": "未发现故事",
+      "myStoriesDesc": "你还没有分享你的冒险。你的第一个故事在等你！",
+      "noStoriesDesc": "成为先驱！分享第一个能激励整个社区的史诗。"
+    },
+    "statistics": {
+      "epics": "epics",
+      "likes": "喜欢",
+      "views": "浏览"
+    },
+    "toast": {
+      "storyCreated": "你的旅行故事已创建！",
+      "errorLoading": "无法加载旅行故事",
+      "loginToBookmark": "登录以保存故事",
+      "bookmarkAdded": "故事已添加到收藏夹",
+      "bookmarkRemoved": "故事已从收藏夹中删除"
+    },
+    "filters": {
+      "searchPlaceholder": "在故事中搜索...",
+      "filtersButton": "筛选",
+      "location": "地点",
+      "locationPlaceholder": "按地点筛选...",
+      "linkType": "链接类型",
+      "allTypes": "所有类型",
+      "touristPoints": "景点",
+      "itineraries": "行程",
+      "activities": "活动",
+      "period": "时间段",
+      "from": "从",
+      "to": "到",
+      "tags": "标签",
+      "addTagPlaceholder": "添加筛选标签...",
+      "addButton": "添加",
+      "loading": "加载中...",
+      "results": "结果",
+      "resultsPlural": "结果",
+      "clearFilters": "清除筛选"
+    },
+    "createDialog": {
+      "tabs": {
+        "aiItinerary": "从行程",
+        "aiInstant": "AI生成",
+        "manual": "手动"
+      },
+      "aiItinerary": {
+        "title": "从行程生成",
+        "selectLabel": "选择行程",
+        "selectPlaceholder": "选择行程...",
+        "generating": "生成中...",
+        "generate": "生成故事"
+      },
+      "aiInstant": {
+        "title": "AI即时生成",
+        "preparing": "AI正在准备您的故事...",
+        "templates": {
+          "paris": {
+            "title": "浪漫巴黎",
+            "description": "带纪念碑的浪漫之旅"
+          },
+          "mountain": {
+            "title": "山地冒险",
+            "description": "徒步和野生景观"
+          },
+          "coastal": {
+            "title": "沿海公路旅行",
+            "description": "海滩和日落"
+          },
+          "urban": {
+            "title": "城市文化",
+            "description": "街头艺术和美食"
+          }
+        }
+      },
+      "form": {
+        "title": "您的故事标题 *",
+        "titlePlaceholder": "为您的经历起一个吸引人的标题...",
+        "content": "您的故事 *",
+        "contentPlaceholder": "讲述您的经历、情感、发现...",
+        "media": "图片和视频",
+        "mediaHelp": "添加照片和视频丰富您的故事",
+        "activities": "活动类别",
+        "activitiesLoading": "加载类别中...",
+        "intensity": "强度等级",
+        "intensityLoading": "加载等级中...",
+        "tripDate": "旅行日期",
+        "selectDate": "选择日期",
+        "date": "旅行日期",
+        "datePlaceholder": "选择日期",
+        "location": "您的旅行地点",
+        "locationHelp": "点击地图选择地点或使用您的当前位置",
+        "tags": "自定义标签（可选）",
+        "tagsPlaceholder": "添加自定义标签...",
+        "public": "公开故事",
+        "private": "私人故事",
+        "cancel": "取消",
+        "creating": "创建中...",
+        "create": "创建故事"
+      },
+      "toast": {
+        "aiGenerated": "使用AI生成故事！现在可以自定义。",
+        "instantGenerated": "故事已生成！随意自定义。",
+        "generationError": "自动生成时出错",
+        "loginRequired": "您必须登录才能创建故事",
+        "fieldsRequired": "标题和内容为必填项",
+        "createError": "创建时出错"
+      }
+    }
   },
   "partnerApplication": {
     "title": "成为合作伙伴",
@@ -228,5 +622,584 @@
     "edit": "编辑",
     "create": "创建",
     "search": "搜索"
+  },
+  "touristPoints": {
+    "pageTitle": "景点",
+    "pageDescription": "发现我们的社区和合作伙伴推荐的特别地点",
+    "searchPlaceholder": "按名称、描述、位置搜索...",
+    "filterByType": "按类型过滤",
+    "sortBy": "排序方式",
+    "filters": {
+      "all": "所有景点",
+      "partnersOnly": "仅合作伙伴",
+      "featured": "精选",
+      "regular": "普通景点"
+    },
+    "sorting": {
+      "rating": "最高评分",
+      "reviews": "评论数量",
+      "recent": "最新",
+      "name": "字母顺序"
+    },
+    "stats": {
+      "totalPoints": "总景点数",
+      "partners": "合作伙伴",
+      "featured": "精选",
+      "averageRating": "平均评分"
+    },
+    "results": {
+      "found": "找到景点",
+      "foundPlural": "找到景点",
+      "for": "搜索",
+      "certifiedPartners": "仅认证合作伙伴"
+    },
+    "empty": {
+      "title": "未找到景点",
+      "noResults": "请尝试其他关键词",
+      "noPoints": "目前没有可用的景点"
+    }
+  },
+  "recommendations": {
+    "pageTitle": "推荐",
+    "pageDescription": "根据您的喜好和灵感获取智能推荐。",
+    "subtitle": "一个引擎根据您的规划选择和灵感优化项目和活动。",
+    "suggestedProgram": {
+      "title": "建议的项目",
+      "description": "3天平衡的组合",
+      "day1": "第1天：导游和全景景点",
+      "day2": "第2天：当地美食和必看博物馆",
+      "day3": "第3天：自由时间、海滩或自然公园"
+    },
+    "recommendedActivities": {
+      "title": "推荐活动",
+      "description": "基于您的兴趣",
+      "activity1": "当地烹饪课程（小组）",
+      "activity2": "日出时的轻松徒步",
+      "activity3": "工匠区和独立咖啡馆"
+    }
+  },
+  "profile": {
+    "pageTitle": "我的资料 - Voyage AI",
+    "pageDescription": "在 Voyage AI 上管理您的用户资料和旅游景点",
+    "accessRequired": "需要访问权限",
+    "accessRequiredDesc": "您必须登录才能访问您的个人资料。",
+    "signIn": "登录",
+    "tabs": {
+      "profile": "信息",
+      "content": "我的内容",
+      "statistics": "统计",
+      "social": "网络",
+      "privacy": "隐私",
+      "security": "安全",
+      "touristPoints": "POI",
+      "savedItineraries": "行程",
+      "notifications": "通知",
+      "rgpd": "GDPR"
+    },
+    "personalInfo": "个人信息",
+    "personalInfoDesc": "在下方编辑您的个人资料信息",
+    "firstName": "名字",
+    "lastName": "姓氏",
+    "email": "邮箱",
+    "emailCannotBeChanged": "无法从此页面更改邮箱",
+    "phoneNumber": "电话号码",
+    "phonePlaceholder": "+86 138 1234 5678",
+    "bio": "简介",
+    "bioPlaceholder": "介绍一下您自己...",
+    "preferredLanguage": "首选语言",
+    "selectLanguage": "选择语言",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "取消",
+    "edit": "编辑",
+    "delete": "删除",
+    "confirm": "确认",
+    "myTouristPoints": "我的景点",
+    "myTouristPointsDesc": "管理您的旅游景点",
+    "addPoint": "添加景点",
+    "editPoint": "编辑景点",
+    "addNewPoint": "添加景点",
+    "noTouristPoints": "没有景点",
+    "noTouristPointsDesc": "您还没有创建任何景点。开始添加一个吧！",
+    "verified": "已验证",
+    "hidden": "已隐藏",
+    "openingHours": "营业时间",
+    "amenities": "设施",
+    "uploadedPhotos": "上传的照片",
+    "uploadedVideos": "上传的视频",
+    "photo": "照片",
+    "backToList": "返回列表",
+    "destination": "目的地",
+    "day": "天",
+    "days": "天",
+    "createdOn": "创建于",
+    "addToFavorites": "添加到收藏",
+    "removeFromFavorites": "从收藏中移除",
+    "editItinerary": "编辑行程",
+    "viewDetails": "查看详情",
+    "exportPdf": "导出为PDF",
+    "share": "分享",
+    "shareWithOthers": "与其他用户分享",
+    "rgpdTitle": "GDPR和数据管理",
+    "rgpdDesc": "根据通用数据保护条例管理您的个人数据",
+    "categories": {
+      "restaurant": "餐厅",
+      "hotel": "酒店",
+      "museum": "博物馆",
+      "monument": "纪念碑",
+      "park": "公园",
+      "beach": "海滩",
+      "mountain": "山",
+      "shopping": "购物",
+      "entertainment": "娱乐",
+      "sport": "运动",
+      "culture": "文化",
+      "nature": "自然"
+    },
+    "priceRanges": {
+      "budget": "¥ - 经济",
+      "moderate": "¥¥ - 中等",
+      "elevated": "¥¥¥ - 高端",
+      "luxury": "¥¥¥¥ - 奢华"
+    },
+    "toast": {
+      "loadError": "加载景点时出错",
+      "updateSuccess": "资料更新成功",
+      "updateError": "更新资料时出错",
+      "pointUpdateSuccess": "景点更新成功",
+      "pointCreateSuccess": "景点创建成功",
+      "pointCreateSuccessPartner": "景点创建成功 - 已标记为合作伙伴景点",
+      "saveError": "保存时出错",
+      "deleteSuccess": "景点删除成功",
+      "deleteError": "删除时出错",
+      "activateSuccess": "景点激活成功",
+      "deactivateSuccess": "景点停用成功",
+      "modifyError": "修改时出错",
+      "exportSuccess": "PDF导出成功",
+      "exportError": "导出PDF时出错",
+      "linkCopied": "链接已复制到剪贴板",
+      "shareError": "分享时出错",
+      "copyLink": "复制链接"
+    },
+    "deleteConfirm": "您确定要删除此景点吗？",
+    "extendedInfo": {
+      "title": "附加信息",
+      "description": "使用附加信息完善您的个人资料",
+      "location": "位置",
+      "city": "城市",
+      "cityPlaceholder": "例如：巴黎",
+      "country": "国家",
+      "countryPlaceholder": "例如：法国",
+      "socialNetworks": "社交网络",
+      "facebookPlaceholder": "https://facebook.com/username",
+      "instagramPlaceholder": "https://instagram.com/username",
+      "twitterPlaceholder": "https://twitter.com/username",
+      "linkedinPlaceholder": "https://linkedin.com/in/username",
+      "travelPreferences": "旅行偏好",
+      "travelStyle": "旅行风格",
+      "selectTravelStyle": "选择你的风格",
+      "favoriteDestinations": "喜爱的目的地",
+      "favoriteDestinationsPlaceholder": "例如：东京、纽约、马拉喀什（用逗号分隔）",
+      "favoriteDestinationsHelp": "用逗号分隔目的地",
+      "travelInterests": "兴趣爱好",
+      "travelInterestsPlaceholder": "例如：潜水、徒步、美食、摄影",
+      "travelInterestsHelp": "描述你喜欢的旅行活动和兴趣",
+      "professionalInfo": "职业信息",
+      "occupation": "职业",
+      "occupationPlaceholder": "例如：Web开发者",
+      "website": "网站",
+      "websitePlaceholder": "https://example.com",
+      "travelStyles": {
+        "adventure": "冒险",
+        "luxury": "奢华",
+        "budget": "经济",
+        "cultural": "文化",
+        "relaxation": "休闲",
+        "family": "家庭",
+        "solo": "独自",
+        "group": "团体"
+      },
+      "toast": {
+        "updateSuccess": "信息已成功更新",
+        "updateError": "更新信息时出错"
+      }
+    }
+  },
+  "partnerCenter": {
+    "title": "合作伙伴专区",
+    "subtitle": "加入我们的合作伙伴网络，向热情的旅行者社区展示您的独特场所。",
+    "loginRequired": "请登录以访问合作伙伴专区",
+    "benefits": {
+      "visibility": {
+        "title": "提升可见度",
+        "description": "使用独特的合作伙伴徽章突出展示您的场所"
+      },
+      "premium": {
+        "title": "高级展示",
+        "description": "在地图上享受优先定位"
+      },
+      "analytics": {
+        "title": "详细统计",
+        "description": "访问您景点的性能分析"
+      }
+    },
+    "pending": {
+      "title": "申请审核中",
+      "message": "您的合作伙伴申请已提交，目前正在由我们的团队审核。批准后您将收到通知。",
+      "completeProfile": "为加快验证速度，请用所有必需信息完成您的合作伙伴资料。",
+      "completeButton": "完善我的合作伙伴资料",
+      "status": "状态",
+      "statusPending": "等待批准"
+    },
+    "profile": {
+      "contactEmail": "联系邮箱",
+      "phone": "电话",
+      "website": "网站",
+      "subscription": "订阅",
+      "description": "描述",
+      "notProvided": "未提供",
+      "updateButton": "更新我的资料",
+      "status": {
+        "pending": "待定",
+        "approved": "已批准",
+        "suspended": "已暂停"
+      }
+    },
+    "dashboard": {
+      "title": "仪表板",
+      "subtitle": "管理您的景点并跟踪您的表现",
+      "overview": "概览",
+      "analytics": "分析",
+      "pois": "我的景点",
+      "bookings": "预订",
+      "finances": "财务",
+      "subscription": "订阅",
+      "settings": "设置",
+      "notifications": "通知",
+      "notificationsShort": "通知",
+      "stats": {
+        "totalPois": "景点",
+        "totalActive": "总活跃数",
+        "viewsThisMonth": "本月浏览量",
+        "totalBookings": "总预订量",
+        "totalRevenue": "总收入",
+        "averageRating": "平均评分",
+        "pendingPayments": "待付款"
+      },
+      "analytics": {
+        "realTimeMetrics": "实时性能指标",
+        "totalViews": "总浏览量",
+        "conversionRate": "转化率",
+        "bookings": "预订",
+        "avgRevenue": "平均收入",
+        "totalRevenue": "总收入",
+        "vsLastMonth": "与上月相比",
+        "topPOI": "热门景点",
+        "none": "无",
+        "bestPerformer": "最佳表现",
+        "viewsEvolution": "浏览量趋势",
+        "viewsDescription": "30天浏览量和转化率",
+        "financialPerformance": "财务表现",
+        "financialDescription": "每日预订和收入",
+        "views": "浏览量",
+        "revenue": "收入",
+        "autoInsights": "自动洞察",
+        "autoInsightsDescription": "您的表现自动分析",
+        "excellentConversion": "出色的转化率{rate}%！您的内容很好地吸引和转化访客。",
+        "exceptionalGrowth": "本月增长{growth}%，表现卓越！继续保持。",
+        "lowConversion": "转化率较低（{rate}%）。考虑优化您的描述和照片。",
+        "loadError": "无法加载分析数据。"
+      },
+      "pois": {
+        "title": "我的兴趣点",
+        "subtitle": "管理您的兴趣点并跟踪其验证状态",
+        "createButton": "创建 POI",
+        "createFirst": "创建我的第一个 POI",
+        "loading": "加载中...",
+        "loadError": "无法加载您的兴趣点",
+        "status": {
+          "draft": "草稿",
+          "pendingValidation": "待验证",
+          "underReview": "审核中",
+          "approved": "已批准",
+          "rejected": "已拒绝",
+          "blocked": "已封禁",
+          "unknown": "未知状态"
+        },
+        "statusDescription": {
+          "draft": "此兴趣点正在创建中，尚未提交验证。",
+          "pendingValidation": "此兴趣点已提交，等待我们的团队验证。",
+          "underReview": "此兴趣点正在由我们的团队审核。您将很快收到回复。",
+          "approved": "此兴趣点已获批准，现对公众可见。",
+          "rejected": "此兴趣点已被拒绝。请检查评论并在修正后重新提交。",
+          "blocked": "此兴趣点因违反我们的使用条款而被封禁。",
+          "unknown": "未知状态。"
+        },
+        "stats": {
+          "total": "总计",
+          "drafts": "草稿",
+          "pending": "待处理",
+          "underReview": "审核中",
+          "approved": "已批准",
+          "rejected": "已拒绝"
+        },
+        "empty": {
+          "title": "没有兴趣点",
+          "description": "您还没有创建任何兴趣点。开始创建一个吧！"
+        },
+        "actions": {
+          "edit": "编辑",
+          "delete": "删除",
+          "resubmit": "重新提交",
+          "conversation": "讨论",
+          "hideConversation": "隐藏",
+          "accommodation": "住宿费率",
+          "activity": "活动费率",
+          "restaurant": "菜单和桌子"
+        },
+        "details": {
+          "createdAt": "创建于",
+          "updatedAt": "修改于",
+          "resubmission": "重新提交 #",
+          "rejectionReason": "拒绝原因：",
+          "blockReason": "封禁原因：",
+          "illustration": "插图"
+        },
+        "delete": {
+          "title": "删除兴趣点",
+          "itemType": "POI",
+          "warningApproved": "此 POI 目前对公众可见，可能具有相关的评论或预订。",
+          "success": "POI 删除成功",
+          "successDescription": "兴趣点\"{name}\"已被永久删除",
+          "error": "删除错误",
+          "errorDescription": "删除过程中发生错误。请重试。"
+        },
+        "resubmit": {
+          "success": "POI 已重新提交",
+          "successDescription": "您的兴趣点已重新提交以供验证",
+          "error": "错误",
+          "errorDescription": "无法重新提交 POI"
+        },
+        "edit": {
+          "success": "POI 已修改",
+          "successDescription": "您的兴趣点已成功修改"
+        },
+        "management": {
+          "accommodationTitle": "住宿费率管理 – {name}",
+          "activityTitle": "活动费率管理 – {name}",
+          "restaurantTitle": "餐厅管理 – {name}"
+        }
+      },
+      "finances": {
+        "stats": {
+          "availableBalance": "可用余额",
+          "readyForWithdrawal": "可提现",
+          "processing": "处理中",
+          "paymentOn": "付款日期",
+          "thisMonth": "本月",
+          "monthlyRevenue": "月收入",
+          "avgCommission": "平均佣金",
+          "avgRate": "平均费率"
+        },
+        "revenueChart": {
+          "title": "收入趋势",
+          "description": "过去12个月的月度收入",
+          "revenue": "收入"
+        },
+        "tabs": {
+          "commissions": "佣金",
+          "withdrawals": "提现",
+          "paymentMethods": "支付方式"
+        },
+        "commissions": {
+          "title": "佣金历史",
+          "description": "所有佣金的详细信息",
+          "export": "导出",
+          "client": "客户",
+          "reference": "参考",
+          "commission": "佣金",
+          "rate": "费率",
+          "date": "日期"
+        },
+        "withdrawals": {
+          "title": "提现请求",
+          "description": "管理您的资金提现",
+          "request": "请求提现",
+          "empty": "暂无提现请求",
+          "noPaymentMethod": "您需要先添加支付方式",
+          "amountExceeds": "金额超过可用余额",
+          "requestSuccess": "提现请求已成功发送",
+          "requestError": "处理提现请求时出错"
+        },
+        "paymentMethods": {
+          "title": "支付方式",
+          "description": "管理您的银行账户和钱包",
+          "add": "添加",
+          "empty": "未配置支付方式",
+          "emptyDescription": "添加银行账户或电子钱包",
+          "accountConfigured": "账户已配置",
+          "default": "默认",
+          "active": "活跃",
+          "inactive": "非活跃"
+        },
+        "status": {
+          "pending": "待处理",
+          "processing": "处理中",
+          "paid": "已支付",
+          "completed": "已完成",
+          "failed": "失败",
+          "rejected": "已拒绝"
+        },
+        "errors": {
+          "loadError": "加载财务数据时出错"
+        }
+      },
+      "charts": {
+        "viewsOverTime": "浏览量趋势",
+        "viewsDescription": "30天浏览量和转化率",
+        "bookingsRevenue": "预订和收入",
+        "revenueDescription": "每周财务业绩",
+        "performance": "业绩",
+        "topPerformer": "最佳表现"
+      },
+      "earnings": {
+        "title": "收入历史",
+        "description": "每次预订收益详情",
+        "amount": "金额",
+        "commission": "佣金",
+        "bookingDate": "预订日期",
+        "paymentStatus": "付款状态",
+        "pending": "待处理",
+        "paid": "已付款",
+        "cancelled": "已取消"
+      },
+      "notificationPanel": {
+        "title": "最新通知",
+        "description": "及时了解您景点的活动",
+        "markAsRead": "标记为已读",
+        "noNotifications": "无通知",
+        "updateError": "更新通知时出错"
+      },
+      "export": "导出数据",
+      "loadingError": "加载仪表板时出错",
+      "subscription": {
+        "loading": "正在加载订阅信息...",
+        "loadError": "加载订阅信息时出错",
+        "currentPlan": {
+          "title": "{planName}计划",
+          "description": "{description} - {commission}%佣金",
+          "nextPayment": "下次付款：{date}",
+          "monthly": "{price}€/月",
+          "yearly": "{price}€/年"
+        },
+        "usage": {
+          "pois": "景点",
+          "bookings": "本月预订",
+          "commission": "当前佣金",
+          "commissionNote": "高级计划佣金率更低"
+        },
+        "alerts": {
+          "limitWarning": "您即将达到计划限制。请考虑升级。"
+        },
+        "plans": {
+          "title": "可用计划",
+          "current": "当前",
+          "monthly": "{price}€/月",
+          "yearly": "或 {price}€/年（充2个月）",
+          "unlimited": "无限景点",
+          "limited": "{count}个景点",
+          "commissionRate": "{rate}%佣金",
+          "upgradeMonthly": "升级 - 月付",
+          "upgradeYearly": "升级 - 年付",
+          "changeMonthly": "切换 - 月付",
+          "changeYearly": "切换 - 年付",
+          "cancel": "取消订阅"
+        },
+        "actions": {
+          "upgradeSuccess": "订阅更新成功！",
+          "upgradeError": "更新订阅时出错",
+          "cancelSuccess": "订阅已取消。它将在计费期结束前保持活跃。",
+          "cancelError": "取消订阅时出错"
+        },
+        "billing": {
+          "title": "计费历史",
+          "description": "您最近的发票和付款",
+          "empty": "暂无发票",
+          "emptyDescription": "付款后发票将显示在这里"
+        },
+        "status": {
+          "active": "活跃",
+          "cancelled": "已取消",
+          "suspended": "已暂停"
+        },
+        "planDetails": {
+          "basic": {
+            "name": "基础版",
+            "description": "适合开始发布景点",
+            "features": [
+              "最多5个景点",
+              "标准支持",
+              "基础分析"
+            ]
+          },
+          "premium": {
+            "name": "高级版",
+            "description": "扩展目录并提高可见性",
+            "features": [
+              "25个景点",
+              "优先支持",
+              "高级分析",
+              "营销活动"
+            ]
+          },
+          "enterprise": {
+            "name": "企业版",
+            "description": "适合酒店连锁或大型POI运营",
+            "features": [
+              "无限景点",
+              "专属客户经理",
+              "定制集成",
+              "24/7支持"
+            ]
+          }
+        }
+      },
+      "bookings": {
+        "loading": "正在加载预订数据...",
+        "loadError": "加载预订数据时出错",
+        "stats": {
+          "totalBookings": "总预订数",
+          "totalRevenue": "收入",
+          "commissions": "佣金",
+          "pending": "待处理"
+        },
+        "history": {
+          "title": "预订历史",
+          "reference": "参考号",
+          "amount": "金额",
+          "commission": "佣金",
+          "date": "日期",
+          "customer": "客户",
+          "poi": "景点",
+          "empty": "暂无预订",
+          "emptyDescription": "您景点的预订将显示在这里"
+        },
+        "status": {
+          "pending": "待处理",
+          "confirmed": "已确认",
+          "cancelled": "已取消",
+          "completed": "已完成"
+        }
+      },
+      "notifications": {
+        "title": "通知",
+        "markAllRead": "全部标记为已读",
+        "loading": "正在加载通知...",
+        "empty": "暂无通知",
+        "loadError": "无法加载通知",
+        "markAllSuccess": "所有通知已标记为已读",
+        "reference": "参考: {reference}"
+      }
+    }
   }
 }

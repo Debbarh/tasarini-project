@@ -50,7 +50,7 @@ export interface AccommodationPreferences {
 
 export interface ActivityPreferences {
   categories: string[];
-  intensity: 'relaxed' | 'moderate' | 'active' | 'intense';
+  intensity: string;
   interests: string[];
   avoidances: string[];
 }
@@ -112,17 +112,103 @@ export interface UnsplashImage {
   description: string;
   photographer: string;
   photographerUrl: string;
+  photographerUsername: string;
+  downloadLocation: string;
+  unsplashUrl: string;
+}
+
+// Enriched Section Types
+export interface BestTimeToVisit {
+  overall?: string;
+  byDestination?: Record<string, string>;
+  seasons?: {
+    spring?: string;
+    summer?: string;
+    autumn?: string;
+    winter?: string;
+  };
+  avoidPeriods?: string[];
+}
+
+export interface VisaAndEntry {
+  generalInfo?: string;
+  requirements?: string[];
+  processingTime?: string;
+  cost?: string;
+  exemptions?: string[];
+  entryRequirements?: string[];
+}
+
+export interface HealthAndSafety {
+  vaccinations?: string[];
+  healthTips?: string[];
+  insurance?: string;
+  emergencyNumbers?: {
+    police?: string;
+    medical?: string;
+    embassy?: string;
+  };
+  safetyTips?: string[];
+  waterQuality?: string;
+  foodSafety?: string;
+}
+
+export interface MustTryDish {
+  name: string;
+  description: string;
+  whereToFind: string;
+  priceRange: string;
+  dietaryInfo?: string;
+}
+
+export interface GiftIdea {
+  item: string;
+  description: string;
+  whereToBuy: string;
+  priceRange: string;
+  tips?: string;
+}
+
+export interface SimilarDestination {
+  name: string;
+  country: string;
+  why: string;
+  distance?: string;
+  bestFor?: string;
+}
+
+export interface TransportationAdvice {
+  gettingThere?: string;
+  localTransport?: {
+    metro?: string;
+    bus?: string;
+    taxi?: string;
+    bike?: string;
+    walking?: string;
+  };
+  transportCards?: string[];
+  tips?: string[];
+}
+
+export interface LocalEvent {
+  name: string;
+  date: string;
+  description: string;
+  location?: string;
 }
 
 export interface DetailedItinerary {
   title?: string;
   description?: string;
+  whyVisit?: string;
   totalBudget?: number;
   budgetBreakdown?: {
     accommodation: number;
     food: number;
     activities: number;
     transport: number;
+    shopping?: number;
+    miscellaneous?: number;
   };
   practicalTips?: string[];
   trip: TripFormData;
@@ -131,6 +217,20 @@ export interface DetailedItinerary {
   practicalInfo: PracticalInfo;
   recommendations: Recommendations;
   destinationImages?: { [cityName: string]: UnsplashImage[] };
+
+  // Enriched sections
+  bestTimeToVisit?: BestTimeToVisit;
+  visaAndEntry?: VisaAndEntry;
+  healthAndSafety?: HealthAndSafety;
+  mustTryDishes?: MustTryDish[];
+  giftIdeas?: GiftIdea[];
+  similarDestinations?: SimilarDestination[];
+  transportationAdvice?: TransportationAdvice;
+  culturalTips?: string[];
+  localEvents?: LocalEvent[];
+  sustainabilityTips?: string[];
+  packingList?: string[];
+  mustSee?: string[];
 }
 
 export interface PracticalInfo {

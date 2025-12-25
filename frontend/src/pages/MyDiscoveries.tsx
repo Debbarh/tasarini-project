@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,9 +11,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useFavoritePOIs } from '@/hooks/useFavoritePOIs';
 import { toast } from 'sonner';
 import { discoveryService, DiscoveryItinerary } from '@/services/discoveryService';
+import { normalizeApiResponse } from '@/utils/apiHelpers';
+import { useSystemSettings } from '@/hooks/useSystemSettings';
 
 const MyDiscoveries = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
+  const { settings } = useSystemSettings();
   const { favorites, loading: favoritesLoading } = useFavoritePOIs();
   const [itineraries, setItineraries] = useState<DiscoveryItinerary[]>([]);
   const [publicItineraries, setPublicItineraries] = useState<DiscoveryItinerary[]>([]);
@@ -28,14 +33,14 @@ const MyDiscoveries = () => {
 
   const fetchItineraries = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
       const data = await discoveryService.list({ mine: 'true' });
-      setItineraries(data || []);
+      setItineraries(normalizeApiResponse(data));
     } catch (error: any) {
       console.error('Erreur lors du chargement des itinéraires:', error);
-      toast.error('Erreur lors du chargement des itinéraires');
+      toast.error(t('myDiscoveries.toast.loadError'));
     } finally {
       setLoading(false);
     }
@@ -45,26 +50,26 @@ const MyDiscoveries = () => {
     setLoading(true);
     try {
       const data = await discoveryService.list({ public: 'true', limit: 20 });
-      setPublicItineraries(data || []);
+      setPublicItineraries(normalizeApiResponse(data));
     } catch (error: any) {
       console.error('Erreur lors du chargement des itinéraires publics:', error);
-      toast.error('Erreur lors du chargement des itinéraires publics');
+      toast.error(t('myDiscoveries.toast.loadPublicError'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteItinerary = async (id: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet itinéraire ?')) return;
+    if (!confirm(t('myDiscoveries.confirmDelete'))) return;
 
     try {
       await discoveryService.delete(id);
 
       setItineraries(prev => prev.filter(item => item.id !== id));
-      toast.success('Itinéraire supprimé');
+      toast.success(t('myDiscoveries.toast.deleted'));
     } catch (error: any) {
       console.error('Erreur lors de la suppression:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('myDiscoveries.toast.deleteError'));
     }
   };
 
@@ -75,10 +80,10 @@ const MyDiscoveries = () => {
         item.id === id ? updated : item
       ));
       
-      toast.success(`Itinéraire ${!currentStatus ? 'rendu public' : 'rendu privé'}`);
+      toast.success(`Itinéraire ${!currentStatus ? t('myDiscoveries.toast.madePublic') : t('myDiscoveries.toast.madePrivate')}`);
     } catch (error: any) {
       console.error('Erreur lors de la mise à jour:', error);
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('myDiscoveries.toast.updateError'));
     }
   };
 
@@ -97,19 +102,19 @@ const MyDiscoveries = () => {
     } else {
       try {
         await navigator.clipboard.writeText(url);
-        toast.success('Lien copié dans le presse-papiers !');
+        toast.success(t('myDiscoveries.toast.linkCopied'));
       } catch (error) {
-        toast.error('Impossible de copier le lien');
+        toast.error(t('myDiscoveries.toast.copyError'));
       }
     }
   };
 
   const getDifficultyLabel = (level: string) => {
     switch (level) {
-      case 'easy': return 'Facile';
-      case 'medium': return 'Modéré';
-      case 'hard': return 'Difficile';
-      default: return 'Facile';
+      case 'easy': return t('myDiscoveries.difficulty.easy');
+      case 'medium': return t('myDiscoveries.difficulty.medium');
+      case 'hard': return t('myDiscoveries.difficulty.hard');
+      default: return t('myDiscoveries.difficulty.easy');
     }
   };
 
@@ -126,9 +131,9 @@ const MyDiscoveries = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Mes Découvertes</h1>
+          <h1 className="text-3xl font-bold mb-4">{t('myDiscoveries.pageTitle')}</h1>
           <p className="text-muted-foreground">
-            Connectez-vous pour voir vos favoris et itinéraires.
+            {t('myDiscoveries.loginMessage')}
           </p>
         </div>
       </div>
@@ -138,14 +143,14 @@ const MyDiscoveries = () => {
   return (
     <main className="container mx-auto px-4 py-8 animate-fade-in">
       <Helmet>
-        <title>Mes Découvertes | Voyage AI</title>
-        <meta name="description" content="Gérez vos lieux favoris et itinéraires de découverte personnalisés." />
+        <title>{t('myDiscoveries.pageTitle')} | Voyage AI</title>
+        <meta name="description" content={t('myDiscoveries.pageDescription')} />
       </Helmet>
 
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Mes Découvertes</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('myDiscoveries.pageTitle')}</h1>
         <p className="text-muted-foreground">
-          Retrouvez vos lieux favoris et itinéraires personnalisés
+          {t('myDiscoveries.subtitle')}
         </p>
       </div>
 
@@ -153,15 +158,15 @@ const MyDiscoveries = () => {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="favorites" className="flex items-center gap-2">
             <Heart className="w-4 h-4" />
-            Favoris ({favorites.length})
+            {t('myDiscoveries.tabs.favorites')} ({favorites.length})
           </TabsTrigger>
           <TabsTrigger value="itineraries" className="flex items-center gap-2">
             <Route className="w-4 h-4" />
-            Mes Itinéraires ({itineraries.length})
+            {t('myDiscoveries.tabs.itineraries')} ({itineraries.length})
           </TabsTrigger>
           <TabsTrigger value="community" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
-            Communauté
+            {t('myDiscoveries.tabs.community')}
           </TabsTrigger>
         </TabsList>
 
@@ -175,15 +180,17 @@ const MyDiscoveries = () => {
             <Card>
               <CardContent className="text-center py-8">
                 <Heart className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Aucun favori</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('myDiscoveries.favorites.empty')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Commencez par ajouter des lieux à vos favoris depuis la carte
+                  {t('myDiscoveries.favorites.emptyMessage')}
                 </p>
-                <Button 
-                  onClick={() => window.location.href = '/inspire'}
-                >
-                  Explorer la carte
-                </Button>
+                {settings.beInspiredEnabled && (
+                  <Button
+                    onClick={() => window.location.href = '/inspire'}
+                  >
+                    {t('myDiscoveries.favorites.exploreMap')}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -222,22 +229,24 @@ const MyDiscoveries = () => {
                         </div>
                       )}
                     </div>
-                    
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full mt-3"
-                      onClick={() => {
-                        const lat = favorite.tourist_point?.latitude;
-                        const lng = favorite.tourist_point?.longitude;
-                        if (lat && lng) {
-                          window.location.href = `/inspire?lat=${lat}&lng=${lng}`;
-                        }
-                      }}
-                    >
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Voir sur la carte
-                    </Button>
+
+                    {settings.beInspiredEnabled && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-3"
+                        onClick={() => {
+                          const lat = favorite.tourist_point?.latitude;
+                          const lng = favorite.tourist_point?.longitude;
+                          if (lat && lng) {
+                            window.location.href = `/inspire?lat=${lat}&lng=${lng}`;
+                          }
+                        }}
+                      >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        {t('myDiscoveries.actions.view')}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -255,15 +264,17 @@ const MyDiscoveries = () => {
             <Card>
               <CardContent className="text-center py-8">
                 <Route className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Aucun itinéraire</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('myDiscoveries.itineraries.empty')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Créez votre premier itinéraire en sélectionnant des points d'intérêt
+                  {t('myDiscoveries.itineraries.emptyMessage')}
                 </p>
-                <Button 
-                  onClick={() => window.location.href = '/inspire'}
-                >
-                  Créer un itinéraire
-                </Button>
+                {settings.beInspiredEnabled && (
+                  <Button
+                    onClick={() => window.location.href = '/inspire'}
+                  >
+                    {t('myDiscoveries.itineraries.createNew')}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -274,13 +285,15 @@ const MyDiscoveries = () => {
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-semibold text-lg line-clamp-1">{itinerary.title}</h3>
                       <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => shareItinerary(itinerary)}
-                        >
-                          <Share2 className="w-4 h-4" />
-                        </Button>
+                        {settings.beInspiredEnabled && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => shareItinerary(itinerary)}
+                          >
+                            <Share2 className="w-4 h-4" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
@@ -301,7 +314,7 @@ const MyDiscoveries = () => {
                     <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span>{itinerary.poi_ids?.length || 0} lieux</span>
+                        <span>{itinerary.poi_ids?.length || 0} {t('myDiscoveries.itineraries.places')}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-muted-foreground" />
@@ -317,7 +330,7 @@ const MyDiscoveries = () => {
                         {itinerary.is_public && (
                           <Badge variant="outline">
                             <Globe className="w-3 h-3 mr-1" />
-                            Public
+                            {t('myDiscoveries.community.public')}
                           </Badge>
                         )}
                       </div>
@@ -327,7 +340,7 @@ const MyDiscoveries = () => {
                         size="sm"
                         onClick={() => togglePublicStatus(itinerary.id, itinerary.is_public)}
                       >
-                        {itinerary.is_public ? 'Rendre privé' : 'Rendre public'}
+                        {itinerary.is_public ? t('myDiscoveries.actions.makePrivate') : t('myDiscoveries.actions.makePublic')}
                       </Button>
                     </div>
                     
@@ -347,10 +360,10 @@ const MyDiscoveries = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5" />
-                Itinéraires de la communauté
+                {t('myDiscoveries.community.title')}
               </CardTitle>
               <CardDescription>
-                Découvrez les itinéraires partagés par d'autres utilisateurs
+                {t('myDiscoveries.community.description')}
               </CardDescription>
             </CardHeader>
           </Card>
@@ -366,17 +379,19 @@ const MyDiscoveries = () => {
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-semibold text-lg line-clamp-1">{itinerary.title}</h3>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => shareItinerary(itinerary)}
-                      >
-                        <Share2 className="w-4 h-4" />
-                      </Button>
+                      {settings.beInspiredEnabled && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => shareItinerary(itinerary)}
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                     
                     <div className="text-sm text-muted-foreground mb-2">
-                      Par {itinerary.user_display_name || 'Voyageur Tasarini'}
+                      {t('myDiscoveries.community.by')} {itinerary.user_display_name || t('myDiscoveries.community.defaultUsername')}
                     </div>
                     
                     {itinerary.description && (
@@ -388,7 +403,7 @@ const MyDiscoveries = () => {
                     <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span>{itinerary.poi_ids?.length || 0} lieux</span>
+                        <span>{itinerary.poi_ids?.length || 0} {t('myDiscoveries.itineraries.places')}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-muted-foreground" />

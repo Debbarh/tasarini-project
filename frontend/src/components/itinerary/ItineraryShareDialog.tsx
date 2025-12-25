@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +33,7 @@ export const ItineraryShareDialog: React.FC<ItineraryShareDialogProps> = ({
   onOpenChange,
   itinerary
 }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [permission, setPermission] = useState<'view' | 'edit'>('view');
   const [shares, setShares] = useState<Share[]>([]);
@@ -77,7 +79,7 @@ export const ItineraryShareDialog: React.FC<ItineraryShareDialogProps> = ({
       setShares(sharesWithProfiles);
     } catch (error) {
       console.error('Error fetching shares:', error);
-      toast.error('Erreur lors du chargement des partages');
+      toast.error(t('toast.share.loadError'));
     } finally {
       setFetchingShares(false);
     }
@@ -98,7 +100,7 @@ export const ItineraryShareDialog: React.FC<ItineraryShareDialogProps> = ({
       if (userError) throw userError;
       
       if (!userData) {
-        toast.error('Aucun utilisateur trouvé avec cet email');
+        toast.error(t('toast.share.userNotFound'));
         return;
       }
 
@@ -114,20 +116,21 @@ export const ItineraryShareDialog: React.FC<ItineraryShareDialogProps> = ({
 
       if (shareError) {
         if (shareError.code === '23505') {
-          toast.error('Cet utilisateur a déjà accès à cet itinéraire');
+          toast.error(t('toast.share.alreadyShared'));
         } else {
           throw shareError;
         }
         return;
       }
 
-      toast.success(`Itinéraire partagé avec ${email} en mode ${permission === 'edit' ? 'modification' : 'lecture'}`);
+      const mode = permission === 'edit' ? t('toast.share.editMode') : t('toast.share.viewMode');
+      toast.success(t('toast.share.success', { email, mode }));
       setEmail('');
       setPermission('view');
       fetchShares();
     } catch (error) {
       console.error('Error sharing itinerary:', error);
-      toast.error('Erreur lors du partage');
+      toast.error(t('toast.share.shareError'));
     } finally {
       setLoading(false);
     }
@@ -142,11 +145,11 @@ export const ItineraryShareDialog: React.FC<ItineraryShareDialogProps> = ({
 
       if (error) throw error;
 
-      toast.success('Partage supprimé');
+      toast.success(t('toast.share.removeSuccess'));
       fetchShares();
     } catch (error) {
       console.error('Error removing share:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('toast.share.removeError'));
     }
   };
 
@@ -159,11 +162,11 @@ export const ItineraryShareDialog: React.FC<ItineraryShareDialogProps> = ({
 
       if (error) throw error;
 
-      toast.success('Permissions mises à jour');
+      toast.success(t('toast.share.updateSuccess'));
       fetchShares();
     } catch (error) {
       console.error('Error updating permission:', error);
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('toast.share.updateError'));
     }
   };
 

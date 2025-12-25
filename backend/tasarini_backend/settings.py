@@ -66,6 +66,8 @@ MIDDLEWARE = [
     # Tasarini custom middlewares
     # 'apps.accounts.middleware.EmailVerificationMiddleware',  # Désactivé: on utilise is_active à la place
     'apps.accounts.session_middleware.UserSessionMiddleware',  # Gestion automatique des sessions utilisateur
+    'apps.content.middleware.StoryMetricsMiddleware',  # Track API performance metrics
+    'apps.content.middleware.StoryViewTrackingMiddleware',  # Auto-increment story view counts
 ]
 
 ROOT_URLCONF = 'tasarini_backend.urls'
@@ -92,6 +94,22 @@ ASGI_APPLICATION = 'tasarini_backend.asgi.application'
 DATABASES = {
     'default': env.db(),
 }
+
+# Caching configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'tasarini-cache',
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+        }
+    }
+}
+
+# Cache timeout configurations (in seconds)
+CACHE_TTL_SHORT = 60 * 5  # 5 minutes - for frequently changing data
+CACHE_TTL_MEDIUM = 60 * 15  # 15 minutes - for semi-static data
+CACHE_TTL_LONG = 60 * 60  # 1 hour - for static data
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -143,6 +161,14 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,  # Default page size for all list endpoints
+    'DEFAULT_THROTTLE_RATES': {
+        'likes': '30/min',
+        'comments': '10/min',
+        'bookmarks': '30/min',
+        'story_create': '5/min',
+    },
 }
 
 SPECTACULAR_SETTINGS = {
@@ -176,6 +202,51 @@ EMAIL_USE_LOCALTIME = True
 
 # Frontend URL for email links
 FRONTEND_URL = env('FRONTEND_URL', default='http://localhost:5173')
+
+# LibreTranslate service URL for translations
+LIBRETRANSLATE_URL = env('LIBRETRANSLATE_URL', default='http://libretranslate:5000')
+
+# DeepL API configuration
+DEEPL_API_KEY = env('DEEPL_API_KEY', default='')
+
+# AI provider API keys (stored only in environment, jamais côté frontend)
+OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
+OPENAI_API_BASE = env('OPENAI_API_BASE', default='https://api.openai.com/v1')
+GEMINI_API_KEY = env('GEMINI_API_KEY', default='')
+GEMINI_API_BASE = env('GEMINI_API_BASE', default='https://generativelanguage.googleapis.com/v1beta')
+PERPLEXITY_API_KEY = env('PERPLEXITY_API_KEY', default='')
+PERPLEXITY_API_BASE = env('PERPLEXITY_API_BASE', default='https://api.perplexity.ai')
+
+# Unsplash API keys for destination images
+UNSPLASH_ACCESS_KEY = env('UNSPLASH_ACCESS_KEY', default='')
+UNSPLASH_SECRET_KEY = env('UNSPLASH_SECRET_KEY', default='')
+UNSPLASH_API_BASE = env('UNSPLASH_API_BASE', default='https://api.unsplash.com')
+
+# Travel APIs for real-time booking data
+# Amadeus API for flights and travel data
+AMADEUS_API_KEY = env('AMADEUS_API_KEY', default='')
+AMADEUS_API_SECRET = env('AMADEUS_API_SECRET', default='')
+AMADEUS_API_BASE = env('AMADEUS_API_BASE', default='https://test.api.amadeus.com')
+
+# Hotelbeds API for hotel bookings
+HOTELBEDS_API_KEY = env('HOTELBEDS_API_KEY', default='')
+HOTELBEDS_SECRET = env('HOTELBEDS_SECRET', default='')
+HOTELBEDS_API_BASE = env('HOTELBEDS_API_BASE', default='https://api.test.hotelbeds.com')
+
+# Hotelbeds Activities API
+HOTELBEDS_ACTIVITIES_API_KEY = env('HOTELBEDS_ACTIVITIES_API_KEY', default='')
+HOTELBEDS_ACTIVITIES_SECRET = env('HOTELBEDS_ACTIVITIES_SECRET', default='')
+HOTELBEDS_ACTIVITIES_API_BASE = env('HOTELBEDS_ACTIVITIES_API_BASE', default='https://api.test.hotelbeds.com')
+
+# Hotelbeds Transfers API
+HOTELBEDS_TRANSFERS_API_KEY = env('HOTELBEDS_TRANSFERS_API_KEY', default='')
+HOTELBEDS_TRANSFERS_SECRET = env('HOTELBEDS_TRANSFERS_SECRET', default='')
+HOTELBEDS_TRANSFERS_API_BASE = env('HOTELBEDS_TRANSFERS_API_BASE', default='https://api.test.hotelbeds.com')
+
+# Kayak API for travel bookings
+KAYAK_API_KEY = env('KAYAK_API_KEY', default='')
+# Default to sandbox affiliate base; can be overridden via env
+KAYAK_API_BASE = env('KAYAK_API_BASE', default='https://sandbox-en-us.kayakaffiliates.com/api/affiliate')
 
 LOGGING = {
     'version': 1,

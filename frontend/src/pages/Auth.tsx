@@ -39,6 +39,9 @@ const Auth = () => {
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
 
+  // Validation errors
+  const [emailError, setEmailError] = useState<string | null>(null);
+
   useEffect(() => {
     // Check for partner-specific messages
     const message = searchParams.get('message');
@@ -88,6 +91,9 @@ const Auth = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Clear previous errors
+    setEmailError(null);
+
     // Validation frontend
     if (signUpPassword !== signUpPasswordConfirm) {
       toast.error(t('auth.gdpr.passwordsDontMatch'));
@@ -102,7 +108,7 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      await signUp(
+      const result = await signUp(
         signUpEmail,
         signUpPassword,
         signUpFirstName,
@@ -114,6 +120,12 @@ const Auth = () => {
         '1.0',
         marketingConsent
       );
+
+      // Check for email-specific errors
+      if (result.error?.payload?.email) {
+        const emailErrors = result.error.payload.email;
+        setEmailError(Array.isArray(emailErrors) ? emailErrors.join(', ') : emailErrors);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -337,11 +349,17 @@ const Auth = () => {
                         type="email"
                         placeholder={t('auth.emailPlaceholder')}
                         value={signUpEmail}
-                        onChange={(e) => setSignUpEmail(e.target.value)}
-                        className="pl-10"
+                        onChange={(e) => {
+                          setSignUpEmail(e.target.value);
+                          setEmailError(null); // Clear error when user types
+                        }}
+                        className={`pl-10 ${emailError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                         required
                       />
                     </div>
+                    {emailError && (
+                      <p className="text-sm text-red-500 mt-1">{emailError}</p>
+                    )}
                   </div>
                   
                   <div className="space-y-2">

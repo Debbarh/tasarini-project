@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/integrations/api/client';
+import { normalizeApiResponse } from '@/utils/apiHelpers';
 
 export interface SecurityCheck {
   id: string;
@@ -42,13 +43,16 @@ export const useSecurityData = () => {
     try {
       setScanning(true);
 
-      const [poiData, auditLogs] = await Promise.all([
+      const [poiResponse, auditLogsResponse] = await Promise.all([
         apiClient.get<any[]>('poi/tourist-points/', { limit: 100 }),
         apiClient.get<any[]>('admin/audit-logs/', { limit: 1 }),
       ]);
 
-      const totalPoi = poiData?.length ?? 0;
-      const approvedPoi = poiData?.filter((poi) => poi.status_enum === 'approved').length ?? 0;
+      const poiData = normalizeApiResponse(poiResponse);
+      const auditLogs = normalizeApiResponse(auditLogsResponse);
+
+      const totalPoi = poiData.length;
+      const approvedPoi = poiData.filter((poi) => poi.status_enum === 'approved').length;
 
       const checks: SecurityCheck[] = [
         {
@@ -114,10 +118,11 @@ export const useSecurityData = () => {
 
   const fetchSecurityAlerts = async () => {
     try {
-      const alertsData = await apiClient.get<any[]>('admin/audit-logs/', { limit: 50 });
+      const alertsResponse = await apiClient.get<any[]>('admin/audit-logs/', { limit: 50 });
+      const alertsData = normalizeApiResponse(alertsResponse);
 
       // Transformer les logs d'audit en alertes de sécurité
-      const alerts: SecurityAlert[] = (alertsData || [])
+      const alerts: SecurityAlert[] = alertsData
         .filter(log => 
           log.action === 'RLS_VIOLATION' || 
           log.action === 'UNAUTHORIZED_ACCESS' ||

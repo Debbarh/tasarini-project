@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -7,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { UnifiedPOIFormData } from '@/types/poi-form';
 import { useActivitySettings } from '@/hooks/useActivitySettings';
+import { getLocalizedDescription, getLocalizedLabel } from '@/utils/multilingualHelpers';
 
 interface ActivitySectionProps {
   formData: UnifiedPOIFormData;
@@ -26,6 +28,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
     avoidances,
     loading
   } = useActivitySettings();
+  const { i18n } = useTranslation();
 
   const handleArrayFieldToggle = (field: keyof UnifiedPOIFormData, value: string) => {
     const currentArray = formData[field] as string[];
@@ -78,10 +81,12 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                     }`}
                   >
                     <div className="text-sm font-medium flex items-center gap-2">
-                      {category.icon_emoji} {category.label_fr}
+                      {category.icon_emoji} {getLocalizedLabel(category, i18n.language)}
                     </div>
-                    {category.description_fr && (
-                      <div className="text-xs text-muted-foreground mt-1">{category.description_fr}</div>
+                    {getLocalizedDescription(category, i18n.language) && (
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {getLocalizedDescription(category, i18n.language)}
+                      </div>
                     )}
                   </div>
                 ))}
@@ -105,9 +110,11 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                     }`}
                   >
                     <div className="text-sm font-medium flex items-center gap-2">
-                      {level.icon_emoji} {level.label_fr}
+                      {level.icon_emoji} {getLocalizedLabel(level, i18n.language)}
                     </div>
-                    <div className="text-xs text-muted-foreground">{level.description_fr}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {getLocalizedDescription(level, i18n.language)}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -126,7 +133,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                     className="cursor-pointer"
                     onClick={() => handleArrayFieldToggle('activity_interests', interest.code)}
                   >
-                    {interest.label_fr}
+                    {getLocalizedLabel(interest, i18n.language)}
                     {formData.activity_interests.includes(interest.code) && (
                       <X className="ml-1 h-3 w-3" />
                     )}
@@ -145,7 +152,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                     className="cursor-pointer"
                     onClick={() => handleArrayFieldToggle('activity_avoidances', avoidance.code)}
                   >
-                    {avoidance.label_fr}
+                    {getLocalizedLabel(avoidance, i18n.language)}
                     {formData.activity_avoidances.includes(avoidance.code) && (
                       <X className="ml-1 h-3 w-3" />
                     )}

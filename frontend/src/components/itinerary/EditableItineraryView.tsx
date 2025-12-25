@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -148,7 +149,7 @@ const ActivityEditDialog: React.FC<ActivityEditDialogProps> = ({
 
     onSave(updatedActivity);
     onClose();
-    toast.success('Activité mise à jour avec succès');
+    toast.success(t('toast.itinerary.activityUpdated'));
   };
 
   return (
@@ -750,12 +751,12 @@ export const EditableItineraryView: React.FC<EditableItineraryViewProps> = ({
       },
     }));
 
-    toast.success('Nouveau jour ajouté');
+    toast.success(t('toast.itinerary.dayAdded'));
   };
 
   const handleDeleteDay = (dayIndex: number) => {
     if (editedItinerary.itinerary_data.days.length <= 1) {
-      toast.error('Impossible de supprimer le dernier jour');
+      toast.error(t('toast.itinerary.cannotDeleteLastDay'));
       return;
     }
 
@@ -769,7 +770,7 @@ export const EditableItineraryView: React.FC<EditableItineraryViewProps> = ({
       },
     }));
 
-    toast.success('Jour supprimé');
+    toast.success(t('toast.itinerary.dayDeleted'));
   };
 
   const handleAddActivity = (dayIndex: number) => {
@@ -810,7 +811,7 @@ export const EditableItineraryView: React.FC<EditableItineraryViewProps> = ({
   const handleSave = () => {
     onSave(editedItinerary);
     onClose();
-    toast.success('Itinéraire sauvegardé avec succès');
+    toast.success(t('toast.itinerary.saved'));
   };
 
   // Collect all activity IDs for global sortable context

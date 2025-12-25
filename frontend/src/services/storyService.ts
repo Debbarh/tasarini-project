@@ -13,6 +13,8 @@ export interface Story {
   id: number | string;
   author: number;
   author_name?: string;
+  author_first_name?: string;
+  author_last_name?: string;
   title: string;
   content: string;
   cover_image?: string;

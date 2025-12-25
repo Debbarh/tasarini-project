@@ -1,0 +1,32 @@
+name,country_code,country_name,latitude,longitude,is_active
+Lisbonne,PT,Portugal,38.7223,-9.1393,true
+Porto,PT,Portugal,41.1579,-8.6291,true
+Faro,PT,Portugal,37.0194,-7.9322,true
+Berlin,DE,Allemagne,52.5200,13.4050,true
+Munich,DE,Allemagne,48.1351,11.5820,true
+Hambourg,DE,Allemagne,53.5511,9.9937,true
+Francfort,DE,Allemagne,50.1109,8.6821,true
+Bruxelles,BE,Belgique,50.8503,4.3517,true
+Bruges,BE,Belgique,51.2093,3.2247,true
+Anvers,BE,Belgique,51.2213,4.4051,true
+Amsterdam,NL,Pays-Bas,52.3676,4.9041,true
+Rotterdam,NL,Pays-Bas,51.9225,4.4792,true
+La Haye,NL,Pays-Bas,52.0705,4.3007,true
+Zurich,CH,Suisse,47.3769,8.5417,true
+Genève,CH,Suisse,46.2044,6.1432,true
+Berne,CH,Suisse,46.9480,7.4474,true
+Vienne,AT,Autriche,48.2082,16.3738,true
+Salzbourg,AT,Autriche,47.8095,13.0550,true
+Innsbruck,AT,Autriche,47.2692,11.4041,true
+Athènes,GR,Grèce,37.9838,23.7275,true
+Thessalonique,GR,Grèce,40.6401,22.9444,true
+Santorin,GR,Grèce,36.3932,25.4615,true
+Istanbul,TR,Turquie,41.0082,28.9784,true
+Ankara,TR,Turquie,39.9334,32.8597,true
+Antalya,TR,Turquie,36.8969,30.7133,true
+Le Caire,EG,Égypte,30.0444,31.2357,true
+Alexandrie,EG,Égypte,31.2001,29.9187,true
+Louxor,EG,Égypte,25.6872,32.6396,true
+Tunis,TN,Tunisie,36.8065,10.1815,true
+Sousse,TN,Tunisie,35.8256,10.6341,true
+Djerba,TN,Tunisie,33.8076,10.8451,true

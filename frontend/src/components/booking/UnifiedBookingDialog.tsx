@@ -51,11 +51,18 @@ export const UnifiedBookingDialog: React.FC<UnifiedBookingDialogProps> = ({
   useEffect(() => {
     const checkPartnerBooking = async () => {
       if (item?.id) {
-        const partnerBookingInfo = await PartnerBookingAdapter.checkPartnerBooking(item.id);
-        setPartnerInfo(partnerBookingInfo);
+        try {
+          const partnerBookingInfo = await PartnerBookingAdapter.checkPartnerBooking(item.id);
+          setPartnerInfo(partnerBookingInfo);
+        } catch (error) {
+          // Silently handle errors (e.g., unauthorized, not found)
+          // Partner booking is optional, so we continue without it
+          console.debug('Partner booking not available for this item:', error);
+          setPartnerInfo(null);
+        }
       }
     };
-    
+
     checkPartnerBooking();
   }, [item]);
 

@@ -72,3 +72,37 @@ export interface BookingResult {
   message?: string;
   error?: string;
 }
+
+// Types pour les résultats de recherche d'hôtels
+export interface HotelSearchCard {
+  id: string;
+  name: string;
+  categoryCode?: string;
+  categoryName?: string;
+  destinationCity: string;
+  destinationCountry: string;
+  destinationName?: string;
+  zoneName?: string;
+  address: string;
+  rating: number;
+  price: {
+    amount: number;
+    currency: string;
+  };
+  checkInDate: string;
+  checkOutDate: string;
+  bookingUrl: string;
+  provider: string;
+  imageUrl: string | null;
+  allImages?: Array<{ path: string; imageTypeCode: string }>;
+  description?: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  facilities?: any[];
+  web?: string;
+  email?: string;
+  phones?: any[];
+  postalCode?: string;
+}

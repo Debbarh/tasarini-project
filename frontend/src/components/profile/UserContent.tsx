@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Map, Eye, Heart, MessageCircle, Share2, Calendar, MapPin, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
-import { apiClient } from '@/integrations/api/client';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 import { Link } from 'react-router-dom';
 
 interface Story {
@@ -54,12 +54,12 @@ export const UserContent: React.FC = () => {
     setLoading(true);
     try {
       const [storiesData, itinerariesData] = await Promise.all([
-        apiClient.get<Story[]>('stories/?mine=true&limit=6'),
-        apiClient.get<SavedItinerary[]>('travel/saved-itineraries/?limit=6')
+        apiClient.get<any>('stories/?mine=true&limit=6'),
+        apiClient.get<any>('travel/saved-itineraries/?limit=6')
       ]);
 
-      const userStories = storiesData || [];
-      const userItineraries = itinerariesData || [];
+      const userStories = extractArrayFromResponse<Story>(storiesData);
+      const userItineraries = extractArrayFromResponse<SavedItinerary>(itinerariesData);
 
       setStories(userStories);
       setItineraries(userItineraries);

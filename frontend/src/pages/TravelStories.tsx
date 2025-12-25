@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { TrendingTab } from "@/components/stories/TrendingTab";
 import { AIRecommendationsTab } from "@/components/stories/AIRecommendationsTab";
 import { MapTab } from "@/components/stories/MapTab";
 import { storyService, Story } from "@/services/storyService";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 interface StoryFilterState {
   search: string;
@@ -30,7 +32,9 @@ interface StoryFilterState {
 }
 
 const TravelStories = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
+  const { settings } = useSystemSettings();
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -66,16 +70,22 @@ const TravelStories = () => {
         sort: filters.sortBy,
         mine: Boolean(showMyStories && user),
       });
+
+      // Handle both array response and paginated response {results: [...]}
+      const normalized = Array.isArray(data)
+        ? data
+        : (data as any)?.results || [];
+
       setStories(
-        (data || []).map((story) => ({
+        normalized.map((story) => ({
           ...story,
           story_type: (story.story_type as 'user' | 'ai_generated' | 'partner_sponsored') || 'user',
           comments_count: story.comments_count || 0,
         }))
       );
     } catch (error) {
-      console.error('Erreur lors du chargement des stories:', error);
-      toast.error('Impossible de charger les travel stories');
+      console.error('Error loading stories:', error);
+      toast.error(t('travelStories.toast.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -98,7 +108,7 @@ const TravelStories = () => {
   const handleStoryCreated = () => {
     setIsCreateDialogOpen(false);
     fetchStories();
-    toast.success('Votre travel story a été créée !');
+    toast.success(t('travelStories.toast.storyCreated'));
   };
 
   const fetchUserStats = async () => {
@@ -130,21 +140,26 @@ const TravelStories = () => {
 
   const handleBookmark = (_storyId: Story['id'], isBookmarked: boolean) => {
     if (!user) {
-      toast.error('Connectez-vous pour sauvegarder les stories');
+      toast.error(t('travelStories.toast.loginToBookmark'));
       return;
     }
-    toast.success(isBookmarked ? 'Story ajoutée aux favoris' : 'Story retirée des favoris');
+    toast.success(isBookmarked ? t('travelStories.toast.bookmarkAdded') : t('travelStories.toast.bookmarkRemoved'));
   };
 
   const handleFiltersChange = (newFilters: Partial<StoryFilterState>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
 
+  // Don't render if module is disabled in admin settings
+  if (!settings.travelStoriesEnabled) {
+    return null;
+  }
+
   return (
     <main className="container mx-auto px-4 py-6 animate-fade-in">
       <Helmet>
-        <title>Réseau Social de Voyage | Travel Stories</title>
-        <meta name="description" content="Découvrez, partagez et vivez les plus belles aventures de voyage. Rejoignez notre communauté de voyageurs passionnés." />
+        <title>{t('travelStories.pageTitle')}</title>
+        <meta name="description" content={t('travelStories.pageDescription')} />
         <link rel="canonical" href="/travel-stories" />
       </Helmet>
 
@@ -153,29 +168,29 @@ const TravelStories = () => {
         <div className="flex-1">
           <h1 className="mb-4 text-3xl font-bold flex items-center gap-3">
             <Globe className="w-8 h-8 text-primary" />
-            <span>📖 Travel Stories Social</span>
+            <span>📖 {t('travelStories.title')}</span>
           </h1>
           <p className="text-muted-foreground mb-4">
-            Découvrez un monde d'aventures partagées. Créez, explorez et connectez-vous avec des voyageurs du monde entier.
+            {t('travelStories.subtitle')}
           </p>
           
           {user && (
             <div className="flex items-center gap-6 text-sm">
               <div className="flex items-center gap-1">
                 <BookOpen className="w-4 h-4 text-primary" />
-                <span>{userStats.stories_count} stories</span>
+                <span>{userStats.stories_count} {t('travelStories.stats.stories')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Users className="w-4 h-4 text-primary" />
-                <span>{userStats.followers_count} abonnés</span>
+                <span>{userStats.followers_count} {t('travelStories.stats.followers')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="w-4 h-4 text-primary" />
-                <span>{userStats.total_likes} likes</span>
+                <span>{userStats.total_likes} {t('travelStories.stats.likes')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Globe className="w-4 h-4 text-primary" />
-                <span>{userStats.countries_visited} pays</span>
+                <span>{userStats.countries_visited} {t('travelStories.stats.countries')}</span>
               </div>
             </div>
           )}
@@ -189,20 +204,20 @@ const TravelStories = () => {
               className="w-full lg:w-auto"
               onClick={() => setShowMyStories((prev) => !prev)}
             >
-              {showMyStories ? 'Voir le feed public' : 'Voir mes stories'}
+              {showMyStories ? t('travelStories.buttons.viewPublicFeed') : t('travelStories.buttons.viewMyStories')}
             </Button>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="lg" className="w-full lg:w-auto">
                   <Plus className="w-5 h-5 mr-2" />
-                  ✍️ Partager mon voyage
+                  ✍️ {t('travelStories.buttons.shareMyJourney')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>✍️ Partagez votre aventure</DialogTitle>
+                  <DialogTitle>✍️ {t('travelStories.dialog.title')}</DialogTitle>
                   <DialogDescription>
-                    Créez une story qui inspirera la communauté de voyageurs
+                    {t('travelStories.dialog.description')}
                   </DialogDescription>
                 </DialogHeader>
                 <CreateSocialStoryDialog
@@ -220,19 +235,19 @@ const TravelStories = () => {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="feed" className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            <span className="hidden sm:inline">Feed</span>
+            <span className="hidden sm:inline">{t('travelStories.tabs.feed')}</span>
           </TabsTrigger>
           <TabsTrigger value="trending" className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4" />
-            <span className="hidden sm:inline">Tendances</span>
+            <span className="hidden sm:inline">{t('travelStories.tabs.trending')}</span>
           </TabsTrigger>
           <TabsTrigger value="map" className="flex items-center gap-2">
             <MapPin className="w-4 h-4" />
-            <span className="hidden sm:inline">Carte</span>
+            <span className="hidden sm:inline">{t('travelStories.tabs.map')}</span>
           </TabsTrigger>
           <TabsTrigger value="ai" className="flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
-            <span className="hidden sm:inline">IA</span>
+            <span className="hidden sm:inline">{t('travelStories.tabs.ai')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -268,19 +283,19 @@ const TravelStories = () => {
           <div className="col-span-full text-center py-8 sm:py-12">
             <BookOpen className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-muted-foreground mb-3 sm:mb-4" />
             <h3 className="text-base sm:text-lg font-semibold mb-2">
-              {showMyStories ? "✈️ Aucune de vos épopées" : "🌟 Aucune histoire découverte"}
+              {showMyStories ? `✈️ ${t('travelStories.empty.myStoriesTitle')}` : `🌟 ${t('travelStories.empty.noStoriesTitle')}`}
             </h3>
             <p className="text-sm sm:text-base text-muted-foreground mb-4 max-w-md mx-auto">
               {showMyStories 
-                ? "Vous n'avez pas encore partagé vos aventures. Votre première histoire n'attend que vous !"
-                : "Soyez le pionnier ! Partagez la première épopée qui inspirera toute la communauté."
+                ? t('travelStories.empty.myStoriesDesc')
+                : t('travelStories.empty.noStoriesDesc')
               }
             </p>
             {user && (
               <Button onClick={() => setIsCreateDialogOpen(true)} size="sm" className="sm:size-default">
                 <Plus className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">✍️ Raconter ma première épopée</span>
-                <span className="sm:hidden">✍️ Commencer</span>
+                <span className="hidden sm:inline">✍️ {t('travelStories.buttons.shareFirstEpic')}</span>
+                <span className="sm:hidden">✍️ {t('travelStories.buttons.start')}</span>
               </Button>
             )}
           </div>
@@ -333,15 +348,15 @@ const TravelStories = () => {
           <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <BookOpen className="w-4 h-4" />
-              <span>{stories.length} épopées</span>
+              <span>{stories.length} {t('travelStories.statistics.epics')}</span>
             </div>
             <div className="flex items-center gap-1">
               <Heart className="w-4 h-4" />
-              <span>{stories.reduce((acc, story) => acc + story.likes_count, 0)} likes</span>
+              <span>{stories.reduce((acc, story) => acc + story.likes_count, 0)} {t('travelStories.statistics.likes')}</span>
             </div>
             <div className="flex items-center gap-1">
               <Eye className="w-4 h-4" />
-              <span>{stories.reduce((acc, story) => acc + story.views_count, 0)} vues</span>
+              <span>{stories.reduce((acc, story) => acc + story.views_count, 0)} {t('travelStories.statistics.views')}</span>
             </div>
           </div>
         </div>

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/integrations/api/client';
+import { useTranslation } from 'react-i18next';
 
 interface BookingTransaction {
   id: string;
@@ -32,6 +33,7 @@ interface BookingTransaction {
 }
 
 export const BookingAnalyticsPanel: React.FC = () => {
+  const { t } = useTranslation();
   const [transactions, setTransactions] = useState<BookingTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -142,7 +144,7 @@ export const BookingAnalyticsPanel: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Réservations</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.bookings.stats.totalBookings')}</p>
                 <p className="text-2xl font-bold">{stats.totalBookings}</p>
               </div>
               <Calendar className="h-8 w-8 text-primary" />
@@ -154,7 +156,7 @@ export const BookingAnalyticsPanel: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Chiffre d'Affaires</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.bookings.stats.totalRevenue')}</p>
                 <p className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-green-500" />
@@ -166,7 +168,7 @@ export const BookingAnalyticsPanel: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Commissions</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.bookings.stats.commissions')}</p>
                 <p className="text-2xl font-bold">{formatCurrency(stats.totalCommissions)}</p>
               </div>
               <Euro className="h-8 w-8 text-blue-500" />
@@ -178,7 +180,7 @@ export const BookingAnalyticsPanel: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">En Attente</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.bookings.stats.pending')}</p>
                 <p className="text-2xl font-bold">{stats.pendingBookings}</p>
               </div>
               <Clock className="h-8 w-8 text-yellow-500" />
@@ -192,16 +194,16 @@ export const BookingAnalyticsPanel: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Historique des Réservations
+            {t('partnerCenter.dashboard.bookings.history.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {transactions.length === 0 ? (
             <div className="text-center py-8">
               <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Aucune réservation pour le moment</p>
+              <p className="text-muted-foreground">{t('partnerCenter.dashboard.bookings.history.empty')}</p>
               <p className="text-sm text-muted-foreground mt-2">
-                Les réservations de vos points d'intérêt apparaîtront ici
+                {t('partnerCenter.dashboard.bookings.history.emptyDescription')}
               </p>
             </div>
           ) : (
@@ -219,27 +221,27 @@ export const BookingAnalyticsPanel: React.FC = () => {
                       </div>
                     </div>
                     <Badge variant={getStatusBadge(transaction.status)}>
-                      {transaction.status}
+                      {t(`partnerCenter.dashboard.bookings.status.${transaction.status}`)}
                     </Badge>
                   </div>
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground">Référence</p>
+                      <p className="text-muted-foreground">{t('partnerCenter.dashboard.bookings.history.reference')}</p>
                       <p className="font-mono">{transaction.booking_reference}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Montant</p>
+                      <p className="text-muted-foreground">{t('partnerCenter.dashboard.bookings.history.amount')}</p>
                       <p className="font-semibold">{formatCurrency(transaction.booking_amount)}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Commission</p>
+                      <p className="text-muted-foreground">{t('partnerCenter.dashboard.bookings.history.commission')}</p>
                       <p className="font-semibold text-green-600">
                         {formatCurrency(transaction.commission_amount)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Date</p>
+                      <p className="text-muted-foreground">{t('partnerCenter.dashboard.bookings.history.date')}</p>
                       <p>{new Date(transaction.booking_date).toLocaleDateString('fr-FR')}</p>
                     </div>
                   </div>

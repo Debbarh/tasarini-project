@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { apiClient } from "@/integrations/api/client";
 
 // Function to clean country names
@@ -15,6 +16,7 @@ interface UserLocation {
   country?: string;
   city?: string;
   region?: string;
+  neighborhood?: string;
 }
 
 interface AnalyticsData {
@@ -37,6 +39,7 @@ export const useAnalytics = () => {
   });
 
   const [userLocation, setUserLocation] = useState<UserLocation>({});
+  const { i18n } = useTranslation();
 
   // Get user location using browser geolocation and IP-based services
   const getUserLocation = useCallback(async () => {
@@ -55,7 +58,8 @@ export const useAnalytics = () => {
               setUserLocation({
                 country: cleanCountryName(data.countryName),
                 city: data.city,
-                region: data.principalSubdivision
+                region: data.principalSubdivision,
+                neighborhood: data.locality || data.localityInfo?.locality?.name || data.localityInfo?.administrative?.[2]?.name
               });
             } catch (error) {
             }
@@ -74,14 +78,18 @@ export const useAnalytics = () => {
   }, []);
 
   const getLocationFromIP = async () => {
+    // DISABLED: CORS issues with ipapi.co
+    // External geolocation calls disabled to avoid CORS errors
+    // Location will use browser geolocation API only
     try {
-      const response = await fetch('https://ipapi.co/json/');
-      const data = await response.json();
-      setUserLocation({
-        country: cleanCountryName(data.country_name),
-        city: data.city,
-        region: data.region
-      });
+      // const response = await fetch('https://ipapi.co/json/');
+      // const data = await response.json();
+      // setUserLocation({
+      //   country: cleanCountryName(data.country_name),
+      //   city: data.city,
+      //   region: data.region,
+      //   neighborhood: data.postal || data.region || undefined
+      // });
     } catch (error) {
     }
   };
@@ -99,6 +107,8 @@ export const useAnalytics = () => {
         user_country: userLocation.country,
         user_city: userLocation.city,
         user_region: userLocation.region,
+        user_neighborhood: userLocation.neighborhood,
+        user_language: i18n.language,
         step_completed: stepCompleted,
         completion_status: completionStatus,
         destinations: tripData.destinations ? JSON.stringify(tripData.destinations) : null,
@@ -117,7 +127,7 @@ export const useAnalytics = () => {
       await apiClient.post('analytics/travel/', analyticsData);
     } catch (error) {
     }
-  }, [sessionId, userLocation]);
+  }, [sessionId, userLocation, i18n.language]);
 
   useEffect(() => {
     getUserLocation();

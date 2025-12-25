@@ -19,6 +19,7 @@ import PlanTrip from "./pages/PlanTrip";
 import Recommendations from "./pages/Recommendations";
 import BeInspired from "./pages/BeInspired";
 import TravelStories from "./pages/TravelStories";
+import StoryDetails from "./pages/StoryDetails";
 import MyDiscoveries from "./pages/MyDiscoveries";
 import TouristPoints from "./pages/TouristPoints";
 import SavedItineraries from "./pages/SavedItineraries";
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
         element: <TravelStories />,
       },
       {
+        path: "travel-stories/:id",
+        element: <StoryDetails />,
+      },
+      {
         path: "my-discoveries",
         element: (
           <ProtectedRoute>
@@ -148,6 +153,91 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+// Global error handlers for external widgets and scripts
+// List of known external widget domains that may have errors
+const EXTERNAL_WIDGET_DOMAINS = [
+  'travelpayouts',
+  'hotellook',
+  'tiqets.com',
+  'expediagroup.com',
+  'booking.com',
+  'getyourguide.com',
+  'viator.com',
+  'omio.com',
+  'omio widget'
+];
+
+window.addEventListener('unhandledrejection', (event) => {
+  // Check if error is from external widget scripts
+  const errorMessage = event.reason?.message || '';
+  const errorStack = event.reason?.stack || '';
+  const errorString = `${errorMessage} ${errorStack}`.toLowerCase();
+
+  // Check if error is from external widgets
+  const isExternalWidgetError =
+    errorMessage.includes('filter') ||
+    errorMessage.includes('map') ||
+    errorStack.includes('main-') ||
+    errorStack.includes('app.js') ||
+    EXTERNAL_WIDGET_DOMAINS.some(domain => errorString.includes(domain.toLowerCase()));
+
+  if (isExternalWidgetError) {
+    // Prevent external widget errors from showing in console
+    event.preventDefault();
+    console.debug('External widget error suppressed:', errorMessage.substring(0, 100));
+  }
+});
+
+window.addEventListener('error', (event) => {
+  // Suppress external script loading errors
+  const target = event.target as HTMLScriptElement | HTMLLinkElement | HTMLImageElement;
+  const tagName = target?.tagName;
+
+  if (tagName === 'SCRIPT' || tagName === 'LINK' || tagName === 'IMG') {
+    const src = (target as any).src || (target as any).href || '';
+    const isExternalWidget = EXTERNAL_WIDGET_DOMAINS.some(domain =>
+      src.toLowerCase().includes(domain.toLowerCase())
+    );
+
+    if (isExternalWidget) {
+      event.preventDefault();
+      console.debug('External widget resource failed to load:', src.substring(0, 100));
+    }
+  }
+}, true); // Use capture phase to catch errors early
+
+// Intercept console errors and warnings from external widgets
+const originalError = console.error;
+const originalWarn = console.warn;
+
+console.error = (...args: any[]) => {
+  const message = args.join(' ').toLowerCase();
+  const isExternalWidget =
+    EXTERNAL_WIDGET_DOMAINS.some(domain => message.includes(domain.toLowerCase())) ||
+    message.includes('getboundingclientrect') ||
+    message.includes('x-frame-options') ||
+    message.includes('failed to load resource') ||
+    message.includes('404') && EXTERNAL_WIDGET_DOMAINS.some(domain => message.includes(domain));
+
+  // Suppress external widget errors
+  if (!isExternalWidget) {
+    originalError.apply(console, args);
+  }
+};
+
+console.warn = (...args: any[]) => {
+  const message = args.join(' ').toLowerCase();
+  const isExternalWidget =
+    EXTERNAL_WIDGET_DOMAINS.some(domain => message.includes(domain.toLowerCase())) ||
+    message.includes('deprecated') ||
+    message.includes('omio widget');
+
+  // Suppress external widget warnings
+  if (!isExternalWidget) {
+    originalWarn.apply(console, args);
+  }
+};
 
 // Configure React Query
 const queryClient = new QueryClient({

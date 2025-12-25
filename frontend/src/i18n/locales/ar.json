@@ -10,6 +10,12 @@
     "logout": "تسجيل الخروج",
     "login": "تسجيل الدخول"
   },
+  "notFound": {
+    "title": "404",
+    "message": "عفواً! لم يتم العثور على الصفحة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "backToHome": "العودة إلى الصفحة الرئيسية"
+  },
   "home": {
     "heroTitle": "مغامرتك القادمة في انتظارك",
     "heroSubtitle": "اكتشف وجهات استثنائية، وأنشئ برامج رحلات مخصصة، وعش تجارب لا تُنسى. دعنا نرشدك إلى رحلة أحلامك.",
@@ -27,10 +33,191 @@
   },
   "planTrip": {
     "title": "خطط لعطلتك المثالية",
-    "subtitle": "أنشئ برنامج رحلة مخصص باستخدام مساعد الذكاء الاصطناعي الذي يفهم رغباتك في المغامرة",
+    "subtitle": "أنشئ مساراً مخصصاً مع مساعد الذكاء الاصطناعي الذي يفهم رغباتك في المغامرة",
     "startPlanning": "ابدأ التخطيط",
-    "smartRecommendations": "التوصيات الذكية",
-    "smartRecommendationsDesc": "يحلل ذكاؤنا الاصطناعي تفضيلاتك لاقتراح تجارب فريدة"
+    "smartRecommendations": "توصيات ذكية",
+    "smartRecommendationsDesc": "يحلل ذكاؤنا الاصطناعي تفضيلاتك لاقتراح تجارب فريدة",
+    "pageTitle": "خطط عطلتك المثالية | رحلات بالذكاء الاصطناعي",
+    "pageDescription": "أنشئ مسار أحلامك بضغطات قليلة. يصمم ذكاؤنا الاصطناعي مغامرات مخصصة تحول رغباتك إلى ذكريات سحرية.",
+    "itineraryGenerated": "تم إنشاء المسار بنجاح!",
+    "personalizedTravel": "رحلتك المخصصة التي أنشأها الذكاء الاصطناعي جاهزة.",
+    "withPreferences": "✨ بناءً على تفضيلاتك!",
+    "withLocalPlaces": "📍 مع أماكن محلية أصيلة!",
+    "generationError": "خطأ في إنشاء المسار",
+    "tryAgainLater": "يرجى المحاولة مرة أخرى لاحقاً أو الاتصال بالدعم إذا استمرت المشكلة.",
+    "enrichmentComplete": "تم إثراء الرحلة!",
+    "enrichmentError": "خطأ أثناء إثراء الرحلة",
+    "createNewTrip": "إنشاء رحلة جديدة",
+    "newTrip": "رحلة جديدة",
+    "wizard": {
+      "title": "خطط رحلتك",
+      "stepOf": "الخطوة {{current}} من {{total}}",
+      "previous": "السابق",
+      "next": "التالي",
+      "generating": "جاري الإنشاء...",
+      "createItinerary": "إنشاء برنامج رحلتي",
+      "steps": {
+        "destinations": {
+          "title": "الوجهات",
+          "description": "إلى أين تريد أن تذهب؟"
+        },
+        "details": {
+          "title": "المرافقون",
+          "description": "مع من تسافر؟"
+        },
+        "budget": {
+          "title": "الميزانية",
+          "description": "حدد ميزانية رحلتك"
+        },
+        "culinary": {
+          "title": "المأكولات",
+          "description": "تفضيلاتك الغذائية"
+        },
+        "accommodation": {
+          "title": "الإقامة",
+          "description": "نوع ومعايير الإقامة"
+        },
+        "activities": {
+          "title": "الأنشطة",
+          "description": "التجارب والاهتمامات"
+        }
+      }
+    },
+    "destinationStep": {
+      "selectCountry": "اختر بلداً",
+      "selectCity": "اختر مدينة",
+      "numberOfDays": "عدد الأيام",
+      "exactDates": "تواريخ محددة",
+      "start": "البداية",
+      "end": "النهاية",
+      "day": "يوم",
+      "days": "أيام",
+      "selectedCountry": "البلد المختار",
+      "selectedCity": "المدينة المختارة",
+      "addDestination": "+ إضافة وجهة",
+      "mapSearch": "📍 البحث عبر الخريطة",
+      "totalDuration": "مدة الرحلة الإجمالية",
+      "selectDescription": "حدد البلدان والمدن التي ترغب في زيارتها",
+      "destination": "الوجهة",
+      "country": "البلد",
+      "city": "المدينة",
+      "title": "ما هي وجهاتك؟",
+      "duration": "المدة",
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ النهاية",
+      "chooseOnMap": "اختر على الخريطة",
+      "addFirstDestination": "أضف وجهة أولاً",
+      "selectOnMap": "حدد وجهتك على الخريطة",
+      "mapDescription": "حدد وجهة بالنقر على الخريطة أو البحث عن عنوان",
+      "itinerary": "خط السير:",
+      "locationSaved": "تم حفظ الوجهة بنجاح.",
+      "locationSaveError": "تعذر حفظ هذا الموقع، يرجى التحقق من المعلومات.",
+      "invalidAddress": "يرجى تحديد عنوان صالح على الخريطة."
+    },
+    "travelDetailsStep": {
+      "title": "رفقاء السفر",
+      "description": "حدد تكوين مجموعتك السياحية",
+      "travelerType": "نوع المسافر",
+      "subtype": "النوع الفرعي",
+      "chooseSubtype": "اختر نوعًا فرعيًا (اختياري)",
+      "groupSize": "حجم المجموعة",
+      "people": "أشخاص",
+      "person": "شخص",
+      "children": "الأطفال",
+      "child": "طفل",
+      "addChild": "إضافة طفل",
+      "year": "سنة",
+      "years": "سنوات",
+      "summary": "ملخص",
+      "impactOnRecommendations": "التأثير على توصياتك:",
+      "maxLevel": "المستوى الأقصى",
+      "veryEasy": "سهل جدًا",
+      "easy": "سهل",
+      "moderate": "معتدل",
+      "difficult": "صعب",
+      "veryDifficult": "صعب جدًا",
+      "compatiblePOIsFound": "POI متوافق تم العثور عليه",
+      "compatiblePOIsFoundPlural": "POI متوافقة تم العثور عليها",
+      "inRegion": "في المنطقة",
+      "inYourBudget": "ضمن ميزانيتك",
+      "noPOIFound": "لم يتم العثور على POI متوافق",
+      "adjustCriteria": "فكر في تعديل معاييرك للحصول على مزيد من الخيارات",
+      "available": "متاح",
+      "availablePlural": "متاحة",
+      "remains": "يتبقى",
+      "remainsPlural": "تتبقى",
+      "error": "خطأ"
+    },
+    "budgetStep": {
+      "title": "ميزانية السفر",
+      "description": "حدد ميزانيتك لتخصيص رحلتك",
+      "budgetLevel": "مستوى الميزانية",
+      "dailyBudget": "الميزانية اليومية",
+      "perDay": "يوم",
+      "currency": "العملة",
+      "flexibility": "المرونة",
+      "selectedLevel": "المستوى المختار",
+      "summary": "ملخص ميزانيتك",
+      "budget": "ميزانية",
+      "error": "خطأ"
+    },
+    "culinaryStep": {
+      "title": "التفضيلات الغذائية",
+      "description": "شارك أذواقك للحصول على توصيات مخصصة",
+      "loading": "جارٍ التحميل...",
+      "cuisineTypes": "أنواع المطابخ المفضلة",
+      "restaurantCategories": "فئات المطاعم المفضلة",
+      "adventureLevel": "مستوى المغامرة الغذائية",
+      "consumeAlcohol": "أنا أتناول الكحول",
+      "dietaryRestrictions": "القيود الغذائية",
+      "summary": "ملخص تفضيلاتك الغذائية",
+      "restriction": "قيد",
+      "restrictionsPlural": "قيود",
+      "cuisineType": "نوع المطبخ",
+      "cuisineTypesPlural": "أنواع المطابخ",
+      "restaurantCategory": "فئة المطعم",
+      "restaurantCategoriesPlural": "فئات المطاعم",
+      "culinaryAdventure": "مغامرة غذائية",
+      "conservative": "محافظ",
+      "moderate": "معتدل",
+      "adventurous": "مغامر",
+      "consumesAlcohol": "يتناول الكحول"
+    },
+    "accommodationStep": {
+      "title": "تفضيلات الإقامة",
+      "description": "اختر نوع الإقامة والخدمات التي تهمك",
+      "loading": "جارٍ التحميل...",
+      "accommodationType": "نوع الإقامة",
+      "amenities": "الخدمات والمرافق",
+      "location": "الموقع المفضل",
+      "accessibility": "إمكانية الوصول",
+      "security": "الأمن",
+      "ambiance": "الأجواء",
+      "summary": "ملخص تفضيلات الإقامة الخاصة بك",
+      "types": "الأنواع",
+      "services": "الخدمات",
+      "locations": "المواقع",
+      "others": "آخرون"
+    },
+    "activitiesStep": {
+      "title": "الأنشطة والتجارب",
+      "description": "حدد اهتماماتك لتخصيص خطة رحلتك",
+      "loading": "جارٍ تحميل البيانات...",
+      "categories": "فئات الأنشطة المفضلة",
+      "intensity": "كثافة الأنشطة",
+      "specificInterests": "اهتمامات محددة",
+      "avoidances": "للتجنب",
+      "avoidancesDescription": "حدد ما تفضل تجنبه أثناء رحلتك",
+      "specialRequests": "طلبات خاصة",
+      "specialRequestsDescription": "أضف أي معلومات محددة لرحلتك",
+      "specialRequestsPlaceholder": "احتفال بعيد ميلاد، قيود طبية، مناسبات خاصة، طلبات محددة...",
+      "summary": "ملخص تفضيلات الأنشطة الخاصة بك",
+      "summaryCategories": "الفئات:",
+      "summaryIntensity": "الكثافة:",
+      "summaryInterests": "الاهتمامات:",
+      "moderate": "معتدل",
+      "others": "آخرون"
+    }
   },
   "beInspired": {
     "title": "استلهم",
@@ -40,11 +227,218 @@
     "exploreMap": "استكشف الخريطة",
     "findInspiration": "ابحث عن الإلهام"
   },
+  "beInspired": {
+    "pageTitle": "استلهم | السفر بالذكاء الاصطناعي",
+    "pageDescription": "استكشف عالمًا من العجائب الخفية حولك. اكتشف الجواهر السرية، والنكهات الأصيلة، والتجارب السحرية التي تنتظرك.",
+    "title": "✨ استلهم",
+    "subtitle": "اكتشف الكنوز المخفية في دائرة نصف قطرها {{radius}} كم. كل مكان يحكي قصة، وكل تجربة تخلق ذكرى لا تُنسى.",
+    "searchHotels": "🏨 الفنادق",
+    "searchHotelsShort": "🏨",
+    "aiGuide": "🤖 الدليل الذكي",
+    "aiGuideShort": "🤖 دليل",
+    "shareDiscovery": "🌟 مشاركة كنز",
+    "shareDiscoveryShort": "🌟 مشاركة",
+    "dialogTitle": "🌟 شارك اكتشافك",
+    "dialogDescription": "اكشف عن مكان سحري تحبه لمجتمع المستكشفين",
+    "exploreMap": "استكشف الخريطة",
+    "findInspiration": "ابحث عن الإلهام",
+    "radiusLabel": "🎯 نطاق الاستكشاف",
+    "radius10": "10 كم",
+    "radius20": "20 كم",
+    "radius30": "30 كم",
+    "radius50": "50 كم",
+    "legendTitle": "المفتاح",
+    "legendRestaurants": "المطاعم والمقاهي",
+    "legendActivities": "الأنشطة والترفيه",
+    "legendTourist": "المعالم السياحية",
+    "legendCenter": "مركز البحث",
+    "positionDetected": "تم اكتشاف الموقع!",
+    "mustBeLoggedIn": "يجب عليك تسجيل الدخول لإضافة نقطة اهتمام",
+    "nameRequired": "اسم نقطة الاهتمام مطلوب",
+    "successAdded": "تمت إضافة نقطة الاهتمام بنجاح!",
+    "errorAdding": "خطأ في الإضافة: {{error}}",
+    "aiContext": "يستكشف المستخدم المنطقة حول {{lat}}, {{lon}}",
+    "smartRecommendations": {
+      "title": "التوصيات الذكية",
+      "description": "اقتراحات مخصصة بناءً على أذواقك وسجلك",
+      "loginRequired": "قم بتسجيل الدخول لتلقي توصيات مخصصة بناءً على تفضيلاتك",
+      "yourPreferences": "تفضيلاتك:",
+      "refresh": "تحديث",
+      "analyzing": "جارٍ تحليل تفضيلاتك...",
+      "noRecommendationsTitle": "بحاجة إلى المزيد من البيانات",
+      "noRecommendationsDesc": "أضف أماكن إلى مفضلاتك وأنشئ مسارات رحلات لتلقي توصيات مخصصة!",
+      "exploreMap": "استكشف الخريطة",
+      "match": "تطابق",
+      "excellentMatch": "تطابق ممتاز",
+      "goodMatch": "تطابق جيد",
+      "toDiscover": "لاكتشافها",
+      "viewOnMap": "الخريطة",
+      "retry": "إعادة المحاولة",
+      "error": "غير قادر على تحميل التوصيات الذكية",
+      "noNewRecommendations": "لم يتم العثور على توصيات جديدة. استكشف المزيد لتحسين اقتراحاتك!",
+      "successGenerated": "تم إنشاء {{count}} توصية مخصصة!",
+      "loadingError": "خطأ في تحميل التوصيات"
+    },
+    "filters": {
+      "title": "الفلاتر",
+      "results": "نتيجة",
+      "searching": "بحت...",
+      "keywordSearch": "بحث بالكلمات الرئيسية",
+      "keywordPlaceholder": "ابحث عن مكان، نشاط...",
+      "categories": "الفئات",
+      "categoryRestaurants": "مطاعم ومقاهي",
+      "categoryActivities": "أنشطة وترفيه",
+      "categoryTourist": "نقاط الاهتمام",
+      "categoryOther": "أخرى",
+      "minRating": "التقييم الأدنى ({{rating}}⭐)",
+      "allRatings": "الكل",
+      "priceRange": "نطاق الأسعار",
+      "allPrices": "جميع الأسعار",
+      "priceEconomical": "€ - اقتصادي",
+      "priceModerate": "€€ - معتدل",
+      "priceHigh": "€€€ - مرتفع",
+      "accessibility": "متاح للكراسي المتحركة",
+      "reset": "إعادة تعيين"
+    }
+  },
   "travelStories": {
+    "pageTitle": "شبكة السفر الاجتماعية | Travel Stories",
+    "pageDescription": "اكتشف وشارك وعش أجمل مغامرات السفر. انضم إلي مجتمعنا من المسافرين المتحمسين.",
     "title": "قصص السفر",
-    "subtitle": "اكتشف حكايات آسرة من المغامرين وشارك تجاربك الخاصة لإلهام المجتمع",
-    "shareStory": "احك رحلتي",
-    "myAdventures": "مغامراتي"
+    "subtitle": "اكتشف عالمًا من المغامرات المشتركة. أنشئ واستكشف وتواصل مع المسافرين من جميع أنحاء العالم.",
+    "shareStory": "شارك رحلتي",
+    "myAdventures": "مغامراتي",
+    "stats": {
+      "stories": "قصص",
+      "followers": "متابعين",
+      "likes": "إعجابات",
+      "countries": "دول"
+    },
+    "buttons": {
+      "viewPublicFeed": "عرض التغذية العامة",
+      "viewMyStories": "عرض قصصي",
+      "shareMyJourney": "شارك رحلتي",
+      "shareFirstEpic": "احكي ملحمتي الأولى",
+      "start": "ابدأ"
+    },
+    "dialog": {
+      "title": "شارك مغامرتك",
+      "description": "أنشئ قصة ستلهم مجتمع المسافرين"
+    },
+    "tabs": {
+      "feed": "التغذية",
+      "trending": "الرائج",
+      "map": "الخريطة",
+      "ai": "الذكاء الاصطناعي"
+    },
+    "empty": {
+      "myStoriesTitle": "لا توجد ملاحم لك",
+      "noStoriesTitle": "لم يتم اكتشاف قصص",
+      "myStoriesDesc": "لم تشارك مغامراتك بعد. قصتك الأولى في انتظارك!",
+      "noStoriesDesc": "كن الرائد! شارك الملحمة الأولى التي ستلهم المجتمع بأكمله."
+    },
+    "statistics": {
+      "epics": "ملاحم",
+      "likes": "إعجابات",
+      "views": "مشاهدات"
+    },
+    "toast": {
+      "storyCreated": "تم إنشاء قصة رحلتك!",
+      "errorLoading": "غير قادر على تحميل قصص السفر",
+      "loginToBookmark": "سجل الدخول لحفظ القصص",
+      "bookmarkAdded": "أضيفت القصة إلى المفضلة",
+      "bookmarkRemoved": "أزيلت القصة من المفضلة"
+    },
+    "filters": {
+      "searchPlaceholder": "ابحث في القصص...",
+      "filtersButton": "الفلاتر",
+      "location": "الموقع",
+      "locationPlaceholder": "تصفية حسب الموقع...",
+      "linkType": "نوع الرابط",
+      "allTypes": "جميع الأنواع",
+      "touristPoints": "نقاط الاهتمام",
+      "itineraries": "خطوط السير",
+      "activities": "الأنشطة",
+      "period": "الفترة",
+      "from": "من",
+      "to": "إلى",
+      "tags": "الوسوم",
+      "addTagPlaceholder": "إضافة وسم للتصفية...",
+      "addButton": "إضافة",
+      "loading": "تحميل...",
+      "results": "نتيجة",
+      "resultsPlural": "نتائج",
+      "clearFilters": "مسح الفلاتر"
+    },
+    "createDialog": {
+      "tabs": {
+        "aiItinerary": "من المسار",
+        "aiInstant": "توليد AI",
+        "manual": "يدوي"
+      },
+      "aiItinerary": {
+        "title": "إنشاء من مسار",
+        "selectLabel": "اختر مسارًا",
+        "selectPlaceholder": "اختر مسارًا...",
+        "generating": "جارٍ التوليد...",
+        "generate": "إنشاء قصة"
+      },
+      "aiInstant": {
+        "title": "إنشاء فوري بواسطة AI",
+        "preparing": "AI يعد قصتك...",
+        "templates": {
+          "paris": {
+            "title": "باريس الرومانسية",
+            "description": "رحلة رومانسية مع الآثار"
+          },
+          "mountain": {
+            "title": "مغامرة جبلية",
+            "description": "رحلات مشي ومناظر برية"
+          },
+          "coastal": {
+            "title": "رحلة ساحلية",
+            "description": "شواطئ وغروب الشمس"
+          },
+          "urban": {
+            "title": "الثقافة الحضرية",
+            "description": "فن الشارع وفنون الطهي"
+          }
+        }
+      },
+      "form": {
+        "title": "عنوان قصتك *",
+        "titlePlaceholder": "عنوان جذاب لتجربتك...",
+        "content": "قصتك *",
+        "contentPlaceholder": "احكِ عن تجربتك، مشاعرك، اكتشافاتك...",
+        "media": "صور وفيديوهات",
+        "mediaHelp": "أضف صورًا وفيديوهات لإثراء قصتك",
+        "activities": "فئات الأنشطة",
+        "activitiesLoading": "تحميل الفئات...",
+        "intensity": "مستوى الكثافة",
+        "intensityLoading": "تحميل المستويات...",
+        "tripDate": "تاريخ الرحلة",
+        "selectDate": "اختر تاريخًا",
+        "date": "تاريخ الرحلة",
+        "datePlaceholder": "اختر تاريخًا",
+        "location": "موقع رحلتك",
+        "locationHelp": "انقر على الخريطة لاختيار موقع أو استخدم موقعك الحالي",
+        "tags": "علامات مخصصة (اختياري)",
+        "tagsPlaceholder": "أضف علامة مخصصة...",
+        "public": "قصة عامة",
+        "private": "قصة خاصة",
+        "cancel": "إلغاء",
+        "creating": "جارٍ الإنشاء...",
+        "create": "إنشاء قصة"
+      },
+      "toast": {
+        "aiGenerated": "تم إنشاء القصة بواسطة AI! يمكنك الآن تخصيصها",
+        "instantGenerated": "تم إنشاء القصة! خصصها كما تشاء",
+        "generationError": "خطأ أثناء التوليد التلقائي",
+        "loginRequired": "يجب أن تكون مسجلاً للدخول لإنشاء قصة",
+        "fieldsRequired": "العنوان والمحتوى مطلوبان",
+        "createError": "خطأ أثناء الإنشاء"
+      }
+    }
   },
   "partnerApplication": {
     "title": "كن شريكاً",
@@ -225,8 +619,587 @@
     "save": "حفظ",
     "cancel": "إلغاء",
     "delete": "حذف",
-    "edit": "تحرير",
+    "edit": "تعديل",
     "create": "إنشاء",
     "search": "بحث"
+  },
+  "touristPoints": {
+    "pageTitle": "المعالم السياحية",
+    "pageDescription": "اكتشف الأماكن الاستثنائية التي أوصى بها مجتمعنا وشركاؤنا",
+    "searchPlaceholder": "البحث بالاسم أو الوصف أو الموقع...",
+    "filterByType": "تصفية حسب النوع",
+    "sortBy": "الترتيب حسب",
+    "filters": {
+      "all": "جميع النقاط",
+      "partnersOnly": "الشركاء فقط",
+      "featured": "مميزة",
+      "regular": "نقاط عادية"
+    },
+    "sorting": {
+      "rating": "أعلى تقييم",
+      "reviews": "عدد المراجعات",
+      "recent": "الأحدث",
+      "name": "ترتيب أبجدي"
+    },
+    "stats": {
+      "totalPoints": "إجمالي النقاط",
+      "partners": "الشركاء",
+      "featured": "مميزة",
+      "averageRating": "متوسط التقييم"
+    },
+    "results": {
+      "found": "نقطة وجدت",
+      "foundPlural": "نقاط وجدت",
+      "for": "لـ",
+      "certifiedPartners": "شركاء معتمدون فقط"
+    },
+    "empty": {
+      "title": "لم يتم العثور على معالم سياحية",
+      "noResults": "جرّب كلمات مفتاحية أخرى",
+      "noPoints": "لا توجد معالم سياحية متاحة حالياً"
+    }
+  },
+  "recommendations": {
+    "pageTitle": "التوصيات",
+    "pageDescription": "احصل على توصيات ذكية بناءً على تفضيلاتك وإلهامك.",
+    "subtitle": "محرك يقوم بتحسين البرامج والأنشطة من اختيارات التخطيط والإلهام الخاصة بك.",
+    "suggestedProgram": {
+      "title": "البرنامج المقترح",
+      "description": "مزيج متوازن لمدة 3 أيام",
+      "day1": "اليوم 1: جولة بصحبة مرشد ونقاط بانورامية",
+      "day2": "اليوم 2: فن الطهي المحلي ومتحف لا يُفوَّت",
+      "day3": "اليوم 3: وقت حر، شاطئ أو حديقة طبيعية"
+    },
+    "recommendedActivities": {
+      "title": "الأنشطة الموصى بها",
+      "description": "بناءً على اهتماماتك",
+      "activity1": "درس طهي محلي (مجموعة صغيرة)",
+      "activity2": "مشي لطيف عند شروق الشمس",
+      "activity3": "حي الحرفيين والمقاهي المستقلة"
+    }
+  },
+  "profile": {
+    "pageTitle": "ملفي الشخصي - Voyage AI",
+    "pageDescription": "إدارة ملف المستخدم الخاص بك ونقاط الاهتمام السياحية على Voyage AI",
+    "accessRequired": "يتطلب الوصول",
+    "accessRequiredDesc": "يجب عليك تسجيل الدخول للوصول إلى ملفك الشخصي.",
+    "signIn": "تسجيل الدخول",
+    "tabs": {
+      "profile": "المعلومات",
+      "content": "محتواي",
+      "statistics": "الإحصائيات",
+      "social": "الشبكة",
+      "privacy": "الخصوصية",
+      "security": "الأمان",
+      "touristPoints": "POI",
+      "savedItineraries": "خط السير",
+      "notifications": "الإشعارات",
+      "rgpd": "GDPR"
+    },
+    "personalInfo": "المعلومات الشخصية",
+    "personalInfoDesc": "قم بتعديل معلومات ملفك الشخصي أدناه",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "emailCannotBeChanged": "لا يمكن تغيير البريد الإلكتروني من هذه الصفحة",
+    "phoneNumber": "رقم الهاتف",
+    "phonePlaceholder": "+966 50 123 4567",
+    "bio": "السيرة الذاتية",
+    "bioPlaceholder": "أخبرنا عن نفسك...",
+    "preferredLanguage": "اللغة المفضلة",
+    "selectLanguage": "اختر لغة",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "confirm": "تأكيد",
+    "myTouristPoints": "نقاط الاهتمام الخاصة بي",
+    "myTouristPointsDesc": "إدارة نقاط الاهتمام السياحية الخاصة بك",
+    "addPoint": "إضافة نقطة",
+    "editPoint": "تعديل نقطة الاهتمام",
+    "addNewPoint": "إضافة نقطة اهتمام",
+    "noTouristPoints": "لا توجد نقاط اهتمام",
+    "noTouristPointsDesc": "لم تقم بإنشاء أي نقاط اهتمام بعد. ابدأ بإضافة واحدة!",
+    "verified": "موثق",
+    "hidden": "مخفي",
+    "openingHours": "ساعات العمل",
+    "amenities": "المرافق",
+    "uploadedPhotos": "الصور المحملة",
+    "uploadedVideos": "الفيديوهات المحملة",
+    "photo": "صورة",
+    "backToList": "العودة إلى القائمة",
+    "destination": "الوجهة",
+    "day": "يوم",
+    "days": "أيام",
+    "createdOn": "تم الإنشاء في",
+    "addToFavorites": "إضافة إلى المفضلة",
+    "removeFromFavorites": "إزالة من المفضلة",
+    "editItinerary": "تعديل خط السير",
+    "viewDetails": "عرض التفاصيل",
+    "exportPdf": "تصدير كـ PDF",
+    "share": "مشاركة",
+    "shareWithOthers": "مشاركة مع مستخدمين آخرين",
+    "rgpdTitle": "GDPR وإدارة البيانات",
+    "rgpdDesc": "إدارة بياناتك الشخصية وفقًا للائحة العامة لحماية البيانات",
+    "categories": {
+      "restaurant": "مطعم",
+      "hotel": "فندق",
+      "museum": "متحف",
+      "monument": "نصب تذكاري",
+      "park": "حديقة",
+      "beach": "شاطئ",
+      "mountain": "جبل",
+      "shopping": "تسوق",
+      "entertainment": "ترفيه",
+      "sport": "رياضة",
+      "culture": "ثقافة",
+      "nature": "طبيعة"
+    },
+    "priceRanges": {
+      "budget": "﷼ - اقتصادي",
+      "moderate": "﷼﷼ - متوسط",
+      "elevated": "﷼﷼﷼ - مرتفع",
+      "luxury": "﷼﷼﷼﷼ - فاخر"
+    },
+    "toast": {
+      "loadError": "خطأ في تحميل نقاط الاهتمام",
+      "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
+      "updateError": "خطأ في تحديث الملف الشخصي",
+      "pointUpdateSuccess": "تم تحديث نقطة الاهتمام بنجاح",
+      "pointCreateSuccess": "تم إنشاء نقطة الاهتمام بنجاح",
+      "pointCreateSuccessPartner": "تم إنشاء نقطة الاهتمام بنجاح - تم وضع علامة كنقطة شريك",
+      "saveError": "خطأ في الحفظ",
+      "deleteSuccess": "تم حذف نقطة الاهتمام بنجاح",
+      "deleteError": "خطأ في الحذف",
+      "activateSuccess": "تم تفعيل نقطة الاهتمام بنجاح",
+      "deactivateSuccess": "تم إلغاء تفعيل نقطة الاهتمام بنجاح",
+      "modifyError": "خطأ في التعديل",
+      "exportSuccess": "تم تصدير PDF بنجاح",
+      "exportError": "خطأ في تصدير PDF",
+      "linkCopied": "تم نسخ الرابط إلى الحافظة",
+      "shareError": "خطأ في المشاركة",
+      "copyLink": "نسخ الرابط"
+    },
+    "deleteConfirm": "هل أنت متأكد من أنك تريد حذف نقطة الاهتمام هذه؟",
+    "extendedInfo": {
+      "title": "معلومات إضافية",
+      "description": "أكمل ملفك الشخصي بمعلومات إضافية",
+      "location": "الموقع",
+      "city": "المدينة",
+      "cityPlaceholder": "مثل: باريس",
+      "country": "البلد",
+      "countryPlaceholder": "مثل: فرنسا",
+      "socialNetworks": "شبكات التواصل الاجتماعي",
+      "facebookPlaceholder": "https://facebook.com/username",
+      "instagramPlaceholder": "https://instagram.com/username",
+      "twitterPlaceholder": "https://twitter.com/username",
+      "linkedinPlaceholder": "https://linkedin.com/in/username",
+      "travelPreferences": "تفضيلات السفر",
+      "travelStyle": "نمط السفر",
+      "selectTravelStyle": "اختر نمطك",
+      "favoriteDestinations": "الوجهات المفضلة",
+      "favoriteDestinationsPlaceholder": "مثل: طوكيو، نيويورك، مراكش (مفصولة بفواصل)",
+      "favoriteDestinationsHelp": "افصل الوجهات بفواصل",
+      "travelInterests": "الاهتمامات",
+      "travelInterestsPlaceholder": "مثل: الغوص، المشي لمسافات طويلة، الطعام، التصوير",
+      "travelInterestsHelp": "صف أنشطة واهتمامات السفر المفضلة لديك",
+      "professionalInfo": "المعلومات المهنية",
+      "occupation": "المهنة",
+      "occupationPlaceholder": "مثل: مطور ويب",
+      "website": "موقع الويب",
+      "websitePlaceholder": "https://example.com",
+      "travelStyles": {
+        "adventure": "مغامرة",
+        "luxury": "فاخر",
+        "budget": "اقتصادي",
+        "cultural": "ثقافي",
+        "relaxation": "استرخاء",
+        "family": "عائلي",
+        "solo": "فردي",
+        "group": "جماعي"
+      },
+      "toast": {
+        "updateSuccess": "تم تحديث المعلومات بنجاح",
+        "updateError": "خطأ في تحديث المعلومات"
+      }
+    }
+  },
+  "partnerCenter": {
+    "title": "فضاء الشركاء",
+    "subtitle": "انضم إلى شبكة شركائنا واعرض أماكنك الاستثنائية لمجتمع شغوف من المسافرين.",
+    "loginRequired": "يرجى تسجيل الدخول للوصول إلى فضاء الشركاء",
+    "benefits": {
+      "visibility": {
+        "title": "ظهور أكبر",
+        "description": "سلط الضوء على أماكنك بشارة شريك مميزة"
+      },
+      "premium": {
+        "title": "تمييز مميز",
+        "description": "استفد من موقع ذو أولوية على الخريطة"
+      },
+      "analytics": {
+        "title": "إحصائيات مفصلة",
+        "description": "احصل على تحليلات أداء نقاط الاهتمام الخاصة بك"
+      }
+    },
+    "pending": {
+      "title": "الطلب قيد المراجعة",
+      "message": "تم إرسال طلب الشراكة الخاص بك ويتم حاليًا مراجعته من قبل فريقنا. ستتلقى إشعارًا بمجرد الموافقة عليه.",
+      "completeProfile": "لتسريع عملية التحقق، أكمل ملف تعريف الشريك الخاص بك بجميع المعلومات المطلوبة.",
+      "completeButton": "إكمال ملف تعريف الشريك الخاص بي",
+      "status": "الحالة",
+      "statusPending": "في انتظار الموافقة"
+    },
+    "profile": {
+      "contactEmail": "البريد الإلكتروني للاتصال",
+      "phone": "الهاتف",
+      "website": "الموقع الإلكتروني",
+      "subscription": "الاشتراك",
+      "description": "الوصف",
+      "notProvided": "غير محدد",
+      "updateButton": "تحديث ملفي الشخصي",
+      "status": {
+        "pending": "قيد الانتظار",
+        "approved": "موافق عليه",
+        "suspended": "معلق"
+      }
+    },
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "subtitle": "قم بإدارة نقاط الاهتمام الخاصة بك وتتبع أدائك",
+      "overview": "نظرة عامة",
+      "analytics": "التحليلات",
+      "pois": "نقاط الاهتمام الخاصة بي",
+      "bookings": "الحجوزات",
+      "finances": "المالية",
+      "subscription": "الاشتراك",
+      "settings": "الإعدادات",
+      "notifications": "الإشعارات",
+      "notificationsShort": "الإشعارات",
+      "stats": {
+        "totalPois": "نقاط الاهتمام",
+        "totalActive": "إجمالي النشط",
+        "viewsThisMonth": "المشاهدات هذا الشهر",
+        "totalBookings": "إجمالي الحجوزات",
+        "totalRevenue": "إجمالي الإيرادات",
+        "averageRating": "متوسط التقييم",
+        "pendingPayments": "المدفوعات المعلقة"
+      },
+      "analytics": {
+        "realTimeMetrics": "مقاييس الأداء في الوقت الفعلي",
+        "totalViews": "إجمالي المشاهدات",
+        "conversionRate": "معدل التحويل",
+        "bookings": "الحجوزات",
+        "avgRevenue": "متوسط الإيرادات",
+        "totalRevenue": "إجمالي الإيرادات",
+        "vsLastMonth": "مقارنة بالشهر الماضي",
+        "topPOI": "أفضل نقطة اهتمام",
+        "none": "لا يوجد",
+        "bestPerformer": "الأفضل أداءً",
+        "viewsEvolution": "تطور المشاهدات",
+        "viewsDescription": "المشاهدات ومعدل التحويل على مدى 30 يومًا",
+        "financialPerformance": "الأداء المالي",
+        "financialDescription": "الحجوزات والإيرادات اليومية",
+        "views": "المشاهدات",
+        "revenue": "الإيرادات",
+        "autoInsights": "رؤى تلقائية",
+        "autoInsightsDescription": "تحليل تلقائي لأدائك",
+        "excellentConversion": "معدل تحويل ممتاز {rate}%! يجذب محتواك الزوار ويحولهم بشكل جيد.",
+        "exceptionalGrowth": "نمو استثنائي بنسبة {growth}٪ هذا الشهر! استمر على هذا المنوال.",
+        "lowConversion": "معدل تحويل منخفض ({rate}٪). فكر في تحسين أوصافك وصورك.",
+        "loadError": "تعذر تحميل بيانات التحليل."
+      },
+      "pois": {
+        "title": "نقاط الاهتمام الخاصة بي",
+        "subtitle": "قم بإدارة نقاط الاهتمام الخاصة بك وتتبع حالة التحقق منها",
+        "createButton": "إنشاء نقطة اهتمام",
+        "createFirst": "إنشاء أول نقطة اهتمام",
+        "loading": "جاري التحميل...",
+        "loadError": "تعذر تحميل نقاط الاهتمام الخاصة بك",
+        "status": {
+          "draft": "مسودة",
+          "pendingValidation": "في انتظار التحقق",
+          "underReview": "قيد المراجعة",
+          "approved": "موافق عليه",
+          "rejected": "مرفوض",
+          "blocked": "محظور",
+          "unknown": "حالة غير معروفة"
+        },
+        "statusDescription": {
+          "draft": "نقطة الاهتمام هو قيد الإنشاء ولم يتم تقديمه للتحقق بعد.",
+          "pendingValidation": "تم تقديم نقطة الاهتمام هذه وهي في انتظار التحقق من قبل فريقنا.",
+          "underReview": "نقطة الاهتمام هذه قيد المراجعة من قبل فريقنا. ستتلقى ردًا قريبًا.",
+          "approved": "تمت الموافقة على نقطة الاهتمام هذه وهي الآن مرئية للجمهور.",
+          "rejected": "تم رفض نقطة الاهتمام هذه. يرجى التحقق من التعليقات وإعادة التقديم بعد التصحيحات.",
+          "blocked": "تم حظر نقطة الاهتمام هذه بسبب انتهاك شروط الاستخدام الخاصة بنا.",
+          "unknown": "حالة غير معروفة."
+        },
+        "stats": {
+          "total": "الإجمالي",
+          "drafts": "مسودات",
+          "pending": "قيد الانتظار",
+          "underReview": "قيد المراجعة",
+          "approved": "موافق عليها",
+          "rejected": "مرفوضة"
+        },
+        "empty": {
+          "title": "لا توجد نقاط اهتمام",
+          "description": "لم تقم بإنشاء أي نقاط اهتمام بعد. ابدأ بإنشاء واحدة!"
+        },
+        "actions": {
+          "edit": "تحرير",
+          "delete": "حذف",
+          "resubmit": "إعادة التقديم",
+          "conversation": "مناقشة",
+          "hideConversation": "إخفاء",
+          "accommodation": "أسعار الإقامة",
+          "activity": "أسعار الأنشطة",
+          "restaurant": "القوائم والطاولات"
+        },
+        "details": {
+          "createdAt": "تم الإنشاء في",
+          "updatedAt": "تم التعديل في",
+          "resubmission": "إعادة تقديم #",
+          "rejectionReason": "سبب الرفض:",
+          "blockReason": "سبب الحظر:",
+          "illustration": "رسم توضيحي لـ"
+        },
+        "delete": {
+          "title": "حذف نقطة الاهتمام",
+          "itemType": "نقطة اهتمام",
+          "warningApproved": "هذه نقطة الاهتمام مرئية حاليًا للجمهور وقد تحتوي على تعليقات أو حجوزات مرتبطة.",
+          "success": "تم حذف نقطة الاهتمام بنجاح",
+          "successDescription": "تم حذف نقطة الاهتمام \"{name}\" نهائيًا",
+          "error": "خطأ في الحذف",
+          "errorDescription": "حدث خطأ أثناء الحذف. يرجى المحاولة مرة أخرى."
+        },
+        "resubmit": {
+          "success": "تمت إعادة تقديم نقطة الاهتمام",
+          "successDescription": "تمت إعادة تقديم نقطة الاهتمام الخاصة بك للتحقق",
+          "error": "خطأ",
+          "errorDescription": "تعذر إعادة تقديم نقطة الاهتمام"
+        },
+        "edit": {
+          "success": "تم تعديل نقطة الاهتمام",
+          "successDescription": "تم تعديل نقطة الاهتمام الخاصة بك بنجاح"
+        },
+        "management": {
+          "accommodationTitle": "إدارة أسعار الإقامة – {name}",
+          "activityTitle": "إدارة أسعار الأنشطة – {name}",
+          "restaurantTitle": "إدارة المطعم – {name}"
+        }
+      },
+      "finances": {
+        "stats": {
+          "availableBalance": "الرصيد المتاح",
+          "readyForWithdrawal": "جاهز للسحب",
+          "processing": "قيد المعالجة",
+          "paymentOn": "الدفع في",
+          "thisMonth": "هذا الشهر",
+          "monthlyRevenue": "الإيرادات الشهرية",
+          "avgCommission": "متوسط العمولة",
+          "avgRate": "متوسط السعر"
+        },
+        "revenueChart": {
+          "title": "تطور الإيرادات",
+          "description": "الإيرادات الشهرية خلال آخر 12 شهرًا",
+          "revenue": "الإيرادات"
+        },
+        "tabs": {
+          "commissions": "العمولات",
+          "withdrawals": "السحوبات",
+          "paymentMethods": "طرق الدفع"
+        },
+        "commissions": {
+          "title": "سجل العمولات",
+          "description": "تفاصيل جميع عمولاتك",
+          "export": "تصدير",
+          "client": "العميل",
+          "reference": "المرجع",
+          "commission": "العمولة",
+          "rate": "السعر",
+          "date": "التاريخ"
+        },
+        "withdrawals": {
+          "title": "طلبات السحب",
+          "description": "إدارة سحوباتك المالية",
+          "request": "طلب سحب",
+          "empty": "لا توجد طلبات سحب",
+          "noPaymentMethod": "يجب عليك أولاً إضافة طريقة دفع",
+          "amountExceeds": "المبلغ يتجاوز الرصيد المتاح",
+          "requestSuccess": "تم إرسال طلب السحب بنجاح",
+          "requestError": "خطأ في معالجة طلب السحب"
+        },
+        "paymentMethods": {
+          "title": "طرق الدفع",
+          "description": "إدارة حساباتك المصرفية ومحافظك",
+          "add": "إضافة",
+          "empty": "لم يتم تكوين طريقة دفع",
+          "emptyDescription": "أضف حسابًا مصرفيًا أو محفظة إلكترونية",
+          "accountConfigured": "تم تكوين الحساب",
+          "default": "افتراضي",
+          "active": "نشط",
+          "inactive": "غير نشط"
+        },
+        "status": {
+          "pending": "قيد الانتظار",
+          "processing": "قيد المعالجة",
+          "paid": "مدفوع",
+          "completed": "مكتمل",
+          "failed": "فشل",
+          "rejected": "مرفوض"
+        },
+        "errors": {
+          "loadError": "خطأ في تحميل البيانات المالية"
+        }
+      },
+      "charts": {
+        "viewsOverTime": "المشاهدات عبر الزمن",
+        "viewsDescription": "المشاهدات ومعدل التحويل على مدى 30 يومًا",
+        "bookingsRevenue": "الحجوزات والإيرادات",
+        "revenueDescription": "الأداء المالي الأسبوعي",
+        "performance": "الأداء",
+        "topPerformer": "الأفضل أداءً"
+      },
+      "earnings": {
+        "title": "تاريخ الإيرادات",
+        "description": "تفاصيل أرباحك لكل حجز",
+        "amount": "المبلغ",
+        "commission": "العمولة",
+        "bookingDate": "تاريخ الحجز",
+        "paymentStatus": "حالة الدفع",
+        "pending": "قيد الانتظار",
+        "paid": "مدفوع",
+        "cancelled": "ملغى"
+      },
+      "notificationPanel": {
+        "title": "الإشعارات الأخيرة",
+        "description": "ابقَ على اطلاع بالنشاط على نقاط الاهتمام الخاصة بك",
+        "markAsRead": "وضع علامة كمقروء",
+        "noNotifications": "لا توجد إشعارات",
+        "updateError": "خطأ في تحديث الإشعار"
+      },
+      "export": "تصدير البيانات",
+      "loadingError": "خطأ في تحميل لوحة التحكم",
+      "subscription": {
+        "loading": "جاري تحميل معلومات الاشتراك...",
+        "loadError": "خطأ في تحميل معلومات الاشتراك",
+        "currentPlan": {
+          "title": "خطة {planName}",
+          "description": "{description} - عمولة {commission}%",
+          "nextPayment": "الدفع القادم: {date}",
+          "monthly": "{price}€/شهر",
+          "yearly": "{price}€/سنة"
+        },
+        "usage": {
+          "pois": "نقاط الاهتمام",
+          "bookings": "الحجوزات هذا الشهر",
+          "commission": "العمولة الحالية",
+          "commissionNote": "الخطط الأعلى لها عمولات أقل"
+        },
+        "alerts": {
+          "limitWarning": "أنت تقترب من حد خطتك. فكر في الترقية."
+        },
+        "plans": {
+          "title": "الخطط المتاحة",
+          "current": "الحالية",
+          "monthly": "{price}€/شهر",
+          "yearly": "أو {price}€/سنة (شهرين مجانًا)",
+          "unlimited": "نقاط اهتمام غير محدودة",
+          "limited": "{count} نقطة اهتمام",
+          "commissionRate": "عمولة {rate}%",
+          "upgradeMonthly": "ترقية - شهري",
+          "upgradeYearly": "ترقية - سنوي",
+          "changeMonthly": "تغيير - شهري",
+          "changeYearly": "تغيير - سنوي",
+          "cancel": "إلغاء الاشتراك"
+        },
+        "actions": {
+          "upgradeSuccess": "تم تحديث الاشتراك بنجاح!",
+          "upgradeError": "خطأ في تحديث الاشتراك",
+          "cancelSuccess": "تم إلغاء الاشتراك. سيظل نشطًا حتى نهاية فترة الفوترة.",
+          "cancelError": "خطأ في إلغاء الاشتراك"
+        },
+        "billing": {
+          "title": "سجل الفواتير",
+          "description": "فواتيرك ومدفوعاتك الأخيرة",
+          "empty": "لا توجد فواتير متاحة",
+          "emptyDescription": "ستظهر الفواتير هنا بمجرد إجراء المدفوعات"
+        },
+        "status": {
+          "active": "نشط",
+          "cancelled": "ملغى",
+          "suspended": "معلق"
+        },
+        "planDetails": {
+          "basic": {
+            "name": "أساسي",
+            "description": "مثالي لبدء نشر نقاط الاهتمام الخاصة بك",
+            "features": [
+              "حتى 5 نقاط اهتمام",
+              "دعم قياسي",
+              "تحليلات أساسية"
+            ]
+          },
+          "premium": {
+            "name": "ممتاز",
+            "description": "قم بتوسيع كتالوجك وتحسين الظهور",
+            "features": [
+              "25 نقطة اهتمام",
+              "دعم ذو أولوية",
+              "تحليلات متقدمة",
+              "حملات تسويقية"
+            ]
+          },
+          "enterprise": {
+            "name": "مؤسسات",
+            "description": "لسلاسل الفنادق أو عمليات POI واسعة النطاق",
+            "features": [
+              "نقاط اهتمام غير محدودة",
+              "مدير حساب مخصص",
+              "عمليات تكامل مخصصة",
+              "دعم 24/7"
+            ]
+          }
+        }
+      },
+      "bookings": {
+        "loading": "جاري تحميل بيانات الحجز...",
+        "loadError": "خطأ في تحميل بيانات الحجز",
+        "stats": {
+          "totalBookings": "إجمالي الحجوزات",
+          "totalRevenue": "الإيرادات",
+          "commissions": "العمولات",
+          "pending": "قيد الانتظار"
+        },
+        "history": {
+          "title": "سجل الحجوزات",
+          "reference": "المرجع",
+          "amount": "المبلغ",
+          "commission": "العمولة",
+          "date": "التاريخ",
+          "customer": "العميل",
+          "poi": "نقطة الاهتمام",
+          "empty": "لا توجد حجوزات بعد",
+          "emptyDescription": "ستظهر حجوزات نقاط الاهتمام الخاصة بك هنا"
+        },
+        "status": {
+          "pending": "قيد الانتظار",
+          "confirmed": "مؤكد",
+          "cancelled": "ملغى",
+          "completed": "مكتمل"
+        }
+      },
+      "notifications": {
+        "title": "الإشعارات",
+        "markAllRead": "وضع علامة مقروء على الكل",
+        "loading": "جاري تحميل الإشعارات...",
+        "empty": "لا توجد إشعارات بعد",
+        "loadError": "تعذر تحميل الإشعارات",
+        "markAllSuccess": "تم وضع علامة مقروء على جميع الإشعارات",
+        "reference": "المرجع: {reference}"
+      }
+    }
   }
 }

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { notificationService, NotificationDTO, NotificationPreferenceDTO } from '@/services/notificationService';
 import { partnerService, PartnerNotificationDTO } from '@/services/partnerService';
 import { adminPoiService } from '@/services/adminPoiService';
 import type { AdminPoi } from '@/services/adminPoiService';
+import { normalizeApiResponse } from '@/utils/apiHelpers';
 
 interface Notification extends Omit<NotificationDTO, 'id' | 'user'> {
   id: string;
@@ -13,6 +15,7 @@ interface Notification extends Omit<NotificationDTO, 'id' | 'user'> {
 }
 
 export const useNotifications = () => {
+  const { t } = useTranslation();
   const { user, hasRole } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [partnerNotifications, setPartnerNotifications] = useState<PartnerNotificationDTO[]>([]);
@@ -23,16 +26,19 @@ export const useNotifications = () => {
     if (!user) return;
 
     try {
-      const userNotifications = await notificationService.list({ limit: 100 });
+      const userNotificationsData = await notificationService.list({ limit: 100 });
+      const userNotifications = normalizeApiResponse(userNotificationsData);
 
       let adminPartnerData: PartnerNotificationDTO[] = [];
       let recentPois: AdminPoi[] = [];
 
       if (hasRole('admin')) {
-        [adminPartnerData, recentPois] = await Promise.all([
+        const [partnerData, poisData] = await Promise.all([
           partnerService.listNotifications({ limit: 50 }),
           adminPoiService.list({ ordering: '-created_at', page_size: 25 }),
         ]);
+        adminPartnerData = normalizeApiResponse(partnerData);
+        recentPois = normalizeApiResponse(poisData);
       }
 
       const adminPartnerNotifications = adminPartnerData.map((pn) => ({
@@ -81,7 +87,7 @@ export const useNotifications = () => {
       setNotifications(allNotifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
-      toast.error('Erreur lors du chargement des notifications');
+      toast.error(t('toast.hooks.notifications.loadError'));
     }
   };
 
@@ -103,10 +109,10 @@ export const useNotifications = () => {
     try {
       const data = await notificationService.updatePreferences(newPreferences);
       setPreferences(data);
-      toast.success('Préférences mises à jour');
+      toast.success(t('toast.hooks.notifications.preferencesUpdated'));
     } catch (error) {
       console.error('Error updating preferences:', error);
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('toast.hooks.notifications.updateError'));
     } finally {
       setLoading(false);
     }
@@ -152,10 +158,10 @@ export const useNotifications = () => {
         prev.map(notif => ({ ...notif, is_read: true }))
       );
 
-      toast.success('Toutes les notifications marquées comme lues');
+      toast.success(t('toast.hooks.notifications.allMarkedRead'));
     } catch (error) {
       console.error('Error marking all as read:', error);
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('toast.hooks.notifications.updateError'));
     }
   };
 
@@ -164,22 +170,22 @@ export const useNotifications = () => {
       const isPartnerNotification = partnerNotifications.find(pn => String(pn.id) === notificationId);
       if (isPartnerNotification) {
         setNotifications(prev => prev.filter(notif => notif.id !== notificationId));
-        toast.success('Notification supprimée');
+        toast.success(t('toast.hooks.notifications.notificationDeleted'));
         return;
       }
       if (notificationId.startsWith('poi_')) {
         setNotifications(prev => prev.filter(notif => notif.id !== notificationId));
-        toast.success('Notification supprimée');
+        toast.success(t('toast.hooks.notifications.notificationDeleted'));
         return;
       }
       await notificationService.delete(notificationId);
       setNotifications(prev =>
         prev.filter(notif => notif.id !== notificationId)
       );
-      toast.success('Notification supprimée');
+      toast.success(t('toast.hooks.notifications.notificationDeleted'));
     } catch (error) {
       console.error('Error deleting notification:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('toast.hooks.notifications.deleteError'));
     }
   };
 

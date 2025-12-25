@@ -39,6 +39,8 @@ class TravelAnalytics(models.Model):
     user_country = models.CharField(max_length=120, blank=True, null=True)
     user_city = models.CharField(max_length=120, blank=True, null=True)
     user_region = models.CharField(max_length=120, blank=True, null=True)
+    user_neighborhood = models.CharField(max_length=120, blank=True, null=True)
+    user_language = models.CharField(max_length=32, blank=True, null=True)
     user_gender = models.CharField(max_length=20, blank=True, null=True)
 
     destinations = models.JSONField(blank=True, null=True)
@@ -60,6 +62,11 @@ class TravelAnalytics(models.Model):
         choices=[('in_progress', 'In Progress'), ('completed', 'Completed'), ('abandoned', 'Abandoned')],
         default='completed',
     )
+
+    # Résultat généré par l'IA
+    ai_generated_itinerary = models.JSONField(blank=True, null=True, help_text="Itinéraire complet généré par l'IA")
+    ai_provider_used = models.CharField(max_length=50, blank=True, null=True, help_text="Provider IA utilisé (openai, gemini)")
+    used_ai = models.BooleanField(default=False, help_text="True si l'IA a été utilisée, False si fallback statique")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

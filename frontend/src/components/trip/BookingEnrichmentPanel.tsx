@@ -2,33 +2,71 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { EnrichmentOptions } from '@/services/tripEnrichmentService';
 import { UnifiedBookingDialog } from '@/components/booking/UnifiedBookingDialog';
-import { BookingItem, BookingType } from '@/types/booking';
-import { 
-  Plane, 
-  Hotel, 
-  UtensilsCrossed, 
-  MapPin, 
-  Clock, 
+import { HotelDetailsDialog } from '@/components/hotels/HotelDetailsDialog';
+import { BookingItem, BookingType, HotelSearchCard } from '@/types/booking';
+import { DetailedItinerary, TripFormData } from '@/types/trip';
+import { HotelBedsHotel } from '@/services/hotelBedsService';
+import {
+  Plane,
+  Hotel,
+  UtensilsCrossed,
+  MapPin,
+  Clock,
   Star,
   ExternalLink,
   Euro,
-  Car
+  Car,
+  Search,
+  Info,
+  Eye
 } from 'lucide-react';
-import { TransferCard } from './TransferCard';
+import { useToast } from '@/hooks/use-toast';
+import { providerManager } from '@/services/providerManagerService';
+import { DestinationCodeAutocomplete } from '@/components/ui/destination-code-autocomplete';
+import { AirportCodeAutocomplete } from '@/components/ui/airport-code-autocomplete';
+import { mapHotelToSearchCard, mapHotelToBookingItem, formatHotelPrice, getStarRating, renderStars } from '@/utils/hotelUtils';
 
 interface BookingEnrichmentPanelProps {
-  enrichmentData: EnrichmentOptions | null;
-  isEnriching: boolean;
+  itinerary?: DetailedItinerary;
+  tripData?: TripFormData;
+  standalone?: boolean; // Mode standalone pour la page d'accueil
+}
+
+interface SearchResults {
+  hotels: HotelSearchCard[];
+  flights: any[];
+  activities: any[];
 }
 
 export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
-  enrichmentData,
-  isEnriching
+  itinerary,
+  tripData,
+  standalone = false
 }) => {
+  const { toast } = useToast();
+
+  // Charger les fournisseurs au montage du composant
+  React.useEffect(() => {
+    providerManager.loadProviders().catch((error) => {
+      console.error('❌ Erreur chargement fournisseurs:', error);
+    });
+  }, []);
+  const [searchResults, setSearchResults] = useState<SearchResults>({
+    hotels: [],
+    flights: [],
+    activities: []
+  });
+
+  const [isSearching, setIsSearching] = useState({
+    hotels: false,
+    flights: false,
+    activities: false
+  });
+
   const [bookingDialog, setBookingDialog] = useState<{
     isOpen: boolean;
     item: BookingItem | null;
@@ -40,14 +78,51 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
     type: 'hotel'
   });
 
-  if (!isEnriching && !enrichmentData) return null;
+  const [hotelDetailsDialog, setHotelDetailsDialog] = useState<{
+    isOpen: boolean;
+    hotelCode: string;
+    hotel: any;
+  }>({
+    isOpen: false,
+    hotelCode: '',
+    hotel: null
+  });
+
+  // Formulaires de recherche
+  const [hotelSearch, setHotelSearch] = useState({
+    destination: tripData?.destinations?.[0]?.city || '',
+    checkIn: tripData?.startDate ? new Date(tripData.startDate).toISOString().split('T')[0] : '',
+    checkOut: tripData?.endDate ? new Date(tripData.endDate).toISOString().split('T')[0] : '',
+    guests: tripData?.travelGroup?.size || 2
+  });
+
+  const [flightSearch, setFlightSearch] = useState({
+    origin: '',
+    destination: tripData?.destinations?.[0]?.city || '',
+    departureDate: tripData?.startDate ? new Date(tripData.startDate).toISOString().split('T')[0] : '',
+    returnDate: tripData?.endDate ? new Date(tripData.endDate).toISOString().split('T')[0] : '',
+    passengers: tripData?.travelGroup?.size || 1
+  });
+
+  const [transferSearch, setTransferSearch] = useState({
+    from: '',
+    to: tripData?.destinations?.[0]?.city || '',
+    date: tripData?.startDate ? new Date(tripData.startDate).toISOString().split('T')[0] : '',
+    time: '10:00',
+    passengers: tripData?.travelGroup?.size || 1
+  });
+
+  const [activitySearch, setActivitySearch] = useState({
+    destination: tripData?.destinations?.[0]?.city || '',
+    date: tripData?.startDate ? new Date(tripData.startDate).toISOString().split('T')[0] : '',
+    participants: tripData?.travelGroup?.size || 1
+  });
 
   const formatPrice = (amount: number, currency: string) => {
     return `${amount}${currency === 'EUR' ? '€' : currency}`;
   };
 
   const handleBookingClick = (item: any, type: BookingType, dates?: any) => {
-    // Convert enrichment item to BookingItem format
     const bookingItem: BookingItem = {
       id: item.id || `${type}-${Date.now()}`,
       name: item.name || `${item.departure} → ${item.destination}` || item.title,
@@ -59,7 +134,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
       bookingUrl: item.bookingUrl || item.url,
       sourceType: item.bookingUrl ? 'external' : 'internal',
       sourceProvider: item.source || item.provider || 'partner',
-      ...item // Include all original properties
+      ...item
     };
 
     setBookingDialog({
@@ -70,34 +145,213 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
     });
   };
 
-  const LoadingSkeleton = ({ count = 3 }: { count?: number }) => (
-    <div className="space-y-3">
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="flex items-center space-x-3 p-3 border rounded-lg">
-          <Skeleton className="h-12 w-12 rounded" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-3 w-1/2" />
-          </div>
-          <Skeleton className="h-8 w-16" />
-        </div>
-      ))}
-    </div>
-  );
+  // Fonctions de recherche
+  const searchHotels = async () => {
+    const destinationCode = hotelSearch.destination.trim().toUpperCase();
+
+    if (!destinationCode || !hotelSearch.checkIn || !hotelSearch.checkOut) {
+      toast({
+        title: "Champs requis",
+        description: "Veuillez remplir tous les champs de recherche",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Destination must be a HotelBeds code (3 lettres)
+    if (!/^[A-Z]{3}$/.test(destinationCode)) {
+      toast({
+        title: "Code destination invalide",
+        description: "Sélectionnez un code HotelBeds (ex : PAR, BCN, ROM) via l'autocomplete.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validation: check-out doit être après check-in
+    if (hotelSearch.checkOut <= hotelSearch.checkIn) {
+      toast({
+        title: "Dates invalides",
+        description: "La date de départ doit être au moins 1 jour après la date d'arrivée",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSearching(prev => ({ ...prev, hotels: true }));
+
+    try {
+      // Utilisation du Provider Manager pour rechercher les hôtels
+      // Il gère automatiquement la sélection du fournisseur actif avec la meilleure priorité
+      const hotels = await providerManager.searchHotels({
+        destination: destinationCode,
+        checkIn: hotelSearch.checkIn,
+        checkOut: hotelSearch.checkOut,
+        guests: hotelSearch.guests,
+        rooms: 1
+      });
+
+      // Formater les résultats pour l'affichage avec la fonction de mapping dédiée
+      const formattedHotels: HotelSearchCard[] = hotels.map((hotel) =>
+        mapHotelToSearchCard(hotel, {
+          checkIn: hotelSearch.checkIn,
+          checkOut: hotelSearch.checkOut,
+          destination: destinationCode
+        })
+      );
+
+      setSearchResults(prev => ({ ...prev, hotels: formattedHotels }));
+
+      toast({
+        title: "Recherche terminée",
+        description: `${formattedHotels.length} hôtel(s) trouvé(s)`,
+      });
+    } catch (error: any) {
+      console.error('❌ Erreur recherche hôtels:', error);
+      toast({
+        title: "Erreur de recherche",
+        description: error?.message || "Impossible de rechercher des hôtels. Vérifiez le code destination.",
+        variant: "destructive"
+      });
+      setSearchResults(prev => ({ ...prev, hotels: [] }));
+    } finally {
+      setIsSearching(prev => ({ ...prev, hotels: false }));
+    }
+  };
+
+  const searchFlights = async () => {
+    if (!flightSearch.origin || !flightSearch.destination || !flightSearch.departureDate) {
+      toast({
+        title: "Champs requis",
+        description: "Veuillez remplir tous les champs de recherche",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSearching(prev => ({ ...prev, flights: true }));
+
+    try {
+      // Utilisation du Provider Manager pour rechercher les vols
+      // Il gère automatiquement la sélection du fournisseur actif avec la meilleure priorité
+      const flights = await providerManager.searchFlights({
+        origin: flightSearch.origin,
+        destination: flightSearch.destination,
+        departureDate: flightSearch.departureDate,
+        returnDate: flightSearch.returnDate || undefined,
+        passengers: flightSearch.passengers
+      });
+
+      // Formater les résultats pour l'affichage
+      const formattedFlights = flights.slice(0, 10).map((flight: any) => ({
+        id: flight.id,
+        departure: flightSearch.origin,
+        destination: flightSearch.destination,
+        departureDate: flightSearch.departureDate,
+        returnDate: flightSearch.returnDate,
+        airline: flight.validatingAirlineCodes?.[0] || 'N/A',
+        duration: flight.itineraries?.[0]?.duration || 'N/A',
+        stops: (flight.itineraries?.[0]?.segments?.length || 1) - 1,
+        price: {
+          amount: parseFloat(flight.price?.total || '0') || 0,
+          currency: flight.price?.currency || 'EUR'
+        },
+        bookingUrl: flight.testBookingUrl || flight.bookingUrl,
+        provider: 'Amadeus'
+      }));
+
+      setSearchResults(prev => ({ ...prev, flights: formattedFlights }));
+
+      toast({
+        title: "Recherche terminée",
+        description: `${formattedFlights.length} vol(s) trouvé(s)`,
+      });
+    } catch (error: any) {
+      console.error('❌ Erreur recherche vols:', error);
+      toast({
+        title: "Erreur de recherche",
+        description: error?.message || "Impossible de rechercher des vols. Vérifiez les codes IATA.",
+        variant: "destructive"
+      });
+      setSearchResults(prev => ({ ...prev, flights: [] }));
+    } finally {
+      setIsSearching(prev => ({ ...prev, flights: false }));
+    }
+  };
+
+  const searchActivities = async () => {
+    if (!activitySearch.destination || !activitySearch.date) {
+      toast({
+        title: "Champs requis",
+        description: "Veuillez remplir tous les champs de recherche",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSearching(prev => ({ ...prev, activities: true }));
+
+    try {
+      // Utilisation du Provider Manager pour rechercher les activités
+      // Il gère automatiquement la sélection du fournisseur actif avec la meilleure priorité
+      const activities = await providerManager.searchActivities({
+        destination: activitySearch.destination
+      });
+
+      // Formater les résultats pour l'affichage
+      const formattedActivities = activities.map((activity: any) => ({
+        id: activity.code,
+        name: activity.name,
+        description: activity.content?.description || '',
+        duration: activity.modalities?.[0]?.duration?.value
+          ? `${activity.modalities[0].duration.value} ${activity.modalities[0].duration.metric}`
+          : 'N/A',
+        cost: activity.modalities?.[0]?.amountUnitPrice?.amount || 0,
+        rating: activity.modalities?.[0]?.rating || undefined,
+        date: activitySearch.date,
+        time: '10:00',
+        bookingRequired: true,
+        bookingUrl: activity.modalities?.[0]?.bookingUrl,
+        provider: 'HotelBeds',
+        category: activity.category?.name,
+        images: activity.images?.[0]?.url
+      }));
+
+      setSearchResults(prev => ({ ...prev, activities: formattedActivities }));
+
+      toast({
+        title: "Recherche terminée",
+        description: `${formattedActivities.length} activité(s) trouvée(s)`,
+      });
+    } catch (error: any) {
+      console.error('❌ Erreur recherche activités:', error);
+      toast({
+        title: "Erreur de recherche",
+        description: error?.message || "Impossible de rechercher des activités. Vérifiez le code destination.",
+        variant: "destructive"
+      });
+      setSearchResults(prev => ({ ...prev, activities: [] }));
+    } finally {
+      setIsSearching(prev => ({ ...prev, activities: false }));
+    }
+  };
 
   return (
     <Card className="mt-6 border-border/50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <ExternalLink className="h-5 w-5 text-primary" />
-          Options de réservation
+          Centrale de réservation
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          {isEnriching 
-            ? "Recherche des meilleures options en cours..."
-            : "Options de réservation basées sur votre itinéraire"
-          }
+          Recherchez et réservez vos hôtels, vols, transferts et activités
         </p>
+        <div className="flex items-center gap-2 mt-2 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            Plus de requêtes automatiques ! Vous contrôlez maintenant quand effectuer les recherches.
+          </p>
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="hotels" className="w-full">
@@ -124,258 +378,520 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="hotels" className="mt-4">
-            {enrichmentData?.loading.hotels ? (
-              <LoadingSkeleton />
-            ) : (
-              <div className="space-y-3">
-                {enrichmentData?.hotels.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
-                    Aucun hôtel trouvé pour vos dates
-                  </p>
-                ) : (
-                  enrichmentData?.hotels.map((hotel, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                      <div className="flex-1">
-                        <h4 className="font-medium">{hotel.name}</h4>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                          <MapPin className="h-3 w-3" />
-                          <span>{hotel.destinationCity}, {hotel.destinationCountry}</span>
-                          {hotel.rating && (
-                            <>
-                              <Star className="h-3 w-3 fill-current text-yellow-500" />
-                              <span>{hotel.rating}</span>
-                            </>
-                          )}
-                        </div>
-                        {hotel.address && (
-                          <p className="text-xs text-muted-foreground mt-1">{hotel.address}</p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold">
-                          {formatPrice(hotel.price.amount, hotel.price.currency)}
-                          <span className="text-xs text-muted-foreground">/nuit</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="mt-2"
-                          onClick={() => handleBookingClick(hotel, 'hotel', {
-                            start: hotel.checkInDate,
-                            end: hotel.checkOutDate
-                          })}
-                        >
-                          Réserver
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </TabsContent>
+          {/* HOTELS TAB */}
+          <TabsContent value="hotels" className="mt-4 space-y-4">
+            <div className="bg-muted/30 p-4 rounded-lg border">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Rechercher un hôtel
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="hotel-destination">Destination</Label>
+                  <DestinationCodeAutocomplete
+                    value={hotelSearch.destination}
+                    onValueChange={(code) => setHotelSearch({ ...hotelSearch, destination: code.toUpperCase() })}
+                    placeholder="Sélectionnez une destination..."
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="hotel-guests">Nombre de personnes</Label>
+                  <Input
+                    id="hotel-guests"
+                    type="number"
+                    min="1"
+                    value={hotelSearch.guests}
+                    onChange={(e) => setHotelSearch({ ...hotelSearch, guests: parseInt(e.target.value) || 1 })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="hotel-checkin">Date d'arrivée</Label>
+                  <Input
+                    id="hotel-checkin"
+                    type="date"
+                    value={hotelSearch.checkIn}
+                    onChange={(e) => {
+                      const checkIn = e.target.value;
+                      // Auto-set checkout to at least 1 day after check-in
+                      const minCheckout = new Date(checkIn);
+                      minCheckout.setDate(minCheckout.getDate() + 1);
+                      const minCheckoutStr = minCheckout.toISOString().split('T')[0];
 
-          <TabsContent value="flights" className="mt-4">
-            {enrichmentData?.loading.flights ? (
-              <LoadingSkeleton />
-            ) : (
-              <div className="space-y-3">
-                {enrichmentData?.flights.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
-                    Aucun vol trouvé pour vos destinations
-                  </p>
+                      setHotelSearch({
+                        ...hotelSearch,
+                        checkIn,
+                        // Update checkout only if it's invalid or not set
+                        checkOut: !hotelSearch.checkOut || hotelSearch.checkOut <= checkIn
+                          ? minCheckoutStr
+                          : hotelSearch.checkOut
+                      });
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="hotel-checkout">Date de départ</Label>
+                  <Input
+                    id="hotel-checkout"
+                    type="date"
+                    value={hotelSearch.checkOut}
+                    min={hotelSearch.checkIn ? new Date(new Date(hotelSearch.checkIn).getTime() + 86400000).toISOString().split('T')[0] : undefined}
+                    onChange={(e) => setHotelSearch({ ...hotelSearch, checkOut: e.target.value })}
+                  />
+                </div>
+              </div>
+              <Button
+                className="w-full mt-3"
+                onClick={searchHotels}
+                disabled={isSearching.hotels}
+              >
+                {isSearching.hotels ? (
+                  <>Recherche en cours...</>
                 ) : (
-                  enrichmentData?.flights.map((flight, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                      <div className="flex-1">
-                        <h4 className="font-medium">{flight.departure} → {flight.destination}</h4>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                          <span>{flight.departureDate}</span>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            <span>{flight.duration}</span>
-                          </div>
-                          <span>{flight.airline}</span>
-                          {flight.stops > 0 && (
-                            <Badge variant="secondary" className="text-xs">
-                              {flight.stops} escale{flight.stops > 1 ? 's' : ''}
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Rechercher des hôtels
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              {searchResults.hotels.length === 0 ? (
+                <div className="text-center py-8 space-y-2">
+                  <p className="text-muted-foreground">
+                    Entrez vos critères de recherche ci-dessus
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Les résultats s'afficheront ici après la recherche
+                  </p>
+                </div>
+              ) : (
+                searchResults.hotels.map((hotel, index) => {
+                  const starRating = hotel.rating || getStarRating(hotel.categoryCode);
+
+                  return (
+                    <Card key={index} className="overflow-hidden hover:shadow-lg transition-all">
+                      <div className="flex flex-col md:flex-row">
+                        {/* Image Section */}
+                        <div className="relative w-full md:w-64 h-48 md:h-auto bg-muted flex-shrink-0">
+                          {hotel.imageUrl ? (
+                            <img
+                              src={hotel.imageUrl}
+                              alt={hotel.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Hotel className="h-12 w-12 text-muted-foreground/50" />
+                            </div>
+                          )}
+                          {starRating > 0 && (
+                            <Badge className="absolute top-2 left-2 bg-white/90 text-black hover:bg-white">
+                              {renderStars(starRating)}
                             </Badge>
                           )}
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold">
-                          {formatPrice(flight.price.amount, flight.price.currency)}
+
+                        {/* Content Section */}
+                        <div className="flex-1 p-4">
+                          <div className="flex flex-col h-full">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-lg mb-2">{hotel.name}</h4>
+
+                              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-3">
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-3 w-3" />
+                                  <span>{hotel.destinationCity}</span>
+                                </div>
+                                {hotel.destinationCountry && (
+                                  <span className="text-muted-foreground/60">• {hotel.destinationCountry}</span>
+                                )}
+                              </div>
+
+                              {hotel.description && (
+                                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                                  {hotel.description}
+                                </p>
+                              )}
+
+                              {/* Quick Amenities Preview */}
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                {hotel.facilities && hotel.facilities.length > 0 ? (
+                                  <>
+                                    {/* Afficher les 2 premières facilities principales */}
+                                    {hotel.facilities.slice(0, 2).map((facility: any, fidx: number) => {
+                                      const facilityName = facility.description?.content || facility.description || '';
+                                      if (!facilityName) return null;
+
+                                      return (
+                                        <Badge key={fidx} variant="secondary" className="text-xs">
+                                          {facilityName.length > 15 ? facilityName.substring(0, 15) + '...' : facilityName}
+                                        </Badge>
+                                      );
+                                    })}
+                                    {/* Badge pour le nombre total d'équipements */}
+                                    {hotel.facilities.length > 2 && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        +{hotel.facilities.length - 2} autres
+                                      </Badge>
+                                    )}
+                                  </>
+                                ) : (
+                                  <Badge variant="secondary" className="text-xs opacity-50">
+                                    Équipements non spécifiés
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Price and Actions */}
+                            <div className="flex items-end justify-between gap-4 pt-3 border-t">
+                              <div>
+                                <div className="text-xs text-muted-foreground mb-1">À partir de</div>
+                                {hotel.price.amount > 0 ? (
+                                  <div className="text-2xl font-bold text-primary">
+                                    {formatHotelPrice(hotel.price.amount, hotel.price.currency)}
+                                    <span className="text-sm font-normal text-muted-foreground">/nuit</span>
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-muted-foreground">
+                                    Tarif non disponible
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setHotelDetailsDialog({
+                                    isOpen: true,
+                                    hotelCode: hotel.id,
+                                    hotel: hotel
+                                  })}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  Détails
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleBookingClick(hotel, 'hotel', {
+                                    start: hotel.checkInDate,
+                                    end: hotel.checkOutDate
+                                  })}
+                                  disabled={hotel.price.amount <= 0}
+                                >
+                                  Réserver
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="mt-2"
-                          onClick={() => handleBookingClick(flight, 'flight', {
-                            start: flight.departureDate
-                          })}
-                        >
-                          Réserver
-                        </Button>
                       </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
+                    </Card>
+                  );
+                })
+              )}
+            </div>
           </TabsContent>
 
-          <TabsContent value="restaurants" className="mt-4">
-            {enrichmentData?.loading.restaurants ? (
-              <LoadingSkeleton />
-            ) : (
-              <div className="space-y-3">
-                {enrichmentData?.restaurants.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
-                    Aucun restaurant dans votre itinéraire
-                  </p>
+          {/* FLIGHTS TAB */}
+          <TabsContent value="flights" className="mt-4 space-y-4">
+            <div className="bg-muted/30 p-4 rounded-lg border">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Rechercher un vol
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="flight-origin">Départ</Label>
+                  <AirportCodeAutocomplete
+                    value={flightSearch.origin}
+                    onValueChange={(code) => setFlightSearch({ ...flightSearch, origin: code })}
+                    placeholder="Sélectionnez un aéroport de départ..."
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="flight-destination">Destination</Label>
+                  <AirportCodeAutocomplete
+                    value={flightSearch.destination}
+                    onValueChange={(code) => setFlightSearch({ ...flightSearch, destination: code })}
+                    placeholder="Sélectionnez un aéroport d'arrivée..."
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="flight-departure">Date départ</Label>
+                  <Input
+                    id="flight-departure"
+                    type="date"
+                    value={flightSearch.departureDate}
+                    onChange={(e) => setFlightSearch({ ...flightSearch, departureDate: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="flight-return">Date retour (optionnel)</Label>
+                  <Input
+                    id="flight-return"
+                    type="date"
+                    value={flightSearch.returnDate}
+                    onChange={(e) => setFlightSearch({ ...flightSearch, returnDate: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="flight-passengers">Nombre de passagers</Label>
+                  <Input
+                    id="flight-passengers"
+                    type="number"
+                    min="1"
+                    value={flightSearch.passengers}
+                    onChange={(e) => setFlightSearch({ ...flightSearch, passengers: parseInt(e.target.value) || 1 })}
+                  />
+                </div>
+              </div>
+              <Button
+                className="w-full mt-3"
+                onClick={searchFlights}
+                disabled={isSearching.flights}
+              >
+                {isSearching.flights ? (
+                  <>Recherche en cours...</>
                 ) : (
-                  enrichmentData?.restaurants.map((restaurant, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-medium">{restaurant.name}</h4>
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Rechercher des vols
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {searchResults.flights.length === 0 ? (
+                <div className="text-center py-8 space-y-2">
+                  <p className="text-muted-foreground">
+                    Entrez vos critères de recherche ci-dessus
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Les résultats s'afficheront ici après la recherche
+                  </p>
+                </div>
+              ) : (
+                searchResults.flights.map((flight, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div className="flex-1">
+                      <h4 className="font-medium">{flight.departure} → {flight.destination}</h4>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                        <span>{flight.departureDate}</span>
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{flight.duration}</span>
+                        </div>
+                        {flight.stops > 0 && (
                           <Badge variant="secondary" className="text-xs">
-                            Jour {restaurant.dayNumber}
+                            {flight.stops} escale{flight.stops > 1 ? 's' : ''}
                           </Badge>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            <span>{restaurant.time}</span>
-                          </div>
-                          <span className="capitalize">{restaurant.cuisine}</span>
-                          <span>{restaurant.priceRange}</span>
-                          {restaurant.rating && (
-                            <div className="flex items-center gap-1">
-                              <Star className="h-3 w-3 fill-current text-yellow-500" />
-                              <span>{restaurant.rating}</span>
-                            </div>
-                          )}
-                        </div>
-                        {restaurant.description && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                            {restaurant.description}
-                          </p>
                         )}
                       </div>
-                      <div className="text-right">
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="mt-2"
-                          onClick={() => handleBookingClick(restaurant, 'restaurant', {
-                            start: restaurant.date,
-                            time: restaurant.time
-                          })}
-                        >
-                          Réserver
-                        </Button>
-                      </div>
                     </div>
-                  ))
-                )}
-              </div>
-            )}
+                    <div className="text-right">
+                      <div className="font-semibold">
+                        {formatPrice(flight.price.amount, flight.price.currency)}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => handleBookingClick(flight, 'flight', {
+                          start: flight.departureDate
+                        })}
+                      >
+                        Réserver
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </TabsContent>
 
+          {/* TRANSFERS TAB */}
           <TabsContent value="transfers" className="mt-4">
-            {enrichmentData?.loading.transfers ? (
-              <LoadingSkeleton />
-            ) : (
-              <div className="space-y-3">
-                {enrichmentData?.transfers.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
-                    Aucun transfert trouvé pour votre itinéraire
-                  </p>
-                ) : (
-                  enrichmentData?.transfers.map((transfer, index) => (
-                    <TransferCard
-                      key={index}
-                      transfer={transfer}
-                      onBook={(transfer) => handleBookingClick(transfer, 'transfer')}
-                    />
-                  ))
-                )}
+            <div className="bg-muted/30 p-4 rounded-lg border mb-4">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Rechercher un transfert
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="transfer-from">Départ</Label>
+                  <Input
+                    id="transfer-from"
+                    placeholder="Aéroport, Hôtel..."
+                    value={transferSearch.from}
+                    onChange={(e) => setTransferSearch({ ...transferSearch, from: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="transfer-to">Destination</Label>
+                  <Input
+                    id="transfer-to"
+                    placeholder="Hôtel, Centre-ville..."
+                    value={transferSearch.to}
+                    onChange={(e) => setTransferSearch({ ...transferSearch, to: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="transfer-date">Date</Label>
+                  <Input
+                    id="transfer-date"
+                    type="date"
+                    value={transferSearch.date}
+                    onChange={(e) => setTransferSearch({ ...transferSearch, date: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="transfer-time">Heure</Label>
+                  <Input
+                    id="transfer-time"
+                    type="time"
+                    value={transferSearch.time}
+                    onChange={(e) => setTransferSearch({ ...transferSearch, time: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="transfer-passengers">Nombre de passagers</Label>
+                  <Input
+                    id="transfer-passengers"
+                    type="number"
+                    min="1"
+                    value={transferSearch.passengers}
+                    onChange={(e) => setTransferSearch({ ...transferSearch, passengers: parseInt(e.target.value) || 1 })}
+                  />
+                </div>
               </div>
-            )}
+              <Button className="w-full mt-3" disabled>
+                <Search className="h-4 w-4 mr-2" />
+                Rechercher des transferts (bientôt disponible)
+              </Button>
+            </div>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                La recherche de transferts sera bientôt disponible
+              </p>
+            </div>
           </TabsContent>
 
-          <TabsContent value="activities" className="mt-4">
-            {enrichmentData?.loading.activities ? (
-              <LoadingSkeleton />
-            ) : (
-              <div className="space-y-3">
-                {enrichmentData?.activities.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
-                    Aucune activité dans votre itinéraire
-                  </p>
+          {/* RESTAURANTS TAB */}
+          <TabsContent value="restaurants" className="mt-4">
+            <div className="text-center py-8 space-y-2">
+              <UtensilsCrossed className="h-12 w-12 mx-auto text-muted-foreground/50" />
+              <p className="text-muted-foreground font-medium">
+                Les restaurants sont déjà inclus dans votre itinéraire
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Consultez la section "Itinéraire détaillé" ci-dessus pour voir les recommandations de restaurants
+              </p>
+            </div>
+          </TabsContent>
+
+          {/* ACTIVITIES TAB */}
+          <TabsContent value="activities" className="mt-4 space-y-4">
+            <div className="bg-muted/30 p-4 rounded-lg border">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Rechercher une activité
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="activity-destination">Destination</Label>
+                  <DestinationCodeAutocomplete
+                    value={activitySearch.destination}
+                    onValueChange={(code) => setActivitySearch({ ...activitySearch, destination: code })}
+                    placeholder="Sélectionnez une destination..."
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="activity-date">Date</Label>
+                  <Input
+                    id="activity-date"
+                    type="date"
+                    value={activitySearch.date}
+                    onChange={(e) => setActivitySearch({ ...activitySearch, date: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="activity-participants">Nombre de participants</Label>
+                  <Input
+                    id="activity-participants"
+                    type="number"
+                    min="1"
+                    value={activitySearch.participants}
+                    onChange={(e) => setActivitySearch({ ...activitySearch, participants: parseInt(e.target.value) || 1 })}
+                  />
+                </div>
+              </div>
+              <Button
+                className="w-full mt-3"
+                onClick={searchActivities}
+                disabled={isSearching.activities}
+              >
+                {isSearching.activities ? (
+                  <>Recherche en cours...</>
                 ) : (
-                  enrichmentData?.activities.map((activity, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-medium">{activity.name}</h4>
-                          <Badge variant="secondary" className="text-xs">
-                            Jour {activity.dayNumber}
-                          </Badge>
-                          {activity.bookingRequired && (
-                            <Badge variant="destructive" className="text-xs">
-                              Réservation requise
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Rechercher des activités
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {searchResults.activities.length === 0 ? (
+                <div className="text-center py-8 space-y-2">
+                  <p className="text-muted-foreground">
+                    Entrez vos critères de recherche ci-dessus
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Les résultats s'afficheront ici après la recherche
+                  </p>
+                </div>
+              ) : (
+                searchResults.activities.map((activity, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div className="flex-1">
+                      <h4 className="font-medium">{activity.name}</h4>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                        <span>{activity.duration}</span>
+                        {activity.cost > 0 && (
                           <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            <span>{activity.time}</span>
+                            <Euro className="h-3 w-3" />
+                            <span>{activity.cost}€</span>
                           </div>
-                          <span>{activity.duration}</span>
-                          {activity.cost > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Euro className="h-3 w-3" />
-                              <span>{activity.cost}€</span>
-                            </div>
-                          )}
-                          {activity.rating && (
-                            <div className="flex items-center gap-1">
-                              <Star className="h-3 w-3 fill-current text-yellow-500" />
-                              <span>{activity.rating}</span>
-                            </div>
-                          )}
-                        </div>
-                        {activity.description && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                            {activity.description}
-                          </p>
                         )}
-                      </div>
-                      <div className="text-right">
-                        {activity.bookingRequired && (
-                          <Button 
-                            size="sm" 
-                            variant="default" 
-                            className="mt-2"
-                            onClick={() => handleBookingClick(activity, 'activity', {
-                              start: activity.date,
-                              time: activity.time
-                            })}
-                          >
-                            Réserver
-                          </Button>
+                        {activity.rating && (
+                          <div className="flex items-center gap-1">
+                            <Star className="h-3 w-3 fill-current text-yellow-500" />
+                            <span>{activity.rating}</span>
+                          </div>
                         )}
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-            )}
+                    <div className="text-right">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        className="mt-2"
+                        onClick={() => handleBookingClick(activity, 'activity', {
+                          start: activity.date,
+                          time: activity.time
+                        })}
+                      >
+                        Réserver
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </CardContent>
@@ -387,6 +903,36 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
         bookingType={bookingDialog.type}
         defaultDates={bookingDialog.dates}
       />
+
+      {/* Hotel Details Dialog */}
+      {hotelDetailsDialog.isOpen && (
+        <HotelDetailsDialog
+          isOpen={hotelDetailsDialog.isOpen}
+          onClose={() => setHotelDetailsDialog({ isOpen: false, hotelCode: '', hotel: null })}
+          hotelCode={hotelDetailsDialog.hotelCode}
+          checkIn={hotelSearch.checkIn}
+          checkOut={hotelSearch.checkOut}
+          guests={hotelSearch.guests}
+          onBook={(hotel: HotelBedsHotel) => {
+            // Fermer le dialogue de détails
+            setHotelDetailsDialog({ isOpen: false, hotelCode: '', hotel: null });
+
+            // Ouvrir le dialogue de réservation avec la fonction de mapping
+            setBookingDialog({
+              isOpen: true,
+              item: mapHotelToBookingItem(hotel, {
+                start: hotelSearch.checkIn,
+                end: hotelSearch.checkOut
+              }),
+              type: 'hotel',
+              dates: {
+                start: hotelSearch.checkIn,
+                end: hotelSearch.checkOut
+              }
+            });
+          }}
+        />
+      )}
     </Card>
   );
 };

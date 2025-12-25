@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { apiClient } from '@/integrations/api/client';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
+import { authService } from '@/services/authService';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -106,29 +108,30 @@ interface TouristPointForm {
   media_videos?: string[] | null;
 }
 
-const categories = [
-  'Restaurant',
-  'Hôtel',
-  'Musée',
-  'Monument',
-  'Parc',
-  'Plage',
-  'Montagne',
-  'Shopping',
-  'Divertissement',
-  'Sport',
-  'Culture',
-  'Nature'
-];
-
-const priceRanges = [
-  { value: '€', label: '€ - Budget' },
-  { value: '€€', label: '€€ - Modéré' },
-  { value: '€€€', label: '€€€ - Élevé' },
-  { value: '€€€€', label: '€€€€ - Luxe' }
-];
-
 const Profile = () => {
+  const { t } = useTranslation();
+  
+  const categories = [
+    t('profile.categories.restaurant'),
+    t('profile.categories.hotel'),
+    t('profile.categories.museum'),
+    t('profile.categories.monument'),
+    t('profile.categories.park'),
+    t('profile.categories.beach'),
+    t('profile.categories.mountain'),
+    t('profile.categories.shopping'),
+    t('profile.categories.entertainment'),
+    t('profile.categories.sport'),
+    t('profile.categories.culture'),
+    t('profile.categories.nature')
+  ];
+
+  const priceRanges = [
+    { value: '€', label: t('profile.priceRanges.budget') },
+    { value: '€€', label: t('profile.priceRanges.moderate') },
+    { value: '€€€', label: t('profile.priceRanges.elevated') },
+    { value: '€€€€', label: t('profile.priceRanges.luxury') }
+  ];
   const { user, profile } = useAuth();
   const { savedItineraries, loading: itinerariesLoading, deleteItinerary, toggleFavorite, updateItinerary } = useSavedItineraries();
   const [isEditing, setIsEditing] = useState(false);
@@ -208,11 +211,12 @@ const Profile = () => {
     if (!user) return;
 
     try {
-      const data = await apiClient.get<any[]>('poi/tourist-points/', { owner: 'me' });
-      setTouristPoints(data || []);
+      const data = await apiClient.get<any>('poi/tourist-points/', { owner: 'me' });
+      const pointsArray = extractArrayFromResponse<TouristPoint>(data);
+      setTouristPoints(pointsArray);
     } catch (error) {
       console.error('Error fetching tourist points:', error);
-      toast.error('Erreur lors du chargement des points d\'intérêt');
+      toast.error(t('toast.poi.loadError'));
     }
   };
 
@@ -222,8 +226,12 @@ const Profile = () => {
 
     setLoading(true);
     try {
+      const profileId = profile?.id;
+      if (!profileId) {
+        throw new Error('Profil introuvable pour la mise à jour');
+      }
       // Update profile fields
-      await apiClient.patch('accounts/profiles/me/', {
+      await authService.updateProfile(profileId, {
         first_name: profileForm.first_name,
         last_name: profileForm.last_name,
         phone_number: profileForm.phone_number,
@@ -237,14 +245,14 @@ const Profile = () => {
         });
       }
 
-      toast.success('Profil mis à jour avec succès');
+      toast.success(t('profile.toast.updateSuccess'));
       setIsEditing(false);
 
       // Refresh to see updated data
       window.location.reload();
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Erreur lors de la mise à jour du profil');
+      toast.error(t('profile.toast.updateError'));
     } finally {
       setLoading(false);
     }
@@ -303,10 +311,10 @@ const Profile = () => {
 
       if (editingPoint) {
         await apiClient.patch(`poi/tourist-points/${editingPoint}/`, pointData);
-        toast.success('Point d\'intérêt mis à jour avec succès');
+        toast.success(t('toast.poi.updateSuccess'));
       } else {
         await apiClient.post('poi/tourist-points/', pointData);
-        toast.success(`Point d'intérêt créé avec succès${isApprovedPartner ? ' - Marqué comme point partenaire' : ''}`);
+        toast.success(isApprovedPartner ? t('toast.poi.createSuccessPartner') : t('toast.poi.createSuccess'));
       }
 
       // Reset form and refresh data
@@ -330,7 +338,7 @@ const Profile = () => {
       fetchTouristPoints();
     } catch (error) {
       console.error('Error saving tourist point:', error);
-      toast.error('Erreur lors de la sauvegarde');
+      toast.error(t('profile.toast.saveError'));
     } finally {
       setLoading(false);
     }
@@ -367,15 +375,15 @@ const Profile = () => {
   };
 
   const handlePointDelete = async (pointId: string) => {
-    if (!user || !confirm('Êtes-vous sûr de vouloir supprimer ce point d\'intérêt ?')) return;
+    if (!user || !confirm(t('profile.deleteConfirm'))) return;
 
     try {
       await apiClient.delete(`poi/tourist-points/${pointId}/`);
-      toast.success('Point d\'intérêt supprimé avec succès');
+      toast.success(t('toast.poi.deleteSuccess'));
       fetchTouristPoints();
     } catch (error) {
       console.error('Error deleting tourist point:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('toast.poi.deleteError'));
     }
   };
 
@@ -422,11 +430,12 @@ const Profile = () => {
         is_active: !isActive
       });
 
-      toast.success(`Point d'intérêt ${!isActive ? 'activé' : 'désactivé'} avec succès`);
+      const status = !isActive ? t('toast.poi.activated') : t('toast.poi.deactivated');
+      toast.success(t('toast.poi.toggleSuccess', { status }));
       fetchTouristPoints();
     } catch (error) {
       console.error('Error toggling point visibility:', error);
-      toast.error('Erreur lors de la modification');
+      toast.error(t('toast.poi.toggleError'));
     }
   };
 
@@ -434,10 +443,10 @@ const Profile = () => {
     setExportingId(itinerary.id);
     try {
       await exportItineraryToPDF(itinerary.itinerary_data);
-      toast.success('PDF exporté avec succès');
+      toast.success(t('toast.itinerary.pdfExportSuccess'));
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      toast.error('Erreur lors de l\'export du PDF');
+      toast.error(t('toast.itinerary.pdfExportError'));
     } finally {
       setExportingId(null);
     }
@@ -463,12 +472,12 @@ const Profile = () => {
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Accès requis</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('profile.accessRequired')}</h2>
               <p className="text-muted-foreground mb-4">
-                Vous devez être connecté pour accéder à votre profil.
+                {t('profile.accessRequiredDesc')}
               </p>
               <Button asChild>
-                <Link to="/auth">Se connecter</Link>
+                <Link to="/auth">{t('profile.signIn')}</Link>
               </Button>
             </div>
           </CardContent>
@@ -480,8 +489,8 @@ const Profile = () => {
   return (
     <>
       <Helmet>
-        <title>Mon Profil - Voyage AI</title>
-        <meta name="description" content="Gérez votre profil utilisateur et vos points d'intérêt touristiques sur Voyage AI" />
+        <title>{t('profile.pageTitle')}</title>
+        <meta name="description" content={t('profile.pageDescription')} />
       </Helmet>
       
       <div className="min-h-screen bg-background">
@@ -505,24 +514,24 @@ const Profile = () => {
 
             <Tabs defaultValue="profile" className="space-y-6">
               <TabsList className="grid w-full grid-cols-10">
-                <TabsTrigger value="profile">Informations</TabsTrigger>
-                <TabsTrigger value="content">Mon Contenu</TabsTrigger>
-                <TabsTrigger value="statistics">Statistiques</TabsTrigger>
-                <TabsTrigger value="social">Réseau</TabsTrigger>
-                <TabsTrigger value="privacy">Confidentialité</TabsTrigger>
-                <TabsTrigger value="security">Sécurité</TabsTrigger>
-                <TabsTrigger value="tourist-points">POI</TabsTrigger>
-                <TabsTrigger value="saved-itineraries">Itinéraires</TabsTrigger>
-                <TabsTrigger value="notifications">Notifs</TabsTrigger>
-                <TabsTrigger value="rgpd">RGPD</TabsTrigger>
+                <TabsTrigger value="profile">{t('profile.tabs.profile')}</TabsTrigger>
+                <TabsTrigger value="content">{t('profile.tabs.content')}</TabsTrigger>
+                <TabsTrigger value="statistics">{t('profile.tabs.statistics')}</TabsTrigger>
+                <TabsTrigger value="social">{t('profile.tabs.social')}</TabsTrigger>
+                <TabsTrigger value="privacy">{t('profile.tabs.privacy')}</TabsTrigger>
+                <TabsTrigger value="security">{t('profile.tabs.security')}</TabsTrigger>
+                <TabsTrigger value="tourist-points">{t('profile.tabs.touristPoints')}</TabsTrigger>
+                <TabsTrigger value="saved-itineraries">{t('profile.tabs.savedItineraries')}</TabsTrigger>
+                <TabsTrigger value="notifications">{t('profile.tabs.notifications')}</TabsTrigger>
+                <TabsTrigger value="rgpd">{t('profile.tabs.rgpd')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Informations Personnelles</CardTitle>
+                    <CardTitle>{t('profile.personalInfo')}</CardTitle>
                     <CardDescription>
-                      Modifiez vos informations de profil ci-dessous
+                      {t('profile.personalInfoDesc')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -543,7 +552,7 @@ const Profile = () => {
                     <form onSubmit={handleProfileUpdate} className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="first_name">Prénom</Label>
+                          <Label htmlFor="first_name">{t('profile.firstName')}</Label>
                           <Input
                             id="first_name"
                             value={profileForm.first_name}
@@ -552,7 +561,7 @@ const Profile = () => {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="last_name">Nom</Label>
+                          <Label htmlFor="last_name">{t('profile.lastName')}</Label>
                           <Input
                             id="last_name"
                             value={profileForm.last_name}
@@ -562,7 +571,7 @@ const Profile = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">{t('profile.email')}</Label>
                         <Input
                           id="email"
                           type="email"
@@ -571,44 +580,44 @@ const Profile = () => {
                           className="bg-muted"
                         />
                         <p className="text-sm text-muted-foreground">
-                          L'email ne peut pas être modifié depuis cette page
+                          {t('profile.emailCannotBeChanged')}
                         </p>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="phone_number">Numéro de téléphone</Label>
+                        <Label htmlFor="phone_number">{t('profile.phoneNumber')}</Label>
                         <Input
                           id="phone_number"
                           type="tel"
                           value={profileForm.phone_number}
                           onChange={(e) => setProfileForm(prev => ({ ...prev, phone_number: e.target.value }))}
                           disabled={!isEditing}
-                          placeholder="+33 6 12 34 56 78"
+                          placeholder={t('profile.phonePlaceholder')}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="bio">Biographie</Label>
+                        <Label htmlFor="bio">{t('profile.bio')}</Label>
                         <Textarea
                           id="bio"
                           value={profileForm.bio}
                           onChange={(e: any) => setProfileForm(prev => ({ ...prev, bio: e.target.value }))}
                           disabled={!isEditing}
-                          placeholder="Parlez-nous de vous..."
+                          placeholder={t('profile.bioPlaceholder')}
                           rows={4}
                           className="resize-none"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="preferred_language">Langue préférée</Label>
+                        <Label htmlFor="preferred_language">{t('profile.preferredLanguage')}</Label>
                         <Select
                           value={profileForm.preferred_language}
                           onValueChange={(value) => setProfileForm(prev => ({ ...prev, preferred_language: value }))}
                           disabled={!isEditing}
                         >
                           <SelectTrigger id="preferred_language">
-                            <SelectValue placeholder="Sélectionnez une langue" />
+                            <SelectValue placeholder={t('profile.selectLanguage')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="fr">Français</SelectItem>
@@ -632,14 +641,14 @@ const Profile = () => {
                         {isEditing ? (
                           <div className="flex gap-2">
                             <Button type="submit" disabled={loading}>
-                              {loading ? 'Sauvegarde...' : 'Sauvegarder'}
+                              {loading ? t('profile.saving') : t('profile.save')}
                             </Button>
                             <Button 
                               type="button" 
                               variant="outline" 
                               onClick={() => setIsEditing(false)}
                             >
-                              Annuler
+                              {t('profile.cancel')}
                             </Button>
                           </div>
                         ) : (
@@ -649,7 +658,7 @@ const Profile = () => {
                             onClick={() => setIsEditing(true)}
                           >
                             <Edit className="w-4 h-4 mr-2" />
-                            Modifier
+                            {t('profile.edit')}
                           </Button>
                         )}
                       </div>
@@ -699,14 +708,14 @@ const Profile = () => {
               <TabsContent value="tourist-points" className="space-y-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-2xl font-bold">Mes Points d'Intérêt</h2>
+                    <h2 className="text-2xl font-bold">{t('profile.myTouristPoints')}</h2>
                     <p className="text-muted-foreground">
-                      Gérez vos points d'intérêt touristiques
+                      {t('profile.myTouristPointsDesc')}
                     </p>
                   </div>
                   <Button onClick={() => setShowAddForm(true)} disabled={showAddForm}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Ajouter un point
+                    {t('profile.addPoint')}
                   </Button>
                 </div>
 
@@ -714,7 +723,7 @@ const Profile = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>
-                        {editingPoint ? 'Modifier le point d\'intérêt' : 'Ajouter un point d\'intérêt'}
+                        {editingPoint ? t('profile.editPoint') : t('profile.addNewPoint')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -756,9 +765,9 @@ const Profile = () => {
                       <CardContent className="pt-6">
                         <div className="text-center">
                           <MapPin className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                          <h3 className="text-lg font-semibold mb-2">Aucun point d'intérêt</h3>
+                          <h3 className="text-lg font-semibold mb-2">{t('profile.noTouristPoints')}</h3>
                           <p className="text-muted-foreground">
-                            Vous n'avez pas encore créé de points d'intérêt. Commencez par en ajouter un !
+                            {t('profile.noTouristPointsDesc')}
                           </p>
                         </div>
                       </CardContent>
@@ -787,10 +796,10 @@ const Profile = () => {
                                     </Badge>
                                   )}
                                   {point.is_verified && (
-                                    <Badge variant="default">Vérifié</Badge>
+                                    <Badge variant="default">{t('profile.verified')}</Badge>
                                   )}
                                   {!point.is_active && (
-                                    <Badge variant="destructive">Masqué</Badge>
+                                    <Badge variant="destructive">{t('profile.hidden')}</Badge>
                                   )}
                                 </div>
                                 
@@ -906,7 +915,7 @@ const Profile = () => {
                                       <div className="space-y-2">
                                         <h4 className="font-medium flex items-center gap-2">
                                           <Clock className="w-4 h-4" />
-                                          Horaires d'ouverture
+                                          {t('profile.openingHours')}
                                         </h4>
                                         <p className="text-sm text-muted-foreground">
                                           {formatOpeningHours(point.opening_hours)}
@@ -917,7 +926,7 @@ const Profile = () => {
                                     {/* Amenities */}
                                     {point.amenities && point.amenities.length > 0 && (
                                       <div className="space-y-2">
-                                        <h4 className="font-medium">Équipements</h4>
+                                        <h4 className="font-medium">{t('profile.amenities')}</h4>
                                         <div className="flex flex-wrap gap-1">
                                           {point.amenities.map((amenity, index) => (
                                             <Badge key={index} variant="outline" className="text-xs">
@@ -932,13 +941,13 @@ const Profile = () => {
                                      {/* Médias uploadés - Images */}
                                      {point.media_images && point.media_images.length > 0 && (
                                        <div className="space-y-2">
-                                         <h4 className="font-medium">Photos uploadées</h4>
+                                         <h4 className="font-medium">{t('profile.uploadedPhotos')}</h4>
                                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                            {point.media_images.map((image, index) => (
                                              <img
                                                key={index}
                                                src={image}
-                                               alt={`${point.name} - Photo ${index + 1}`}
+                                               alt={`${point.name} - ${t('profile.photo')} ${index + 1}`}
                                                className="w-full h-24 object-cover rounded border cursor-pointer hover:opacity-80 transition-opacity"
                                                onClick={() => window.open(image, '_blank')}
                                              />
@@ -950,7 +959,7 @@ const Profile = () => {
                                      {/* Médias uploadés - Vidéos */}
                                      {point.media_videos && point.media_videos.length > 0 && (
                                        <div className="space-y-2">
-                                         <h4 className="font-medium">Vidéos uploadées</h4>
+                                         <h4 className="font-medium">{t('profile.uploadedVideos')}</h4>
                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                            {point.media_videos.map((video, index) => (
                                              <video
@@ -1059,10 +1068,10 @@ const Profile = () => {
                                     {itinerary.trip_duration && (
                                       <div className="flex items-center gap-1">
                                         <Calendar className="w-4 h-4" />
-                                        <span>{itinerary.trip_duration} jour{itinerary.trip_duration > 1 ? 's' : ''}</span>
+                                        <span>{itinerary.trip_duration} {itinerary.trip_duration > 1 ? t('profile.days') : t('profile.day')}</span>
                                       </div>
                                     )}
-                                    <span>Créé le {new Date(itinerary.created_at).toLocaleDateString()}</span>
+                                    <span>{t('profile.createdOn')} {new Date(itinerary.created_at).toLocaleDateString()}</span>
                                   </div>
                                 </div>
                                 
@@ -1071,7 +1080,7 @@ const Profile = () => {
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => toggleFavorite(itinerary.id, !itinerary.is_favorite)}
-                                    title={itinerary.is_favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                                    title={itinerary.is_favorite ? t('profile.removeFromFavorites') : t('profile.addToFavorites')}
                                   >
                                     <Heart className={`w-4 h-4 ${itinerary.is_favorite ? 'text-red-500 fill-current' : ''}`} />
                                   </Button>
@@ -1079,7 +1088,7 @@ const Profile = () => {
                                      variant="ghost"
                                      size="sm"
                                      onClick={() => setEditingItinerary(itinerary)}
-                                     title="Modifier l'itinéraire"
+                                     title={t('profile.editItinerary')}
                                    >
                                      <Edit className="w-4 h-4" />
                                    </Button>
@@ -1087,7 +1096,7 @@ const Profile = () => {
                                      variant="ghost"
                                      size="sm"
                                      onClick={() => setSelectedItinerary(itinerary)}
-                                     title="Voir les détails"
+                                     title={t('profile.viewDetails')}
                                    >
                                      <Eye className="w-4 h-4" />
                                    </Button>
@@ -1096,7 +1105,7 @@ const Profile = () => {
                                      size="sm"
                                      onClick={() => handleItineraryExport(itinerary)}
                                      disabled={exportingId === itinerary.id}
-                                     title="Exporter en PDF"
+                                     title={t('profile.exportPdf')}
                                    >
                                      <Download className="w-4 h-4" />
                                    </Button>
@@ -1105,7 +1114,7 @@ const Profile = () => {
                                        <Button
                                          variant="ghost"
                                          size="sm"
-                                         title="Partager"
+                                         title={t('profile.share')}
                                        >
                                          <Share2 className="w-4 h-4" />
                                        </Button>
@@ -1125,7 +1134,7 @@ const Profile = () => {
                                        </DropdownMenuItem>
                                        <DropdownMenuItem onClick={() => handleItineraryShare(itinerary, 'copy')}>
                                          <ExternalLink className="w-4 h-4 mr-2" />
-                                         Copier le lien
+                                         {t('profile.toast.copyLink')}
                                        </DropdownMenuItem>
                                        </DropdownMenuContent>
                                    </DropdownMenu>
@@ -1133,7 +1142,7 @@ const Profile = () => {
                                      variant="ghost"
                                      size="sm"
                                      onClick={() => setSharingItinerary(itinerary)}
-                                     title="Partager avec d'autres utilisateurs"
+                                     title={t('profile.shareWithOthers')}
                                    >
                                      <UserPlus className="w-4 h-4" />
                                    </Button>
@@ -1142,7 +1151,7 @@ const Profile = () => {
                                     size="sm"
                                     onClick={() => deleteItinerary(itinerary.id)}
                                     className="text-destructive hover:text-destructive"
-                                    title="Supprimer"
+                                    title={t('profile.delete')}
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </Button>
@@ -1163,9 +1172,9 @@ const Profile = () => {
 
               <TabsContent value="rgpd" className="space-y-6">
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold">RGPD & Gestion des données</h2>
+                  <h2 className="text-2xl font-bold">{t('profile.rgpdTitle')}</h2>
                   <p className="text-muted-foreground">
-                    Gérez vos données personnelles conformément au Règlement Général sur la Protection des Données
+                    {t('profile.rgpdDesc')}
                   </p>
                 </div>
 

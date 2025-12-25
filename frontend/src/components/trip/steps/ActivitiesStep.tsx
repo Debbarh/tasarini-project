@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Activity, Mountain, Camera, Utensils, Music, Palette, BookOpen, Zap } from "lucide-react";
+import { Activity, Zap } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { TripFormData, ActivityPreferences } from "@/types/trip";
 import { useActivitySettings } from "@/hooks/useActivitySettings";
-import * as LucideIcons from "lucide-react";
+import { getLocalizedDescription, getLocalizedLabel } from "@/utils/multilingualHelpers";
 
 interface ActivitiesStepProps {
   data: Partial<TripFormData>;
@@ -16,40 +18,48 @@ interface ActivitiesStepProps {
   onValidate: (isValid: boolean) => void;
 }
 
-const ACTIVITY_CATEGORIES = [
-  { value: 'culture', label: 'Culture & Histoire', icon: BookOpen, color: 'bg-purple-100 text-purple-700' },
-  { value: 'adventure', label: 'Aventure & Sport', icon: Mountain, color: 'bg-green-100 text-green-700' },
-  { value: 'relaxation', label: 'Détente & Bien-être', icon: Activity, isEmoji: true, emoji: '🧘', color: 'bg-blue-100 text-blue-700' },
-  { value: 'gastronomy', label: 'Gastronomie', icon: Utensils, color: 'bg-orange-100 text-orange-700' },
-  { value: 'nature', label: 'Nature & Paysages', icon: Activity, isEmoji: true, emoji: '🌿', color: 'bg-green-100 text-green-700' },
-  { value: 'nightlife', label: 'Vie nocturne', icon: Music, color: 'bg-pink-100 text-pink-700' },
-  { value: 'art', label: 'Art & Créativité', icon: Palette, color: 'bg-indigo-100 text-indigo-700' },
-  { value: 'photography', label: 'Photographie', icon: Camera, color: 'bg-gray-100 text-gray-700' },
-  { value: 'shopping', label: 'Shopping', icon: Activity, isEmoji: true, emoji: '🛍️', color: 'bg-yellow-100 text-yellow-700' },
-  { value: 'local', label: 'Expériences locales', icon: Activity, isEmoji: true, emoji: '🏘️', color: 'bg-teal-100 text-teal-700' },
-];
+const LABEL_FIELDS = ['label_fr', 'label_en', 'label_es', 'label_de', 'label_it', 'label_pt', 'label_ru', 'label_ja', 'label_zh', 'label_hi', 'label_ar'] as const;
 
-const INTERESTS = [
-  'Musées', 'Monuments historiques', 'Architecture', 'Art contemporain',
-  'Randonnée', 'Sports nautiques', 'Escalade', 'Cyclisme', 'Ski',
-  'Spas', 'Yoga', 'Méditation', 'Plages',
-  'Restaurants étoilés', 'Street food', 'Marchés locaux', 'Cours de cuisine',
-  'Parcs nationaux', 'Jardins', 'Faune sauvage', 'Volcans',
-  'Bars', 'Clubs', 'Concerts', 'Spectacles',
-  'Galeries', 'Ateliers d\'artistes', 'Festivals',
-  'Tours photo', 'Paysages', 'Architecture urbaine',
-  'Boutiques locales', 'Marchés artisanaux', 'Centres commerciaux',
-  'Rencontres locales', 'Traditions', 'Festivals culturels'
-];
+type MultilingualEntry = Record<(typeof LABEL_FIELDS)[number], string | undefined> & { code: string };
 
-const AVOIDANCES = [
-  'Hauteurs', 'Foules importantes', 'Activités physiques intenses',
-  'Lieux fermés', 'Animaux sauvages', 'Sports extrêmes',
-  'Lieux bruyants', 'Activités nocturnes tardives',
-  'Marche excessive', 'Transports en commun bondés'
-];
+const matchEntryByValue = <T extends MultilingualEntry>(value: string, entries: T[]) => {
+  return entries.find((entry) => {
+    if (entry.code === value) return true;
+    return LABEL_FIELDS.some((field) => entry[field] && entry[field]?.toLowerCase() === value.toLowerCase());
+  });
+};
+
+const normalizeArrayValues = <T extends MultilingualEntry>(values: string[], entries: T[]) => {
+  if (!values || values.length === 0) return [];
+  const normalized: string[] = [];
+  values.forEach((value) => {
+    const match = matchEntryByValue(value, entries);
+    const next = match ? match.code : value;
+    if (next && !normalized.includes(next)) {
+      normalized.push(next);
+    }
+  });
+  return normalized;
+};
+
+const normalizeSingleValue = <T extends MultilingualEntry>(value: string, entries: T[]) => {
+  if (!value) return value;
+  const match = matchEntryByValue(value, entries);
+  return match ? match.code : value;
+};
+
+const arraysEqual = (a: string[], b: string[]) => {
+  if (a.length !== b.length) return false;
+  return a.every((item, index) => item === b[index]);
+};
+
+const getLabelFromCode = <T extends MultilingualEntry>(code: string, entries: T[], language: string) => {
+  const entry = entries.find((item) => item.code === code);
+  return getLocalizedLabel(entry, language) || code;
+};
 
 export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepProps) => {
+  const { t, i18n } = useTranslation();
   const { categories, intensityLevels, interests, avoidances, loading } = useActivitySettings();
   const [preferences, setPreferences] = useState<ActivityPreferences>(
     data.activityPreferences || {
@@ -60,6 +70,33 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
     }
   );
   const [specialRequests, setSpecialRequests] = useState(data.specialRequests || "");
+
+  useEffect(() => {
+    if (loading) return;
+
+    setPreferences((prev) => {
+      const normalizedCategories = normalizeArrayValues(prev.categories, categories);
+      const normalizedInterests = normalizeArrayValues(prev.interests, interests);
+      const normalizedAvoidances = normalizeArrayValues(prev.avoidances, avoidances);
+      const normalizedIntensity = normalizeSingleValue(prev.intensity, intensityLevels);
+
+      const unchanged =
+        arraysEqual(prev.categories, normalizedCategories) &&
+        arraysEqual(prev.interests, normalizedInterests) &&
+        arraysEqual(prev.avoidances, normalizedAvoidances) &&
+        prev.intensity === normalizedIntensity;
+
+      if (unchanged) return prev;
+
+      return {
+        ...prev,
+        categories: normalizedCategories,
+        interests: normalizedInterests,
+        avoidances: normalizedAvoidances,
+        intensity: normalizedIntensity || prev.intensity,
+      };
+    });
+  }, [loading, categories, intensityLevels, interests, avoidances]);
 
   useEffect(() => {
     const isValid = preferences.categories.length > 0;
@@ -86,15 +123,15 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8">Chargement des données...</div>;
+    return <div className="flex justify-center p-8">{t('planTrip.activitiesStep.loading')}</div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Activités et expériences</h3>
+        <h3 className="text-lg font-semibold mb-2">{t('planTrip.activitiesStep.title')}</h3>
         <p className="text-muted-foreground">
-          Sélectionnez vos centres d'intérêt pour personnaliser votre itinéraire
+          {t('planTrip.activitiesStep.description')}
         </p>
       </div>
 
@@ -103,7 +140,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Activity className="h-4 w-4 text-primary" />
-            Catégories d'activités préférées
+            {t('planTrip.activitiesStep.categories')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -124,7 +161,9 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
                   ) : (
                     <Activity className="h-5 w-5" />
                   )}
-                  <span className="text-xs text-center">{category.label_fr}</span>
+                  <span className="text-xs text-center">
+                    {getLabelFromCode(category.code, categories, i18n.language)}
+                  </span>
                 </Button>
               );
             })}
@@ -137,7 +176,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Zap className="h-4 w-4 text-primary" />
-            Intensité des activités
+            {t('planTrip.activitiesStep.intensity')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -147,12 +186,16 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
                 key={level.code}
                 variant={preferences.intensity === level.code ? "default" : "outline"}
                 className="h-auto flex-col gap-2 p-4"
-                onClick={() => updatePreferences({ intensity: level.code as ActivityPreferences['intensity'] })}
+                onClick={() => updatePreferences({ intensity: level.code })}
               >
                 <span className="text-2xl">{level.icon_emoji}</span>
                 <div className="text-center">
-                  <div className="font-medium text-sm">{level.label_fr}</div>
-                  <div className="text-xs text-muted-foreground">{level.description_fr}</div>
+                  <div className="font-medium text-sm">
+                    {getLabelFromCode(level.code, intensityLevels, i18n.language)}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {getLocalizedDescription(level, i18n.language)}
+                  </div>
                 </div>
               </Button>
             ))}
@@ -163,7 +206,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
       {/* Specific Interests */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Centres d'intérêt spécifiques</CardTitle>
+          <CardTitle className="text-base">{t('planTrip.activitiesStep.specificInterests')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -175,7 +218,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
                   onCheckedChange={() => toggleArrayItem('interests', interest.code)}
                 />
                 <Label htmlFor={`interest-${interest.code}`} className="text-sm">
-                  {interest.label_fr}
+                  {getLabelFromCode(interest.code, interests, i18n.language)}
                 </Label>
               </div>
             ))}
@@ -186,9 +229,9 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
       {/* Avoidances */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">À éviter</CardTitle>
+          <CardTitle className="text-base">{t('planTrip.activitiesStep.avoidances')}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Sélectionnez ce que vous préférez éviter pendant votre voyage
+            {t('planTrip.activitiesStep.avoidancesDescription')}
           </p>
         </CardHeader>
         <CardContent>
@@ -201,7 +244,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
                   onCheckedChange={() => toggleArrayItem('avoidances', avoidance.code)}
                 />
                 <Label htmlFor={`avoidance-${avoidance.code}`} className="text-sm">
-                  {avoidance.label_fr}
+                  {getLabelFromCode(avoidance.code, avoidances, i18n.language)}
                 </Label>
               </div>
             ))}
@@ -212,14 +255,14 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
       {/* Special Requests */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Demandes spéciales</CardTitle>
+          <CardTitle className="text-base">{t('planTrip.activitiesStep.specialRequests')}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Ajoutez toute information particulière pour votre voyage
+            {t('planTrip.activitiesStep.specialRequestsDescription')}
           </p>
         </CardHeader>
         <CardContent>
           <Textarea
-            placeholder="Anniversaire à célébrer, contraintes médicales, occasions spéciales, demandes particulières..."
+            placeholder={t('planTrip.activitiesStep.specialRequestsPlaceholder')}
             value={specialRequests}
             onChange={(e) => setSpecialRequests(e.target.value)}
             className="min-h-[100px]"
@@ -231,16 +274,16 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
       <Card className="bg-secondary/50">
         <CardContent className="p-4">
           <div className="space-y-2">
-            <h4 className="font-medium">Résumé de vos préférences d'activités</h4>
+            <h4 className="font-medium">{t('planTrip.activitiesStep.summary')}</h4>
             <div className="space-y-2">
               {preferences.categories.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  <span className="text-sm font-medium">Catégories :</span>
+                  <span className="text-sm font-medium">{t('planTrip.activitiesStep.summaryCategories')}</span>
                   {preferences.categories.map(categoryCode => {
                     const category = categories.find(c => c.code === categoryCode);
                     return category ? (
                       <Badge key={categoryCode} variant="outline" className="text-xs">
-                        {category.label_fr}
+                        {getLabelFromCode(category.code, categories, i18n.language)}
                       </Badge>
                     ) : null;
                   })}
@@ -248,26 +291,26 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
               )}
               
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Intensité :</span>
+                <span className="text-sm font-medium">{t('planTrip.activitiesStep.summaryIntensity')}</span>
                 <Badge variant="outline" className="text-xs">
-                  {intensityLevels.find(level => level.code === preferences.intensity)?.label_fr || 'Modéré'}
+                  {getLabelFromCode(preferences.intensity, intensityLevels, i18n.language) || t('planTrip.activitiesStep.moderate')}
                 </Badge>
               </div>
 
               {preferences.interests.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  <span className="text-sm font-medium">Intérêts :</span>
+                  <span className="text-sm font-medium">{t('planTrip.activitiesStep.summaryInterests')}</span>
                   {preferences.interests.slice(0, 5).map(interestCode => {
                     const interest = interests.find(i => i.code === interestCode);
                     return interest ? (
                       <Badge key={interestCode} variant="outline" className="text-xs">
-                        {interest.label_fr}
+                        {getLabelFromCode(interest.code, interests, i18n.language)}
                       </Badge>
                     ) : null;
                   })}
                   {preferences.interests.length > 5 && (
                     <Badge variant="outline" className="text-xs">
-                      +{preferences.interests.length - 5} autres
+                      +{preferences.interests.length - 5} {t('planTrip.activitiesStep.others')}
                     </Badge>
                   )}
                 </div>

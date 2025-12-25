@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ interface BudgetStepProps {
 }
 
 export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
+  const { t } = useTranslation();
   const { 
     budgetLevels, 
     currencies, 
@@ -112,7 +114,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
   if (error) {
     return (
       <div className="text-center text-red-500">
-        <p>Erreur: {error}</p>
+        <p>{t('planTrip.budgetStep.error')}: {error}</p>
       </div>
     );
   }
@@ -122,9 +124,9 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Budget de voyage</h3>
+        <h3 className="text-lg font-semibold mb-2">{t('planTrip.budgetStep.title')}</h3>
         <p className="text-muted-foreground">
-          Définissez votre budget pour personnaliser votre voyage
+          {t('planTrip.budgetStep.description')}
         </p>
       </div>
 
@@ -132,7 +134,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Wallet className="h-4 w-4 text-primary" />
-            Niveau de budget
+            {t('planTrip.budgetStep.budgetLevel')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -158,7 +160,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="daily-budget">Budget quotidien</Label>
+              <Label htmlFor="daily-budget">{t('planTrip.budgetStep.dailyBudget')}</Label>
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <Input
@@ -169,12 +171,12 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
                   onChange={(e) => updateBudget({ dailyBudget: parseInt(e.target.value) || 10 })}
                   className="flex-1"
                 />
-                <span className="text-sm text-muted-foreground">{selectedCurrency?.symbol}/jour</span>
+                <span className="text-sm text-muted-foreground">{selectedCurrency?.symbol}/{t('planTrip.budgetStep.perDay')}</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Devise</Label>
+              <Label>{t('planTrip.budgetStep.currency')}</Label>
               <Select value={budget.currency} onValueChange={(value) => updateBudget({ currency: value })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -190,7 +192,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label>Flexibilité</Label>
+              <Label>{t('planTrip.budgetStep.flexibility')}</Label>
               <Select 
                 value={budget.flexibility} 
                 onValueChange={(value) => updateBudget({ flexibility: value })}
@@ -211,7 +213,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
 
           <div className="bg-secondary/50 p-3 rounded-md text-sm">
             <p className="font-medium mb-1">
-              Niveau sélectionné : {budgetLevels.find(l => l.code === budget.level)?.label_fr}
+              {t('planTrip.budgetStep.selectedLevel')} : {budgetLevels.find(l => l.code === budget.level)?.label_fr}
             </p>
             <p className="text-muted-foreground">{getBudgetDescription(budget.level)}</p>
           </div>
@@ -222,16 +224,16 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
       <Card className="bg-secondary/50">
         <CardContent className="p-4">
           <div className="space-y-2">
-            <h4 className="font-medium">Résumé de votre budget</h4>
+            <h4 className="font-medium">{t('planTrip.budgetStep.summary')}</h4>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline">
-                Budget {budgetLevels.find(l => l.code === budget.level)?.label_fr} : {budget.dailyBudget}{selectedCurrency?.symbol}/jour
+                {t('planTrip.budgetStep.budget')} {budgetLevels.find(l => l.code === budget.level)?.label_fr} : {budget.dailyBudget}{selectedCurrency?.symbol}/{t('planTrip.budgetStep.perDay')}
               </Badge>
               <Badge variant="outline">
-                Devise : {selectedCurrency?.name_fr}
+                {t('planTrip.budgetStep.currency')} : {selectedCurrency?.name_fr}
               </Badge>
               <Badge variant="outline">
-                Flexibilité : {flexibilityOptions.find(o => o.code === budget.flexibility)?.label_fr}
+                {t('planTrip.budgetStep.flexibility')} : {flexibilityOptions.find(o => o.code === budget.flexibility)?.label_fr}
               </Badge>
             </div>
           </div>

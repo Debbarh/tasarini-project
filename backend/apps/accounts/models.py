@@ -682,6 +682,13 @@ class Notification(models.Model):
         ('general', 'Général'),
         ('new_partner', 'Nouveau partenaire'),
         ('new_poi', 'Nouveau POI'),
+        # Story-related notifications
+        ('reaction', 'Réaction à une story'),
+        ('comment', 'Commentaire sur une story'),
+        ('comment_reaction', 'Réaction à un commentaire'),
+        ('mention', 'Mention'),
+        ('follow', 'Nouvel abonné'),
+        ('new_story', 'Nouvelle story d\'un abonné'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')

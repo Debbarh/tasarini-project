@@ -76,69 +76,23 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
     }
   };
 
-  const generateCountryCode = (name: string) => {
-    const sanitized = name.replace(/[^a-zA-Z]/g, '').toUpperCase();
-    const base = (sanitized || 'CTR').slice(0, 3).padEnd(3, 'X');
-    return base;
-  };
-
   const verifyAndCreateLocation = async (countryName: string, cityName: string, lat: number, lng: number) => {
     setIsVerifying(true);
     
     try {
-      // Vérifier si le pays existe
-      const countryMatches = await locationService.listCountries(countryName);
-      const existingCountry = countryMatches?.find(
-        (country) => country.name.toLowerCase() === countryName.toLowerCase()
-      );
-
-      let finalCountryId = existingCountry?.id;
-
-      // Si le pays n'existe pas, le créer
-      if (!existingCountry) {
-        const code = generateCountryCode(countryName);
-        const newCountry = await locationService.createCountry({
-          name: countryName,
-          code,
-        });
-        finalCountryId = newCountry.id;
-        toast({
-          title: "Pays créé",
-          description: `Le pays "${countryName}" a été ajouté à la base de données`,
-        });
-      }
-
-      // Vérifier si la ville existe
-      const cityMatches = await locationService.listCities({
-        country: finalCountryId,
-        search: cityName,
-      });
-      const existingCity = cityMatches?.find(
-        (city) => city.name.toLowerCase() === cityName.toLowerCase()
-      );
-
-      let finalCityId = existingCity?.id;
-
-      // Si la ville n'existe pas, la créer
-      if (!existingCity) {
-        const newCity = await locationService.createCity({
-          name: cityName,
-          country: finalCountryId as string,
-          latitude: lat,
-          longitude: lng,
-        });
-        finalCityId = newCity.id;
-        toast({
-          title: "Ville créée",
-          description: `La ville "${cityName}" a été ajoutée à la base de données`,
-        });
-      }
+      const payload = {
+        country_name: countryName,
+        city_name: cityName,
+        latitude: Number.isFinite(lat) ? lat : undefined,
+        longitude: Number.isFinite(lng) ? lng : undefined,
+      };
+      const result = await locationService.resolveLocation(payload);
 
       // Mettre à jour les champs du formulaire
-      updateField('country', countryName);
-      updateField('city', cityName);
-      setCountryId(finalCountryId);
-      setCityId(finalCityId);
+      updateField('country', result.country_name);
+      updateField('city', result.city_name);
+      setCountryId(result.country_id);
+      setCityId(result.city_id);
 
     } catch (error) {
       console.error('Error verifying/creating location:', error);

@@ -151,7 +151,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: null };
     } catch (error: any) {
       console.error('AuthContext: signUp error', error);
-      toast.error(error?.payload?.detail || t('auth.invalidCredentials'));
+
+      // Extract field-specific validation errors
+      const payload = error?.payload;
+      if (payload && typeof payload === 'object') {
+        // Check for field-level errors (e.g., {email: ["Cet email est déjà utilisé."]})
+        const fieldErrors = Object.entries(payload)
+          .filter(([key, value]) => Array.isArray(value) && key !== 'detail')
+          .map(([, value]) => (value as string[]).join(', '));
+
+        if (fieldErrors.length > 0) {
+          toast.error(fieldErrors.join(' '));
+          return { error };
+        }
+
+        // Fallback to detail message
+        if (payload.detail) {
+          toast.error(payload.detail);
+          return { error };
+        }
+      }
+
+      // Final fallback
+      toast.error(t('auth.invalidCredentials'));
       return { error };
     }
   };

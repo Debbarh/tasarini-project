@@ -35,8 +35,12 @@ const TouristPointsManagement = () => {
     try {
       setLoading(true);
       const data = await adminPoiService.list({ ordering: '-created_at' });
-      setPoints(data);
-      setFilteredPoints(data);
+      // Handle both array and paginated response formats
+      const pointsArray = Array.isArray(data)
+        ? data
+        : (data as any)?.results || [];
+      setPoints(pointsArray);
+      setFilteredPoints(pointsArray);
     } catch (error) {
       console.error('Error fetching tourist points:', error);
       toast({

@@ -10,6 +10,12 @@
     "logout": "लॉग आउट",
     "login": "लॉग इन"
   },
+  "notFound": {
+    "title": "404",
+    "message": "अरे! पृष्ठ नहीं मिला",
+    "description": "आप जिस पृष्ठ की तलाश कर रहे हैं वह मौजूद नहीं है या स्थानांतरित हो गया है।",
+    "backToHome": "होम पर वापस जाएं"
+  },
   "home": {
     "heroTitle": "आपका अगला साहसिक कार्य आपका इंतजार कर रहा है",
     "heroSubtitle": "असाधारण गंतव्यों की खोज करें, व्यक्तिगत यात्रा कार्यक्रम बनाएं, और अविस्मरणीय अनुभव जिएं। हमें आपके सपनों की यात्रा की ओर आपका मार्गदर्शन करने दें।",
@@ -28,9 +34,190 @@
   "planTrip": {
     "title": "अपनी परफेक्ट छुट्टी की योजना बनाएं",
     "subtitle": "हमारे AI सहायक के साथ एक कस्टम यात्रा कार्यक्रम बनाएं जो आपकी साहसिक इच्छाओं को समझता है",
-    "startPlanning": "योजना बनाना शुरू करें",
+    "startPlanning": "योजना शुरू करें",
     "smartRecommendations": "स्मार्ट सिफारिशें",
-    "smartRecommendationsDesc": "हमारी AI आपकी प्राथमिकताओं का विश्लेषण करके अनोखे अनुभव सुझाती है"
+    "smartRecommendationsDesc": "हमारा AI आपकी पसंदों का विश्लेषण करके अनोखे अनुभवों का सुझाव देता है",
+    "pageTitle": "अपनी परफेक्ट छुट्टी की योजना बनाएं | AI यात्रा",
+    "pageDescription": "कुछ ही क्लिक में अपने सपनों का यात्रा कार्यक्रम बनाएं। हमारा AI कस्टम साहसिक कार्य डिजाइन करता है जो आपकी इच्छाओं को जादुई यादों में बदल देता है।",
+    "itineraryGenerated": "यात्रा कार्यक्रम सफलतापूर्वक बनाया गया!",
+    "personalizedTravel": "आपकी AI द्वारा बनाई गई व्यक्तिगत यात्रा तैयार है।",
+    "withPreferences": "✨ आपकी पसंद के आधार पर!",
+    "withLocalPlaces": "📍 प्रामाणिक स्थानीय स्थानों के साथ!",
+    "generationError": "यात्रा कार्यक्रम बनाने में त्रुटि",
+    "tryAgainLater": "कृपया बाद में पुनः प्रयास करें या यदि समस्या बनी रहे तो सपोर्ट से संपर्क करें।",
+    "enrichmentComplete": "यात्रा समृद्धीकरण पूर्ण!",
+    "enrichmentError": "यात्रा समृद्धीकरण के दौरान त्रुटि",
+    "createNewTrip": "नई यात्रा बनाएं",
+    "newTrip": "नई यात्रा",
+    "wizard": {
+      "title": "अपनी यात्रा की योजना बनाएं",
+      "stepOf": "कदम {{current}} / {{total}}",
+      "previous": "पिछला",
+      "next": "अगला",
+      "generating": "बनाई जा रही है...",
+      "createItinerary": "मेरा यात्रा कार्यक्रम बनाएं",
+      "steps": {
+        "destinations": {
+          "title": "गंतव्य",
+          "description": "आप कहाँ जाना चाहते हैं?"
+        },
+        "details": {
+          "title": "साथी",
+          "description": "आप किसके साथ यात्रा कर रहे हैं?"
+        },
+        "budget": {
+          "title": "बजट",
+          "description": "अपना यात्रा बजट निर्धारित करें"
+        },
+        "culinary": {
+          "title": "भोजन",
+          "description": "आपकी भोजन पसंद"
+        },
+        "accommodation": {
+          "title": "आवास",
+          "description": "आवास के प्रकार और मानदंड"
+        },
+        "activities": {
+          "title": "गतिविधियां",
+          "description": "अनुभव और रुचियां"
+        }
+      }
+    },
+    "destinationStep": {
+      "selectCountry": "एक देश चुनें",
+      "selectCity": "एक शहर चुनें",
+      "numberOfDays": "दिनों की संख्या",
+      "exactDates": "सटीक तारीखें",
+      "start": "शुरू",
+      "end": "अंत",
+      "day": "दिन",
+      "days": "दिन",
+      "selectedCountry": "चयनित देश",
+      "selectedCity": "चयनित शहर",
+      "addDestination": "+ गंतव्य जोड़ें",
+      "mapSearch": "📍 मानचित्र द्वारा खोजें",
+      "totalDuration": "कुल यात्रा अवधि",
+      "selectDescription": "उन देशों और शहरों का चयन करें जिन्हें आप देखना चाहते हैं",
+      "destination": "गंतव्य",
+      "country": "देश",
+      "city": "शहर",
+      "title": "आपके गंतव्य क्या हैं?",
+      "duration": "अवधि",
+      "startDate": "आरंभ तिथि",
+      "endDate": "समाप्ति तिथि",
+      "chooseOnMap": "मानचित्र पर चुनें",
+      "addFirstDestination": "पहले एक गंतव्य जोड़ें",
+      "selectOnMap": "मानचित्र पर अपना गंतव्य चुनें",
+      "mapDescription": "मानचित्र पर क्लिक करके या पता खोजकर गंतव्य चुनें",
+      "itinerary": "यात्रा कार्यक्रम:",
+      "locationSaved": "गंतव्य सफलतापूर्वक सहेजा गया।",
+      "locationSaveError": "यह स्थान सहेजने में असमर्थ, कृपया जानकारी की जांच करें।",
+      "invalidAddress": "कृपया मानचित्र पर एक वैध पता चुनें।"
+    },
+    "travelDetailsStep": {
+      "title": "यात्रा साथी",
+      "description": "अपने यात्रा समूह की संरचना निर्दिष्ट करें",
+      "travelerType": "यात्री प्रकार",
+      "subtype": "उपप्रकार",
+      "chooseSubtype": "उपप्रकार चुनें (वैकल्पिक)",
+      "groupSize": "समूह आकार",
+      "people": "लोग",
+      "person": "व्यक्ति",
+      "children": "बच्चे",
+      "child": "बच्चा",
+      "addChild": "बच्चा जोड़ें",
+      "year": "वर्ष",
+      "years": "वर्ष",
+      "summary": "सारांश",
+      "impactOnRecommendations": "आपकी सिफारिशों पर प्रभाव:",
+      "maxLevel": "अधिकतम स्तर",
+      "veryEasy": "बहुत आसान",
+      "easy": "आसान",
+      "moderate": "मध्यम",
+      "difficult": "कठिन",
+      "veryDifficult": "बहुत कठिन",
+      "compatiblePOIsFound": "संगत POI मिला",
+      "compatiblePOIsFoundPlural": "संगत POI मिले",
+      "inRegion": "क्षेत्र में",
+      "inYourBudget": "आपके बजट में",
+      "noPOIFound": "कोई संगत POI नहीं मिला",
+      "adjustCriteria": "अधिक विकल्पों के लिए अपने मानदंडों को समायोजित करने पर विचार करें",
+      "available": "उपलब्ध",
+      "availablePlural": "उपलब्ध",
+      "remains": "शेष",
+      "remainsPlural": "शेष",
+      "error": "त्रुटि"
+    },
+    "budgetStep": {
+      "title": "यात्रा बजट",
+      "description": "अपनी यात्रा को अनुकूलित करने के लिए अपना बजट निर्धारित करें",
+      "budgetLevel": "बजट स्तर",
+      "dailyBudget": "दैनिक बजट",
+      "perDay": "दिन",
+      "currency": "मुद्रा",
+      "flexibility": "लचीलापन",
+      "selectedLevel": "चयनित स्तर",
+      "summary": "आपका बजट सारांश",
+      "budget": "बजट",
+      "error": "त्रुटि"
+    },
+    "culinaryStep": {
+      "title": "पाक पसंद",
+      "description": "व्यक्तिगत सिफारिशों के लिए अपनी पसंद साझा करें",
+      "loading": "लोड हो रहा है...",
+      "cuisineTypes": "पसंदीदा पाक प्रकार",
+      "restaurantCategories": "पसंदीदा रेस्तरां श्रेणियां",
+      "adventureLevel": "पाक साहसिक स्तर",
+      "consumeAlcohol": "मैं शराब पीता/पीती हूं",
+      "dietaryRestrictions": "आहार प्रतिबंध",
+      "summary": "आपकी पाक पसंद का सारांश",
+      "restriction": "प्रतिबंध",
+      "restrictionsPlural": "प्रतिबंध",
+      "cuisineType": "पाक प्रकार",
+      "cuisineTypesPlural": "पाक प्रकार",
+      "restaurantCategory": "रेस्तरां श्रेणी",
+      "restaurantCategoriesPlural": "रेस्तरां श्रेणियां",
+      "culinaryAdventure": "पाक साहसिक",
+      "conservative": "रूढ़िवादी",
+      "moderate": "मध्यम",
+      "adventurous": "साहसिक",
+      "consumesAlcohol": "शराब पीता है"
+    },
+    "accommodationStep": {
+      "title": "आवास पसंद",
+      "description": "आवास का प्रकार और सुविधाएं चुनें जो आपके लिए महत्वपूर्ण हैं",
+      "loading": "लोड हो रहा है...",
+      "accommodationType": "आवास का प्रकार",
+      "amenities": "सेवाएं और सुविधाएं",
+      "location": "पसंदीदा स्थान",
+      "accessibility": "सुगम्यता",
+      "security": "सुरक्षा",
+      "ambiance": "माहौल",
+      "summary": "आपकी आवास पसंद का सारांश",
+      "types": "प्रकार",
+      "services": "सेवाएं",
+      "locations": "स्थान",
+      "others": "अन्य"
+    },
+    "activitiesStep": {
+      "title": "गतिविधियाँ और अनुभव",
+      "description": "अपनी यात्रा योजना को व्यक्तिगत बनाने के लिए अपनी रुचियाँ चुनें",
+      "loading": "डेटा लोड हो रहा है...",
+      "categories": "पसंदीदा गतिविधि श्रेणियाँ",
+      "intensity": "गतिविधि तीव्रता",
+      "specificInterests": "विशिष्ट रुचियाँ",
+      "avoidances": "बचाने योग्य",
+      "avoidancesDescription": "वह चुनें जो आप अपनी यात्रा के दौरान बचाना पसंद करते हैं",
+      "specialRequests": "विशेष अनुरोध",
+      "specialRequestsDescription": "अपनी यात्रा के लिए कोई भी विशिष्ट जानकारी जोड़ें",
+      "specialRequestsPlaceholder": "जन्मदिन का जश्न, चिकित्सा प्रतिबंध, विशेष अवसर, विशिष्ट अनुरोध...",
+      "summary": "आपकी गतिविधि पसंद का सारांश",
+      "summaryCategories": "श्रेणियाँ:",
+      "summaryIntensity": "तीव्रता:",
+      "summaryInterests": "रुचियाँ:",
+      "moderate": "मध्यम",
+      "others": "अन्य"
+    }
   },
   "beInspired": {
     "title": "प्रेरणा लें",
@@ -40,11 +227,218 @@
     "exploreMap": "मानचित्र का अन्वेषण करें",
     "findInspiration": "प्रेरणा खोजें"
   },
+  "beInspired": {
+    "pageTitle": "प्रेरित हों | AI यात्रा",
+    "pageDescription": "अपने आसपास छिपे हुए आश्चर्यों की दुनिया का अन्वेषण करें। गुप्त रत्नों, प्रामाणिक स्वादों और जादुई अनुभवों को खोजें जो आपका इंतजार कर रहे हैं।",
+    "title": "✨ प्रेरित हों",
+    "subtitle": "{{radius}}किमी की त्रिज्या में छिपे खजाने खोजें। हर जगह एक कहानी सुनाती है, हर अनुभव एक अभूतपूर्व याद बनाता है।",
+    "searchHotels": "🏨 होटल",
+    "searchHotelsShort": "🏨",
+    "aiGuide": "🤖 AI गाइड",
+    "aiGuideShort": "🤖 गाइड",
+    "shareDiscovery": "🌟 खजाना साझा करें",
+    "shareDiscoveryShort": "🌟 साझा करें",
+    "dialogTitle": "🌟 अपनी खोज साझा करें",
+    "dialogDescription": "एक जादुई जगह जो आपको पसंद है, उसे अन्वेषक समुदाय के सामने प्रकट करें",
+    "exploreMap": "मानचित्र देखें",
+    "findInspiration": "प्रेरणा खोजें",
+    "radiusLabel": "🎯 अन्वेषण त्रिज्या",
+    "radius10": "10 किमी",
+    "radius20": "20 किमी",
+    "radius30": "30 किमी",
+    "radius50": "50 किमी",
+    "legendTitle": "लीजेंड",
+    "legendRestaurants": "रेस्तरां और कैफे",
+    "legendActivities": "गतिविधियाँ और मनोरंजन",
+    "legendTourist": "पर्यटन स्थल",
+    "legendCenter": "खोज केंद्र",
+    "positionDetected": "स्थिति पहचानी गई!",
+    "mustBeLoggedIn": "रुचि का बिंदु जोड़ने के लिए आपको लॉग इन होना चाहिए",
+    "nameRequired": "रुचि के बिंदु का नाम आवश्यक है",
+    "successAdded": "रुचि का बिंदु सफलतापूर्वक जोड़ा गया!",
+    "errorAdding": "जोड़ने में त्रुटि: {{error}}",
+    "aiContext": "उपयोगकर्ता {{lat}}, {{lon}} के आसपास के क्षेत्र की खोज कर रहा है",
+    "smartRecommendations": {
+      "title": "स्मार्ट सिफारिशें",
+      "description": "आपकी पसंद और इतिहास के आधार पर व्यक्तिगत सुझाव",
+      "loginRequired": "अपनी प्राथमिकताओं के आधार पर व्यक्तिगत सिफारिशें प्राप्त करने के लिए साइन इन करें",
+      "yourPreferences": "आपकी प्राथमिकताएं:",
+      "refresh": "रीफ्रेश करें",
+      "analyzing": "आपकी प्राथमिकताओं का विश्लेषण कर रहे हैं...",
+      "noRecommendationsTitle": "अधिक डेटा की आवश्यकता है",
+      "noRecommendationsDesc": "व्यक्तिगत सिफारिशें प्राप्त करने के लिए अपने पसंदीदा में स्थान जोड़ें और यात्रा कार्यक्रम बनाएं!",
+      "exploreMap": "मानचित्र का अन्वेषण करें",
+      "match": "मिलान",
+      "excellentMatch": "उत्कृष्ट मिलान",
+      "goodMatch": "अच्छा मिलान",
+      "toDiscover": "खोजने के लिए",
+      "viewOnMap": "मानचित्र",
+      "retry": "पुनः प्रयास करें",
+      "error": "स्मार्ट सिफारिशें लोड करने में असमर्थ",
+      "noNewRecommendations": "कोई नई सिफारिश नहीं मिली। अपने सुझावों को बेहतर बनाने के लिए और अधिक अन्वेषण करें!",
+      "successGenerated": "{{count}} व्यक्तिगत सिफारिशें उत्पन्न की गईं!",
+      "loadingError": "सिफारिशें लोड करने में त्रुटि"
+    },
+    "filters": {
+      "title": "फ़िल्टर",
+      "results": "परिणाम",
+      "searching": "खोज रहे हैं...",
+      "keywordSearch": "कीवर्ड खोज",
+      "keywordPlaceholder": "कोई स्थान, गतिविधि खोजें...",
+      "categories": "श्रेणियां",
+      "categoryRestaurants": "रेस्तरां और कैफे",
+      "categoryActivities": "गतिविधियां और मनोरंजन",
+      "categoryTourist": "रुचि के बिंदु",
+      "categoryOther": "अन्य",
+      "minRating": "न्यूनतम रेटिंग ({{rating}}⭐)",
+      "allRatings": "सभी",
+      "priceRange": "मूल्य सीमा",
+      "allPrices": "सभी मूल्य",
+      "priceEconomical": "€ - किफ़ायती",
+      "priceModerate": "€€ - मध्यम",
+      "priceHigh": "€€€ - महंगा",
+      "accessibility": "व्हीलचेयर सुगम",
+      "reset": "रीसेट करें"
+    }
+  },
   "travelStories": {
-    "title": "यात्रा की कहानियां",
-    "subtitle": "साहसिक लोगों की मनमोहक कहानियों की खोज करें और समुदाय को प्रेरित करने के लिए अपने अनुभव साझा करें",
-    "shareStory": "मेरी यात्रा बताएं",
-    "myAdventures": "मेरे साहसिक कार्य"
+    "pageTitle": "यात्रा सोशल नेटवर्क | Travel Stories",
+    "pageDescription": "सबसे सुंदर यात्रा साहसिक कार्यों को खोजें, साझा करें और अनुभव करें। हमारे जुनूनी यात्रियों के समुदाय में शामिल हों।",
+    "title": "यात्रा कहानियाँ",
+    "subtitle": "साझा किए गए साहसिक कार्यों की दुनिया को खोजें। बनाएं, अन्वेषण करें और दुनिया भर के यात्रियों से जुड़ें।",
+    "shareStory": "मेरी यात्रा साझा करें",
+    "myAdventures": "मेरे साहसिक कार्य",
+    "stats": {
+      "stories": "कहानियां",
+      "followers": "फॉलोवर्स",
+      "likes": "पसंद",
+      "countries": "देश"
+    },
+    "buttons": {
+      "viewPublicFeed": "सार्वजनिक फीड देखें",
+      "viewMyStories": "मेरी कहानियां देखें",
+      "shareMyJourney": "मेरी यात्रा साझा करें",
+      "shareFirstEpic": "मेरी पहली महाकाव्य कहानी बताएं",
+      "start": "शुरू करें"
+    },
+    "dialog": {
+      "title": "अपने साहसिक कार्य साझा करें",
+      "description": "एक ऐसी कहानी बनाएं जो यात्रियों के समुदाय को प्रेरित करेगी"
+    },
+    "tabs": {
+      "feed": "फीड",
+      "trending": "ट्रेंडिंग",
+      "map": "मानचित्र",
+      "ai": "AI"
+    },
+    "empty": {
+      "myStoriesTitle": "आपकी कोई महाकाव्य कहानी नहीं",
+      "noStoriesTitle": "कोई कहानी नहीं मिली",
+      "myStoriesDesc": "आपने अभी तक अपने साहसिक कार्य साझा नहीं किए हैं। आपकी पहली कहानी आपका इंतजार कर रही है!",
+      "noStoriesDesc": "अग्रदूत बनें! पहली महाकाव्य कहानी साझा करें जो पूरे समुदाय को प्रेरित करेगी।"
+    },
+    "statistics": {
+      "epics": "महाकाव्य",
+      "likes": "पसंद",
+      "views": "दृश्य"
+    },
+    "toast": {
+      "storyCreated": "आपकी यात्रा कहानी बनाई गई है!",
+      "errorLoading": "यात्रा कहानियां लोड करने में असमर्थ",
+      "loginToBookmark": "कहानियों को सहेजने के लिए साइन इन करें",
+      "bookmarkAdded": "कहानी पसंदीदा में जोड़ी गई",
+      "bookmarkRemoved": "कहानी पसंदीदा से हटाई गई"
+    },
+    "filters": {
+      "searchPlaceholder": "कहानियों में खोजें...",
+      "filtersButton": "फ़िल्टर",
+      "location": "स्थान",
+      "locationPlaceholder": "स्थान से फ़िल्टर करें...",
+      "linkType": "लिंक प्रकार",
+      "allTypes": "सभी प्रकार",
+      "touristPoints": "रुचि के बिंदु",
+      "itineraries": "यात्रा कार्यक्रम",
+      "activities": "गतिविधियां",
+      "period": "अवधि",
+      "from": "से",
+      "to": "तक",
+      "tags": "टैग",
+      "addTagPlaceholder": "फ़िल्टर के लिए टैग जोड़ें...",
+      "addButton": "जोड़ें",
+      "loading": "लोड हो रहा है...",
+      "results": "परिणाम",
+      "resultsPlural": "परिणाम",
+      "clearFilters": "फ़िल्टर साफ़ करें"
+    },
+    "createDialog": {
+      "tabs": {
+        "aiItinerary": "यात्रा कार्यक्रम से",
+        "aiInstant": "AI जेनरेशन",
+        "manual": "मैनुअल"
+      },
+      "aiItinerary": {
+        "title": "यात्रा कार्यक्रम से जेनरेट करें",
+        "selectLabel": "यात्रा कार्यक्रम चुनें",
+        "selectPlaceholder": "यात्रा कार्यक्रम चुनें...",
+        "generating": "जेनरेट हो रहा है...",
+        "generate": "कहानी जेनरेट करें"
+      },
+      "aiInstant": {
+        "title": "AI तत्काल जेनरेशन",
+        "preparing": "AI आपकी कहानी तैयार कर रहा है...",
+        "templates": {
+          "paris": {
+            "title": "रोमांटिक पेरिस",
+            "description": "स्मारकों के साथ रोमांटिक यात्रा"
+          },
+          "mountain": {
+            "title": "पहाड़़ का साहसिक कार्य",
+            "description": "ट्रैकिंग और जंगली परिदृश्य"
+          },
+          "coastal": {
+            "title": "तटीय रोड ट्रिप",
+            "description": "समुद्र तट और सूर्यास्त"
+          },
+          "urban": {
+            "title": "शहरी संस्कृति",
+            "description": "स्ट्रीट आर्ट और भोजन"
+          }
+        }
+      },
+      "form": {
+        "title": "आपकी कहानी का शीर्षक *",
+        "titlePlaceholder": "आपके अनुभव के लिए एक आकर्षक शीर्षक...",
+        "content": "आपकी कहानी *",
+        "contentPlaceholder": "अपने अनुभव, भावनाओं, खोजों के बारे में बताएं...",
+        "media": "छवियां और वीडियो",
+        "mediaHelp": "अपनी कहानी को समृद्ध करने के लिए फोटो और वीडियो जोड़ें",
+        "activities": "गतिविधि श्रेणियां",
+        "activitiesLoading": "श्रेणियां लोड हो रही हैं...",
+        "intensity": "तीव्रता स्तर",
+        "intensityLoading": "स्तर लोड हो रहे हैं...",
+        "tripDate": "यात्रा तिथि",
+        "selectDate": "तिथि चुनें",
+        "date": "यात्रा तिथि",
+        "datePlaceholder": "तिथि चुनें",
+        "location": "आपकी यात्रा का स्थान",
+        "locationHelp": "स्थान चुनने के लिए मानचित्र पर क्लिक करें या अपनी वर्तमान स्थिति का उपयोग करें",
+        "tags": "कस्टम टैग (वैकल्पिक)",
+        "tagsPlaceholder": "एक कस्टम टैग जोड़ें...",
+        "public": "सार्वजनिक कहानी",
+        "private": "निजी कहानी",
+        "cancel": "रद्द करें",
+        "creating": "बना रहे हैं...",
+        "create": "कहानी बनाएं"
+      },
+      "toast": {
+        "aiGenerated": "AI से कहानी जेनरेट हुई! अब आप इसे कस्टमाइज़ कर सकते हैं।",
+        "instantGenerated": "कहानी जेनरेट हुई! अपनी पसंद से कस्टमाइज़ करें।",
+        "generationError": "स्वचालित जेनरेशन के दौरान त्रुटि",
+        "loginRequired": "कहानी बनाने के लिए आपको लॉगिन करना होगा",
+        "fieldsRequired": "शीर्षक और सामग्री आवश्यक हैं",
+        "createError": "निर्माण के दौरान त्रुटि"
+      }
+    }
   },
   "partnerApplication": {
     "title": "साझेदार बनें",
@@ -228,5 +622,584 @@
     "edit": "संपादित करें",
     "create": "बनाएं",
     "search": "खोजें"
+  },
+  "touristPoints": {
+    "pageTitle": "पर्यटन स्थल",
+    "pageDescription": "हमारे समुदाय और साझेदारों द्वारा अनुशंसित असाधारण स्थानों की खोज करें",
+    "searchPlaceholder": "नाम, विवरण, स्थान से खोजें...",
+    "filterByType": "प्रकार से फ़िल्टर करें",
+    "sortBy": "क्रमबद्ध करें",
+    "filters": {
+      "all": "सभी स्थान",
+      "partnersOnly": "केवल साझेदार",
+      "featured": "विशेषतायुक्त",
+      "regular": "सामान्य स्थान"
+    },
+    "sorting": {
+      "rating": "सर्वोच्च रेटिंग",
+      "reviews": "समीक्षाओं की संख्या",
+      "recent": "सबसे हालिया",
+      "name": "वर्णमाला क्रम"
+    },
+    "stats": {
+      "totalPoints": "कुल स्थान",
+      "partners": "साझेदार",
+      "featured": "विशेषतायुक्त",
+      "averageRating": "औसत रेटिंग"
+    },
+    "results": {
+      "found": "स्थान मिला",
+      "foundPlural": "स्थान मिले",
+      "for": "के लिए",
+      "certifiedPartners": "केवल प्रमाणित साझेदार"
+    },
+    "empty": {
+      "title": "कोई पर्यटन स्थल नहीं मिला",
+      "noResults": "अन्य कीवर्ड आज़माएं",
+      "noPoints": "इस समय कोई पर्यटन स्थल उपलब्ध नहीं है"
+    }
+  },
+  "recommendations": {
+    "pageTitle": "सिफारिशें",
+    "pageDescription": "अपनी पसंद और प्रेरणाओं के आधर पर बुद्धिमान सिफारिशें प्राप्त करें।",
+    "subtitle": "एक इंजन आपके योजना विकल्पों और प्रेरणाओं से कार्यक्रमों और गतिविधियों को परिष्कृत करता है।",
+    "suggestedProgram": {
+      "title": "सुझाया गया कार्यक्रम",
+      "description": "3 दिनों का संतुलित मिश्रण",
+      "day1": "दिन 1: निर्देशित यात्रा और पैनोरमिक स्थान",
+      "day2": "दिन 2: स्थानीय भोजन और अवश्य देखें संग्रहालय",
+      "day3": "दिन 3: खाली समय, समुद्र तट या प्राकृतिक उद्यान"
+    },
+    "recommendedActivities": {
+      "title": "अनुशंसित गतिविधियाँ",
+      "description": "आपकी रुचियों के आधर पर",
+      "activity1": "स्थानीय पाक कला कक्षा (छोटा समूह)",
+      "activity2": "सूर्योदय पर धीमी पैदल यात्रा",
+      "activity3": "शिल्पकार जिला और स्वतंत्र कैफे"
+    }
+  },
+  "profile": {
+    "pageTitle": "मेरी प्रोफ़ाइल - Voyage AI",
+    "pageDescription": "Voyage AI पर अपनी उपयोगकर्ता प्रोफ़ाइल और पर्यटन स्थलों को प्रबंधित करें",
+    "accessRequired": "पहुंच आवश्यक",
+    "accessRequiredDesc": "अपनी प्रोफ़ाइल तक पहुंचने के लिए आपको लॉग इन होना चाहिए।",
+    "signIn": "साइन इन करें",
+    "tabs": {
+      "profile": "जानकारी",
+      "content": "मेरी सामग्री",
+      "statistics": "सांख्यिकी",
+      "social": "नेटवर्क",
+      "privacy": "गोपनीयता",
+      "security": "सुरक्षा",
+      "touristPoints": "POI",
+      "savedItineraries": "यात्रा कार्यक्रम",
+      "notifications": "सूचनाएं",
+      "rgpd": "GDPR"
+    },
+    "personalInfo": "व्यक्तिगत जानकारी",
+    "personalInfoDesc": "नीचे अपनी प्रोफ़ाइल जानकारी संपादित करें",
+    "firstName": "पहला नाम",
+    "lastName": "अंतिम नाम",
+    "email": "ईमेल",
+    "emailCannotBeChanged": "इस पृष्ठ से ईमेल नहीं बदला जा सकता",
+    "phoneNumber": "फ़ोन नंबर",
+    "phonePlaceholder": "+91 98765 43210",
+    "bio": "जीवनी",
+    "bioPlaceholder": "अपने बारे में बताएं...",
+    "preferredLanguage": "पसंदीदा भाषा",
+    "selectLanguage": "भाषा चुनें",
+    "save": "सहेजें",
+    "saving": "सहेजा जा रहा है...",
+    "cancel": "रद्द करें",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "confirm": "पुष्टि करें",
+    "myTouristPoints": "मेरे रुचि के स्थान",
+    "myTouristPointsDesc": "अपने पर्यटन स्थलों को प्रबंधित करें",
+    "addPoint": "स्थान जोड़ें",
+    "editPoint": "स्थान संपादित करें",
+    "addNewPoint": "स्थान जोड़ें",
+    "noTouristPoints": "कोई स्थान नहीं",
+    "noTouristPointsDesc": "आपने अभी तक कोई स्थान नहीं बनाया है। एक जोड़कर शुरू करें!",
+    "verified": "सत्यापित",
+    "hidden": "छिपा हुआ",
+    "openingHours": "खुलने का समय",
+    "amenities": "सुविधाएं",
+    "uploadedPhotos": "अपलोड की गई तस्वीरें",
+    "uploadedVideos": "अपलोड किए गए वीडियो",
+    "photo": "फ़ोटो",
+    "backToList": "सूची पर वापस जाएं",
+    "destination": "गंतव्य",
+    "day": "दिन",
+    "days": "दिन",
+    "createdOn": "बनाया गया",
+    "addToFavorites": "पसंदीदा में जोड़ें",
+    "removeFromFavorites": "पसंदीदा से हटाएं",
+    "editItinerary": "यात्रा कार्यक्रम संपादित करें",
+    "viewDetails": "विवरण देखें",
+    "exportPdf": "PDF के रूप में निर्यात करें",
+    "share": "साझा करें",
+    "shareWithOthers": "अन्य उपयोगकर्ताओं के साथ साझा करें",
+    "rgpdTitle": "GDPR और डेटा प्रबंधन",
+    "rgpdDesc": "सामान्य डेटा सुरक्षा विनियमन के अनुसार अपने व्यक्तिगत डेटा को प्रबंधित करें",
+    "categories": {
+      "restaurant": "रेस्तरां",
+      "hotel": "होटल",
+      "museum": "संग्रहालय",
+      "monument": "स्मारक",
+      "park": "पार्क",
+      "beach": "समुद्र तट",
+      "mountain": "पहाड़",
+      "shopping": "खरीदारी",
+      "entertainment": "मनोरंजन",
+      "sport": "खेल",
+      "culture": "संस्कृति",
+      "nature": "प्रकृति"
+    },
+    "priceRanges": {
+      "budget": "₹ - बजट",
+      "moderate": "₹₹ - मध्यम",
+      "elevated": "₹₹₹ - उच्च",
+      "luxury": "₹₹₹₹ - लक्जरी"
+    },
+    "toast": {
+      "loadError": "स्थान लोड करने में त्रुटि",
+      "updateSuccess": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
+      "updateError": "प्रोफ़ाइल अपडेट करने में त्रुटि",
+      "pointUpdateSuccess": "स्थान सफलतापूर्वक अपडेट किया गया",
+      "pointCreateSuccess": "स्थान सफलतापूर्वक बनाया गया",
+      "pointCreateSuccessPartner": "स्थान सफलतापूर्वक बनाया गया - भागीदार स्थान के रूप में चिह्नित किया गया",
+      "saveError": "सहेजने में त्रुटि",
+      "deleteSuccess": "स्थान सफलतापूर्वक हटाया गया",
+      "deleteError": "हटाने में त्रुटि",
+      "activateSuccess": "स्थान सफलतापूर्वक सक्रिय किया गया",
+      "deactivateSuccess": "स्थान सफलतापूर्वक निष्क्रिय किया गया",
+      "modifyError": "संशोधन में त्रुटि",
+      "exportSuccess": "PDF सफलतापूर्वक निर्यात किया गया",
+      "exportError": "PDF निर्यात करने में त्रुटि",
+      "linkCopied": "लिंक क्लिपबोर्ड पर कॉपी किया गया",
+      "shareError": "साझा करने में त्रुटि",
+      "copyLink": "लिंक कॉपी करें"
+    },
+    "deleteConfirm": "क्या आप वाकई इस स्थान को हटाना चाहते हैं?",
+    "extendedInfo": {
+      "title": "अतिरिक्त जानकारी",
+      "description": "अतिरिक्त जानकारी के साथ अपनी प्रोफ़ाइल पूरी करें",
+      "location": "स्थान",
+      "city": "शहर",
+      "cityPlaceholder": "उदाहरण: पेरिस",
+      "country": "देश",
+      "countryPlaceholder": "उदाहरण: फ्रांस",
+      "socialNetworks": "सोशल नेटवर्क",
+      "facebookPlaceholder": "https://facebook.com/username",
+      "instagramPlaceholder": "https://instagram.com/username",
+      "twitterPlaceholder": "https://twitter.com/username",
+      "linkedinPlaceholder": "https://linkedin.com/in/username",
+      "travelPreferences": "यात्रा पसंद",
+      "travelStyle": "यात्रा शैली",
+      "selectTravelStyle": "अपनी शैली चुनें",
+      "favoriteDestinations": "पसंदीदा स्थान",
+      "favoriteDestinationsPlaceholder": "उदा.: टोक्यो, न्यूयॉर्क, मार्राकेश (अल्पविराम से अलग किया गया)",
+      "favoriteDestinationsHelp": "अल्पविराम से स्थानों को अलग करें",
+      "travelInterests": "रुचियाँ",
+      "travelInterestsPlaceholder": "उदा.: गोताखोरी, ट्रैकिंग, भोजन, फोटोग्राफी",
+      "travelInterestsHelp": "अपनी पसंदीदा यात्रा गतिविधियों और रुचियों का वर्णन करें",
+      "professionalInfo": "पेशेवर जानकारी",
+      "occupation": "पेशा",
+      "occupationPlaceholder": "उदा.: वेब डेवलपर",
+      "website": "वेबसाइट",
+      "websitePlaceholder": "https://example.com",
+      "travelStyles": {
+        "adventure": "साहसिक",
+        "luxury": "लक्जरी",
+        "budget": "बजट",
+        "cultural": "सांस्कृतिक",
+        "relaxation": "आराम",
+        "family": "परिवार",
+        "solo": "अकेले",
+        "group": "समूह"
+      },
+      "toast": {
+        "updateSuccess": "जानकारी सफलतापूर्वक अपडेट हुई",
+        "updateError": "जानकारी अपडेट करने में त्रुटि"
+      }
+    }
+  },
+  "partnerCenter": {
+    "title": "साझेदार क्षेत्र",
+    "subtitle": "हमारे साझेदार नेटवर्क में शामिल हों और यात्रियों के एक उत्साही समुदाय को अपने असाधारण स्थानों का प्रदर्शन करें।",
+    "loginRequired": "कृपया साझेदार क्षेत्र तक पहुँचने के लिए लॉगिन करें",
+    "benefits": {
+      "visibility": {
+        "title": "बढ़ी हुई दृश्यता",
+        "description": "एक विशिष्ट साझेदार बैज के साथ अपने स्थानों को उजागर करें"
+      },
+      "premium": {
+        "title": "प्रीमियम हाइलाइटिंग",
+        "description": "मानचित्र पर प्राथमिकता स्थिति का लाभ उठाएं"
+      },
+      "analytics": {
+        "title": "विस्तृत आंकड़े",
+        "description": "अपने रुचि के स्थानों के प्रदर्शन विश्लेषण तक पहुंचें"
+      }
+    },
+    "pending": {
+      "title": "आवेदन समीक्षाधीन",
+      "message": "आपका साझेदार आवेदन प्रस्तुत किया गया है और वर्तमान में हमारी टीम द्वारा समीक्षा की जा रही है। स्वीकृत होने पर आपको सूचना प्राप्त होगी।",
+      "completeProfile": "सत्यापन में तेजी लाने के लिए, सभी आवश्यक जानकारी के साथ अपनी साझेदार प्रोफ़ाइल पूरी करें।",
+      "completeButton": "मेरी साझेदार प्रोफ़ाइल पूरी करें",
+      "status": "स्थिति",
+      "statusPending": "स्वीकृति की प्रतीक्षा में"
+    },
+    "profile": {
+      "contactEmail": "संपर्क ईमेल",
+      "phone": "फ़ोन",
+      "website": "वेबसाइट",
+      "subscription": "सदस्यता",
+      "description": "विवरण",
+      "notProvided": "प्रदान नहीं किया गया",
+      "updateButton": "मेरी प्रोफ़ाइल अपडेट करें",
+      "status": {
+        "pending": "लंबित",
+        "approved": "स्वीकृत",
+        "suspended": "निलंबित"
+      }
+    },
+    "dashboard": {
+      "title": "डैशबोर्ड",
+      "subtitle": "अपने रुचि के स्थानों का प्रबंधन करें और अपने प्रदर्शन को ट्रैक करें",
+      "overview": "अवलोकन",
+      "analytics": "विश्लेषण",
+      "pois": "मेरे पीओआई",
+      "bookings": "बुकिंग",
+      "finances": "वित्त",
+      "subscription": "सदस्यता",
+      "settings": "सेटिंग्स",
+      "notifications": "सूचनाएं",
+      "notificationsShort": "सूचनाएं",
+      "stats": {
+        "totalPois": "रुचि के स्थान",
+        "totalActive": "कुल सक्रिय",
+        "viewsThisMonth": "इस महीने के दृश्य",
+        "totalBookings": "कुल बुकिंग",
+        "totalRevenue": "कुल राजस्व",
+        "averageRating": "औसत रेटिंग",
+        "pendingPayments": "लंबित भुगतान"
+      },
+      "analytics": {
+        "realTimeMetrics": "रीयल-टाइम प्रदर्शन मेट्रिक्स",
+        "totalViews": "कुल दृश्य",
+        "conversionRate": "रूपांतरण दर",
+        "bookings": "बुकिंग",
+        "avgRevenue": "औसत राजस्व",
+        "totalRevenue": "कुल राजस्व",
+        "vsLastMonth": "पिछले महीने की तुलना में",
+        "topPOI": "टॉप पीओआई",
+        "none": "कोई नहीं",
+        "bestPerformer": "सर्वश्रेष्ठ प्रदर्शक",
+        "viewsEvolution": "दृश्य विकास",
+        "viewsDescription": "30 दिनों में दृश्य और रूपांतरण दर",
+        "financialPerformance": "वित्तीय प्रदर्शन",
+        "financialDescription": "दैनिक बुकिंग और राजस्व",
+        "views": "दृश्य",
+        "revenue": "राजस्व",
+        "autoInsights": "स्वचालित अंतर्दृष्टि",
+        "autoInsightsDescription": "आपके प्रदर्शन का स्वचालित विश्लेषण",
+        "excellentConversion": "उत्कृष्ट रूपांतरण दर {rate}%! आपकी सामग्री आगंतुकों को अच्छी तरह से आकर्षित और परिवर्तित करती है।",
+        "exceptionalGrowth": "इस महीने {growth}% की असाधारण वृद्धि! ऐसे ही जारी रखें।",
+        "lowConversion": "कम रूपांतरण दर ({rate}%)। अपने विवरण और फोटो को अनुकूलित करने पर विचार करें।",
+        "loadError": "विश्लेषण डेटा लोड करने में असमर्थ।"
+      },
+      "pois": {
+        "title": "मेरे रुचि के स्थान",
+        "subtitle": "अपने रुचि के स्थानों का प्रबंधन करें और उनकी सत्यापन स्थिति को ट्रैक करें",
+        "createButton": "POI बनाएं",
+        "createFirst": "मेरा पहला POI बनाएं",
+        "loading": "लोड हो रहा है...",
+        "loadError": "आपके रुचि के स्थान लोड करने में असमर्थ",
+        "status": {
+          "draft": "मसौदा",
+          "pendingValidation": "सत्यापन लंबित",
+          "underReview": "समीक्षाधीन",
+          "approved": "स्वीकृत",
+          "rejected": "अस्वीकृत",
+          "blocked": "अवरुद्ध",
+          "unknown": "अज्ञात स्थिति"
+        },
+        "statusDescription": {
+          "draft": "यह रुचि का स्थान बनाया जा रहा है और अभी तक सत्यापन के लिए प्रस्तुत नहीं किया गया है।",
+          "pendingValidation": "यह रुचि का स्थान प्रस्तुत कर दिया गया है और हमारी टीम द्वारा सत्यापन की प्रतीक्षा में है।",
+          "underReview": "यह रुचि का स्थान हमारी टीम द्वारा समीक्षा की जा रही है। आपको जल्द ही प्रतिक्रिया मिलेगी।",
+          "approved": "यह रुचि का स्थान स्वीकृत हो गया है और अब जनता के लिए दृश्यमान है।",
+          "rejected": "यह रुचि का स्थान अस्वीकृत कर दिया गया है। कृपया टिप्पणियों की जांच करें और सुधार के बाद पुनः प्रस्तुत करें।",
+          "blocked": "यह रुचि का स्थान हमारी उपयोग की शर्तों के उल्लंघन के कारण अवरुद्ध कर दिया गया है।",
+          "unknown": "अज्ञात स्थिति।"
+        },
+        "stats": {
+          "total": "कुल",
+          "drafts": "मसौदे",
+          "pending": "लंबित",
+          "underReview": "समीक्षाधीन",
+          "approved": "स्वीकृत",
+          "rejected": "अस्वीकृत"
+        },
+        "empty": {
+          "title": "कोई रुचि का स्थान नहीं",
+          "description": "आपने अभी तक कोई रुचि का स्थान नहीं बनाया है। एक बनाकर शुरू करें!"
+        },
+        "actions": {
+          "edit": "संपादित करें",
+          "delete": "हटाएं",
+          "resubmit": "पुनः प्रस्तुत करें",
+          "conversation": "चर्चा",
+          "hideConversation": "छिपाएं",
+          "accommodation": "आवास दरें",
+          "activity": "गतिविधि दरें",
+          "restaurant": "मेनू और टेबल"
+        },
+        "details": {
+          "createdAt": "बनाया गया",
+          "updatedAt": "संशोधित",
+          "resubmission": "पुनःप्रस्तुति #",
+          "rejectionReason": "अस्वीकृति का कारण:",
+          "blockReason": "अवरोध का कारण:",
+          "illustration": "चित्र"
+        },
+        "delete": {
+          "title": "रुचि का स्थान हटाएं",
+          "itemType": "POI",
+          "warningApproved": "यह POI वर्तमान में जनता के लिए दृश्यमान है और इससे संबंधित समीक्षाएं या बुकिंग हो सकती हैं।",
+          "success": "POI सफलतापूर्वक हटा दिया गया",
+          "successDescription": "रुचि का स्थान \"{name}\" स्थायी रूप से हटा दिया गया है",
+          "error": "हटाने में त्रुटि",
+          "errorDescription": "हटाने के दौरान एक त्रुटि आई। कृपया पुनः प्रयास करें।"
+        },
+        "resubmit": {
+          "success": "POI पुनः प्रस्तुत किया गया",
+          "successDescription": "आपका रुचि का स्थान सत्यापन के लिए पुनः प्रस्तुत किया गया है",
+          "error": "त्रुटि",
+          "errorDescription": "POI पुनः प्रस्तुत करने में असमर्थ"
+        },
+        "edit": {
+          "success": "POI संशोधित",
+          "successDescription": "आपका रुचि का स्थान सफलतापूर्वक संशोधित हो गया है"
+        },
+        "management": {
+          "accommodationTitle": "आवास दर प्रबंधन – {name}",
+          "activityTitle": "गतिविधि दर प्रबंधन – {name}",
+          "restaurantTitle": "रेस्तरां प्रबंधन – {name}"
+        }
+      },
+      "finances": {
+        "stats": {
+          "availableBalance": "उपलब्ध शेष",
+          "readyForWithdrawal": "निकासी के लिए तैयार",
+          "processing": "प्रसंस्करण में",
+          "paymentOn": "भुगतान तिथि",
+          "thisMonth": "इस महीने",
+          "monthlyRevenue": "मासिक राजस्व",
+          "avgCommission": "ौसत कमीशन",
+          "avgRate": "ौसत दर"
+        },
+        "revenueChart": {
+          "title": "राजस्व विकास",
+          "description": "पिछले 12 महीनों में मासिक राजस्व",
+          "revenue": "राजस्व"
+        },
+        "tabs": {
+          "commissions": "कमीशन",
+          "withdrawals": "निकासी",
+          "paymentMethods": "भुगतान विधियां"
+        },
+        "commissions": {
+          "title": "कमीशन इतिहास",
+          "description": "आपके सभी कमीशन का विवरण",
+          "export": "निर्यात",
+          "client": "ग्राहक",
+          "reference": "संदर्भ",
+          "commission": "कमीशन",
+          "rate": "दर",
+          "date": "तारीख"
+        },
+        "withdrawals": {
+          "title": "निकासी अनुरोध",
+          "description": "अपनी धनराशि निकासी का प्रबंधन करें",
+          "request": "निकासी का अनुरोध करें",
+          "empty": "कोई निकासी अनुरोध नहीं",
+          "noPaymentMethod": "आपको पहले भुगतान विधि जोड़नी होगी",
+          "amountExceeds": "राशि उपलब्ध शेष से अधिक है",
+          "requestSuccess": "निकासी अनुरोध सफलतापूर्वक भेजा गया",
+          "requestError": "निकासी अनुरोध प्रसंस्करण में त्रुटि"
+        },
+        "paymentMethods": {
+          "title": "भुगतान विधियां",
+          "description": "अपने बैंक खाते और वॉलेट प्रबंधित करें",
+          "add": "जोड़ें",
+          "empty": "कोई भुगतान विधि कॉन्फ़िगर नहीं की गई",
+          "emptyDescription": "बैंक खाता या ई-वॉलेट जोड़ें",
+          "accountConfigured": "खाता कॉन्फ़िगर किया गया",
+          "default": "डिफ़ॉल्ट",
+          "active": "सक्रिय",
+          "inactive": "निष्क्रिय"
+        },
+        "status": {
+          "pending": "लंबित",
+          "processing": "प्रसंस्करण में",
+          "paid": "भुगतान किया गया",
+          "completed": "पूर्ण",
+          "failed": "विफल",
+          "rejected": "अस्वीकृत"
+        },
+        "errors": {
+          "loadError": "वित्तीय डेटा लोड करने में त्रुटि"
+        }
+      },
+      "charts": {
+        "viewsOverTime": "समय के साथ दृश्य",
+        "viewsDescription": "30 दिनों में दृश्य और रूपांतरण दर",
+        "bookingsRevenue": "बुकिंग और राजस्व",
+        "revenueDescription": "साप्ताहिक वित्तीय प्रदर्शन",
+        "performance": "प्रदर्शन",
+        "topPerformer": "शीर्ष प्रदर्शक"
+      },
+      "earnings": {
+        "title": "राजस्व इतिहास",
+        "description": "प्रति बुकिंग आपकी कमाई का विवरण",
+        "amount": "राशि",
+        "commission": "कमीशन",
+        "bookingDate": "बुकिंग तिथि",
+        "paymentStatus": "भुगतान स्थिति",
+        "pending": "लंबित",
+        "paid": "भुगतान किया गया",
+        "cancelled": "रद्द किया गया"
+      },
+      "notificationPanel": {
+        "title": "हालिया सूचनाएं",
+        "description": "अपने रुचि के स्थानों पर गतिविधि के बारे में सूचित रहें",
+        "markAsRead": "पढ़ा हुआ चिह्नित करें",
+        "noNotifications": "कोई सूचना नहीं",
+        "updateError": "सूचना अपडेट करने में त्रुटि"
+      },
+      "export": "डेटा निर्यात करें",
+      "loadingError": "डैशबोर्ड लोड करने में त्रुटि",
+      "subscription": {
+        "loading": "सदस्यता जानकारी लोड हो रही है...",
+        "loadError": "सदस्यता जानकारी लोड करने में त्रुटि",
+        "currentPlan": {
+          "title": "{planName} योजना",
+          "description": "{description} - {commission}% कमीशन",
+          "nextPayment": "अगला भुगतान: {date}",
+          "monthly": "{price}€/माह",
+          "yearly": "{price}€/वर्ष"
+        },
+        "usage": {
+          "pois": "रुचि के स्थल",
+          "bookings": "इस महीने बुकिंग",
+          "commission": "वर्तमान कमीशन",
+          "commissionNote": "उच्च योजनाओं में कम कमीशन होता है"
+        },
+        "alerts": {
+          "limitWarning": "आप अपनी योजना की सीमा के पास पहुंच रहे हैं। अपग्रेड करने पर विचार करें।"
+        },
+        "plans": {
+          "title": "उपलब्ध योजनाएं",
+          "current": "वर्तमान",
+          "monthly": "{price}€/माह",
+          "yearly": "या {price}€/वर्ष (2 महीने मुफ्त)",
+          "unlimited": "असीमित रुचि के स्थल",
+          "limited": "{count} रुचि के स्थल",
+          "commissionRate": "{rate}% कमीशन",
+          "upgradeMonthly": "अपग्रेड करें - मासिक",
+          "upgradeYearly": "अपग्रेड करें - वार्षिक",
+          "changeMonthly": "बदलें - मासिक",
+          "changeYearly": "बदलें - वार्षिक",
+          "cancel": "सदस्यता रद्द करें"
+        },
+        "actions": {
+          "upgradeSuccess": "सदस्यता सफलतापूर्वक अपडेट हो गई!",
+          "upgradeError": "सदस्यता अपडेट करने में त्रुटि",
+          "cancelSuccess": "सदस्यता रद्द हो गई। यह बिलिंग अवधि के अंत तक सक्रिय रहेगी।",
+          "cancelError": "सदस्यता रद्द करने में त्रुटि"
+        },
+        "billing": {
+          "title": "बिलिंग इतिहास",
+          "description": "आपके हालिया चालान और भुगतान",
+          "empty": "कोई चालान उपलब्ध नहीं",
+          "emptyDescription": "भुगतान के बाद चालान यहां दिखाई देंगे"
+        },
+        "status": {
+          "active": "सक्रिय",
+          "cancelled": "रद्द",
+          "suspended": "निलंबित"
+        },
+        "planDetails": {
+          "basic": {
+            "name": "बेसिक",
+            "description": "अपने रुचि के स्थल प्रकाशित करना शुरू करने के लिए आदर्श",
+            "features": [
+              "5 रुचि के स्थल तक",
+              "मानक समर्थन",
+              "बुनियादी विश्लेषण"
+            ]
+          },
+          "premium": {
+            "name": "प्रीमियम",
+            "description": "अपनी कैटलॉग का विस्तार करें और दृश्यता बढ़ाएं",
+            "features": [
+              "25 रुचि के स्थल",
+              "प्राथमिकता समर्थन",
+              "उन्नत विश्लेषण",
+              "मार्केटिंग अभियान"
+            ]
+          },
+          "enterprise": {
+            "name": "एंटरप्राइज",
+            "description": "होटल नेटवर्क या बड़े पैमाने के POI संचालन के लिए",
+            "features": [
+              "असीमित रुचि के स्थल",
+              "समर्पित खाता प्रबंधक",
+              "कस्टम एकीकरण",
+              "24/7 समर्थन"
+            ]
+          }
+        }
+      },
+      "bookings": {
+        "loading": "बुकिंग डेटा लोड हो रहा है...",
+        "loadError": "बुकिंग डेटा लोड करने में त्रुटि",
+        "stats": {
+          "totalBookings": "कुल बुकिंग",
+          "totalRevenue": "राजस्व",
+          "commissions": "कमीशन",
+          "pending": "लंबित"
+        },
+        "history": {
+          "title": "बुकिंग इतिहास",
+          "reference": "संदर्भ",
+          "amount": "राशि",
+          "commission": "कमीशन",
+          "date": "तारीख",
+          "customer": "ग्राहक",
+          "poi": "रुचि का स्थल",
+          "empty": "अभी तक कोई बुकिंग नहीं",
+          "emptyDescription": "आपके रुचि के स्थलों की बुकिंग यहां दिखाई देंगी"
+        },
+        "status": {
+          "pending": "लंबित",
+          "confirmed": "पुष्टिकृत",
+          "cancelled": "रद्द",
+          "completed": "पूर्ण"
+        }
+      },
+      "notifications": {
+        "title": "सूचनाएं",
+        "markAllRead": "सभी को पढ़ा गया चिह्नित करें",
+        "loading": "सूचनाएं लोड हो रही हैं...",
+        "empty": "अभी कोई सूचना नहीं",
+        "loadError": "सूचनाएं लोड करने में असमर्थ",
+        "markAllSuccess": "सभी सूचनाएं पढ़ी गई चिह्नित",
+        "reference": "संदर्भ: {reference}"
+      }
+    }
   }
 }

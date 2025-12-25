@@ -21,10 +21,24 @@ export const useCulinarySettings = () => {
         culinaryAdminService.listRestaurantCategories(),
       ]);
 
-      setDietaryRestrictions(dietaryData || []);
-      setCuisineTypes(cuisineData || []);
-      setAdventureLevels(adventureData || []);
-      setRestaurantCategories(categoriesData || []);
+      // Handle both array and paginated response formats
+      const dietaryArray = Array.isArray(dietaryData)
+        ? dietaryData
+        : (dietaryData as any)?.results || [];
+      const cuisineArray = Array.isArray(cuisineData)
+        ? cuisineData
+        : (cuisineData as any)?.results || [];
+      const adventureArray = Array.isArray(adventureData)
+        ? adventureData
+        : (adventureData as any)?.results || [];
+      const categoriesArray = Array.isArray(categoriesData)
+        ? categoriesData
+        : (categoriesData as any)?.results || [];
+
+      setDietaryRestrictions(dietaryArray);
+      setCuisineTypes(cuisineArray);
+      setAdventureLevels(adventureArray);
+      setRestaurantCategories(categoriesArray);
     } catch (err: any) {
       setError(err.message);
     } finally {

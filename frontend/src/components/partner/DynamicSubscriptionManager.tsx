@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { partnerService } from '@/services/partnerService';
+import { useTranslation } from 'react-i18next';
 import { 
   Check, 
   Crown, 
@@ -50,6 +51,7 @@ interface PartnerSubscription {
 }
 
 const DynamicSubscriptionManager: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [plans, setPlans] = useState<SubscriptionPlan[]>(AVAILABLE_PLANS);
   const [currentSubscription, setCurrentSubscription] = useState<PartnerSubscription | null>(null);
@@ -110,7 +112,7 @@ const DynamicSubscriptionManager: React.FC = () => {
 
     } catch (error) {
       console.error('Erreur lors de la récupération des données d\'abonnement:', error);
-      toast.error('Erreur lors du chargement des informations d\'abonnement');
+      toast.error(t('partnerCenter.dashboard.subscription.loadError'));
     } finally {
       setLoading(false);
     }
@@ -137,11 +139,11 @@ const DynamicSubscriptionManager: React.FC = () => {
         },
       });
 
-      toast.success('Abonnement mis à jour avec succès !');
+      toast.success(t('partnerCenter.dashboard.subscription.actions.upgradeSuccess'));
       fetchSubscriptionData();
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'abonnement:', error);
-      toast.error('Erreur lors de la mise à jour de l\'abonnement');
+      toast.error(t('partnerCenter.dashboard.subscription.actions.upgradeError'));
     }
   };
 
@@ -156,11 +158,11 @@ const DynamicSubscriptionManager: React.FC = () => {
         },
       });
 
-      toast.success("Abonnement annulé. Il restera actif jusqu'à la fin de la période facturée.");
+      toast.success(t('partnerCenter.dashboard.subscription.actions.cancelSuccess'));
       fetchSubscriptionData();
     } catch (error) {
       console.error('Erreur lors de l\'annulation de l\'abonnement:', error);
-      toast.error('Erreur lors de l\'annulation de l\'abonnement');
+      toast.error(t('partnerCenter.dashboard.subscription.actions.cancelError'));
     }
   };
 
@@ -213,23 +215,26 @@ const DynamicSubscriptionManager: React.FC = () => {
               {getPlanIcon(currentPlan?.code || 'basic')}
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  Plan {currentPlan?.name}
-                  <Badge variant="outline">{currentSubscription?.status}</Badge>
+                  {t('partnerCenter.dashboard.subscription.currentPlan.title', { planName: t(`partnerCenter.dashboard.subscription.planDetails.${currentPlan?.code || 'basic'}.name`) })}
+                  <Badge variant="outline">{t(`partnerCenter.dashboard.subscription.status.${currentSubscription?.status || 'active'}`)}</Badge>
                 </CardTitle>
                 <CardDescription>
-                  {currentPlan?.description} - Commission {((currentPlan?.commission_rate || 0.15) * 100).toFixed(0)}%
+                  {t('partnerCenter.dashboard.subscription.currentPlan.description', { 
+                    description: t(`partnerCenter.dashboard.subscription.planDetails.${currentPlan?.code || 'basic'}.description`),
+                    commission: ((currentPlan?.commission_rate || 0.15) * 100).toFixed(0)
+                  })}
                 </CardDescription>
               </div>
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold">
                 {currentSubscription?.billing_cycle === 'yearly' 
-                  ? `${currentPlan?.price_yearly || 290}€/an` 
-                  : `${currentPlan?.price_monthly || 29}€/mois`
+                  ? t('partnerCenter.dashboard.subscription.currentPlan.yearly', { price: currentPlan?.price_yearly || 290 })
+                  : t('partnerCenter.dashboard.subscription.currentPlan.monthly', { price: currentPlan?.price_monthly || 29 })
                 }
               </p>
               <p className="text-sm text-muted-foreground">
-                Prochain paiement: {new Date(currentSubscription?.next_billing_date || '').toLocaleDateString('fr-FR')}
+                {t('partnerCenter.dashboard.subscription.currentPlan.nextPayment', { date: new Date(currentSubscription?.next_billing_date || '').toLocaleDateString('fr-FR') })}
               </p>
             </div>
           </div>
@@ -239,7 +244,7 @@ const DynamicSubscriptionManager: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Points d'intérêt</span>
+                <span className="text-sm font-medium">{t('partnerCenter.dashboard.subscription.usage.pois')}</span>
                 <span className="text-sm text-muted-foreground">
                   {currentSubscription?.current_usage.tourist_points || 0}
                   {currentPlan?.max_tourist_points === -1 ? '' : `/${currentPlan?.max_tourist_points}`}
@@ -256,7 +261,7 @@ const DynamicSubscriptionManager: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Réservations ce mois</span>
+                <span className="text-sm font-medium">{t('partnerCenter.dashboard.subscription.usage.bookings')}</span>
                 <span className="text-sm text-muted-foreground">
                   {currentSubscription?.current_usage.monthly_bookings || 0}
                 </span>
@@ -266,13 +271,13 @@ const DynamicSubscriptionManager: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Commission actuelle</span>
+                <span className="text-sm font-medium">{t('partnerCenter.dashboard.subscription.usage.commission')}</span>
                 <span className="text-sm font-semibold text-green-600">
                   {((currentPlan?.commission_rate || 0.15) * 100).toFixed(0)}%
                 </span>
               </div>
               <div className="text-xs text-muted-foreground">
-                Plus le plan est élevé, plus la commission est faible
+                {t('partnerCenter.dashboard.subscription.usage.commissionNote')}
               </div>
             </div>
           </div>
@@ -283,7 +288,7 @@ const DynamicSubscriptionManager: React.FC = () => {
             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <p className="text-sm text-yellow-800">
-                Vous approchez de la limite de votre plan. Considérez une mise à niveau.
+                {t('partnerCenter.dashboard.subscription.alerts.limitWarning')}
               </p>
             </div>
           )}
@@ -302,14 +307,14 @@ const DynamicSubscriptionManager: React.FC = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   {getPlanIcon(plan.code)}
-                  {isCurrentPlan && <Badge>Actuel</Badge>}
+                  {isCurrentPlan && <Badge>{t('partnerCenter.dashboard.subscription.plans.current')}</Badge>}
                 </div>
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardTitle className="text-xl">{t(`partnerCenter.dashboard.subscription.planDetails.${plan.code}.name`)}</CardTitle>
+                <CardDescription>{t(`partnerCenter.dashboard.subscription.planDetails.${plan.code}.description`)}</CardDescription>
                 <div className="space-y-1">
-                  <p className="text-3xl font-bold">{plan.price_monthly}€<span className="text-base font-normal">/mois</span></p>
+                  <p className="text-3xl font-bold">{t('partnerCenter.dashboard.subscription.plans.monthly', { price: plan.price_monthly })}</p>
                   <p className="text-sm text-muted-foreground">
-                    ou {plan.price_yearly}€/an (2 mois gratuits)
+                    {t('partnerCenter.dashboard.subscription.plans.yearly', { price: plan.price_yearly })}
                   </p>
                 </div>
               </CardHeader>
@@ -318,14 +323,16 @@ const DynamicSubscriptionManager: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">
-                      {plan.max_tourist_points === -1 ? 'Points d\'intérêt illimités' : `${plan.max_tourist_points} points d'intérêt`}
+                      {plan.max_tourist_points === -1 
+                        ? t('partnerCenter.dashboard.subscription.plans.unlimited') 
+                        : t('partnerCenter.dashboard.subscription.plans.limited', { count: plan.max_tourist_points })}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Commission {(plan.commission_rate * 100).toFixed(0)}%</span>
+                    <span className="text-sm">{t('partnerCenter.dashboard.subscription.plans.commissionRate', { rate: (plan.commission_rate * 100).toFixed(0) })}</span>
                   </div>
-                  {plan.features.map((feature, index) => (
+                  {t(`partnerCenter.dashboard.subscription.planDetails.${plan.code}.features`, { returnObjects: true }).map((feature: string, index: number) => (
                     <div key={index} className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-500" />
                       <span className="text-sm">{feature}</span>
@@ -340,14 +347,14 @@ const DynamicSubscriptionManager: React.FC = () => {
                       variant={isUpgrade ? "default" : "outline"}
                       onClick={() => upgradeSubscription(plan.code, 'monthly')}
                     >
-                      {isUpgrade ? 'Upgrader' : 'Changer'} - Mensuel
+                      {isUpgrade ? t('partnerCenter.dashboard.subscription.plans.upgradeMonthly') : t('partnerCenter.dashboard.subscription.plans.changeMonthly')}
                     </Button>
                     <Button 
                       className="w-full" 
                       variant="secondary"
                       onClick={() => upgradeSubscription(plan.code, 'yearly')}
                     >
-                      {isUpgrade ? 'Upgrader' : 'Changer'} - Annuel
+                      {isUpgrade ? t('partnerCenter.dashboard.subscription.plans.upgradeYearly') : t('partnerCenter.dashboard.subscription.plans.changeYearly')}
                     </Button>
                   </div>
                 )}
@@ -358,7 +365,7 @@ const DynamicSubscriptionManager: React.FC = () => {
                     className="w-full"
                     onClick={cancelSubscription}
                   >
-                    Annuler l'abonnement
+                    {t('partnerCenter.dashboard.subscription.plans.cancel')}
                   </Button>
                 )}
               </CardContent>
@@ -372,16 +379,16 @@ const DynamicSubscriptionManager: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5" />
-            Historique de facturation
+            {t('partnerCenter.dashboard.subscription.billing.title')}
           </CardTitle>
-          <CardDescription>Vos dernières factures et paiements</CardDescription>
+          <CardDescription>{t('partnerCenter.dashboard.subscription.billing.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">Aucune facture disponible</p>
+            <p className="text-muted-foreground">{t('partnerCenter.dashboard.subscription.billing.empty')}</p>
             <p className="text-sm text-muted-foreground mt-2">
-              Les factures apparaîtront ici une fois les paiements effectués
+              {t('partnerCenter.dashboard.subscription.billing.emptyDescription')}
             </p>
           </div>
         </CardContent>

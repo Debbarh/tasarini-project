@@ -10,6 +10,12 @@
     "logout": "Disconnetti",
     "login": "Accedi"
   },
+  "notFound": {
+    "title": "404",
+    "message": "Ops! Pagina non trovata",
+    "description": "La pagina che stai cercando non esiste o è stata spostata.",
+    "backToHome": "Torna alla home"
+  },
   "home": {
     "heroTitle": "La tua prossima avventura ti aspetta",
     "heroSubtitle": "Scopri destinazioni straordinarie, crea itinerari personalizzati e vivi esperienze indimenticabili. Lascia che ti guidiamo verso il viaggio dei tuoi sogni.",
@@ -27,10 +33,191 @@
   },
   "planTrip": {
     "title": "Pianifica la tua fuga perfetta",
-    "subtitle": "Crea un itinerario personalizzato con il nostro assistente IA che comprende i tuoi desideri di avventura",
+    "subtitle": "Crea un itinerario personalizzato con il nostro assistente IA che comprende i tuoi desideri d'avventura",
     "startPlanning": "Inizia a pianificare",
     "smartRecommendations": "Raccomandazioni intelligenti",
-    "smartRecommendationsDesc": "La nostra IA analizza le tue preferenze per suggerire esperienze uniche"
+    "smartRecommendationsDesc": "La nostra IA analizza le tue preferenze per suggerire esperienze uniche",
+    "pageTitle": "Pianifica la Tua Fuga Perfetta | Viaggio IA",
+    "pageDescription": "Crea il tuo itinerario dei sogni in pochi clic. La nostra IA progetta avventure su misura che trasformano i tuoi desideri in ricordi magici.",
+    "itineraryGenerated": "Itinerario generato con successo!",
+    "personalizedTravel": "Il tuo viaggio personalizzato creato dall'IA è pronto.",
+    "withPreferences": "✨ Basato sulle tue preferenze!",
+    "withLocalPlaces": "📍 Con luoghi locali autentici!",
+    "generationError": "Errore nella generazione dell'itinerario",
+    "tryAgainLater": "Riprova più tardi o contatta il supporto se il problema persiste.",
+    "enrichmentComplete": "Arricchimento del viaggio completato!",
+    "enrichmentError": "Errore durante l'arricchimento del viaggio",
+    "createNewTrip": "Crea un nuovo viaggio",
+    "newTrip": "Nuovo viaggio",
+    "wizard": {
+      "title": "Pianifica il tuo viaggio",
+      "stepOf": "Passo {{current}} di {{total}}",
+      "previous": "Precedente",
+      "next": "Avanti",
+      "generating": "Generazione...",
+      "createItinerary": "Crea il mio itinerario",
+      "steps": {
+        "destinations": {
+          "title": "Destinazioni",
+          "description": "Dove vuoi andare?"
+        },
+        "details": {
+          "title": "Compagni",
+          "description": "Con chi viaggi?"
+        },
+        "budget": {
+          "title": "Budget",
+          "description": "Definisci il tuo budget di viaggio"
+        },
+        "culinary": {
+          "title": "Cucina",
+          "description": "Le tue preferenze culinarie"
+        },
+        "accommodation": {
+          "title": "Alloggio",
+          "description": "Tipo e criteri di alloggio"
+        },
+        "activities": {
+          "title": "Attività",
+          "description": "Esperienze e interessi"
+        }
+      }
+    },
+    "destinationStep": {
+      "selectCountry": "Seleziona un paese",
+      "selectCity": "Seleziona una città",
+      "numberOfDays": "Numero di giorni",
+      "exactDates": "Date esatte",
+      "start": "Inizio",
+      "end": "Fine",
+      "day": "giorno",
+      "days": "giorni",
+      "selectedCountry": "Paese selezionato",
+      "selectedCity": "Città selezionata",
+      "addDestination": "+ Aggiungi una destinazione",
+      "mapSearch": "📍 Ricerca per mappa",
+      "totalDuration": "Durata totale del viaggio",
+      "selectDescription": "Seleziona i paesi e le città che desideri visitare",
+      "destination": "Destinazione",
+      "country": "Paese",
+      "city": "Città",
+      "title": "Quali sono le tue destinazioni?",
+      "duration": "Durata",
+      "startDate": "Data di inizio",
+      "endDate": "Data di fine",
+      "chooseOnMap": "Scegli sulla mappa",
+      "addFirstDestination": "Aggiungi prima una destinazione",
+      "selectOnMap": "Seleziona la tua destinazione sulla mappa",
+      "mapDescription": "Seleziona una destinazione cliccando sulla mappa o cercando un indirizzo",
+      "itinerary": "Itinerario:",
+      "locationSaved": "Destinazione salvata con successo.",
+      "locationSaveError": "Impossibile salvare questa posizione, si prega di verificare le informazioni.",
+      "invalidAddress": "Si prega di selezionare un indirizzo valido sulla mappa."
+    },
+    "travelDetailsStep": {
+      "title": "Compagni di viaggio",
+      "description": "Specificare la composizione del gruppo di viaggio",
+      "travelerType": "Tipo di viaggiatore",
+      "subtype": "Sottotipo",
+      "chooseSubtype": "Scegli un sottotipo (opzionale)",
+      "groupSize": "Dimensione del gruppo",
+      "people": "persone",
+      "person": "persona",
+      "children": "Bambini",
+      "child": "Bambino",
+      "addChild": "Aggiungi un bambino",
+      "year": "anno",
+      "years": "anni",
+      "summary": "Riepilogo",
+      "impactOnRecommendations": "Impatto sulle tue raccomandazioni:",
+      "maxLevel": "Livello max",
+      "veryEasy": "Molto facile",
+      "easy": "Facile",
+      "moderate": "Moderato",
+      "difficult": "Difficile",
+      "veryDifficult": "Molto difficile",
+      "compatiblePOIsFound": "POI compatibile trovato",
+      "compatiblePOIsFoundPlural": "POI compatibili trovati",
+      "inRegion": "nella regione",
+      "inYourBudget": "nel tuo budget",
+      "noPOIFound": "Nessun POI compatibile trovato",
+      "adjustCriteria": "Considera di adattare i tuoi criteri per più opzioni",
+      "available": "disponibile",
+      "availablePlural": "disponibili",
+      "remains": "rimane",
+      "remainsPlural": "rimangono",
+      "error": "Errore"
+    },
+    "budgetStep": {
+      "title": "Budget di viaggio",
+      "description": "Imposta il tuo budget per personalizzare il tuo viaggio",
+      "budgetLevel": "Livello di budget",
+      "dailyBudget": "Budget giornaliero",
+      "perDay": "giorno",
+      "currency": "Valuta",
+      "flexibility": "Flessibilità",
+      "selectedLevel": "Livello selezionato",
+      "summary": "Riepilogo del tuo budget",
+      "budget": "Budget",
+      "error": "Errore"
+    },
+    "culinaryStep": {
+      "title": "Preferenze culinarie",
+      "description": "Condividi i tuoi gusti per raccomandazioni personalizzate",
+      "loading": "Caricamento...",
+      "cuisineTypes": "Tipi di cucina preferiti",
+      "restaurantCategories": "Categorie di ristoranti preferite",
+      "adventureLevel": "Livello di avventura culinaria",
+      "consumeAlcohol": "Consumo alcol",
+      "dietaryRestrictions": "Restrizioni dietetiche",
+      "summary": "Riepilogo delle tue preferenze culinarie",
+      "restriction": "restrizione",
+      "restrictionsPlural": "restrizioni",
+      "cuisineType": "tipo di cucina",
+      "cuisineTypesPlural": "tipi di cucina",
+      "restaurantCategory": "categoria di ristorante",
+      "restaurantCategoriesPlural": "categorie di ristorante",
+      "culinaryAdventure": "Avventura culinaria",
+      "conservative": "Conservatore",
+      "moderate": "Moderato",
+      "adventurous": "Avventuroso",
+      "consumesAlcohol": "Consuma alcol"
+    },
+    "accommodationStep": {
+      "title": "Preferenze di alloggio",
+      "description": "Scegli il tipo di alloggio e i servizi che ti interessano",
+      "loading": "Caricamento...",
+      "accommodationType": "Tipo di alloggio",
+      "amenities": "Servizi e comfort",
+      "location": "Posizione preferita",
+      "accessibility": "Accessibilità",
+      "security": "Sicurezza",
+      "ambiance": "Atmosfera",
+      "summary": "Riepilogo delle tue preferenze di alloggio",
+      "types": "Tipi",
+      "services": "Servizi",
+      "locations": "Posizioni",
+      "others": "altri"
+    },
+    "activitiesStep": {
+      "title": "Attività ed esperienze",
+      "description": "Seleziona i tuoi interessi per personalizzare il tuo itinerario",
+      "loading": "Caricamento dati...",
+      "categories": "Categorie di attività preferite",
+      "intensity": "Intensità delle attività",
+      "specificInterests": "Interessi specifici",
+      "avoidances": "Da evitare",
+      "avoidancesDescription": "Seleziona cosa preferisci evitare durante il viaggio",
+      "specialRequests": "Richieste speciali",
+      "specialRequestsDescription": "Aggiungi qualsiasi informazione specifica per il tuo viaggio",
+      "specialRequestsPlaceholder": "Compleanno da festeggiare, restrizioni mediche, occasioni speciali, richieste specifiche...",
+      "summary": "Riepilogo delle tue preferenze di attività",
+      "summaryCategories": "Categorie:",
+      "summaryIntensity": "Intensità:",
+      "summaryInterests": "Interessi:",
+      "moderate": "Moderato",
+      "others": "altri"
+    }
   },
   "beInspired": {
     "title": "Lasciati ispirare",
@@ -40,11 +227,218 @@
     "exploreMap": "Esplora la mappa",
     "findInspiration": "Trova ispirazione"
   },
+  "beInspired": {
+    "pageTitle": "Lasciati Ispirare | Viaggio IA",
+    "pageDescription": "Esplora un mondo di meraviglie nascoste intorno a te. Scopri gemme segrete, sapori autentici ed esperienze magiche che ti aspettano.",
+    "title": "✨ Lasciati ispirare",
+    "subtitle": "Scopri tesori nascosti in un raggio di {{radius}}km. Ogni luogo racconta una storia, ogni esperienza crea un ricordo indimenticabile.",
+    "searchHotels": "🏨 Hotel",
+    "searchHotelsShort": "🏨",
+    "aiGuide": "🤖 Guida IA",
+    "aiGuideShort": "🤖 Guida",
+    "shareDiscovery": "🌟 Condividi un tesoro",
+    "shareDiscoveryShort": "🌟 Condividi",
+    "dialogTitle": "🌟 Condividi la tua scoperta",
+    "dialogDescription": "Rivela un luogo magico che ami alla comunità di esploratori",
+    "exploreMap": "Esplora la mappa",
+    "findInspiration": "Trova ispirazione",
+    "radiusLabel": "🎯 Raggio di esplorazione",
+    "radius10": "10 km",
+    "radius20": "20 km",
+    "radius30": "30 km",
+    "radius50": "50 km",
+    "legendTitle": "Legenda",
+    "legendRestaurants": "Ristoranti e Caffè",
+    "legendActivities": "Attività e Svago",
+    "legendTourist": "Punti di Interesse Turistico",
+    "legendCenter": "Centro di ricerca",
+    "positionDetected": "Posizione rilevata!",
+    "mustBeLoggedIn": "Devi essere connesso per aggiungere un punto di interesse",
+    "nameRequired": "Il nome del punto di interesse è obbligatorio",
+    "successAdded": "Punto di interesse aggiunto con successo!",
+    "errorAdding": "Errore durante l'aggiunta: {{error}}",
+    "aiContext": "L'utente sta esplorando la regione intorno a {{lat}}, {{lon}}",
+    "smartRecommendations": {
+      "title": "Raccomandazioni Intelligenti",
+      "description": "Suggerimenti personalizzati basati sui tuoi gusti e sulla tua cronologia",
+      "loginRequired": "Accedi per ricevere raccomandazioni personalizzate in base alle tue preferenze",
+      "yourPreferences": "Le tue preferenze:",
+      "refresh": "Aggiorna",
+      "analyzing": "Analisi delle tue preferenze in corso...",
+      "noRecommendationsTitle": "Sono necessari più dati",
+      "noRecommendationsDesc": "Aggiungi luoghi ai tuoi preferiti e crea itinerari per ricevere raccomandazioni personalizzate!",
+      "exploreMap": "Esplora la mappa",
+      "match": "corrispondenza",
+      "excellentMatch": "Ottima corrispondenza",
+      "goodMatch": "Buona corrispondenza",
+      "toDiscover": "Da scoprire",
+      "viewOnMap": "Mappa",
+      "retry": "Riprova",
+      "error": "Impossibile caricare le raccomandazioni intelligenti",
+      "noNewRecommendations": "Nessuna nuova raccomandazione trovata. Esplora di più per migliorare i tuoi suggerimenti!",
+      "successGenerated": "{{count}} raccomandazioni personalizzate generate!",
+      "loadingError": "Errore nel caricamento delle raccomandazioni"
+    },
+    "filters": {
+      "title": "Filtri",
+      "results": "risultati",
+      "searching": "Ricerca in corso...",
+      "keywordSearch": "Ricerca per parole chiave",
+      "keywordPlaceholder": "Cerca un luogo, un'attività...",
+      "categories": "Categorie",
+      "categoryRestaurants": "Ristoranti e Café",
+      "categoryActivities": "Attività e Tempo Libero",
+      "categoryTourist": "Punti di Interesse",
+      "categoryOther": "Altri",
+      "minRating": "Valutazione minima ({{rating}}⭐)",
+      "allRatings": "Tutte",
+      "priceRange": "Fascia di prezzo",
+      "allPrices": "Tutti i prezzi",
+      "priceEconomical": "€ - Economico",
+      "priceModerate": "€€ - Moderato",
+      "priceHigh": "€€€ - Alto",
+      "accessibility": "Accessibile ai disabili",
+      "reset": "Ripristina"
+    }
+  },
   "travelStories": {
+    "pageTitle": "Rete Sociale di Viaggio | Travel Stories",
+    "pageDescription": "Scopri, condividi e vivi le più belle avventure di viaggio. Unisciti alla nostra comunità di viaggiatori appassionati.",
     "title": "Storie di Viaggio",
-    "subtitle": "Scopri racconti avvincenti di avventurieri e condividi le tue esperienze per ispirare la comunità",
-    "shareStory": "Racconta il mio viaggio",
-    "myAdventures": "Le mie avventure"
+    "subtitle": "Scopri un mondo di avventure condivise. Crea, esplora e connettiti con viaggiatori di tutto il mondo.",
+    "shareStory": "Condividi il mio viaggio",
+    "myAdventures": "Le mie avventure",
+    "stats": {
+      "stories": "storie",
+      "followers": "follower",
+      "likes": "mi piace",
+      "countries": "paesi"
+    },
+    "buttons": {
+      "viewPublicFeed": "Visualizza feed pubblico",
+      "viewMyStories": "Visualizza le mie storie",
+      "shareMyJourney": "Condividi il mio viaggio",
+      "shareFirstEpic": "Racconta la mia prima epica",
+      "start": "Inizia"
+    },
+    "dialog": {
+      "title": "Condividi la tua avventura",
+      "description": "Crea una storia che ispirerà la comunità dei viaggiatori"
+    },
+    "tabs": {
+      "feed": "Feed",
+      "trending": "Tendenze",
+      "map": "Mappa",
+      "ai": "IA"
+    },
+    "empty": {
+      "myStoriesTitle": "Nessuna delle tue epiche",
+      "noStoriesTitle": "Nessuna storia scoperta",
+      "myStoriesDesc": "Non hai ancora condiviso le tue avventure. La tua prima storia ti aspetta!",
+      "noStoriesDesc": "Sii il pioniere! Condividi la prima epica che ispirerà tutta la comunità."
+    },
+    "statistics": {
+      "epics": "epiche",
+      "likes": "mi piace",
+      "views": "visualizzazioni"
+    },
+    "toast": {
+      "storyCreated": "La tua storia di viaggio è stata creata!",
+      "errorLoading": "Impossibile caricare le storie di viaggio",
+      "loginToBookmark": "Accedi per salvare le storie",
+      "bookmarkAdded": "Storia aggiunta ai preferiti",
+      "bookmarkRemoved": "Storia rimossa dai preferiti"
+    },
+    "filters": {
+      "searchPlaceholder": "Cerca nelle storie...",
+      "filtersButton": "Filtri",
+      "location": "Luogo",
+      "locationPlaceholder": "Filtra per luogo...",
+      "linkType": "Tipo di collegamento",
+      "allTypes": "Tutti i tipi",
+      "touristPoints": "Punti di interesse",
+      "itineraries": "Itinerari",
+      "activities": "Attività",
+      "period": "Periodo",
+      "from": "Dal",
+      "to": "Al",
+      "tags": "Tag",
+      "addTagPlaceholder": "Aggiungi tag per filtrare...",
+      "addButton": "Aggiungi",
+      "loading": "Caricamento...",
+      "results": "risultato",
+      "resultsPlural": "risultati",
+      "clearFilters": "Cancella filtri"
+    },
+    "createDialog": {
+      "tabs": {
+        "aiItinerary": "Da itinerario",
+        "aiInstant": "Generazione IA",
+        "manual": "Manuale"
+      },
+      "aiItinerary": {
+        "title": "Genera da un itinerario",
+        "selectLabel": "Seleziona un itinerario",
+        "selectPlaceholder": "Scegli un itinerario...",
+        "generating": "Generazione in corso...",
+        "generate": "Genera storia"
+      },
+      "aiInstant": {
+        "title": "Generazione istantanea tramite IA",
+        "preparing": "L'IA sta preparando la tua storia...",
+        "templates": {
+          "paris": {
+            "title": "Parigi Romantica",
+            "description": "Viaggio romantico con monumenti"
+          },
+          "mountain": {
+            "title": "Avventura in Montagna",
+            "description": "Trekking e paesaggi selvaggi"
+          },
+          "coastal": {
+            "title": "Road Trip Costiero",
+            "description": "Spiagge e tramonti"
+          },
+          "urban": {
+            "title": "Cultura Urbana",
+            "description": "Arte di strada e gastronomia"
+          }
+        }
+      },
+      "form": {
+        "title": "Titolo della tua storia *",
+        "titlePlaceholder": "Un titolo accattivante per la tua esperienza...",
+        "content": "La tua storia *",
+        "contentPlaceholder": "Racconta la tua esperienza, emozioni, scoperte...",
+        "media": "Immagini e video",
+        "mediaHelp": "Aggiungi foto e video per arricchire il tuo racconto",
+        "activities": "Categorie di attività",
+        "activitiesLoading": "Caricamento categorie...",
+        "intensity": "Livello di intensità",
+        "intensityLoading": "Caricamento livelli...",
+        "tripDate": "Data del viaggio",
+        "selectDate": "Scegli una data",
+        "date": "Data del viaggio",
+        "datePlaceholder": "Scegli una data",
+        "location": "Luogo del tuo viaggio",
+        "locationHelp": "Fai clic sulla mappa per selezionare un luogo o usa la tua posizione attuale",
+        "tags": "Tag personalizzati (opzionale)",
+        "tagsPlaceholder": "Aggiungi un tag personalizzato...",
+        "public": "Storia pubblica",
+        "private": "Storia privata",
+        "cancel": "Annulla",
+        "creating": "Creazione...",
+        "create": "Crea storia"
+      },
+      "toast": {
+        "aiGenerated": "Storia generata con IA! Ora puoi personalizzarla.",
+        "instantGenerated": "Storia generata! Personalizzala come vuoi.",
+        "generationError": "Errore durante la generazione automatica",
+        "loginRequired": "Devi essere loggato per creare una storia",
+        "fieldsRequired": "Il titolo e il contenuto sono obbligatori",
+        "createError": "Errore durante la creazione"
+      }
+    }
   },
   "partnerApplication": {
     "title": "Diventa Partner",
@@ -196,5 +590,584 @@
     "edit": "Modifica",
     "create": "Crea",
     "search": "Cerca"
+  },
+  "touristPoints": {
+    "pageTitle": "Punti di Interesse",
+    "pageDescription": "Scopri luoghi eccezionali consigliati dalla nostra comunità e dai partner",
+    "searchPlaceholder": "Cerca per nome, descrizione, posizione...",
+    "filterByType": "Filtra per tipo",
+    "sortBy": "Ordina per",
+    "filters": {
+      "all": "Tutti i punti",
+      "partnersOnly": "Solo partner",
+      "featured": "In evidenza",
+      "regular": "Punti classici"
+    },
+    "sorting": {
+      "rating": "Valutazione più alta",
+      "reviews": "Numero di recensioni",
+      "recent": "Più recenti",
+      "name": "Alfabetico"
+    },
+    "stats": {
+      "totalPoints": "Punti totali",
+      "partners": "Partner",
+      "featured": "In evidenza",
+      "averageRating": "Valutazione media"
+    },
+    "results": {
+      "found": "punto trovato",
+      "foundPlural": "punti trovati",
+      "for": "per",
+      "certifiedPartners": "Solo partner certificati"
+    },
+    "empty": {
+      "title": "Nessun punto di interesse trovato",
+      "noResults": "Prova con parole chiave diverse",
+      "noPoints": "Nessun punto di interesse disponibile al momento"
+    }
+  },
+  "recommendations": {
+    "pageTitle": "Raccomandazioni",
+    "pageDescription": "Ricevi raccomandazioni intelligenti basate sulle tue preferenze e ispirazioni.",
+    "subtitle": "Un motore perfeziona programmi e attività dalle tue scelte di pianificazione e ispirazioni.",
+    "suggestedProgram": {
+      "title": "Programma suggerito",
+      "description": "Un mix equilibrato di 3 giorni",
+      "day1": "Giorno 1: tour guidato e punti panoramici",
+      "day2": "Giorno 2: gastronomia locale e museo imperdibile",
+      "day3": "Giorno 3: tempo libero, spiaggia o parco naturale"
+    },
+    "recommendedActivities": {
+      "title": "Attività raccomandate",
+      "description": "Basate sui tuoi interessi",
+      "activity1": "Corso di cucina locale (piccolo gruppo)",
+      "activity2": "Escursione dolce all'alba",
+      "activity3": "Quartiere degli artigiani e caffè indipendenti"
+    }
+  },
+  "profile": {
+    "pageTitle": "Il Mio Profilo - Voyage AI",
+    "pageDescription": "Gestisci il tuo profilo utente e i tuoi punti di interesse turistico su Voyage AI",
+    "accessRequired": "Accesso Richiesto",
+    "accessRequiredDesc": "Devi effettuare l'accesso per accedere al tuo profilo.",
+    "signIn": "Accedi",
+    "tabs": {
+      "profile": "Informazioni",
+      "content": "Il Mio Contenuto",
+      "statistics": "Statistiche",
+      "social": "Rete",
+      "privacy": "Privacy",
+      "security": "Sicurezza",
+      "touristPoints": "POI",
+      "savedItineraries": "Itinerari",
+      "notifications": "Notif.",
+      "rgpd": "GDPR"
+    },
+    "personalInfo": "Informazioni Personali",
+    "personalInfoDesc": "Modifica le tue informazioni del profilo qui sotto",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "email": "Email",
+    "emailCannotBeChanged": "L'email non può essere modificata da questa pagina",
+    "phoneNumber": "Numero di telefono",
+    "phonePlaceholder": "+39 333 123 4567",
+    "bio": "Biografia",
+    "bioPlaceholder": "Raccontaci di te...",
+    "preferredLanguage": "Lingua preferita",
+    "selectLanguage": "Seleziona una lingua",
+    "save": "Salva",
+    "saving": "Salvataggio...",
+    "cancel": "Annulla",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "confirm": "Conferma",
+    "myTouristPoints": "I Miei Punti di Interesse",
+    "myTouristPointsDesc": "Gestisci i tuoi punti di interesse turistico",
+    "addPoint": "Aggiungi un punto",
+    "editPoint": "Modifica punto di interesse",
+    "addNewPoint": "Aggiungi un punto di interesse",
+    "noTouristPoints": "Nessun punto di interesse",
+    "noTouristPointsDesc": "Non hai ancora creato alcun punto di interesse. Inizia aggiungendone uno!",
+    "verified": "Verificato",
+    "hidden": "Nascosto",
+    "openingHours": "Orari di apertura",
+    "amenities": "Servizi",
+    "uploadedPhotos": "Foto caricate",
+    "uploadedVideos": "Video caricati",
+    "photo": "Foto",
+    "backToList": "Torna alla lista",
+    "destination": "Destinazione",
+    "day": "giorno",
+    "days": "giorni",
+    "createdOn": "Creato il",
+    "addToFavorites": "Aggiungi ai preferiti",
+    "removeFromFavorites": "Rimuovi dai preferiti",
+    "editItinerary": "Modifica itinerario",
+    "viewDetails": "Visualizza dettagli",
+    "exportPdf": "Esporta come PDF",
+    "share": "Condividi",
+    "shareWithOthers": "Condividi con altri utenti",
+    "rgpdTitle": "GDPR & Gestione dei dati",
+    "rgpdDesc": "Gestisci i tuoi dati personali in conformità con il Regolamento Generale sulla Protezione dei Dati",
+    "categories": {
+      "restaurant": "Ristorante",
+      "hotel": "Hotel",
+      "museum": "Museo",
+      "monument": "Monumento",
+      "park": "Parco",
+      "beach": "Spiaggia",
+      "mountain": "Montagna",
+      "shopping": "Shopping",
+      "entertainment": "Intrattenimento",
+      "sport": "Sport",
+      "culture": "Cultura",
+      "nature": "Natura"
+    },
+    "priceRanges": {
+      "budget": "€ - Economico",
+      "moderate": "€€ - Moderato",
+      "elevated": "€€€ - Elevato",
+      "luxury": "€€€€ - Lusso"
+    },
+    "toast": {
+      "loadError": "Errore nel caricamento dei punti di interesse",
+      "updateSuccess": "Profilo aggiornato con successo",
+      "updateError": "Errore nell'aggiornamento del profilo",
+      "pointUpdateSuccess": "Punto di interesse aggiornato con successo",
+      "pointCreateSuccess": "Punto di interesse creato con successo",
+      "pointCreateSuccessPartner": "Punto di interesse creato con successo - Contrassegnato come punto partner",
+      "saveError": "Errore nel salvataggio",
+      "deleteSuccess": "Punto di interesse eliminato con successo",
+      "deleteError": "Errore nell'eliminazione",
+      "activateSuccess": "Punto di interesse attivato con successo",
+      "deactivateSuccess": "Punto di interesse disattivato con successo",
+      "modifyError": "Errore nella modifica",
+      "exportSuccess": "PDF esportato con successo",
+      "exportError": "Errore nell'esportazione del PDF",
+      "linkCopied": "Link copiato negli appunti",
+      "shareError": "Errore nella condivisione",
+      "copyLink": "Copia link"
+    },
+    "deleteConfirm": "Sei sicuro di voler eliminare questo punto di interesse?",
+    "extendedInfo": {
+      "title": "Informazioni Aggiuntive",
+      "description": "Completa il tuo profilo con informazioni aggiuntive",
+      "location": "Posizione",
+      "city": "Città",
+      "cityPlaceholder": "Es: Parigi",
+      "country": "Paese",
+      "countryPlaceholder": "Es: Francia",
+      "socialNetworks": "Social Network",
+      "facebookPlaceholder": "https://facebook.com/username",
+      "instagramPlaceholder": "https://instagram.com/username",
+      "twitterPlaceholder": "https://twitter.com/username",
+      "linkedinPlaceholder": "https://linkedin.com/in/username",
+      "travelPreferences": "Preferenze di Viaggio",
+      "travelStyle": "Stile di Viaggio",
+      "selectTravelStyle": "Seleziona il tuo stile",
+      "favoriteDestinations": "Destinazioni Preferite",
+      "favoriteDestinationsPlaceholder": "Es: Tokyo, New York, Marrakech (separate da virgole)",
+      "favoriteDestinationsHelp": "Separa le destinazioni con virgole",
+      "travelInterests": "Interessi",
+      "travelInterestsPlaceholder": "Es: immersioni, trekking, gastronomia, fotografia",
+      "travelInterestsHelp": "Descrivi le tue attività e interessi di viaggio preferiti",
+      "professionalInfo": "Informazioni Professionali",
+      "occupation": "Professione",
+      "occupationPlaceholder": "Es: Sviluppatore Web",
+      "website": "Sito Web",
+      "websitePlaceholder": "https://esempio.com",
+      "travelStyles": {
+        "adventure": "Avventura",
+        "luxury": "Lusso",
+        "budget": "Economico",
+        "cultural": "Culturale",
+        "relaxation": "Relax",
+        "family": "Famiglia",
+        "solo": "Solo",
+        "group": "Gruppo"
+      },
+      "toast": {
+        "updateSuccess": "Informazioni aggiornate con successo",
+        "updateError": "Errore durante l'aggiornamento delle informazioni"
+      }
+    }
+  },
+  "partnerCenter": {
+    "title": "Area Partner",
+    "subtitle": "Unisciti alla nostra rete di partner e mostra i tuoi luoghi eccezionali a una comunità appassionata di viaggiatori.",
+    "loginRequired": "Effettua il login per accedere all'area partner",
+    "benefits": {
+      "visibility": {
+        "title": "Maggiore Visibilità",
+        "description": "Evidenzia i tuoi luoghi con un distintivo badge partner"
+      },
+      "premium": {
+        "title": "Evidenziazione Premium",
+        "description": "Beneficia di un posizionamento prioritario sulla mappa"
+      },
+      "analytics": {
+        "title": "Statistiche Dettagliate",
+        "description": "Accedi alle analisi delle prestazioni dei tuoi punti di interesse"
+      }
+    },
+    "pending": {
+      "title": "Candidatura in Revisione",
+      "message": "La tua candidatura come partner è stata inviata ed è attualmente in revisione da parte del nostro team. Riceverai una notifica una volta approvata.",
+      "completeProfile": "Per accelerare la validazione, completa il tuo profilo partner con tutte le informazioni richieste.",
+      "completeButton": "Completa il mio profilo partner",
+      "status": "Stato",
+      "statusPending": "In attesa di approvazione"
+    },
+    "profile": {
+      "contactEmail": "Email di Contatto",
+      "phone": "Telefono",
+      "website": "Sito Web",
+      "subscription": "Abbonamento",
+      "description": "Descrizione",
+      "notProvided": "Non fornito",
+      "updateButton": "Aggiorna il mio profilo",
+      "status": {
+        "pending": "In attesa",
+        "approved": "Approvato",
+        "suspended": "Sospeso"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Gestisci i tuoi punti di interesse e monitora le tue prestazioni",
+      "overview": "Panoramica",
+      "analytics": "Analisi",
+      "pois": "I Miei PDI",
+      "bookings": "Prenotazioni",
+      "finances": "Finanze",
+      "subscription": "Abbonamento",
+      "settings": "Impostazioni",
+      "notifications": "Notifiche",
+      "notificationsShort": "Notif.",
+      "stats": {
+        "totalPois": "Punti di Interesse",
+        "totalActive": "Totale attivi",
+        "viewsThisMonth": "Visualizzazioni questo mese",
+        "totalBookings": "Prenotazioni totali",
+        "totalRevenue": "Entrate totali",
+        "averageRating": "Valutazione media",
+        "pendingPayments": "Pagamenti in sospeso"
+      },
+      "analytics": {
+        "realTimeMetrics": "Metriche di performance in tempo reale",
+        "totalViews": "Visualizzazioni totali",
+        "conversionRate": "Tasso di conversione",
+        "bookings": "Prenotazioni",
+        "avgRevenue": "Entrate medie",
+        "totalRevenue": "Entrate totali",
+        "vsLastMonth": "vs mese scorso",
+        "topPOI": "Top POI",
+        "none": "Nessuno",
+        "bestPerformer": "Miglior performer",
+        "viewsEvolution": "Evoluzione visualizzazioni",
+        "viewsDescription": "Visualizzazioni e tasso di conversione su 30 giorni",
+        "financialPerformance": "Performance finanziaria",
+        "financialDescription": "Prenotazioni e entrate giornaliere",
+        "views": "Visualizzazioni",
+        "revenue": "Entrate",
+        "autoInsights": "Insights automatici",
+        "autoInsightsDescription": "Analisi automatizzata delle tue prestazioni",
+        "excellentConversion": "Eccellente tasso di conversione del {rate}%! I tuoi contenuti attirano e convertono bene i visitatori.",
+        "exceptionalGrowth": "Crescita eccezionale del {growth}% questo mese! Continua così.",
+        "lowConversion": "Tasso di conversione basso ({rate}%). Considera di ottimizzare le tue descrizioni e foto.",
+        "loadError": "Impossibile caricare i dati di analisi."
+      },
+      "pois": {
+        "title": "I Miei Punti di Interesse",
+        "subtitle": "Gestisci i tuoi punti di interesse e monitora il loro stato di validazione",
+        "createButton": "Crea un POI",
+        "createFirst": "Crea il mio primo POI",
+        "loading": "Caricamento...",
+        "loadError": "Impossibile caricare i tuoi punti di interesse",
+        "status": {
+          "draft": "Bozza",
+          "pendingValidation": "In attesa di validazione",
+          "underReview": "In revisione",
+          "approved": "Approvato",
+          "rejected": "Rifiutato",
+          "blocked": "Bloccato",
+          "unknown": "Stato sconosciuto"
+        },
+        "statusDescription": {
+          "draft": "Questo punto di interesse è in fase di creazione e non è ancora stato inviato per la validazione.",
+          "pendingValidation": "Questo punto di interesse è stato inviato ed è in attesa di validazione da parte del nostro team.",
+          "underReview": "Questo punto di interesse è in fase di revisione da parte del nostro team. Riceverai presto una risposta.",
+          "approved": "Questo punto di interesse è stato approvato ed è ora visibile al pubblico.",
+          "rejected": "Questo punto di interesse è stato rifiutato. Controlla i commenti e reinvialo dopo le correzioni.",
+          "blocked": "Questo punto di interesse è stato bloccato a causa di una violazione dei nostri termini di utilizzo.",
+          "unknown": "Stato sconosciuto."
+        },
+        "stats": {
+          "total": "Totale",
+          "drafts": "Bozze",
+          "pending": "In attesa",
+          "underReview": "In revisione",
+          "approved": "Approvati",
+          "rejected": "Rifiutati"
+        },
+        "empty": {
+          "title": "Nessun punto di interesse",
+          "description": "Non hai ancora creato punti di interesse. Inizia creandone uno!"
+        },
+        "actions": {
+          "edit": "Modifica",
+          "delete": "Elimina",
+          "resubmit": "Reinvia",
+          "conversation": "Discussione",
+          "hideConversation": "Nascondi",
+          "accommodation": "Tariffe alloggio",
+          "activity": "Tariffe attività",
+          "restaurant": "Menù e tavoli"
+        },
+        "details": {
+          "createdAt": "Creato il",
+          "updatedAt": "Modificato il",
+          "resubmission": "Reinvio #",
+          "rejectionReason": "Motivo del rifiuto:",
+          "blockReason": "Motivo del blocco:",
+          "illustration": "Illustrazione di"
+        },
+        "delete": {
+          "title": "Elimina punto di interesse",
+          "itemType": "POI",
+          "warningApproved": "Questo POI è attualmente visibile al pubblico e potrebbe avere recensioni o prenotazioni associate.",
+          "success": "POI eliminato con successo",
+          "successDescription": "Il punto di interesse \"{name}\" è stato eliminato definitivamente",
+          "error": "Errore di eliminazione",
+          "errorDescription": "Si è verificato un errore durante l'eliminazione. Riprova."
+        },
+        "resubmit": {
+          "success": "POI reinviato",
+          "successDescription": "Il tuo punto di interesse è stato reinviato per la validazione",
+          "error": "Errore",
+          "errorDescription": "Impossibile reinviare il POI"
+        },
+        "edit": {
+          "success": "POI modificato",
+          "successDescription": "Il tuo punto di interesse è stato modificato con successo"
+        },
+        "management": {
+          "accommodationTitle": "Gestione tariffe alloggio – {name}",
+          "activityTitle": "Gestione tariffe attività – {name}",
+          "restaurantTitle": "Gestione ristorante – {name}"
+        }
+      },
+      "finances": {
+        "stats": {
+          "availableBalance": "Saldo disponibile",
+          "readyForWithdrawal": "Pronto per il prelievo",
+          "processing": "In elaborazione",
+          "paymentOn": "Pagamento il",
+          "thisMonth": "Questo mese",
+          "monthlyRevenue": "Entrate mensili",
+          "avgCommission": "Commissione media",
+          "avgRate": "Tasso medio"
+        },
+        "revenueChart": {
+          "title": "Evoluzione delle entrate",
+          "description": "Entrate mensili negli ultimi 12 mesi",
+          "revenue": "Entrate"
+        },
+        "tabs": {
+          "commissions": "Commissioni",
+          "withdrawals": "Prelievi",
+          "paymentMethods": "Metodi di pagamento"
+        },
+        "commissions": {
+          "title": "Storico commissioni",
+          "description": "Dettagli di tutte le tue commissioni",
+          "export": "Esporta",
+          "client": "Cliente",
+          "reference": "Riferimento",
+          "commission": "Commissione",
+          "rate": "Tasso",
+          "date": "Data"
+        },
+        "withdrawals": {
+          "title": "Richieste di prelievo",
+          "description": "Gestisci i tuoi prelievi di fondi",
+          "request": "Richiedi prelievo",
+          "empty": "Nessuna richiesta di prelievo",
+          "noPaymentMethod": "Devi prima aggiungere un metodo di pagamento",
+          "amountExceeds": "L'importo supera il saldo disponibile",
+          "requestSuccess": "Richiesta di prelievo inviata con successo",
+          "requestError": "Errore nell'elaborazione della richiesta di prelievo"
+        },
+        "paymentMethods": {
+          "title": "Metodi di pagamento",
+          "description": "Gestisci i tuoi conti bancari e portafogli",
+          "add": "Aggiungi",
+          "empty": "Nessun metodo di pagamento configurato",
+          "emptyDescription": "Aggiungi un conto bancario o un portafoglio elettronico",
+          "accountConfigured": "Conto configurato",
+          "default": "Predefinito",
+          "active": "Attivo",
+          "inactive": "Inattivo"
+        },
+        "status": {
+          "pending": "In attesa",
+          "processing": "In elaborazione",
+          "paid": "Pagato",
+          "completed": "Completato",
+          "failed": "Fallito",
+          "rejected": "Rifiutato"
+        },
+        "errors": {
+          "loadError": "Errore nel caricamento dei dati finanziari"
+        }
+      },
+      "charts": {
+        "viewsOverTime": "Visualizzazioni nel Tempo",
+        "viewsDescription": "Visualizzazioni e tasso di conversione in 30 giorni",
+        "bookingsRevenue": "Prenotazioni e Entrate",
+        "revenueDescription": "Prestazioni finanziarie settimanali",
+        "performance": "Prestazioni",
+        "topPerformer": "Migliore performance"
+      },
+      "earnings": {
+        "title": "Storico Entrate",
+        "description": "Dettagli dei tuoi guadagni per prenotazione",
+        "amount": "Importo",
+        "commission": "Commissione",
+        "bookingDate": "Data prenotazione",
+        "paymentStatus": "Stato pagamento",
+        "pending": "In attesa",
+        "paid": "Pagato",
+        "cancelled": "Annullato"
+      },
+      "notificationPanel": {
+        "title": "Notifiche Recenti",
+        "description": "Rimani informato sull'attività dei tuoi punti di interesse",
+        "markAsRead": "Segna come letto",
+        "noNotifications": "Nessuna notifica",
+        "updateError": "Errore durante l'aggiornamento della notifica"
+      },
+      "export": "Esporta dati",
+      "loadingError": "Errore nel caricamento della dashboard",
+      "subscription": {
+        "loading": "Caricamento informazioni abbonamento...",
+        "loadError": "Errore nel caricamento delle informazioni sull'abbonamento",
+        "currentPlan": {
+          "title": "Piano {planName}",
+          "description": "{description} - Commissione {commission}%",
+          "nextPayment": "Prossimo pagamento: {date}",
+          "monthly": "{price}€/mese",
+          "yearly": "{price}€/anno"
+        },
+        "usage": {
+          "pois": "Punti di interesse",
+          "bookings": "Prenotazioni questo mese",
+          "commission": "Commissione attuale",
+          "commissionNote": "I piani superiori hanno commissioni più basse"
+        },
+        "alerts": {
+          "limitWarning": "Stai raggiungendo il limite del tuo piano. Considera un aggiornamento."
+        },
+        "plans": {
+          "title": "Piani disponibili",
+          "current": "Attuale",
+          "monthly": "{price}€/mese",
+          "yearly": "o {price}€/anno (2 mesi gratis)",
+          "unlimited": "Punti di interesse illimitati",
+          "limited": "{count} punti di interesse",
+          "commissionRate": "Commissione {rate}%",
+          "upgradeMonthly": "Aggiorna - Mensile",
+          "upgradeYearly": "Aggiorna - Annuale",
+          "changeMonthly": "Cambia - Mensile",
+          "changeYearly": "Cambia - Annuale",
+          "cancel": "Annulla abbonamento"
+        },
+        "actions": {
+          "upgradeSuccess": "Abbonamento aggiornato con successo!",
+          "upgradeError": "Errore nell'aggiornamento dell'abbonamento",
+          "cancelSuccess": "Abbonamento annullato. Rimane attivo fino alla fine del periodo di fatturazione.",
+          "cancelError": "Errore nell'annullamento dell'abbonamento"
+        },
+        "billing": {
+          "title": "Storico fatturazione",
+          "description": "Le tue recenti fatture e pagamenti",
+          "empty": "Nessuna fattura disponibile",
+          "emptyDescription": "Le fatture appariranno qui una volta effettuati i pagamenti"
+        },
+        "status": {
+          "active": "Attivo",
+          "cancelled": "Annullato",
+          "suspended": "Sospeso"
+        },
+        "planDetails": {
+          "basic": {
+            "name": "Basic",
+            "description": "Perfetto per iniziare a pubblicare i tuoi punti di interesse",
+            "features": [
+              "Fino a 5 punti di interesse",
+              "Supporto standard",
+              "Analisi di base"
+            ]
+          },
+          "premium": {
+            "name": "Premium",
+            "description": "Espandi il tuo catalogo e migliora la visibilità",
+            "features": [
+              "25 punti di interesse",
+              "Supporto prioritario",
+              "Analisi avanzate",
+              "Campagne marketing"
+            ]
+          },
+          "enterprise": {
+            "name": "Enterprise",
+            "description": "Per catene alberghiere o operazioni POI su larga scala",
+            "features": [
+              "Punti di interesse illimitati",
+              "Account manager dedicato",
+              "Integrazioni personalizzate",
+              "Supporto 24/7"
+            ]
+          }
+        }
+      },
+      "bookings": {
+        "loading": "Caricamento dati prenotazioni...",
+        "loadError": "Errore nel caricamento dei dati delle prenotazioni",
+        "stats": {
+          "totalBookings": "Prenotazioni totali",
+          "totalRevenue": "Ricavi",
+          "commissions": "Commissioni",
+          "pending": "In sospeso"
+        },
+        "history": {
+          "title": "Storico Prenotazioni",
+          "reference": "Riferimento",
+          "amount": "Importo",
+          "commission": "Commissione",
+          "date": "Data",
+          "customer": "Cliente",
+          "poi": "Punto di interesse",
+          "empty": "Nessuna prenotazione ancora",
+          "emptyDescription": "Le prenotazioni per i tuoi punti di interesse appariranno qui"
+        },
+        "status": {
+          "pending": "In sospeso",
+          "confirmed": "Confermato",
+          "cancelled": "Annullato",
+          "completed": "Completato"
+        }
+      },
+      "notifications": {
+        "title": "Notifiche",
+        "markAllRead": "Segna tutte come lette",
+        "loading": "Caricamento notifiche...",
+        "empty": "Nessuna notifica ancora",
+        "loadError": "Impossibile caricare le notifiche",
+        "markAllSuccess": "Tutte le notifiche segnate come lette",
+        "reference": "Rif: {reference}"
+      }
+    }
   }
 }

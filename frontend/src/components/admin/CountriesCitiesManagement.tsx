@@ -5,12 +5,76 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Edit, Plus, MapPin, Globe } from "lucide-react";
+import { Trash2, Edit, Plus, MapPin, Globe, Download, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { locationAdminService, Country, City } from "@/services/locationAdminService";
+import { API_BASE_URL, extractArrayFromResponse } from "@/integrations/api/client";
+
+const LANGUAGE_FIELDS = [
+  { key: "name_fr", label: "Français" },
+  { key: "name_en", label: "Anglais" },
+  { key: "name_es", label: "Espagnol" },
+  { key: "name_de", label: "Allemand" },
+  { key: "name_it", label: "Italien" },
+  { key: "name_pt", label: "Portugais" },
+  { key: "name_ru", label: "Russe" },
+  { key: "name_ja", label: "Japonais" },
+  { key: "name_zh", label: "Chinois" },
+  { key: "name_hi", label: "Hindi" },
+  { key: "name_ar", label: "Arabe" },
+] as const;
+
+const emptyCountryForm = {
+  name: "",
+  code: "",
+  is_active: true,
+  name_fr: "",
+  name_en: "",
+  name_es: "",
+  name_de: "",
+  name_it: "",
+  name_pt: "",
+  name_ru: "",
+  name_ja: "",
+  name_zh: "",
+  name_hi: "",
+  name_ar: "",
+};
+
+const emptyCityForm = {
+  name: "",
+  country: "",
+  latitude: "",
+  longitude: "",
+  is_active: true,
+  name_fr: "",
+  name_en: "",
+  name_es: "",
+  name_de: "",
+  name_it: "",
+  name_pt: "",
+  name_ru: "",
+  name_ja: "",
+  name_zh: "",
+  name_hi: "",
+  name_ar: "",
+};
+
+type CountryFormState = typeof emptyCountryForm;
+type CityFormState = typeof emptyCityForm;
+
+const getLocalizedName = (entity: Partial<Record<(typeof LANGUAGE_FIELDS)[number]["key"] | "name", string>>) => {
+  for (const { key } of LANGUAGE_FIELDS) {
+    const value = entity[key];
+    if (value) {
+      return value;
+    }
+  }
+  return entity.name || "";
+};
 
 export default function CountriesCitiesManagement() {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -22,19 +86,9 @@ export default function CountriesCitiesManagement() {
   const [editingCity, setEditingCity] = useState<City | null>(null);
   const { toast } = useToast();
 
-  const [countryForm, setCountryForm] = useState({
-    name: "",
-    code: "",
-    is_active: true,
-  });
+  const [countryForm, setCountryForm] = useState<CountryFormState>({ ...emptyCountryForm });
 
-  const [cityForm, setCityForm] = useState({
-    name: "",
-    country: "",
-    latitude: "",
-    longitude: "",
-    is_active: true,
-  });
+  const [cityForm, setCityForm] = useState<CityFormState>({ ...emptyCityForm });
 
   const [loading, setLoading] = useState(true);
 
@@ -49,8 +103,10 @@ export default function CountriesCitiesManagement() {
         locationAdminService.listCountries(),
         locationAdminService.listCities(),
       ]);
-      setCountries(countriesData || []);
-      setCities(citiesData || []);
+
+      // Handle both array and paginated response formats
+      setCountries(extractArrayFromResponse<Country>(countriesData));
+      setCities(extractArrayFromResponse<City>(citiesData));
     } catch (error) {
       console.error("Error loading locations", error);
       toast({
@@ -64,20 +120,36 @@ export default function CountriesCitiesManagement() {
   };
 
   const handleSaveCountry = async () => {
-    if (!countryForm.name || !countryForm.code) {
+    if (!countryForm.code) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Le code ISO est obligatoire",
         variant: "destructive",
       });
       return;
     }
 
+    const payload: Record<string, any> = {
+      code: countryForm.code.toUpperCase(),
+      is_active: countryForm.is_active,
+    };
+
+    LANGUAGE_FIELDS.forEach(({ key }) => {
+      payload[key] = countryForm[key as keyof typeof countryForm] || "";
+    });
+
+    payload.name =
+      countryForm.name.trim() ||
+      payload.name_fr ||
+      payload.name_en ||
+      payload.name_es ||
+      payload.code;
+
     try {
       if (editingCountry) {
-        await locationAdminService.updateCountry(editingCountry.id, countryForm);
+        await locationAdminService.updateCountry(editingCountry.id, payload);
       } else {
-        await locationAdminService.createCountry(countryForm);
+        await locationAdminService.createCountry(payload);
       }
       toast({
         title: "Succès",
@@ -85,7 +157,7 @@ export default function CountriesCitiesManagement() {
       });
       setIsCountryDialogOpen(false);
       setEditingCountry(null);
-      setCountryForm({ name: "", code: "", is_active: true });
+      setCountryForm({ ...emptyCountryForm });
       fetchData();
     } catch (error: any) {
       toast({
@@ -97,22 +169,36 @@ export default function CountriesCitiesManagement() {
   };
 
   const handleSaveCity = async () => {
-    if (!cityForm.name || !cityForm.country) {
+    if (!cityForm.country) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Sélectionnez un pays pour la ville",
         variant: "destructive",
       });
       return;
     }
 
-    const payload = {
-      name: cityForm.name,
+    const payload: Record<string, any> = {
+      name: cityForm.name.trim(),
       country: cityForm.country,
       latitude: cityForm.latitude ? parseFloat(cityForm.latitude) : null,
       longitude: cityForm.longitude ? parseFloat(cityForm.longitude) : null,
       is_active: cityForm.is_active,
     };
+
+    LANGUAGE_FIELDS.forEach(({ key }) => {
+      payload[key] = cityForm[key as keyof typeof cityForm] || "";
+    });
+
+    if (!payload.name) {
+      payload.name =
+        payload.name_fr ||
+        payload.name_en ||
+        payload.name_es ||
+        payload.name_de ||
+        payload.name_it ||
+        "Ville sans nom";
+    }
 
     try {
       if (editingCity) {
@@ -126,7 +212,7 @@ export default function CountriesCitiesManagement() {
       });
       setIsCityDialogOpen(false);
       setEditingCity(null);
-      setCityForm({ name: "", country: "", latitude: "", longitude: "", is_active: true });
+      setCityForm({ ...emptyCityForm });
       fetchData();
     } catch (error: any) {
       toast({
@@ -197,22 +283,273 @@ export default function CountriesCitiesManagement() {
     }
   };
 
+  const buildCountryForm = (country?: Country | null): CountryFormState => {
+    if (!country) {
+      return { ...emptyCountryForm };
+    }
+    const translations = LANGUAGE_FIELDS.reduce((acc, { key }) => {
+      const value = country[key as keyof Country];
+      acc[key] = (typeof value === 'string' ? value : "") || "";
+      return acc;
+    }, {} as Record<string, string>);
+
+    return {
+      ...emptyCountryForm,
+      ...translations,
+      name: country.name || translations.name_fr || "",
+      code: country.code || "",
+      is_active: country.is_active,
+    };
+  };
+
+  const buildCityForm = (city?: City | null): CityFormState => {
+    if (!city) {
+      return { ...emptyCityForm };
+    }
+    const translations = LANGUAGE_FIELDS.reduce((acc, { key }) => {
+      const value = city[key as keyof City];
+      acc[key] = (typeof value === 'string' ? value : "") || "";
+      return acc;
+    }, {} as Record<string, string>);
+
+    return {
+      ...emptyCityForm,
+      ...translations,
+      name: city.name || translations.name_fr || "",
+      country: city.country || "",
+      latitude: city.latitude?.toString() || "",
+      longitude: city.longitude?.toString() || "",
+      is_active: city.is_active,
+    };
+  };
+
   const openEditCountry = (country: Country) => {
     setEditingCountry(country);
-    setCountryForm({ name: country.name, code: country.code, is_active: country.is_active });
+    setCountryForm(buildCountryForm(country));
     setIsCountryDialogOpen(true);
   };
 
   const openEditCity = (city: City) => {
     setEditingCity(city);
-    setCityForm({
-      name: city.name,
-      country: city.country || "",
-      latitude: city.latitude?.toString() || "",
-      longitude: city.longitude?.toString() || "",
-      is_active: city.is_active,
-    });
+    setCityForm(buildCityForm(city));
     setIsCityDialogOpen(true);
+  };
+
+  // Translate functions
+  const handleTranslateCountry = async (countryId: string) => {
+    try {
+      console.log('[CountriesCitiesManagement] Translating country', countryId);
+      const translateEndpoint = `/api/v1/locations/countries/${countryId}/translate/`;
+      console.log('[CountriesCitiesManagement] Translation endpoint (country):', translateEndpoint);
+      const result = await locationAdminService.translateCountry(countryId);
+      console.log('[CountriesCitiesManagement] Translation response (country):', result);
+      const updatedCountry = result.country;
+
+      setCountries((prev) =>
+        prev.map((country) => (country.id === updatedCountry.id ? updatedCountry : country))
+      );
+
+      if (editingCountry && editingCountry.id === updatedCountry.id) {
+        setEditingCountry(updatedCountry);
+        setCountryForm(buildCountryForm(updatedCountry));
+      }
+
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire le pays",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTranslateCity = async (cityId: string) => {
+    try {
+      console.log('[CountriesCitiesManagement] Translating city', cityId);
+      const result = await locationAdminService.translateCity(cityId);
+      console.log('[CountriesCitiesManagement] Translation response (city):', result);
+      const updatedCity = result.city;
+
+      setCities((prev) => prev.map((city) => (city.id === updatedCity.id ? updatedCity : city)));
+
+      if (editingCity && editingCity.id === updatedCity.id) {
+        setEditingCity(updatedCity);
+        setCityForm(buildCityForm(updatedCity));
+      }
+
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire la ville",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Export functions
+  const handleExportCountries = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/locations/countries/export-csv/`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('tasarini_access_token')}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'countries.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: "Succès",
+        description: "Export des pays réussi",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Échec de l'export des pays",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExportCities = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/locations/cities/export-csv/`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('tasarini_access_token')}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cities.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: "Succès",
+        description: "Export des villes réussi",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Échec de l'export des villes",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Import functions
+  const handleImportCountries = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/locations/countries/import-csv/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('tasarini_access_token')}`,
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Import failed');
+      }
+
+      toast({
+        title: "Succès",
+        description: `Import terminé: ${result.created} créés, ${result.updated} mis à jour${result.errors.length > 0 ? `, ${result.errors.length} erreurs` : ''}`,
+      });
+
+      if (result.errors.length > 0) {
+        console.error('Import errors:', result.errors);
+      }
+
+      // Refresh data
+      fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Échec de l'import des pays",
+        variant: "destructive",
+      });
+    }
+
+    // Reset input
+    event.target.value = '';
+  };
+
+  const handleImportCities = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/locations/cities/import-csv/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('tasarini_access_token')}`,
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Import failed');
+      }
+
+      toast({
+        title: "Succès",
+        description: `Import terminé: ${result.created} créés, ${result.updated} mis à jour${result.errors.length > 0 ? `, ${result.errors.length} erreurs` : ''}`,
+      });
+
+      if (result.errors.length > 0) {
+        console.error('Import errors:', result.errors);
+      }
+
+      // Refresh data
+      fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Échec de l'import des villes",
+        variant: "destructive",
+      });
+    }
+
+    // Reset input
+    event.target.value = '';
   };
 
   const filteredCities = selectedCountry && selectedCountry !== "all"
@@ -245,21 +582,39 @@ export default function CountriesCitiesManagement() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Gestion des Pays</CardTitle>
-              <Dialog open={isCountryDialogOpen} onOpenChange={setIsCountryDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button onClick={() => {
-                    setEditingCountry(null);
-                    setCountryForm({ name: "", code: "", is_active: true });
-                  }}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Ajouter un pays
-                  </Button>
-                </DialogTrigger>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={handleExportCountries}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Exporter CSV
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.csv';
+                  input.onchange = (e) => handleImportCountries(e as any);
+                  input.click();
+                }}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Importer CSV
+                </Button>
+                <Dialog open={isCountryDialogOpen} onOpenChange={setIsCountryDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button onClick={() => {
+                      setEditingCountry(null);
+                      setCountryForm({ ...emptyCountryForm });
+                    }}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Ajouter un pays
+                    </Button>
+                  </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>
                       {editingCountry ? "Modifier le pays" : "Ajouter un pays"}
                     </DialogTitle>
+                    <DialogDescription>
+                      Renseignez le nom et ses traductions pour toutes les langues supportées.
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
@@ -283,6 +638,49 @@ export default function CountriesCitiesManagement() {
                         maxLength={2}
                       />
                     </div>
+                    {editingCountry && (
+                      <div className="border rounded-lg p-3 bg-blue-50">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium">Traduction automatique</p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              Remplir automatiquement les champs de traduction vides via LibreTranslate
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTranslateCountry(editingCountry.id)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            <Globe className="w-4 h-4 mr-1" />
+                            Traduire
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    <div className="border rounded-lg p-3 space-y-3">
+                      <p className="text-sm font-medium">Traductions du nom</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {LANGUAGE_FIELDS.map(({ key, label }) => {
+                          const fieldKey = key as keyof CountryFormState;
+                          return (
+                            <div key={key}>
+                              <Label htmlFor={`country-${key}`}>{label}</Label>
+                              <Input
+                                id={`country-${key}`}
+                                value={(countryForm[fieldKey] as string) || ""}
+                                onChange={(e) =>
+                                  setCountryForm({ ...countryForm, [fieldKey]: e.target.value } as CountryFormState)
+                                }
+                                placeholder={`Nom en ${label.toLowerCase()}`}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                     <div className="flex items-center space-x-2">
                       <Switch
                         id="country-active-switch"
@@ -298,13 +696,14 @@ export default function CountriesCitiesManagement() {
                   </div>
                 </DialogContent>
               </Dialog>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {countries.map((country) => (
                   <div key={country.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <span className="font-medium">{country.name}</span>
+                      <span className="font-medium">{getLocalizedName(country)}</span>
                       <Badge variant="secondary" className="ml-2">{country.code}</Badge>
                       {!country.is_active && (
                         <Badge variant="destructive" className="ml-2">Inactif</Badge>
@@ -350,30 +749,50 @@ export default function CountriesCitiesManagement() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Tous les pays</SelectItem>
-                      {countries.filter(country => country.id && country.name).map((country) => (
-                        <SelectItem key={country.id} value={country.id}>
-                          {country.name}
-                        </SelectItem>
-                      ))}
+                      {countries
+                        .filter((country) => country.id && getLocalizedName(country))
+                        .map((country) => (
+                          <SelectItem key={country.id} value={country.id}>
+                            {getLocalizedName(country)}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-              <Dialog open={isCityDialogOpen} onOpenChange={setIsCityDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button onClick={() => {
-                    setEditingCity(null);
-                    setCityForm({ name: "", country: "", latitude: "", longitude: "", is_active: true });
-                  }}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Ajouter une ville
-                  </Button>
-                </DialogTrigger>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={handleExportCities}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Exporter CSV
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.csv';
+                  input.onchange = (e) => handleImportCities(e as any);
+                  input.click();
+                }}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Importer CSV
+                </Button>
+                <Dialog open={isCityDialogOpen} onOpenChange={setIsCityDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button onClick={() => {
+                      setEditingCity(null);
+                      setCityForm({ ...emptyCityForm });
+                    }}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Ajouter une ville
+                    </Button>
+                  </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>
                       {editingCity ? "Modifier la ville" : "Ajouter une ville"}
                     </DialogTitle>
+                    <DialogDescription>
+                      Ajoutez la localisation et les traductions du nom pour chaque langue.
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
@@ -396,11 +815,13 @@ export default function CountriesCitiesManagement() {
                           <SelectValue placeholder="Sélectionner un pays" />
                         </SelectTrigger>
                         <SelectContent>
-                          {countries.filter(country => country.id && country.name).map((country) => (
-                            <SelectItem key={country.id} value={country.id}>
-                              {country.name}
-                            </SelectItem>
-                          ))}
+                          {countries
+                            .filter((country) => country.id && getLocalizedName(country))
+                            .map((country) => (
+                              <SelectItem key={country.id} value={country.id}>
+                                {getLocalizedName(country)}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -430,6 +851,49 @@ export default function CountriesCitiesManagement() {
                         />
                       </div>
                     </div>
+                    {editingCity && (
+                      <div className="border rounded-lg p-3 bg-blue-50">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium">Traduction automatique</p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              Remplir automatiquement les champs de traduction vides via LibreTranslate
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTranslateCity(editingCity.id)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            <Globe className="w-4 h-4 mr-1" />
+                            Traduire
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    <div className="border rounded-lg p-3 space-y-3">
+                      <p className="text-sm font-medium">Traductions du nom</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {LANGUAGE_FIELDS.map(({ key, label }) => {
+                          const fieldKey = key as keyof CityFormState;
+                          return (
+                            <div key={key}>
+                              <Label htmlFor={`city-${key}`}>{label}</Label>
+                              <Input
+                                id={`city-${key}`}
+                                value={(cityForm[fieldKey] as string) || ""}
+                                onChange={(e) =>
+                                  setCityForm({ ...cityForm, [fieldKey]: e.target.value } as CityFormState)
+                                }
+                                placeholder={`Nom en ${label.toLowerCase()}`}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                     <div className="flex items-center space-x-2">
                       <Switch
                         id="city-active-switch"
@@ -445,16 +909,17 @@ export default function CountriesCitiesManagement() {
                   </div>
                 </DialogContent>
               </Dialog>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {filteredCities.map((city) => (
                   <div key={city.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <span className="font-medium">{city.name}</span>
+                      <span className="font-medium">{getLocalizedName(city)}</span>
                       {city.country_detail && (
                         <Badge variant="outline" className="ml-2">
-                          {city.country_detail.name}
+                          {getLocalizedName(city.country_detail)}
                         </Badge>
                       )}
                       {!city.is_active && (

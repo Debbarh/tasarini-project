@@ -53,12 +53,17 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         const containerHeight = containerRef.current.clientHeight;
         const controlsHeight = controlsRef.current.clientHeight;
         const padding = 32; // 2rem de padding total
-        const newMapHeight = Math.max(250, containerHeight - controlsHeight - padding);
+        const newMapHeight = Math.max(400, containerHeight - controlsHeight - padding);
         setMapHeight(newMapHeight);
       }
     };
 
-    calculateMapHeight();
+    // Calculer la hauteur après un délai pour s'assurer que le DOM est prêt
+    const timers = [
+      setTimeout(calculateMapHeight, 100),
+      setTimeout(calculateMapHeight, 300),
+      setTimeout(calculateMapHeight, 500),
+    ];
 
     // Observer pour recalculer quand la taille change
     const resizeObserver = new ResizeObserver(calculateMapHeight);
@@ -70,24 +75,10 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     }
 
     return () => {
+      timers.forEach(timer => clearTimeout(timer));
       resizeObserver.disconnect();
     };
   }, []);
-
-  // Recalcul également quand le contenu change
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (containerRef.current && controlsRef.current) {
-        const containerHeight = containerRef.current.clientHeight;
-        const controlsHeight = controlsRef.current.clientHeight;
-        const padding = 32;
-        const newMapHeight = Math.max(250, containerHeight - controlsHeight - padding);
-        setMapHeight(newMapHeight);
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery, currentLat, currentLng, userLocation]);
 
   const searchLocation = async () => {
     if (!searchQuery.trim()) return;
@@ -158,8 +149,9 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       searchLocation();
     }
   };
@@ -243,8 +235,8 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
 
   return (
-    <div ref={containerRef} className={`flex flex-col h-full ${className}`}>
-      <div ref={controlsRef} className="flex-none space-y-4">
+    <div ref={containerRef} className={`flex flex-col ${className}`} style={{ height: '100%' }}>
+      <div ref={controlsRef} className="flex-shrink-0 space-y-4">
         {/* Header avec icône et bouton géolocalisation */}
         <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/10 via-blue-50 to-primary/5 rounded-xl border border-primary/20">
           <div className="flex items-center gap-3">
@@ -288,7 +280,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
                   placeholder="Rechercher une adresse magique..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                   className="pl-10 border-0 bg-transparent focus:ring-2 focus:ring-primary/50 transition-all duration-300"
                 />
               </div>
@@ -366,7 +358,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       </div>
 
       {/* Carte interactive avec hauteur dynamique */}
-      <div className="flex-1 min-h-0 mt-4">
+      <div className="flex-1 min-h-[400px] mt-4">
         <SimpleInteractiveMap
           latitude={currentLat}
           longitude={currentLng}

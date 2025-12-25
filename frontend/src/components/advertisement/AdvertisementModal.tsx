@@ -29,12 +29,19 @@ interface AdvertisementSettings {
   duration_seconds: number;
 }
 
+interface GenerationProgress {
+  step: string;
+  progress: number;
+  message: string;
+}
+
 interface AdvertisementModalProps {
   isOpen: boolean;
   onClose: () => void;
+  generationProgress?: GenerationProgress;
 }
 
-const AdvertisementModal = ({ isOpen, onClose }: AdvertisementModalProps) => {
+const AdvertisementModal = ({ isOpen, onClose, generationProgress }: AdvertisementModalProps) => {
   const [settings, setSettings] = useState<AdvertisementSettings | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -270,14 +277,14 @@ const AdvertisementModal = ({ isOpen, onClose }: AdvertisementModalProps) => {
               <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white text-sm">
-                    Génération de votre itinéraire en cours...
+                    {generationProgress?.message || 'Génération de votre itinéraire en cours...'}
                   </span>
                   <span className="text-white text-sm">
-                    {timeLeft}s restantes
+                    {generationProgress?.progress ? `${Math.round(generationProgress.progress)}%` : `${timeLeft}s restantes`}
                   </span>
                 </div>
-                <Progress 
-                  value={progress} 
+                <Progress
+                  value={generationProgress?.progress || progress}
                   className="h-2"
                 />
               </div>

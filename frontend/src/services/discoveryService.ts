@@ -25,11 +25,18 @@ export interface DiscoveryItineraryPayload {
   is_public?: boolean;
 }
 
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 const BASE_ENDPOINT = 'discovery/itineraries/';
 
 export const discoveryService = {
   list(params?: Record<string, string | number | boolean>) {
-    return apiClient.get<DiscoveryItinerary[]>(BASE_ENDPOINT, params);
+    return apiClient.get<DiscoveryItinerary[] | PaginatedResponse<DiscoveryItinerary>>(BASE_ENDPOINT, params);
   },
 
   create(payload: DiscoveryItineraryPayload) {

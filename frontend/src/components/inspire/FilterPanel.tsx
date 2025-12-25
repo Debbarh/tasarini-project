@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,19 +19,20 @@ interface FilterPanelProps {
 }
 
 const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPanelProps) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const categories = [
-    { id: 'restaurant', label: 'Restaurants & Cafés', color: 'bg-red-500' },
-    { id: 'activity', label: 'Activités & Loisirs', color: 'bg-blue-500' },
-    { id: 'tourist', label: 'Points d\'Intérêt', color: 'bg-emerald-500' },
-    { id: 'other', label: 'Autres', color: 'bg-gray-500' }
+    { id: 'restaurant', labelKey: 'beInspired.filters.categoryRestaurants', color: 'bg-red-500' },
+    { id: 'activity', labelKey: 'beInspired.filters.categoryActivities', color: 'bg-blue-500' },
+    { id: 'tourist', labelKey: 'beInspired.filters.categoryTourist', color: 'bg-emerald-500' },
+    { id: 'other', labelKey: 'beInspired.filters.categoryOther', color: 'bg-gray-500' }
   ];
 
   const priceRanges = [
-    { value: '€', label: '€ - Économique' },
-    { value: '€€', label: '€€ - Modéré' },
-    { value: '€€€', label: '€€€ - Élevé' }
+    { value: '€', labelKey: 'beInspired.filters.priceEconomical' },
+    { value: '€€', labelKey: 'beInspired.filters.priceModerate' },
+    { value: '€€€', labelKey: 'beInspired.filters.priceHigh' }
   ];
 
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
@@ -98,7 +100,7 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Filtres
+            {t('beInspired.filters.title')}
             {hasActiveFilters && (
               <Badge variant="secondary" className="ml-2">
                 {getActiveFilterCount()}
@@ -107,7 +109,7 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-sm">
-              {isLoading ? "Recherche..." : `${poiCount} résultats`}
+              {isLoading ? t('beInspired.filters.searching') : `${poiCount} ${t('beInspired.filters.results')}`}
             </Badge>
             <Button
               variant="ghost"
@@ -124,23 +126,23 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleContent>
           <CardContent className="space-y-6">
-            {/* Recherche par mots-clés */}
+            {/* Keyword search */}
             <div>
               <label className="text-sm font-medium mb-2 block">
-                Recherche par mots-clés
+                {t('beInspired.filters.keywordSearch')}
               </label>
               <Input
-                placeholder="Rechercher un lieu, une activité..."
+                placeholder={t('beInspired.filters.keywordPlaceholder')}
                 value={filters.searchTerm || ''}
                 onChange={(e) => handleKeywordChange(e.target.value)}
                 className="w-full"
               />
             </div>
 
-            {/* Catégories */}
+            {/* Categories */}
             <div>
               <label className="text-sm font-medium mb-3 block">
-                Catégories
+                {t('beInspired.filters.categories')}
               </label>
               <div className="space-y-2">
                 {categories.map((category) => (
@@ -156,7 +158,7 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
                         htmlFor={category.id}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        {category.label}
+                        {t(category.labelKey)}
                       </label>
                     </div>
                   </div>
@@ -164,10 +166,10 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
               </div>
             </div>
 
-            {/* Note minimum */}
+            {/* Minimum rating */}
             <div>
               <label className="text-sm font-medium mb-3 block">
-                Note minimum ({filters.rating || 0}⭐)
+                {t('beInspired.filters.minRating', { rating: filters.rating || 0 })}
               </label>
               <div className="px-2">
                 <Slider
@@ -179,33 +181,33 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
                   className="w-full"
                 />
                 <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>Toutes</span>
+                  <span>{t('beInspired.filters.allRatings')}</span>
                   <span>5⭐</span>
                 </div>
               </div>
             </div>
 
-            {/* Gamme de prix */}
+            {/* Price range */}
             <div>
               <label className="text-sm font-medium mb-2 block">
-                Gamme de prix
+                {t('beInspired.filters.priceRange')}
               </label>
               <Select value={filters.priceRange || 'all'} onValueChange={handlePriceRangeChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Tous les prix" />
+                  <SelectValue placeholder={t('beInspired.filters.allPrices')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tous les prix</SelectItem>
+                  <SelectItem value="all">{t('beInspired.filters.allPrices')}</SelectItem>
                   {priceRanges.map((range) => (
                     <SelectItem key={range.value} value={range.value}>
-                      {range.label}
+                      {t(range.labelKey)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Accessibilité */}
+            {/* Accessibility */}
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="accessibility"
@@ -216,7 +218,7 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
                 htmlFor="accessibility"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Accessible aux personnes à mobilité réduite
+                {t('beInspired.filters.accessibility')}
               </label>
             </div>
 
@@ -230,7 +232,7 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
                 className="flex items-center gap-2"
               >
                 <RotateCcw className="h-4 w-4" />
-                Réinitialiser
+                {t('beInspired.filters.reset')}
               </Button>
             </div>
           </CardContent>

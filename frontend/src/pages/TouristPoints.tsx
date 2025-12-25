@@ -9,6 +9,7 @@ import { apiClient } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import TouristPointCard from '@/components/partner/TouristPointCard';
 import PartnerBadge from '@/components/partner/PartnerBadge';
+import { useTranslation } from 'react-i18next';
 
 interface TouristPoint {
   id: string;
@@ -35,6 +36,7 @@ interface TouristPoint {
 }
 
 const PublicTouristPoints: React.FC = () => {
+  const { t } = useTranslation();
   const [points, setPoints] = useState<TouristPoint[]>([]);
   const [filteredPoints, setFilteredPoints] = useState<TouristPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -154,9 +156,9 @@ const PublicTouristPoints: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       {/* En-tête */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">Points d'Intérêt</h1>
+        <h1 className="text-3xl font-bold mb-4">{t('touristPoints.pageTitle')}</h1>
         <p className="text-muted-foreground mb-6">
-          Découvrez les lieux exceptionnels recommandés par notre communauté et nos partenaires
+          {t('touristPoints.pageDescription')}
         </p>
 
         {/* Statistiques */}
@@ -164,25 +166,25 @@ const PublicTouristPoints: React.FC = () => {
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-primary">{stats.totalPoints}</div>
-              <div className="text-sm text-muted-foreground">Points totaux</div>
+              <div className="text-sm text-muted-foreground">{t('touristPoints.stats.totalPoints')}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-blue-600">{stats.partnerPoints}</div>
-              <div className="text-sm text-muted-foreground">Partenaires</div>
+              <div className="text-sm text-muted-foreground">{t('touristPoints.stats.partners')}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-yellow-600">{stats.featuredPoints}</div>
-              <div className="text-sm text-muted-foreground">En vedette</div>
+              <div className="text-sm text-muted-foreground">{t('touristPoints.stats.featured')}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">{stats.averageRating.toFixed(1)}</div>
-              <div className="text-sm text-muted-foreground">Note moyenne</div>
+              <div className="text-sm text-muted-foreground">{t('touristPoints.stats.averageRating')}</div>
             </CardContent>
           </Card>
         </div>
@@ -196,7 +198,7 @@ const PublicTouristPoints: React.FC = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Rechercher par nom, description, localisation..."
+                  placeholder={t('touristPoints.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -206,25 +208,25 @@ const PublicTouristPoints: React.FC = () => {
             
             <Select value={filterType} onValueChange={setFilterType}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filtrer par type" />
+                <SelectValue placeholder={t('touristPoints.filterByType')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les points</SelectItem>
-                <SelectItem value="partners">Partenaires uniquement</SelectItem>
-                <SelectItem value="featured">En vedette</SelectItem>
-                <SelectItem value="regular">Points classiques</SelectItem>
+                <SelectItem value="all">{t('touristPoints.filters.all')}</SelectItem>
+                <SelectItem value="partners">{t('touristPoints.filters.partnersOnly')}</SelectItem>
+                <SelectItem value="featured">{t('touristPoints.filters.featured')}</SelectItem>
+                <SelectItem value="regular">{t('touristPoints.filters.regular')}</SelectItem>
               </SelectContent>
             </Select>
             
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Trier par" />
+                <SelectValue placeholder={t('touristPoints.sortBy')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="rating">Note décroissante</SelectItem>
-                <SelectItem value="reviews">Nombre d'avis</SelectItem>
-                <SelectItem value="recent">Plus récents</SelectItem>
-                <SelectItem value="name">Nom alphabétique</SelectItem>
+                <SelectItem value="rating">{t('touristPoints.sorting.rating')}</SelectItem>
+                <SelectItem value="reviews">{t('touristPoints.sorting.reviews')}</SelectItem>
+                <SelectItem value="recent">{t('touristPoints.sorting.recent')}</SelectItem>
+                <SelectItem value="name">{t('touristPoints.sorting.name')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -234,14 +236,14 @@ const PublicTouristPoints: React.FC = () => {
       {/* Résultats */}
       <div className="mb-4 flex items-center justify-between">
         <p className="text-muted-foreground">
-          {filteredPoints.length} point{filteredPoints.length !== 1 ? 's' : ''} trouvé{filteredPoints.length !== 1 ? 's' : ''}
-          {searchTerm && ` pour "${searchTerm}"`}
+          {filteredPoints.length} {filteredPoints.length === 1 ? t('touristPoints.results.found') : t('touristPoints.results.foundPlural')}
+          {searchTerm && ` ${t('touristPoints.results.for')} "${searchTerm}"`}
         </p>
         
         {filterType === 'partners' && (
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-blue-600" />
-            <span className="text-sm text-muted-foreground">Partenaires certifiés uniquement</span>
+            <span className="text-sm text-muted-foreground">{t('touristPoints.results.certifiedPartners')}</span>
           </div>
         )}
       </div>
@@ -251,9 +253,9 @@ const PublicTouristPoints: React.FC = () => {
         <Card>
           <CardContent className="text-center p-12">
             <MapPin className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Aucun point d'intérêt trouvé</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('touristPoints.empty.title')}</h3>
             <p className="text-muted-foreground">
-              {searchTerm ? 'Essayez avec d\'autres mots-clés' : 'Aucun point d\'intérêt disponible pour le moment'}
+              {searchTerm ? t('touristPoints.empty.noResults') : t('touristPoints.empty.noPoints')}
             </p>
           </CardContent>
         </Card>

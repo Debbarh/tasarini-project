@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle2, XCircle, Building2, User } from 'lucide-react';
 import { authTokenStorage } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
-const getPartnerTarget = (isPartner: boolean) => (isPartner ? '/complete-partner-profile' : '/profile');
+const getPartnerTarget = (partnerFlag: boolean) => (partnerFlag ? '/complete-partner-profile' : '/profile');
 
 export default function VerifyEmail() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,7 +35,7 @@ export default function VerifyEmail() {
 
     if (!token) {
       setStatus('error');
-      setMessage('Token de vérification manquant.');
+      setMessage(t('verifyEmail.messages.tokenMissing'));
       return;
     }
 
@@ -47,13 +49,13 @@ export default function VerifyEmail() {
     verifyEmail(token);
   }, [searchParams, location.state]);
 
-  const redirectToAuth = () => {
-    const target = getPartnerTarget(isPartner);
+  const redirectToAuth = (partnerFlag = isPartner) => {
+    const target = getPartnerTarget(partnerFlag);
     window.location.href = `/auth?redirectTo=${encodeURIComponent(target)}`;
   };
 
-  const navigateToTarget = () => {
-    window.location.href = getPartnerTarget(isPartner);
+  const navigateToTarget = (partnerFlag = isPartner) => {
+    window.location.href = getPartnerTarget(partnerFlag);
   };
 
   const verifyEmail = async (token: string) => {
@@ -76,35 +78,34 @@ export default function VerifyEmail() {
 
       setStatus('success');
       setVerifyData(data);
-      if (data?.user?.role === 'partner') {
-        setIsPartner(true);
-      }
-      setMessage('Votre email a été vérifié avec succès!');
-      toast.success('Email vérifié avec succès!');
+      const partnerRole = data?.user?.role === 'partner';
+      setIsPartner(partnerRole);
+      setMessage(t('verifyEmail.messages.success'));
+      toast.success(t('verifyEmail.toast.success'));
       if (data?.auto_login_available) {
-        attemptAutoLogin(token);
+        attemptAutoLogin(token, partnerRole);
       } else {
-        toast.info('Veuillez vous connecter pour finaliser votre inscription.');
-        redirectToAuth();
+        toast.info(t('verifyEmail.messages.manualLoginInfo'));
+        redirectToAuth(partnerRole);
       }
 
     } catch (error: any) {
       console.error('Erreur lors de la vérification:', error);
       setStatus('error');
 
-      const errorMessage = error?.message || 'Token invalide ou expiré.';
+      const errorMessage = error?.message || t('verifyEmail.messages.verificationError');
       setMessage(errorMessage);
       toast.error(errorMessage);
     }
   };
 
-  const attemptAutoLogin = async (token?: string | null) => {
+  const attemptAutoLogin = async (token?: string | null, partnerFlag = isPartner) => {
     const tokenValue = token ?? currentToken;
     if (!tokenValue || autoLoginState === 'running') {
       return;
     }
     setAutoLoginState('running');
-    toast.info('Email vérifié, connexion en cours...');
+    toast.info(t('verifyEmail.toast.verifying'));
     try {
       const response = await fetch('http://localhost:8000/api/auth/verify-email/complete/', {
         method: 'POST',
@@ -115,22 +116,22 @@ export default function VerifyEmail() {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.detail || 'Impossible de terminer la vérification.');
+        throw new Error(data.detail || t('verifyEmail.toast.completeError'));
       }
       authTokenStorage.setTokens(data.tokens);
-      toast.success('Connexion réussie, redirection...');
-      navigateToTarget();
+      toast.success(t('verifyEmail.toast.loginSuccess'));
+      navigateToTarget(partnerFlag);
     } catch (error: any) {
       console.error('Auto-login error:', error);
       setAutoLoginState('failed');
-      toast.error(error?.message || 'Impossible de vous connecter automatiquement. Connectez-vous pour continuer.');
-      redirectToAuth();
+      toast.error(error?.message || t('verifyEmail.toast.loginError'));
+      redirectToAuth(partnerFlag);
     }
   };
 
   const handleContinue = () => {
     if (verifyData?.auto_login_available) {
-      attemptAutoLogin();
+      attemptAutoLogin(undefined, isPartner);
       return;
     }
     if (verifyData?.auto_login_available) {
@@ -148,7 +149,7 @@ export default function VerifyEmail() {
     try {
       const accessToken = authTokenStorage.getAccessToken();
       if (!accessToken) {
-        toast.error('Veuillez vous connecter pour renvoyer le lien de vérification.');
+        toast.error(t('verifyEmail.toast.resendAuthRequired'));
         navigate(`/auth?redirectTo=${encodeURIComponent('/verify-email-required')}`);
         return;
       }
@@ -160,11 +161,11 @@ export default function VerifyEmail() {
         },
       });
       if (!response.ok) {
-        throw new Error('Impossible de renvoyer le lien. Veuillez réessayer.');
+        throw new Error(t('verifyEmail.toast.resendError'));
       }
-      toast.success('Un nouvel email de vérification a été envoyé.');
+      toast.success(t('verifyEmail.toast.resendSuccess'));
     } catch (error: any) {
-      toast.error(error?.message || 'Impossible de renvoyer le lien. Connectez-vous pour réessayer.');
+      toast.error(error?.message || t('verifyEmail.toast.resendError'));
     }
   };
 
@@ -185,16 +186,16 @@ export default function VerifyEmail() {
           </div>
 
           <CardTitle className="text-2xl">
-            {status === 'loading' && 'Vérification en cours...'}
-            {status === 'success' && 'Email vérifié!'}
-            {status === 'error' && 'Erreur de vérification'}
+            {status === 'loading' && t('verifyEmail.title.loading')}
+            {status === 'success' && t('verifyEmail.title.success')}
+            {status === 'error' && t('verifyEmail.title.error')}
           </CardTitle>
 
           <CardDescription className="text-base mt-2">
-            {status === 'loading' && 'Veuillez patienter pendant que nous vérifions votre email.'}
-            {status === 'success' && isPartner && 'Votre compte partenaire a été activé avec succès.'}
-            {status === 'success' && !isPartner && 'Votre compte a été activé avec succès.'}
-            {status === 'error' && 'Nous n\'avons pas pu vérifier votre email.'}
+            {status === 'loading' && t('verifyEmail.description.loading')}
+            {status === 'success' && isPartner && t('verifyEmail.description.successPartner')}
+            {status === 'success' && !isPartner && t('verifyEmail.description.successUser')}
+            {status === 'error' && t('verifyEmail.description.error')}
           </CardDescription>
         </CardHeader>
 
@@ -217,25 +218,25 @@ export default function VerifyEmail() {
                 <div className="flex items-center justify-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <Building2 className="w-5 h-5 text-blue-600" />
                   <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
-                    Prochaine étape : Complétez votre profil partenaire
+                    {t('verifyEmail.partner.nextStep')}
                   </p>
                 </div>
               )}
               <p className="text-sm text-center text-muted-foreground">
                 {verifyData?.auto_login_available
-                  ? "Nous tentons de vous connecter automatiquement. Si cela échoue, utilisez le bouton ci-dessous."
-                  : "Activez votre session en vous connectant pour poursuivre vers la prochaine étape."}
+                  ? t('verifyEmail.messages.autoLoginInfo')
+                  : t('verifyEmail.messages.manualLoginInfo')}
               </p>
-              <Button onClick={handleContinue} className="w-full" disabled={autoLoginState === 'running'}>
+                            <Button onClick={handleContinue} className="w-full" disabled={autoLoginState === 'running'}>
                 {isPartner ? (
                   <>
                     <Building2 className="w-4 h-4 mr-2" />
-                    {autoLoginState === 'running' ? 'Connexion...' : 'Continuer vers mon profil partenaire'}
+                    {autoLoginState === 'running' ? t('verifyEmail.partner.continueButtonLoading') : t('verifyEmail.partner.continueButton')}
                   </>
                 ) : (
                   <>
                     <User className="w-4 h-4 mr-2" />
-                    {autoLoginState === 'running' ? 'Connexion...' : 'Accéder à mon profil'}
+                    {autoLoginState === 'running' ? t('verifyEmail.user.continueButtonLoading') : t('verifyEmail.user.continueButton')}
                   </>
                 )}
               </Button>
@@ -245,11 +246,11 @@ export default function VerifyEmail() {
                 onClick={handleResendEmail}
                 disabled={autoLoginState === 'running'}
               >
-                Renvoyer le lien de vérification
+                {t('verifyEmail.buttons.resend')}
               </Button>
               {autoLoginState === 'failed' && (
                 <p className="text-xs text-center text-red-500">
-                  La connexion automatique a échoué. Merci d’utiliser le bouton ci-dessus pour continuer.
+                  {t('verifyEmail.messages.autoLoginFailed')}
                 </p>
               )}
             </div>
@@ -258,11 +259,11 @@ export default function VerifyEmail() {
           {status === 'error' && (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground space-y-2">
-                <p className="font-semibold">Que faire ?</p>
+                <p className="font-semibold">{t('verifyEmail.error.title')}</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>Vérifiez que le lien est complet</li>
-                  <li>Le lien expire après 24 heures</li>
-                  <li>Demandez un nouveau lien de vérification</li>
+                  <li>{t('verifyEmail.error.checkLink')}</li>
+                  <li>{t('verifyEmail.error.expired')}</li>
+                  <li>{t('verifyEmail.error.requestNew')}</li>
                 </ul>
               </div>
 
@@ -271,14 +272,14 @@ export default function VerifyEmail() {
                   onClick={() => navigate('/auth')}
                   className="w-full"
                 >
-                  Retour à la connexion
+                  {t('verifyEmail.buttons.backToLogin')}
                 </Button>
                 <Button
                   onClick={() => navigate('/verify-email-required')}
                   variant="outline"
                   className="w-full"
                 >
-                  Renvoyer un email de vérification
+                  {t('verifyEmail.buttons.requestNewLink')}
                 </Button>
               </div>
             </div>
@@ -287,7 +288,7 @@ export default function VerifyEmail() {
           {status === 'loading' && (
             <div className="text-center">
               <p className="text-xs text-muted-foreground">
-                Cela ne devrait prendre que quelques secondes...
+                {t('verifyEmail.messages.waiting')}
               </p>
             </div>
           )}

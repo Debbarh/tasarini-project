@@ -129,4 +129,22 @@ All colors MUST be HSL.
 
   .bg-gradient-primary { background: var(--gradient-primary); }
   .text-primary-glow { color: hsl(var(--primary-glow)); }
+
+  /* Streaming animations */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  /* Blinking cursor animation for typing effect */
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  .animate-blink {
+    animation: blink 1s infinite;
+  }
 }

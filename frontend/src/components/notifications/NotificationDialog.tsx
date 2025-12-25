@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -62,6 +63,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
   open,
   onOpenChange
 }) => {
+  const { t } = useTranslation();
   const {
     notifications,
     markAsRead,
@@ -77,7 +79,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
     const now = new Date();
     
     if (date > now) {
-      return `Dans ${formatDistanceToNow(date, { locale: fr })}`;
+      return `${t('notifications.timePrefix')} ${formatDistanceToNow(date, { locale: fr })}`;
     } else {
       return formatDistanceToNow(date, { locale: fr, addSuffix: true });
     }
@@ -90,7 +92,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bell className="w-5 h-5" />
-              Notifications
+              {t('notifications.title')}
               {unreadCount > 0 && (
                 <Badge variant="destructive" className="ml-2">
                   {unreadCount}
@@ -105,7 +107,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
                 className="text-xs"
               >
                 <CheckCircle2 className="w-4 h-4 mr-1" />
-                Tout marquer comme lu
+                {t('notifications.markAllRead')}
               </Button>
             )}
           </DialogTitle>
@@ -115,7 +117,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
           {notifications.length === 0 ? (
             <div className="text-center py-8">
               <Bell className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Aucune notification</p>
+              <p className="text-muted-foreground">{t('notifications.empty')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -145,7 +147,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
                               size="sm"
                               onClick={() => markAsRead(notification.id)}
                               className="h-6 w-6 p-0"
-                              title="Marquer comme lu"
+                              title={t('notifications.markRead')}
                             >
                               <CheckCircle className="w-3 h-3" />
                             </Button>
@@ -155,7 +157,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
                             size="sm"
                             onClick={() => deleteNotification(notification.id)}
                             className="h-6 w-6 p-0 text-destructive hover:text-destructive"
-                            title="Supprimer"
+                            title={t('notifications.delete')}
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
@@ -172,7 +174,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
                         </Badge>
                         {notification.is_sent && (
                           <Badge variant="secondary" className="text-xs">
-                            Envoyé
+                            {t('notifications.sent')}
                           </Badge>
                         )}
                       </div>

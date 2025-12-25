@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Progress } from '@/components/ui/progress';
 import { Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
@@ -41,6 +42,7 @@ export const UnifiedPOIForm: React.FC<UnifiedPOIFormProps> = ({
   existingData,
   poiId
 }) => {
+  const { t } = useTranslation();
   const { formData, updateField, resetForm } = usePOIFormData(context, existingData || initialData);
   const { validateForm } = usePOIFormValidation(context);
   const { submitPOI, updatePOI, isSubmitting } = usePOIFormSubmission(context);
@@ -49,7 +51,7 @@ export const UnifiedPOIForm: React.FC<UnifiedPOIFormProps> = ({
 
   const handleSubmit = async (isDraft: boolean = false) => {
     if (!isDraft && !validationResult.isValid) {
-      toast.error('Veuillez corriger les erreurs avant de continuer');
+      toast.error(t('toast.form.validationError'));
       return;
     }
 
@@ -70,7 +72,7 @@ export const UnifiedPOIForm: React.FC<UnifiedPOIFormProps> = ({
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error('Une erreur est survenue lors de la soumission');
+      toast.error(t('toast.form.submitError'));
     }
   };
 

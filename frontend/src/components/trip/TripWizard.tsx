@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -17,37 +18,42 @@ interface TripWizardProps {
   isLoading?: boolean;
 }
 
-const STEPS = [
-  { id: 'destinations', title: 'Destinations', icon: MapPin, description: 'Où souhaitez-vous aller ?' },
-  { id: 'details', title: 'Compagnons', icon: Users, description: 'Avec qui voyagez-vous ?' },
-  { id: 'budget', title: 'Budget', icon: Wallet, description: 'Définissez votre budget de voyage' },
-  { id: 'culinary', title: 'Cuisine', icon: Utensils, description: 'Vos préférences culinaires' },
-  { id: 'accommodation', title: 'Hébergement', icon: Home, description: 'Type et critères d\'hébergement' },
-  { id: 'activities', title: 'Activités', icon: Activity, description: 'Expériences et centres d\'intérêt' },
-];
-
 export const TripWizard = ({ onComplete, isLoading }: TripWizardProps) => {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<TripFormData>>({});
-  const [stepValidation, setStepValidation] = useState<boolean[]>(new Array(STEPS.length).fill(false));
   const { trackStep } = useAnalytics();
+
+  // Create steps array with translations
+  const STEPS = [
+    { id: 'destinations', title: t('planTrip.wizard.steps.destinations.title'), icon: MapPin, description: t('planTrip.wizard.steps.destinations.description') },
+    { id: 'details', title: t('planTrip.wizard.steps.details.title'), icon: Users, description: t('planTrip.wizard.steps.details.description') },
+    { id: 'budget', title: t('planTrip.wizard.steps.budget.title'), icon: Wallet, description: t('planTrip.wizard.steps.budget.description') },
+    { id: 'culinary', title: t('planTrip.wizard.steps.culinary.title'), icon: Utensils, description: t('planTrip.wizard.steps.culinary.description') },
+    { id: 'accommodation', title: t('planTrip.wizard.steps.accommodation.title'), icon: Home, description: t('planTrip.wizard.steps.accommodation.description') },
+    { id: 'activities', title: t('planTrip.wizard.steps.activities.title'), icon: Activity, description: t('planTrip.wizard.steps.activities.description') },
+  ];
+
+  const [stepValidation, setStepValidation] = useState<boolean[]>(new Array(STEPS.length).fill(false));
 
   const currentStepData = STEPS[currentStep];
   const progress = ((currentStep + 1) / STEPS.length) * 100;
 
-  const updateFormData = (stepData: Partial<TripFormData>) => {
-    const newFormData = { ...formData, ...stepData };
-    setFormData(newFormData);
-    
-    // Ne plus faire de tracking à chaque modification
-    // La collecte se fera uniquement à la fin
-  };
+  const updateFormData = useCallback((stepData: Partial<TripFormData>) => {
+    setFormData((prev) => ({ ...prev, ...stepData }));
+    // Tracking reporté à la fin
+  }, []);
 
-  const validateCurrentStep = (isValid: boolean) => {
-    const newValidation = [...stepValidation];
-    newValidation[currentStep] = isValid;
-    setStepValidation(newValidation);
-  };
+  const validateCurrentStep = useCallback((isValid: boolean) => {
+    setStepValidation((prev) => {
+      if (prev[currentStep] === isValid) {
+        return prev;
+      }
+      const next = [...prev];
+      next[currentStep] = isValid;
+      return next;
+    });
+  }, [currentStep]);
 
   const canProceed = stepValidation[currentStep];
   const canGoBack = currentStep > 0;
@@ -56,9 +62,22 @@ export const TripWizard = ({ onComplete, isLoading }: TripWizardProps) => {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      const finalDestinations = formData.destinations ?? [];
+      const fallbackStart = finalDestinations[0]?.startDate ?? new Date();
+      const finalStart = formData.startDate ?? fallbackStart;
+      const fallbackEnd = finalDestinations[finalDestinations.length - 1]?.endDate ?? finalStart;
+      const finalEnd = formData.endDate ?? fallbackEnd;
+
+      const finalData: TripFormData = {
+        ...formData,
+        destinations: finalDestinations,
+        startDate: finalStart,
+        endDate: finalEnd,
+      } as TripFormData;
+
       // Collecter les analytics uniquement à la fin avec toutes les données
-      trackStep('completed', formData, 'completed');
-      onComplete(formData as TripFormData);
+      trackStep('completed', finalData, 'completed');
+      onComplete(finalData);
     }
   };
 
@@ -130,9 +149,9 @@ export const TripWizard = ({ onComplete, isLoading }: TripWizardProps) => {
         <CardContent className="p-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Planifiez votre voyage</h2>
+              <h2 className="text-xl font-semibold">{t('planTrip.wizard.title')}</h2>
               <span className="text-sm text-muted-foreground">
-                Étape {currentStep + 1} sur {STEPS.length}
+                {t('planTrip.wizard.stepOf', { current: currentStep + 1, total: STEPS.length })}
               </span>
             </div>
             <Progress value={progress} className="h-2" />
@@ -200,7 +219,7 @@ export const TripWizard = ({ onComplete, isLoading }: TripWizardProps) => {
           className="flex items-center gap-2"
         >
           <ChevronLeft className="h-4 w-4" />
-          Précédent
+          {t('planTrip.wizard.previous')}
         </Button>
 
         <Button
@@ -212,17 +231,17 @@ export const TripWizard = ({ onComplete, isLoading }: TripWizardProps) => {
             isLoading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
-                Génération...
+                {t('planTrip.wizard.generating')}
               </>
             ) : (
               <>
                 <Sparkles className="h-4 w-4" />
-                Créer mon itinéraire
+                {t('planTrip.wizard.createItinerary')}
               </>
             )
           ) : (
             <>
-              Suivant
+              {t('planTrip.wizard.next')}
               <ChevronRight className="h-4 w-4" />
             </>
           )}

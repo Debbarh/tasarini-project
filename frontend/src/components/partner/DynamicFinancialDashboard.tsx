@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/integrations/api/client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { 
   DollarSign, 
   TrendingUp, 
@@ -57,6 +58,7 @@ interface FinancialStats {
 }
 
 const DynamicFinancialDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -172,7 +174,7 @@ const DynamicFinancialDashboard: React.FC = () => {
 
     } catch (error) {
       console.error('Erreur lors de la récupération des données financières:', error);
-      toast.error('Erreur lors du chargement des données financières');
+      toast.error(t('partnerCenter.dashboard.finances.errors.loadError'));
     } finally {
       setLoading(false);
     }
@@ -181,7 +183,7 @@ const DynamicFinancialDashboard: React.FC = () => {
   const requestWithdrawal = async (amount: number, paymentMethodId: string) => {
     try {
       if (amount > stats.availableBalance) {
-        toast.error('Montant supérieur au solde disponible');
+        toast.error(t('partnerCenter.dashboard.finances.withdrawals.amountExceeds'));
         return;
       }
 
@@ -190,11 +192,11 @@ const DynamicFinancialDashboard: React.FC = () => {
         payment_method: paymentMethodId
       });
 
-      toast.success('Demande de retrait envoyée avec succès');
+      toast.success(t('partnerCenter.dashboard.finances.withdrawals.requestSuccess'));
       fetchFinancialData(); // Rafraîchir les données
     } catch (error) {
       console.error('Erreur lors de la demande de retrait:', error);
-      toast.error('Erreur lors de la demande de retrait');
+      toast.error(t('partnerCenter.dashboard.finances.withdrawals.requestError'));
     }
   };
 
@@ -263,7 +265,7 @@ const DynamicFinancialDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Solde disponible</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.availableBalance')}</CardTitle>
             <DollarSign className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -271,14 +273,14 @@ const DynamicFinancialDashboard: React.FC = () => {
               {stats.availableBalance.toFixed(2)}€
             </div>
             <p className="text-xs text-muted-foreground">
-              Prêt pour retrait
+              {t('partnerCenter.dashboard.finances.stats.readyForWithdrawal')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">En traitement</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.processing')}</CardTitle>
             <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
@@ -286,14 +288,14 @@ const DynamicFinancialDashboard: React.FC = () => {
               {stats.pendingBalance.toFixed(2)}€
             </div>
             <p className="text-xs text-muted-foreground">
-              Paiement le {stats.nextPaymentDate}
+              {t('partnerCenter.dashboard.finances.stats.paymentOn')} {stats.nextPaymentDate}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ce mois-ci</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.thisMonth')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
@@ -301,14 +303,14 @@ const DynamicFinancialDashboard: React.FC = () => {
               {stats.thisMonthEarnings.toFixed(2)}€
             </div>
             <p className="text-xs text-muted-foreground">
-              Revenus du mois
+              {t('partnerCenter.dashboard.finances.stats.monthlyRevenue')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Commission moy.</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.avgCommission')}</CardTitle>
             <CreditCard className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
@@ -316,7 +318,7 @@ const DynamicFinancialDashboard: React.FC = () => {
               {stats.averageCommissionRate.toFixed(1)}%
             </div>
             <p className="text-xs text-muted-foreground">
-              Taux moyen
+              {t('partnerCenter.dashboard.finances.stats.avgRate')}
             </p>
           </CardContent>
         </Card>
@@ -325,8 +327,8 @@ const DynamicFinancialDashboard: React.FC = () => {
       {/* Graphique des revenus */}
       <Card>
         <CardHeader>
-          <CardTitle>Évolution des revenus</CardTitle>
-          <CardDescription>Revenus mensuels sur les 12 derniers mois</CardDescription>
+          <CardTitle>{t('partnerCenter.dashboard.finances.revenueChart.title')}</CardTitle>
+          <CardDescription>{t('partnerCenter.dashboard.finances.revenueChart.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -335,7 +337,7 @@ const DynamicFinancialDashboard: React.FC = () => {
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip 
-                formatter={(value: number) => [`${value.toFixed(2)}€`, 'Revenus']}
+                formatter={(value: number) => [`${value.toFixed(2)}€`, t('partnerCenter.dashboard.finances.revenueChart.revenue')]}
               />
               <Area 
                 type="monotone" 
@@ -352,21 +354,21 @@ const DynamicFinancialDashboard: React.FC = () => {
       {/* Onglets pour gérer les finances */}
       <Tabs defaultValue="commissions" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="commissions">Commissions</TabsTrigger>
-          <TabsTrigger value="withdrawals">Retraits</TabsTrigger>
-          <TabsTrigger value="payment-methods">Moyens de paiement</TabsTrigger>
+          <TabsTrigger value="commissions">{t('partnerCenter.dashboard.finances.tabs.commissions')}</TabsTrigger>
+          <TabsTrigger value="withdrawals">{t('partnerCenter.dashboard.finances.tabs.withdrawals')}</TabsTrigger>
+          <TabsTrigger value="payment-methods">{t('partnerCenter.dashboard.finances.tabs.paymentMethods')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="commissions" className="space-y-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Historique des commissions</CardTitle>
-                <CardDescription>Détail de toutes vos commissions</CardDescription>
+                <CardTitle>{t('partnerCenter.dashboard.finances.commissions.title')}</CardTitle>
+                <CardDescription>{t('partnerCenter.dashboard.finances.commissions.description')}</CardDescription>
               </div>
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
-                Exporter
+                {t('partnerCenter.dashboard.finances.commissions.export')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -379,32 +381,32 @@ const DynamicFinancialDashboard: React.FC = () => {
                         <div>
                           <p className="font-medium">{commission.tourist_point_name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Client: {commission.customer_name}
+                            {t('partnerCenter.dashboard.finances.commissions.client')}: {commission.customer_name}
                           </p>
                         </div>
                       </div>
                       <Badge variant={getStatusBadge(commission.payment_status)}>
-                        {commission.payment_status}
+                        {t(`partnerCenter.dashboard.finances.status.${commission.payment_status}`)}
                       </Badge>
                     </div>
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
-                        <p className="text-muted-foreground">Référence</p>
+                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.reference')}</p>
                         <p className="font-mono">{commission.booking_reference}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Commission</p>
+                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.commission')}</p>
                         <p className="font-semibold text-green-600">
                           {commission.amount.toFixed(2)}€
                         </p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Taux</p>
+                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.rate')}</p>
                         <p>{(commission.commission_rate * 100).toFixed(1)}%</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Date</p>
+                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.date')}</p>
                         <p>{new Date(commission.booking_date).toLocaleDateString('fr-FR')}</p>
                       </div>
                     </div>
@@ -419,14 +421,14 @@ const DynamicFinancialDashboard: React.FC = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Demandes de retrait</CardTitle>
-                <CardDescription>Gérez vos retraits de fonds</CardDescription>
+                <CardTitle>{t('partnerCenter.dashboard.finances.withdrawals.title')}</CardTitle>
+                <CardDescription>{t('partnerCenter.dashboard.finances.withdrawals.description')}</CardDescription>
               </div>
               <Button 
                 onClick={() => {
                   // Ouvrir un dialogue pour demander un retrait
                   if (paymentMethods.length === 0) {
-                    toast.error('Vous devez d\'abord ajouter un moyen de paiement');
+                    toast.error(t('partnerCenter.dashboard.finances.withdrawals.noPaymentMethod'));
                     return;
                   }
                   // Logique pour demander un retrait
@@ -434,14 +436,14 @@ const DynamicFinancialDashboard: React.FC = () => {
                 disabled={stats.availableBalance <= 0}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Demander un retrait
+                {t('partnerCenter.dashboard.finances.withdrawals.request')}
               </Button>
             </CardHeader>
             <CardContent>
               {withdrawals.length === 0 ? (
                 <div className="text-center py-8">
                   <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Aucune demande de retrait</p>
+                  <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.withdrawals.empty')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -459,7 +461,7 @@ const DynamicFinancialDashboard: React.FC = () => {
                         </div>
                         <div className="text-right">
                           <Badge variant={getStatusBadge(withdrawal.status)}>
-                            {withdrawal.status}
+                            {t(`partnerCenter.dashboard.finances.status.${withdrawal.status}`)}
                           </Badge>
                           <p className="text-xs text-muted-foreground mt-1">
                             {new Date(withdrawal.created_at).toLocaleDateString('fr-FR')}
@@ -478,21 +480,21 @@ const DynamicFinancialDashboard: React.FC = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Moyens de paiement</CardTitle>
-                <CardDescription>Gérez vos comptes bancaires et portefeuilles</CardDescription>
+                <CardTitle>{t('partnerCenter.dashboard.finances.paymentMethods.title')}</CardTitle>
+                <CardDescription>{t('partnerCenter.dashboard.finances.paymentMethods.description')}</CardDescription>
               </div>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Ajouter
+                {t('partnerCenter.dashboard.finances.paymentMethods.add')}
               </Button>
             </CardHeader>
             <CardContent>
               {paymentMethods.length === 0 ? (
                 <div className="text-center py-8">
                   <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Aucun moyen de paiement configuré</p>
+                  <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.paymentMethods.empty')}</p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Ajoutez un compte bancaire ou un portefeuille électronique
+                    {t('partnerCenter.dashboard.finances.paymentMethods.emptyDescription')}
                   </p>
                 </div>
               ) : (
@@ -505,16 +507,16 @@ const DynamicFinancialDashboard: React.FC = () => {
                           <div>
                             <p className="font-medium capitalize">{method.type.replace('_', ' ')}</p>
                             <p className="text-sm text-muted-foreground">
-                              {method.details?.account_name || 'Compte configuré'}
+                              {method.details?.account_name || t('partnerCenter.dashboard.finances.paymentMethods.accountConfigured')}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
                           {method.is_default && (
-                            <Badge variant="secondary">Par défaut</Badge>
+                            <Badge variant="secondary">{t('partnerCenter.dashboard.finances.paymentMethods.default')}</Badge>
                           )}
                           <Badge variant={method.is_active ? 'outline' : 'secondary'}>
-                            {method.is_active ? 'Actif' : 'Inactif'}
+                            {method.is_active ? t('partnerCenter.dashboard.finances.paymentMethods.active') : t('partnerCenter.dashboard.finances.paymentMethods.inactive')}
                           </Badge>
                         </div>
                       </div>

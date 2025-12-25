@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { apiClient } from '@/integrations/api/client';
+import { useState, useEffect, useCallback } from 'react';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 
 export interface BudgetLevel {
   id: string;
@@ -62,9 +62,14 @@ export const useBudgetSettings = () => {
         apiClient.get<BudgetFlexibility[]>('poi/budget-flex-options/'),
       ]);
 
-      setBudgetLevels((levelsData || []).filter(level => level.is_active !== false).sort((a, b) => a.display_order - b.display_order));
-      setCurrencies((currenciesData || []).filter(currency => currency.is_active !== false).sort((a, b) => a.display_order - b.display_order));
-      setFlexibilityOptions((flexibilityData || []).filter(option => option.is_active !== false).sort((a, b) => a.display_order - b.display_order));
+      // Handle both array and paginated response formats
+      const levelsArray = extractArrayFromResponse<BudgetLevel>(levelsData);
+      const currenciesArray = extractArrayFromResponse<BudgetCurrency>(currenciesData);
+      const flexibilityArray = extractArrayFromResponse<BudgetFlexibility>(flexibilityData);
+
+      setBudgetLevels(levelsArray.filter(level => level.is_active !== false).sort((a, b) => a.display_order - b.display_order));
+      setCurrencies(currenciesArray.filter(currency => currency.is_active !== false).sort((a, b) => a.display_order - b.display_order));
+      setFlexibilityOptions(flexibilityArray.filter(option => option.is_active !== false).sort((a, b) => a.display_order - b.display_order));
 
     } catch (err) {
       console.error('Error fetching budget settings:', err);
@@ -74,25 +79,28 @@ export const useBudgetSettings = () => {
     }
   };
 
-  const getDefaultCurrency = () => {
-    return currencies.find(currency => currency.is_default) || currencies[0];
-  };
+  const getDefaultCurrency = useCallback(() => {
+    return currencies.find((currency) => currency.is_default) || currencies[0];
+  }, [currencies]);
 
-  const getDefaultFlexibility = () => {
-    return flexibilityOptions.find(option => option.is_default) || flexibilityOptions[0];
-  };
+  const getDefaultFlexibility = useCallback(() => {
+    return flexibilityOptions.find((option) => option.is_default) || flexibilityOptions[0];
+  }, [flexibilityOptions]);
 
-  const getBudgetLevelByCode = (code: string) => {
-    return budgetLevels.find(level => level.code === code);
-  };
+  const getBudgetLevelByCode = useCallback(
+    (code: string) => budgetLevels.find((level) => level.code === code),
+    [budgetLevels],
+  );
 
-  const getCurrencyByCode = (code: string) => {
-    return currencies.find(currency => currency.code === code);
-  };
+  const getCurrencyByCode = useCallback(
+    (code: string) => currencies.find((currency) => currency.code === code),
+    [currencies],
+  );
 
-  const getFlexibilityByCode = (code: string) => {
-    return flexibilityOptions.find(option => option.code === code);
-  };
+  const getFlexibilityByCode = useCallback(
+    (code: string) => flexibilityOptions.find((option) => option.code === code),
+    [flexibilityOptions],
+  );
 
   return {
     budgetLevels,

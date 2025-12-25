@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UnifiedPOIFormData, POIFormContext, POIStatusEnum } from '@/types/poi-form';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { createTouristPoint, updateTouristPoint, TouristPointPayload } from '@/services/poiService';
 import { locationService } from '@/services/locationService';
 
@@ -55,6 +56,7 @@ const buildMetadata = (
 };
 
 export const usePOIFormSubmission = (context: POIFormContext) => {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
 
@@ -136,7 +138,7 @@ export const usePOIFormSubmission = (context: POIFormContext) => {
         const poiData = await preparePOIData(formData, status);
         const data = await createTouristPoint(poiData);
 
-        toast.success(isDraft ? 'Brouillon sauvegardé avec succès!' : 'POI soumis avec succès!');
+        toast.success(isDraft ? t('toast.hooks.poi.draftSaved') : t('toast.hooks.poi.submitted'));
         return { success: true, data };
       } catch (error: any) {
         console.error('Error submitting POI:', error);
@@ -164,9 +166,9 @@ export const usePOIFormSubmission = (context: POIFormContext) => {
             : formData.status_enum || 'pending_validation';
 
         const poiData = await preparePOIData(formData, status);
-        const data = await updateTouristPoint(id, poiData);
+        const data = await updateTouristPoint(poiId, poiData);
 
-        toast.success(isDraft ? 'Brouillon mis à jour avec succès!' : 'POI mis à jour avec succès!');
+        toast.success(isDraft ? t('toast.hooks.poi.draftUpdated') : t('toast.hooks.poi.updated'));
         return { success: true, data };
       } catch (error: any) {
         console.error('Error updating POI:', error);

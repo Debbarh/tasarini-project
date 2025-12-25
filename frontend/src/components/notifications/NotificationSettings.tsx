@@ -1,12 +1,14 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from 'react-i18next';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNotifications } from '@/hooks/useNotifications';
 import { Settings, Bell, Clock, Calendar, Mail } from 'lucide-react';
 
 export const NotificationSettings: React.FC = () => {
+  const { t } = useTranslation();
   const { preferences, updatePreferences, loading } = useNotifications();
 
   const handlePreferenceChange = (key: string, value: boolean | number) => {
@@ -18,7 +20,7 @@ export const NotificationSettings: React.FC = () => {
       <Card>
         <CardContent className="pt-6">
           <div className="text-center">
-            <p className="text-muted-foreground">Chargement des préférences...</p>
+            <p className="text-muted-foreground">{t('notifications.settings.loading')}</p>
           </div>
         </CardContent>
       </Card>
@@ -30,10 +32,10 @@ export const NotificationSettings: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Settings className="w-5 h-5" />
-          Préférences de Notifications
+          {t('notifications.settings.title')}
         </CardTitle>
         <CardDescription>
-          Configurez vos notifications pour les activités et voyages
+          {t('notifications.settings.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -41,15 +43,15 @@ export const NotificationSettings: React.FC = () => {
         <div className="space-y-4">
           <h4 className="font-medium flex items-center gap-2">
             <Bell className="w-4 h-4" />
-            Types de notifications
+            {t('notifications.settings.types.title')}
           </h4>
           
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-sm font-normal">Rappels d'activités</Label>
+                <Label className="text-sm font-normal">{t('notifications.settings.types.activityReminders')}</Label>
                 <p className="text-xs text-muted-foreground">
-                  Recevoir des rappels avant vos activités planifiées
+                  {t('notifications.settings.types.activityRemindersDesc')}
                 </p>
               </div>
               <Switch
@@ -61,9 +63,9 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-sm font-normal">Début de voyage</Label>
+                <Label className="text-sm font-normal">{t('notifications.settings.types.tripStart')}</Label>
                 <p className="text-xs text-muted-foreground">
-                  Notification au début de votre voyage
+                  {t('notifications.settings.types.tripStartDesc')}
                 </p>
               </div>
               <Switch
@@ -75,9 +77,9 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-sm font-normal">Fin de voyage</Label>
+                <Label className="text-sm font-normal">{t('notifications.settings.types.tripEnd')}</Label>
                 <p className="text-xs text-muted-foreground">
-                  Notification à la fin de votre voyage
+                  {t('notifications.settings.types.tripEndDesc')}
                 </p>
               </div>
               <Switch
@@ -93,11 +95,11 @@ export const NotificationSettings: React.FC = () => {
         <div className="space-y-4">
           <h4 className="font-medium flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            Timing des rappels
+            {t('notifications.settings.timing.title')}
           </h4>
           
           <div className="space-y-2">
-            <Label className="text-sm">Rappel avant l'activité</Label>
+            <Label className="text-sm">{t('notifications.settings.timing.before')}</Label>
             <Select
               value={preferences.reminder_hours_before.toString()}
               onValueChange={(value) => handlePreferenceChange('reminder_hours_before', parseInt(value))}
@@ -107,12 +109,12 @@ export const NotificationSettings: React.FC = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">1 heure avant</SelectItem>
-                <SelectItem value="2">2 heures avant</SelectItem>
-                <SelectItem value="6">6 heures avant</SelectItem>
-                <SelectItem value="12">12 heures avant</SelectItem>
-                <SelectItem value="24">24 heures avant</SelectItem>
-                <SelectItem value="48">48 heures avant</SelectItem>
+                <SelectItem value="1">{t('notifications.settings.timing.1h')}</SelectItem>
+                <SelectItem value="2">{t('notifications.settings.timing.2h')}</SelectItem>
+                <SelectItem value="6">{t('notifications.settings.timing.6h')}</SelectItem>
+                <SelectItem value="12">{t('notifications.settings.timing.12h')}</SelectItem>
+                <SelectItem value="24">{t('notifications.settings.timing.24h')}</SelectItem>
+                <SelectItem value="48">{t('notifications.settings.timing.48h')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -122,15 +124,15 @@ export const NotificationSettings: React.FC = () => {
         <div className="space-y-4">
           <h4 className="font-medium flex items-center gap-2">
             <Mail className="w-4 h-4" />
-            Canaux de notification
+            {t('notifications.settings.channels.title')}
           </h4>
           
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-sm font-normal">Notifications dans l'app</Label>
+                <Label className="text-sm font-normal">{t('notifications.settings.channels.inApp')}</Label>
                 <p className="text-xs text-muted-foreground">
-                  Afficher les notifications dans l'application
+                  {t('notifications.settings.channels.inAppDesc')}
                 </p>
               </div>
               <Switch
@@ -142,9 +144,9 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-sm font-normal">Notifications par email</Label>
+                <Label className="text-sm font-normal">{t('notifications.settings.channels.email')}</Label>
                 <p className="text-xs text-muted-foreground">
-                  Recevoir des emails de rappel (bientôt disponible)
+                  {t('notifications.settings.channels.emailDesc')}
                 </p>
               </div>
               <Switch

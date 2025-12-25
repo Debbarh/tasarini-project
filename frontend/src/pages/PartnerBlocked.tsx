@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,11 +10,12 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
 const PartnerBlocked: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: user?.email || '',
-    subject: 'Demande de réévaluation de mon compte partenaire',
+    subject: t('partnerBlocked.contact.subjectDefault'),
     message: ''
   });
   const [loading, setLoading] = useState(false);
@@ -27,17 +29,17 @@ const PartnerBlocked: React.FC = () => {
       // Pour l'instant, on simule l'envoi
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast.success('Votre message a été envoyé. Nous vous répondrons dans les plus brefs délais.');
+      toast.success(t('partnerBlocked.toast.success'));
       
       // Réinitialiser le formulaire sauf l'email
       setFormData(prev => ({
         ...prev,
         name: '',
-        subject: 'Demande de réévaluation de mon compte partenaire',
+        subject: t('partnerBlocked.contact.subjectDefault'),
         message: ''
       }));
     } catch (error) {
-      toast.error('Erreur lors de l\'envoi du message. Veuillez réessayer.');
+      toast.error(t('partnerBlocked.toast.error'));
     } finally {
       setLoading(false);
     }
@@ -55,23 +57,22 @@ const PartnerBlocked: React.FC = () => {
           <CardHeader className="text-center">
             <CardTitle className="flex items-center gap-2 justify-center text-destructive">
               <AlertTriangle className="w-6 h-6" />
-              Compte Partenaire Bloqué
+              {t('partnerBlocked.pageTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-muted-foreground mb-4">
-              Votre candidature partenaire a été refusée ou votre compte a été suspendu. 
-              Si vous pensez qu'il s'agit d'une erreur, vous pouvez nous contacter via le formulaire ci-dessous.
+              {t('partnerBlocked.description')}
             </p>
             <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/20">
               <p className="text-sm text-destructive">
-                <strong>Raisons possibles :</strong>
+                <strong>{t('partnerBlocked.reasons.title')}</strong>
               </p>
               <ul className="text-sm text-destructive mt-2 text-left list-disc list-inside">
-                <li>Informations incorrectes ou incomplètes</li>
-                <li>Non-respect des conditions d'utilisation</li>
-                <li>Activité suspecte détectée</li>
-                <li>Critères de partenariat non respectés</li>
+                <li>{t('partnerBlocked.reasons.incorrect')}</li>
+                <li>{t('partnerBlocked.reasons.terms')}</li>
+                <li>{t('partnerBlocked.reasons.suspicious')}</li>
+                <li>{t('partnerBlocked.reasons.criteria')}</li>
               </ul>
             </div>
           </CardContent>
@@ -82,68 +83,68 @@ const PartnerBlocked: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Mail className="w-5 h-5" />
-              Contacter l'Administration
+              {t('partnerBlocked.contact.title')}
             </CardTitle>
             <p className="text-muted-foreground">
-              Expliquez votre situation et nous examinerons votre demande.
+              {t('partnerBlocked.contact.subtitle')}
             </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nom complet *</Label>
+                  <Label htmlFor="name">{t('partnerBlocked.contact.nameLabel')} {t('partnerBlocked.contact.required')}</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => updateFormData('name', e.target.value)}
                     required
-                    placeholder="Votre nom complet"
+                    placeholder={t('partnerBlocked.contact.namePlaceholder')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email">{t('partnerBlocked.contact.emailLabel')} {t('partnerBlocked.contact.required')}</Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
                     required
-                    placeholder="votre@email.com"
+                    placeholder={t('partnerBlocked.contact.emailPlaceholder')}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="subject">Sujet *</Label>
+                <Label htmlFor="subject">{t('partnerBlocked.contact.subjectLabel')} {t('partnerBlocked.contact.required')}</Label>
                 <Input
                   id="subject"
                   value={formData.subject}
                   onChange={(e) => updateFormData('subject', e.target.value)}
                   required
-                  placeholder="Objet de votre demande"
+                  placeholder={t('partnerBlocked.contact.subjectPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message">Message *</Label>
+                <Label htmlFor="message">{t('partnerBlocked.contact.messageLabel')} {t('partnerBlocked.contact.required')}</Label>
                 <Textarea
                   id="message"
                   value={formData.message}
                   onChange={(e) => updateFormData('message', e.target.value)}
                   required
                   rows={6}
-                  placeholder="Décrivez votre situation et les raisons pour lesquelles votre compte devrait être réévalué..."
+                  placeholder={t('partnerBlocked.contact.messagePlaceholder')}
                 />
               </div>
 
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? (
-                  'Envoi en cours...'
+                  t('partnerBlocked.contact.submitting')
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    Envoyer ma demande
+                    {t('partnerBlocked.contact.submitButton')}
                   </>
                 )}
               </Button>
@@ -156,12 +157,12 @@ const PartnerBlocked: React.FC = () => {
           <CardContent className="pt-6">
             <div className="text-center text-sm text-muted-foreground">
               <p>
-                <strong>Temps de réponse :</strong> Nous nous efforçons de répondre sous 48-72 heures.
+                <strong>{t('partnerBlocked.info.responseTime')}</strong> {t('partnerBlocked.info.responseTimeText')}
               </p>
               <p className="mt-2">
-                Pour des questions urgentes, vous pouvez également nous contacter à :
+                {t('partnerBlocked.info.urgentQuestion')}
                 <br />
-                <strong>support@voyageai.com</strong>
+                <strong>{t('partnerBlocked.info.supportEmail')}</strong>
               </p>
             </div>
           </CardContent>

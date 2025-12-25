@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { SmartRecommendations } from "@/components/inspire/SmartRecommendations"
 import { HotelSearchDialog } from "@/components/amadeus/HotelSearchDialog";
 import { POI, POIFilters, createTouristPoint } from "@/services/poiService";
 import { toast } from "sonner";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 interface TouristPointFormData {
   name: string;
@@ -34,8 +36,10 @@ interface TouristPointFormData {
 }
 
 const BeInspired = () => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
-  const [mapCenter, setMapCenter] = useState({ lat: 48.8566, lon: 2.3522 }); // Paris par défaut
+  const { settings } = useSystemSettings();
+  const [mapCenter, setMapCenter] = useState({ lat: 48.8566, lon: 2.3522 }); // Paris by default
   const [radiusKm, setRadiusKm] = useState(30);
   const [filters, setFilters] = useState<POIFilters>({});
   const [selectedPOI, setSelectedPOI] = useState<POI | null>(null);
@@ -44,7 +48,7 @@ const BeInspired = () => {
   const [isAddingPOI, setIsAddingPOI] = useState(false);
   const [addPOILoading, setAddPOILoading] = useState(false);
   
-  // Formulaire d'ajout de POI
+  // POI addition form
   const [pointForm, setPointForm] = useState<TouristPointFormData>({
     name: '',
     description: '',
@@ -63,7 +67,7 @@ const BeInspired = () => {
   });
   const [selectedLocation, setSelectedLocation] = useState<{lat: number, lng: number, address: string} | null>(null);
 
-  // Obtenir la position de l'utilisateur au chargement
+  // Get user position on load
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -72,7 +76,7 @@ const BeInspired = () => {
             lat: position.coords.latitude,
             lon: position.coords.longitude
           });
-          toast.success("Position détectée !");
+          toast.success(t('beInspired.positionDetected'));
         },
         (error) => {
         }
@@ -110,12 +114,12 @@ const BeInspired = () => {
     e.preventDefault();
     
     if (!user) {
-      toast.error('Vous devez être connecté pour ajouter un point d\'intérêt');
+      toast.error(t('beInspired.mustBeLoggedIn'));
       return;
     }
 
     if (!pointForm.name.trim()) {
-      toast.error('Le nom du point d\'intérêt est requis');
+      toast.error(t('beInspired.nameRequired'));
       return;
     }
 
@@ -141,7 +145,7 @@ const BeInspired = () => {
 
       await createTouristPoint(pointData);
 
-      toast.success('Point d\'intérêt ajouté avec succès !');
+      toast.success(t('beInspired.successAdded'));
       
       // Reset form
       setPointForm({
@@ -176,26 +180,31 @@ const BeInspired = () => {
       }, 100);
       
     } catch (error: any) {
-      console.error('Erreur lors de l\'ajout du point d\'intérêt:', error);
-      toast.error(`Erreur lors de l'ajout: ${error.message}`);
+      console.error('Error adding point of interest:', error);
+      toast.error(t('beInspired.errorAdding', { error: error.message }));
     } finally {
       setAddPOILoading(false);
     }
   };
 
+  // Don't render if module is disabled in admin settings
+  if (!settings.beInspiredEnabled) {
+    return null;
+  }
+
   return (
     <main className="container mx-auto px-4 py-6 sm:py-8 animate-fade-in">
       <Helmet>
-        <title>Laissez-vous inspirer | Voyage AI</title>
-        <meta name="description" content="Explorez un monde de merveilles cachées autour de vous. Découvrez des joyaux secrets, des saveurs authentiques et des expériences magiques qui n'attendent que vous." />
+        <title>{t('beInspired.pageTitle')}</title>
+        <meta name="description" content={t('beInspired.pageDescription')} />
         <link rel="canonical" href="/inspire" />
       </Helmet>
 
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6 mb-6">
         <div className="flex-1">
-          <h1 className="mb-3 sm:mb-4 text-2xl sm:text-3xl font-semibold">✨ Laissez-vous inspirer</h1>
+          <h1 className="mb-3 sm:mb-4 text-2xl sm:text-3xl font-semibold">{t('beInspired.title')}</h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            Partez à la découverte de trésors cachés dans un rayon de {radiusKm}km. Chaque lieu raconte une histoire, chaque expérience crée un souvenir impérissable.
+            {t('beInspired.subtitle', { radius: radiusKm })}
           </p>
         </div>
         
@@ -206,16 +215,16 @@ const BeInspired = () => {
           }}>
             <Button variant="outline" size="sm" className="w-full sm:w-auto">
               <Search className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">🏨 Hôtels</span>
-              <span className="sm:hidden">🏨</span>
+              <span className="hidden sm:inline">{t('beInspired.searchHotels')}</span>
+              <span className="sm:hidden">{t('beInspired.searchHotelsShort')}</span>
             </Button>
           </HotelSearchDialog>
           
-          <TravelAIAssistant initialContext={`L'utilisateur explore la région autour de ${mapCenter.lat}, ${mapCenter.lon}`}>
+          <TravelAIAssistant initialContext={t('beInspired.aiContext', { lat: mapCenter.lat, lon: mapCenter.lon })}>
             <Button variant="outline" size="sm" className="w-full sm:w-auto">
               <Bot className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">🤖 Guide IA</span>
-              <span className="sm:hidden">🤖 Guide</span>
+              <span className="hidden sm:inline">{t('beInspired.aiGuide')}</span>
+              <span className="sm:hidden">{t('beInspired.aiGuideShort')}</span>
             </Button>
           </TravelAIAssistant>
           
@@ -224,15 +233,15 @@ const BeInspired = () => {
               <DialogTrigger asChild>
                 <Button size="sm" className="w-full sm:w-auto">
                   <Plus className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">🌟 Partager un trésor</span>
-                  <span className="sm:hidden">🌟 Partager</span>
+                  <span className="hidden sm:inline">{t('beInspired.shareDiscovery')}</span>
+                  <span className="sm:hidden">{t('beInspired.shareDiscoveryShort')}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-lg sm:text-xl">🌟 Partagez votre découverte</DialogTitle>
+                  <DialogTitle className="text-lg sm:text-xl">{t('beInspired.dialogTitle')}</DialogTitle>
                   <DialogDescription className="text-sm sm:text-base">
-                    Révélez un lieu magique que vous aimez à la communauté des explorateurs
+                    {t('beInspired.dialogDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 <UserPOIContributionForm
@@ -275,7 +284,7 @@ const BeInspired = () => {
         </div>
       </div>
 
-      {/* Panneau de filtres */}
+      {/* Filter panel */}
       <FilterPanel
         filters={filters}
         onFiltersChange={handleFiltersChange}
@@ -284,23 +293,23 @@ const BeInspired = () => {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        {/* Colonne principale - Carte */}
+        {/* Main column - Map */}
         <div className="lg:col-span-2 order-2 lg:order-1">
-          {/* Contrôles de rayon de recherche */}
+          {/* Radius search controls */}
           <Card className="mb-4">
             <CardContent className="p-3 sm:p-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-                <label className="text-sm font-medium">🎯 Rayon d'exploration</label>
+                <label className="text-sm font-medium">{t('beInspired.radiusLabel')}</label>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                   <select
                     className="flex-1 sm:flex-none p-2 border rounded-md text-sm bg-background"
                     value={radiusKm}
                     onChange={(e) => setRadiusKm(Number(e.target.value))}
                   >
-                    <option value="10">10 km</option>
-                    <option value="20">20 km</option>
-                    <option value="30">30 km</option>
-                    <option value="50">50 km</option>
+                    <option value="10">{t('beInspired.radius10')}</option>
+                    <option value="20">{t('beInspired.radius20')}</option>
+                    <option value="30">{t('beInspired.radius30')}</option>
+                    <option value="50">{t('beInspired.radius50')}</option>
                   </select>
                   <Badge variant="outline" className="flex items-center gap-1 shrink-0">
                     <MapPin className="h-3 w-3" />
@@ -311,7 +320,7 @@ const BeInspired = () => {
             </CardContent>
           </Card>
 
-          {/* Carte interactive */}
+          {/* Interactive map */}
           <Card>
             <CardContent className="p-0">
               <div className="h-[400px] sm:h-[500px] lg:h-[600px] w-full">
@@ -329,7 +338,7 @@ const BeInspired = () => {
           </Card>
         </div>
 
-        {/* Colonne latérale - Recommandations */}
+        {/* Sidebar - Recommendations */}
         <div className="space-y-4 order-1 lg:order-2">
           <SmartRecommendations
             userLat={mapCenter.lat}
@@ -340,28 +349,28 @@ const BeInspired = () => {
         </div>
       </div>
 
-      {/* Légende */}
+      {/* Legend */}
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle className="text-lg">Légende</CardTitle>
+          <CardTitle className="text-lg">{t('beInspired.legendTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-xs">🍽️</div>
-              <span>Restaurants & Cafés</span>
+              <span>{t('beInspired.legendRestaurants')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">🎯</div>
-              <span>Activités & Loisirs</span>
+              <span>{t('beInspired.legendActivities')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs">🏛️</div>
-              <span>Points d'Intérêt Touristiques</span>
+              <span>{t('beInspired.legendTourist')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs">📍</div>
-              <span>Centre de recherche</span>
+              <span>{t('beInspired.legendCenter')}</span>
             </div>
           </div>
         </CardContent>

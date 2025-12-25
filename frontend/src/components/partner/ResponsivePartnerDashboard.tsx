@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Bell,
@@ -65,6 +66,7 @@ interface PartnerStats {
 }
 
 const ResponsivePartnerDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const [analytics, setAnalytics] = useState<PartnerAnalytics[]>([]);
@@ -146,7 +148,7 @@ const ResponsivePartnerDashboard: React.FC = () => {
       });
     } catch (error) {
       console.error('Erreur lors du chargement des données:', error);
-      toast.error('Erreur lors du chargement du tableau de bord');
+      toast.error(t('partnerCenter.dashboard.loadingError'));
     } finally {
       setLoading(false);
     }
@@ -163,7 +165,7 @@ const ResponsivePartnerDashboard: React.FC = () => {
       ));
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la notification:', error);
-      toast.error('Erreur lors de la mise à jour de la notification');
+      toast.error(t('partnerCenter.dashboard.notificationPanel.updateError'));
     }
   };
 
@@ -198,15 +200,15 @@ const ResponsivePartnerDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-3xl font-bold">Tableau de Bord</h1>
+          <h1 className="text-xl md:text-3xl font-bold">{t('partnerCenter.dashboard.title')}</h1>
           <p className="text-sm md:text-base text-muted-foreground">
-            Gérez vos points d'intérêt et suivez vos performances
+            {t('partnerCenter.dashboard.subtitle')}
           </p>
         </div>
         {!isMobile && (
           <Button size="sm">
             <Download className="w-4 h-4 mr-2" />
-            Exporter
+            {t('partnerCenter.dashboard.export')}
           </Button>
         )}
       </div>
@@ -219,26 +221,23 @@ const ResponsivePartnerDashboard: React.FC = () => {
         <div className="overflow-x-auto pb-1">
           <TabsList className="flex flex-wrap min-w-full gap-2 h-auto md:flex-nowrap md:gap-0 md:justify-between">
             <TabsTrigger value="analytics" className="text-xs md:text-sm py-2 md:flex-1">
-              Analytiques
+              {t('partnerCenter.dashboard.analyticsTab')}
             </TabsTrigger>
             <TabsTrigger value="pois" className="text-xs md:text-sm py-2 md:flex-1">
-              <span className="hidden md:inline">Mes POIs</span>
-              <span className="md:hidden">POIs</span>
+              {t('partnerCenter.dashboard.poisTab')}
             </TabsTrigger>
             <TabsTrigger value="bookings" className="text-xs md:text-sm py-2 md:flex-1">
-              <span className="hidden md:inline">Réservations</span>
-              <span className="md:hidden">Rés.</span>
+              {t('partnerCenter.dashboard.bookingsTab')}
             </TabsTrigger>
             <TabsTrigger value="finances" className="text-xs md:text-sm py-2 md:flex-1">
-              Finances
+              {t('partnerCenter.dashboard.financesTab')}
             </TabsTrigger>
             <TabsTrigger value="subscription" className="text-xs md:text-sm py-2 md:flex-1">
-              <span className="hidden md:inline">Abonnement</span>
-              <span className="md:hidden">Abo</span>
+              {t('partnerCenter.dashboard.subscriptionTab')}
             </TabsTrigger>
             <TabsTrigger value="notifications" className="text-xs md:text-sm py-2 md:flex-1 relative">
-              <span className="hidden md:inline">Notifications</span>
-              <span className="md:hidden">Notifs</span>
+              <span className="hidden md:inline">{t('partnerCenter.dashboard.notificationsTab')}</span>
+              <span className="md:hidden">{t('partnerCenter.dashboard.notificationsShort')}</span>
               {notifications.filter(n => !n.is_read).length > 0 && (
                 <Badge variant="destructive" className="ml-1 md:ml-2 text-xs scale-75 md:scale-100">
                   {notifications.filter(n => !n.is_read).length}
@@ -271,9 +270,9 @@ const ResponsivePartnerDashboard: React.FC = () => {
         <TabsContent value="notifications" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base md:text-lg">Notifications récentes</CardTitle>
+              <CardTitle className="text-base md:text-lg">{t('partnerCenter.dashboard.notificationPanel.title')}</CardTitle>
               <CardDescription className="text-xs md:text-sm">
-                Restez informé de l'activité sur vos points d'intérêt
+                {t('partnerCenter.dashboard.notificationPanel.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -335,7 +334,7 @@ const ResponsivePartnerDashboard: React.FC = () => {
         <div className="fixed bottom-4 right-4">
           <Button size="sm" className="shadow-lg">
             <Download className="w-4 h-4 mr-2" />
-            Exporter
+            {t('partnerCenter.dashboard.export')}
           </Button>
         </div>
       )}

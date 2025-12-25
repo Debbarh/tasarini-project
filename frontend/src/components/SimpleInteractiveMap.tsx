@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MapPin } from 'lucide-react';
 import { apiClient } from '@/integrations/api/client';
+import { toast } from 'sonner';
+import 'leaflet/dist/leaflet.css';
 
 interface SimpleInteractiveMapProps {
   latitude: number;
@@ -20,23 +22,38 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
-  const [marker, setMarker] = useState<any>(null);
+  const markerRef = useRef<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const onLocationSelectRef = useRef(onLocationSelect);
+
+  // Mettre à jour la ref quand la fonction change
+  useEffect(() => {
+    onLocationSelectRef.current = onLocationSelect;
+  }, [onLocationSelect]);
 
   // Fonction pour vérifier et créer le pays et la ville dans la base de données
   const ensureCountryAndCityExist = async (countryName: string, cityName: string, lat: number, lng: number) => {
     try {
-      // 1. Vérifier si le pays existe
+      // 1. Vérifier si le pays existe (sans filtre is_active pour le trouver même s'il est inactif)
       const existingCountries = await apiClient.get<any[]>('locations/countries/', {
         name__iexact: countryName,
         limit: 1
       });
 
       let countryId: string;
+      let countryCreated = false;
 
       if (existingCountries && existingCountries.length > 0) {
         // Le pays existe déjà
-        countryId = existingCountries[0].id;
+        const existingCountry = existingCountries[0];
+        countryId = existingCountry.id;
+
+        // Si le pays existe mais n'est pas actif, l'activer
+        if (!existingCountry.is_active) {
+          await apiClient.patch<any>(`locations/countries/${countryId}/`, {
+            is_active: true
+          });
+        }
       } else {
         // Créer le nouveau pays
         const countryCode = countryName.substring(0, 2).toUpperCase();
@@ -47,38 +64,62 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
         });
 
         countryId = newCountry.id;
+        countryCreated = true;
       }
 
-      // 2. Vérifier si la ville existe dans ce pays
+      // 2. Vérifier si la ville existe dans ce pays (sans filtre is_active)
       const existingCities = await apiClient.get<any[]>('locations/cities/', {
         country: countryId,
         name__iexact: cityName,
         limit: 1
       });
 
+      let cityCreated = false;
+
       if (!existingCities || existingCities.length === 0) {
         // Créer la nouvelle ville
-        await apiClient.post<any>('locations/cities/', {
+        const newCity = await apiClient.post<any>('locations/cities/', {
           name: cityName,
           country: countryId,
           latitude: lat,
           longitude: lng,
           is_active: true
         });
+        cityCreated = true;
       } else {
-        // Optionnellement, mettre à jour les coordonnées si elles n'existent pas
+        // La ville existe déjà
         const cityData = existingCities[0];
 
+        // Mettre à jour la ville si nécessaire
+        const updates: any = {};
+
+        // Activer la ville si elle est inactive
+        if (!cityData.is_active) {
+          updates.is_active = true;
+        }
+
+        // Mettre à jour les coordonnées si elles n'existent pas
         if (!cityData.latitude || !cityData.longitude) {
-          await apiClient.patch<any>(`locations/cities/${cityData.id}/`, {
-            latitude: lat,
-            longitude: lng
-          });
+          updates.latitude = lat;
+          updates.longitude = lng;
+        }
+
+        // Appliquer les mises à jour si nécessaire
+        if (Object.keys(updates).length > 0) {
+          await apiClient.patch<any>(`locations/cities/${cityData.id}/`, updates);
         }
       }
 
+      return {
+        countryId,
+        countryCreated,
+        cityCreated,
+        message: `${countryCreated ? '✨ Pays créé' : '✅ Pays existant'} • ${cityCreated ? '✨ Ville créée' : '✅ Ville existante'}`
+      };
+
     } catch (error) {
-      console.error('Erreur lors de la gestion du pays/ville:', error);
+      console.error('❌ Erreur lors de la gestion du pays/ville:', error);
+      throw error;
     }
   };
 
@@ -145,7 +186,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
           // Créer un nouveau marqueur unique à la position cliquée avec l'icône personnalisée
           const preciseLatLng = L.latLng(lat, lng);
           const newMarker = L.marker(preciseLatLng, { icon: customIcon }).addTo(mapInstance);
-          setMarker(newMarker);
+          markerRef.current = newMarker;
           
           try {
             // Faire du reverse geocoding avec Nominatim pour obtenir la ville et le pays
@@ -169,49 +210,52 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
               
               if (cityName && countryName) {
                 // Vérifier et créer le pays/ville dans la base de données
-                await ensureCountryAndCityExist(countryName, cityName, lat, lng);
-                
+                toast.loading('Vérification du pays et de la ville...', { id: 'location-check' });
+                const result = await ensureCountryAndCityExist(countryName, cityName, lat, lng);
+                toast.success(result.message, { id: 'location-check' });
+
                 // Appeler la fonction callback avec la ville et le pays
-                onLocationSelect(
-                  Number(lat.toFixed(8)), 
-                  Number(lng.toFixed(8)), 
+                onLocationSelectRef.current(
+                  Number(lat.toFixed(8)),
+                  Number(lng.toFixed(8)),
                   `${cityName}, ${countryName}`
                 );
               } else {
                 // Fallback si pas de données suffisantes
-                onLocationSelect(
-                  Number(lat.toFixed(8)), 
-                  Number(lng.toFixed(8)), 
+                onLocationSelectRef.current(
+                  Number(lat.toFixed(8)),
+                  Number(lng.toFixed(8)),
                   `Position sélectionnée: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
                 );
               }
             } else {
               // Fallback si le reverse geocoding échoue
-              onLocationSelect(
-                Number(lat.toFixed(8)), 
-                Number(lng.toFixed(8)), 
+              onLocationSelectRef.current(
+                Number(lat.toFixed(8)),
+                Number(lng.toFixed(8)),
                 `Position sélectionnée: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
               );
             }
           } catch (error) {
             console.error('Erreur lors du reverse geocoding:', error);
             // Fallback si le reverse geocoding échoue
-            onLocationSelect(
-              Number(lat.toFixed(8)), 
-              Number(lng.toFixed(8)), 
+            onLocationSelectRef.current(
+              Number(lat.toFixed(8)),
+              Number(lng.toFixed(8)),
               `Position sélectionnée: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
             );
           }
         });
 
         setMap(mapInstance);
-        setMarker(initialMarker);
+        markerRef.current = initialMarker;
         setIsInitialized(true);
-        
-        // Force un redimensionnement de la carte après son initialisation
-        setTimeout(() => {
-          mapInstance.invalidateSize();
-        }, 300);
+
+        // Force un redimensionnement de la carte après son initialisation avec plusieurs tentatives
+        setTimeout(() => mapInstance.invalidateSize(), 100);
+        setTimeout(() => mapInstance.invalidateSize(), 300);
+        setTimeout(() => mapInstance.invalidateSize(), 500);
+        setTimeout(() => mapInstance.invalidateSize(), 1000);
 
         // Observer pour redimensionner la carte quand le conteneur change
         const resizeObserver = new ResizeObserver(() => {
@@ -238,7 +282,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
     return () => {
       clearTimeout(timer);
     };
-  }, [latitude, longitude, onLocationSelect, isInitialized]);
+  }, [isInitialized]);
 
   // Mettre à jour la position du marqueur quand les coordonnées changent
   useEffect(() => {
@@ -272,7 +316,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
         });
         
         const newMarker = L.marker(preciseLatLng, { icon: customIcon }).addTo(map);
-        setMarker(newMarker);
+        markerRef.current = newMarker;
         map.setView(preciseLatLng, map.getZoom());
         
         // Force le redimensionnement de la carte
@@ -302,7 +346,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
         mapRef.current.innerHTML = '';
       }
       setMap(null);
-      setMarker(null);
+      markerRef.current = null;
       setIsInitialized(false);
     };
   }, []);

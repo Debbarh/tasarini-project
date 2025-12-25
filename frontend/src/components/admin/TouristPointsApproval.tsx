@@ -28,9 +28,13 @@ const TouristPointsApproval: React.FC = () => {
 
   const fetchTouristPoints = async () => {
     try {
-      
+
       const fetched = await adminPoiService.list({ ordering: '-created_at' });
-      setPoints(fetched);
+      // Handle both array and paginated response formats
+      const pointsArray = Array.isArray(fetched)
+        ? fetched
+        : (fetched as any)?.results || [];
+      setPoints(pointsArray);
     } catch (error: any) {
       console.error('❌ Erreur lors du chargement des points d\'intérêt:', error);
       toast.error(`Erreur lors du chargement: ${error.message}`);

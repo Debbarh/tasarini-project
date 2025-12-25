@@ -1,5 +1,6 @@
 import { apiClient } from "@/integrations/api/client";
 import { TravelGroup } from "@/types/trip";
+import { normalizeApiResponse } from "@/utils/apiHelpers";
 
 export interface POI {
   id: string;
@@ -45,6 +46,15 @@ export interface POI {
     code: string;
     label_fr: string;
     label_en: string;
+    label_es?: string;
+    label_de?: string;
+    label_it?: string;
+    label_pt?: string;
+    label_ru?: string;
+    label_ja?: string;
+    label_zh?: string;
+    label_hi?: string;
+    label_ar?: string;
     level_value: number;
     is_child_friendly: boolean;
     is_senior_friendly: boolean;
@@ -255,7 +265,7 @@ export const getPOIsInRadius = async (
     const params = buildSearchParams(filters);
     const data = await apiClient.get<any[]>('poi/tourist-points/', params);
 
-    let filteredPOIs = (data ?? [])
+    let filteredPOIs = normalizeApiResponse(data)
       .map(item => mapApiPoi(item, centerLat, centerLon))
       .filter((poi): poi is POI => !!poi && poi.distance !== undefined && poi.distance <= radiusKm);
 

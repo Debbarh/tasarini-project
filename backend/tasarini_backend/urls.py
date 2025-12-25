@@ -107,21 +107,36 @@ from apps.partners.views import (
 )
 from apps.content.views import (
     AdvertisementSettingViewSet,
+    ContentReportViewSet,
     DiscoveryItineraryViewSet,
+    ModerationActionViewSet,
     SavedItineraryViewSet,
+    SpamCheckView,
+    SpamPatternViewSet,
+    StoryAIProviderConfigViewSet,
+    StoryAnalyticsViewSet,
+    StoryCollectionViewSet,
     StoryCommentViewSet,
+    StoryDraftViewSet,
     StoryGenerationView,
+    StoryMediaViewSet,
+    StorySeriesViewSet,
     StoryViewSet,
 )
 from apps.bookings.views import BookingViewSet, RatePlanViewSet, RoomViewSet
 from apps.travel.views import (
     EnhancedTripPlannerView,
+    StreamingTripPlannerView,
+    TripPlanningProgressView,
+    DestinationImagesView,
     TravelAIAssistantView,
     SmartRecommendationsView,
     AmadeusProxyView,
     HotelBedsProxyView,
+    KayakProxyView,
+    AIProviderConfigViewSet,
 )
-from apps.core.views import SystemSettingViewSet
+from apps.core.views import SystemSettingViewSet, APIProviderViewSet, WidgetViewSet
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet, basename='user')
@@ -173,8 +188,18 @@ router.register('partners/withdrawals', PartnerWithdrawalViewSet, basename='part
 router.register('partners/endpoints', PartnerEndpointHealthViewSet, basename='partnerendpointhealth')
 router.register('stories', StoryViewSet, basename='story')
 router.register('story-comments', StoryCommentViewSet, basename='storycomment')
+router.register('content/story-ai-providers', StoryAIProviderConfigViewSet, basename='story-ai-provider')
+router.register('content/analytics', StoryAnalyticsViewSet, basename='story-analytics')
+router.register('content/reports', ContentReportViewSet, basename='content-report')
+router.register('content/moderation-actions', ModerationActionViewSet, basename='moderation-action')
+router.register('content/spam-patterns', SpamPatternViewSet, basename='spam-pattern')
+router.register('content/collections', StoryCollectionViewSet, basename='story-collection')
+router.register('content/drafts', StoryDraftViewSet, basename='story-draft')
+router.register('content/series', StorySeriesViewSet, basename='story-series')
+router.register('content/media', StoryMediaViewSet, basename='story-media')
 router.register('discovery/itineraries', DiscoveryItineraryViewSet, basename='discovery-itinerary')
 router.register('travel/saved-itineraries', SavedItineraryViewSet, basename='saved-itinerary')
+router.register('travel/ai-providers', AIProviderConfigViewSet, basename='travel-ai-provider')
 router.register('content/advertisements', AdvertisementSettingViewSet, basename='advertisementsetting')
 router.register('bookings/rooms', RoomViewSet, basename='room')
 router.register('bookings/rate-plans', RatePlanViewSet, basename='rateplan')
@@ -182,6 +207,8 @@ router.register('bookings/reservations', BookingViewSet, basename='reservation')
 router.register('analytics/tourist-points', TouristPointAnalyticsViewSet, basename='poi-analytics')
 router.register('analytics/travel', TravelAnalyticsViewSet, basename='travel-analytics')
 router.register('admin/system-settings', SystemSettingViewSet, basename='system-setting')
+router.register('admin/api-providers', APIProviderViewSet, basename='api-provider')
+router.register('admin/widgets', WidgetViewSet, basename='widget')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -259,12 +286,17 @@ urlpatterns = [
         name='poi-restaurant-section-detail',
     ),
     path('api/v1/travel/planner/', EnhancedTripPlannerView.as_view(), name='travel-planner'),
+    path('api/v1/travel/planner/stream/', StreamingTripPlannerView.as_view(), name='travel-planner-stream'),
+    path('api/v1/travel/planner/progress/', TripPlanningProgressView.as_view(), name='travel-planner-progress'),
+    path('api/v1/travel/destination-images/', DestinationImagesView.as_view(), name='travel-destination-images'),
     path('api/v1/travel/assistant/', TravelAIAssistantView.as_view(), name='travel-assistant'),
     path('api/v1/travel/smart-recommendations/', SmartRecommendationsView.as_view(), name='travel-smart-recommendations'),
     path('api/v1/travel/amadeus/', AmadeusProxyView.as_view(), name='travel-amadeus'),
     path('api/v1/travel/hotelbeds/', HotelBedsProxyView.as_view(), name='travel-hotelbeds'),
+    path('api/v1/travel/kayak/<str:endpoint>/', KayakProxyView.as_view(), name='travel-kayak'),
     path('api/v1/partners/subscriptions/checkout/', PartnerSubscriptionCheckoutView.as_view(), name='partner-subscription-checkout'),
     path('api/v1/stories/generate/', StoryGenerationView.as_view(), name='story-generate'),
+    path('api/v1/content/check-spam/', SpamCheckView.as_view(), name='check-spam'),
 ]
 
 if settings.DEBUG:

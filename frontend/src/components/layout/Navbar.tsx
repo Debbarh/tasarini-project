@@ -11,10 +11,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationDialog } from "@/components/notifications/NotificationDialog";
 import { LogOut, User, Building2, Bell, Menu, X } from "lucide-react";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 const Navbar = () => {
   const { user, profile, signOut, hasRole } = useAuth();
   const { getUnreadCount } = useNotifications();
+  const { settings } = useSystemSettings();
   const { t } = useTranslation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -35,27 +37,33 @@ const Navbar = () => {
 
   const NavigationLinks = ({ mobile = false, onLinkClick = () => {} }) => (
     <div className={mobile ? "flex flex-col space-y-4 py-4" : "hidden gap-4 lg:gap-6 md:flex"}>
-      <NavLink 
-        to="/plan" 
-        className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
-        onClick={onLinkClick}
-      >
-        {t('navigation.createTrip')}
-      </NavLink>
-      <NavLink 
-        to="/inspire" 
-        className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
-        onClick={onLinkClick}
-      >
-        {t('navigation.exploreWorld')}
-      </NavLink>
-      <NavLink 
-        to="/travel-stories" 
-        className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
-        onClick={onLinkClick}
-      >
-        {t('navigation.travelStories')}
-      </NavLink>
+      {settings.planYourTripEnabled && (
+        <NavLink
+          to="/plan"
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          onClick={onLinkClick}
+        >
+          {t('navigation.createTrip')}
+        </NavLink>
+      )}
+      {settings.beInspiredEnabled && (
+        <NavLink
+          to="/inspire"
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          onClick={onLinkClick}
+        >
+          {t('navigation.exploreWorld')}
+        </NavLink>
+      )}
+      {settings.travelStoriesEnabled && (
+        <NavLink
+          to="/travel-stories"
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          onClick={onLinkClick}
+        >
+          {t('navigation.travelStories')}
+        </NavLink>
+      )}
       {user && (
         <NavLink 
           to="/my-discoveries" 

@@ -118,6 +118,84 @@ const SystemSettings = () => {
                 onChange={(e) => handleSettingChange('siteDescription', e.target.value)}
               />
             </div>
+
+            <Separator className="my-6" />
+
+            <div className="space-y-4">
+              <h4 className="font-semibold">Fonctionnalités de la plateforme</h4>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Centrale de Réservation</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Affiche la section centrale de réservation sur le frontend
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.bookingCenterEnabled}
+                  onCheckedChange={(checked) => handleSettingChange('bookingCenterEnabled', checked)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Plan Your Trip</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Affiche le module de planification de voyage
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.planYourTripEnabled}
+                  onCheckedChange={(checked) => handleSettingChange('planYourTripEnabled', checked)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Be Inspired</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Affiche le module d'inspiration de voyage
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.beInspiredEnabled}
+                  onCheckedChange={(checked) => handleSettingChange('beInspiredEnabled', checked)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Travel Stories</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Affiche le module de récits de voyage
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.travelStoriesEnabled}
+                  onCheckedChange={(checked) => handleSettingChange('travelStoriesEnabled', checked)}
+                />
+              </div>
+            </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <Button
+              onClick={saveSettings}
+              className="flex-1"
+              disabled={saving}
+            >
+              {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Sauvegarder les paramètres
+            </Button>
+            <Button
+              variant="outline"
+              onClick={resetToDefaults}
+              className="flex-1"
+              disabled={saving}
+            >
+              Réinitialiser aux valeurs par défaut
+            </Button>
+          </div>
           </div>
             </TabsContent>
 
@@ -206,6 +284,26 @@ const SystemSettings = () => {
                 />
               </div>
             </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <Button
+              onClick={saveSettings}
+              className="flex-1"
+              disabled={saving}
+            >
+              {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Sauvegarder les paramètres
+            </Button>
+            <Button
+              variant="outline"
+              onClick={resetToDefaults}
+              className="flex-1"
+              disabled={saving}
+            >
+              Réinitialiser aux valeurs par défaut
+            </Button>
+          </div>
           </div>
             </TabsContent>
 

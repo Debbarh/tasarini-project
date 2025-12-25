@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ interface CulinaryStepProps {
 }
 
 export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) => {
+  const { t } = useTranslation();
   const { dietaryRestrictions, cuisineTypes, adventureLevels, restaurantCategories, loading } = useCulinarySettings();
   
   const [culinary, setCulinary] = useState<CulinaryPreferences>(
@@ -68,8 +70,8 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">Préférences culinaires</h3>
-          <p className="text-muted-foreground">Chargement...</p>
+          <h3 className="text-lg font-semibold mb-2">{t('planTrip.culinaryStep.title')}</h3>
+          <p className="text-muted-foreground">{t('planTrip.culinaryStep.loading')}</p>
         </div>
       </div>
     );
@@ -78,9 +80,9 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Préférences culinaires</h3>
+        <h3 className="text-lg font-semibold mb-2">{t('planTrip.culinaryStep.title')}</h3>
         <p className="text-muted-foreground">
-          Partagez vos goûts pour des recommandations personnalisées
+          {t('planTrip.culinaryStep.description')}
         </p>
       </div>
 
@@ -88,33 +90,7 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Utensils className="h-4 w-4 text-primary" />
-            Restrictions alimentaires
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {dietaryRestrictions.filter(r => r.is_active).map((restriction) => (
-              <div key={restriction.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`restriction-${restriction.id}`}
-                  checked={culinary.dietaryRestrictions.includes(restriction.label_fr)}
-                  onCheckedChange={() => toggleDietaryRestriction(restriction.label_fr)}
-                />
-                <Label htmlFor={`restriction-${restriction.id}`} className="text-sm">
-                  {restriction.icon_emoji && <span className="mr-1">{restriction.icon_emoji}</span>}
-                  {restriction.label_fr}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Utensils className="h-4 w-4 text-primary" />
-            Types de cuisine appréciés
+            {t('planTrip.culinaryStep.cuisineTypes')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -140,7 +116,7 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Utensils className="h-4 w-4 text-primary" />
-            Catégories de restaurants préférées
+            {t('planTrip.culinaryStep.restaurantCategories')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -171,7 +147,7 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Utensils className="h-4 w-4 text-primary" />
-            Niveau d'aventure culinaire
+            {t('planTrip.culinaryStep.adventureLevel')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -197,8 +173,34 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
             />
             <Label htmlFor="alcohol" className="flex items-center gap-2">
               <Wine className="h-4 w-4" />
-              Je consomme de l'alcool
+              {t('planTrip.culinaryStep.consumeAlcohol')}
             </Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Utensils className="h-4 w-4 text-primary" />
+            {t('planTrip.culinaryStep.dietaryRestrictions')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {dietaryRestrictions.filter(r => r.is_active).map((restriction) => (
+              <div key={restriction.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`restriction-${restriction.id}`}
+                  checked={culinary.dietaryRestrictions.includes(restriction.label_fr)}
+                  onCheckedChange={() => toggleDietaryRestriction(restriction.label_fr)}
+                />
+                <Label htmlFor={`restriction-${restriction.id}`} className="text-sm">
+                  {restriction.icon_emoji && <span className="mr-1">{restriction.icon_emoji}</span>}
+                  {restriction.label_fr}
+                </Label>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -207,29 +209,29 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
       <Card className="bg-secondary/50">
         <CardContent className="p-4">
           <div className="space-y-2">
-            <h4 className="font-medium">Résumé de vos préférences culinaires</h4>
+            <h4 className="font-medium">{t('planTrip.culinaryStep.summary')}</h4>
             <div className="flex flex-wrap gap-2">
               {culinary.dietaryRestrictions.length > 0 && (
                 <Badge variant="outline">
-                  {culinary.dietaryRestrictions.length} restriction{culinary.dietaryRestrictions.length > 1 ? 's' : ''}
+                  {culinary.dietaryRestrictions.length} {culinary.dietaryRestrictions.length > 1 ? t('planTrip.culinaryStep.restrictionsPlural') : t('planTrip.culinaryStep.restriction')}
                 </Badge>
               )}
               <Badge variant="outline">
-                {culinary.cuisineTypes.length} type{culinary.cuisineTypes.length > 1 ? 's' : ''} de cuisine
+                {culinary.cuisineTypes.length} {culinary.cuisineTypes.length > 1 ? t('planTrip.culinaryStep.cuisineTypesPlural') : t('planTrip.culinaryStep.cuisineType')}
               </Badge>
               {culinary.restaurantCategories.length > 0 && (
                 <Badge variant="outline">
-                  {culinary.restaurantCategories.length} catégorie{culinary.restaurantCategories.length > 1 ? 's' : ''} de restaurant
+                  {culinary.restaurantCategories.length} {culinary.restaurantCategories.length > 1 ? t('planTrip.culinaryStep.restaurantCategoriesPlural') : t('planTrip.culinaryStep.restaurantCategory')}
                 </Badge>
               )}
               <Badge variant="outline">
-                Aventure culinaire : {culinary.foodAdventure === 'conservative' ? 'Conservateur' : 
-                                   culinary.foodAdventure === 'moderate' ? 'Modéré' : 'Aventureux'}
+                {t('planTrip.culinaryStep.culinaryAdventure')} : {culinary.foodAdventure === 'conservative' ? t('planTrip.culinaryStep.conservative') : 
+                                   culinary.foodAdventure === 'moderate' ? t('planTrip.culinaryStep.moderate') : t('planTrip.culinaryStep.adventurous')}
               </Badge>
               {culinary.alcoholConsumption && (
                 <Badge variant="outline">
                   <Wine className="h-3 w-3 mr-1" />
-                  Consomme de l'alcool
+                  {t('planTrip.culinaryStep.consumesAlcohol')}
                 </Badge>
               )}
             </div>

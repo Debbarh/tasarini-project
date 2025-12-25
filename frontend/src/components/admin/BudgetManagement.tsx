@@ -5,15 +5,44 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Wallet, DollarSign, Percent } from "lucide-react";
+import { Plus, Edit, Trash2, Wallet, DollarSign, Percent, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { budgetService, BudgetLevel, BudgetCurrency, BudgetFlexibilityOption } from "@/services/budgetService";
+import { getLocalizedLabel, getLocalizedName } from "@/utils/multilingualHelpers";
+import { useTranslation } from "react-i18next";
+
+type LanguageOption = { code: string; label: string; required?: boolean };
+
+const ADDITIONAL_LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'es', label: 'Espagnol' },
+  { code: 'de', label: 'Allemand' },
+  { code: 'it', label: 'Italien' },
+  { code: 'pt', label: 'Portugais' },
+  { code: 'ru', label: 'Russe' },
+  { code: 'ja', label: 'Japonais' },
+  { code: 'zh', label: 'Chinois' },
+  { code: 'hi', label: 'Hindi' },
+  { code: 'ar', label: 'Arabe' },
+];
+
+const LABEL_LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'fr', label: 'Français', required: true },
+  { code: 'en', label: 'Anglais' },
+  ...ADDITIONAL_LANGUAGE_OPTIONS,
+];
+
+const DESCRIPTION_LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'fr', label: 'Français' },
+  { code: 'en', label: 'Anglais' },
+  ...ADDITIONAL_LANGUAGE_OPTIONS,
+];
 
 const BudgetManagement = () => {
+  const { i18n } = useTranslation();
   const [budgetLevels, setBudgetLevels] = useState<BudgetLevel[]>([]);
   const [currencies, setCurrencies] = useState<BudgetCurrency[]>([]);
   const [flexibilityOptions, setFlexibilityOptions] = useState<BudgetFlexibilityOption[]>([]);
@@ -39,9 +68,21 @@ const BudgetManagement = () => {
         budgetService.listCurrencies(),
         budgetService.listFlexOptions(),
       ]);
-      setBudgetLevels(levelsData || []);
-      setCurrencies(currenciesData || []);
-      setFlexibilityOptions(flexData || []);
+
+      // Handle both array and paginated response formats
+      const levelsArray = Array.isArray(levelsData)
+        ? levelsData
+        : (levelsData as any)?.results || [];
+      const currenciesArray = Array.isArray(currenciesData)
+        ? currenciesData
+        : (currenciesData as any)?.results || [];
+      const flexArray = Array.isArray(flexData)
+        ? flexData
+        : (flexData as any)?.results || [];
+
+      setBudgetLevels(levelsArray);
+      setCurrencies(currenciesArray);
+      setFlexibilityOptions(flexArray);
     } catch (error) {
       console.error('Error fetching budget data:', error);
       toast({
@@ -102,17 +143,49 @@ const BudgetManagement = () => {
 
   // Fonctions pour les devises
   const handleSaveCurrency = async (currency: Partial<BudgetCurrency>) => {
+    const payload = {
+      code: currency.code?.trim().toUpperCase() || '',
+      name_fr: currency.name_fr?.trim() || '',
+      name_en: currency.name_en?.trim() || '',
+      symbol: currency.symbol?.trim() || '€',
+      is_active: currency.is_active ?? true,
+      is_default: currency.is_default ?? false,
+      display_order: currency.display_order ?? 0,
+    };
+
+    if (payload.code.length < 3) {
+      toast({
+        title: "Code de devise invalide",
+        description: "Le code ISO doit contenir au moins 3 caractères.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!payload.name_fr) {
+      toast({
+        title: "Nom manquant",
+        description: "Le nom français est obligatoire pour enregistrer la devise.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!payload.symbol) {
+      toast({
+        title: "Symbole manquant",
+        description: "Veuillez renseigner un symbole (€, $, etc.).",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (editingCurrency) {
-        await budgetService.updateCurrency(editingCurrency.id, currency);
+        await budgetService.updateCurrency(editingCurrency.id, payload);
         toast({ title: "Succès", description: "Devise mise à jour" });
       } else {
-        await budgetService.createCurrency({
-          ...currency,
-          is_active: currency.is_active ?? true,
-          is_default: currency.is_default ?? false,
-          display_order: currency.display_order ?? 0,
-        });
+        await budgetService.createCurrency(payload);
         toast({ title: "Succès", description: "Devise créée" });
       }
 
@@ -123,7 +196,7 @@ const BudgetManagement = () => {
       console.error('Error saving currency:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder la devise",
+        description: (error as any)?.detail || (error as any)?.message || "Impossible de sauvegarder la devise",
         variant: "destructive",
       });
     }
@@ -193,6 +266,69 @@ const BudgetManagement = () => {
     }
   };
 
+  const handleTranslateLevel = async (levelId: number) => {
+    try {
+      const result = await budgetService.translateLevel(levelId);
+
+      // Update the editing state with translated values
+      setEditingLevel(result.budget_level);
+
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      await fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire le niveau de budget",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTranslateCurrency = async (currencyId: number) => {
+    try {
+      const result = await budgetService.translateCurrency(currencyId);
+
+      // Update the editing state with translated values
+      setEditingCurrency(result.budget_currency);
+
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      await fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire la devise",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTranslateFlexibility = async (flexibilityId: number) => {
+    try {
+      const result = await budgetService.translateFlexOption(flexibilityId);
+
+      // Update the editing state with translated values
+      setEditingFlexibility(result.budget_flexibility_option);
+
+      toast({
+        title: "✅ Traduction réussie",
+        description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
+      });
+      await fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de traduire l'option de flexibilité",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="levels">
@@ -218,12 +354,39 @@ const BudgetManagement = () => {
                       Ajouter un niveau
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
+                  <DialogContent className="max-w-3xl w-[90vw] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>
                         {editingLevel ? 'Modifier le niveau' : 'Nouveau niveau de budget'}
                       </DialogTitle>
+                      <DialogDescription>
+                        Définissez les montants journaliers, les labels et le statut d'activation de ce niveau.
+                      </DialogDescription>
                     </DialogHeader>
+
+                    {editingLevel && (
+                      <div className="border rounded-lg p-3 bg-blue-50 mb-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium">Traduction automatique</p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              Remplir automatiquement les champs de traduction vides via LibreTranslate
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTranslateLevel(editingLevel.id)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            <Globe className="w-4 h-4 mr-1" />
+                            Traduire
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
                     <BudgetLevelForm
                       level={editingLevel}
                       onSave={handleSaveLevel}
@@ -238,7 +401,7 @@ const BudgetManagement = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Code</TableHead>
-                    <TableHead>Label FR</TableHead>
+                    <TableHead>Label</TableHead>
                     <TableHead>Emoji</TableHead>
                     <TableHead>Montant par défaut</TableHead>
                     <TableHead>Gamme</TableHead>
@@ -250,7 +413,7 @@ const BudgetManagement = () => {
                   {budgetLevels.map((level) => (
                     <TableRow key={level.id}>
                       <TableCell className="font-mono">{level.code}</TableCell>
-                      <TableCell>{level.label_fr}</TableCell>
+                      <TableCell>{getLocalizedLabel(level, i18n.language) || level.label_fr}</TableCell>
                       <TableCell className="text-lg">{level.icon_emoji}</TableCell>
                       <TableCell>{level.default_daily_amount}€</TableCell>
                       <TableCell>
@@ -313,12 +476,39 @@ const BudgetManagement = () => {
                       Ajouter une devise
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
+                  <DialogContent className="max-w-3xl w-[90vw] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>
                         {editingCurrency ? 'Modifier la devise' : 'Nouvelle devise'}
                       </DialogTitle>
+                      <DialogDescription>
+                        Fournissez un code ISO, un nom et un symbole avant de définir les options de statut.
+                      </DialogDescription>
                     </DialogHeader>
+
+                    {editingCurrency && (
+                      <div className="border rounded-lg p-3 bg-blue-50 mb-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium">Traduction automatique</p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              Remplir automatiquement les champs de traduction vides via LibreTranslate
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTranslateCurrency(editingCurrency.id)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            <Globe className="w-4 h-4 mr-1" />
+                            Traduire
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
                     <BudgetCurrencyForm
                       currency={editingCurrency}
                       onSave={handleSaveCurrency}
@@ -333,8 +523,7 @@ const BudgetManagement = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Code</TableHead>
-                    <TableHead>Nom FR</TableHead>
-                    <TableHead>Nom EN</TableHead>
+                    <TableHead>Nom</TableHead>
                     <TableHead>Symbole</TableHead>
                     <TableHead>Statut</TableHead>
                     <TableHead>Par défaut</TableHead>
@@ -345,8 +534,7 @@ const BudgetManagement = () => {
                   {currencies.map((currency) => (
                     <TableRow key={currency.id}>
                       <TableCell className="font-mono">{currency.code}</TableCell>
-                      <TableCell>{currency.name_fr}</TableCell>
-                      <TableCell>{currency.name_en}</TableCell>
+                      <TableCell>{getLocalizedName(currency, i18n.language) || currency.name_fr}</TableCell>
                       <TableCell className="text-lg">{currency.symbol}</TableCell>
                       <TableCell>
                         <Badge variant={currency.is_active ? "default" : "secondary"}>
@@ -403,12 +591,39 @@ const BudgetManagement = () => {
                       Ajouter une option
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
+                  <DialogContent className="max-w-3xl w-[90vw] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>
                         {editingFlexibility ? 'Modifier l\'option' : 'Nouvelle option de flexibilité'}
                       </DialogTitle>
+                      <DialogDescription>
+                        Paramétrez la variation autorisée ainsi que les labels pour cette option de flexibilité.
+                      </DialogDescription>
                     </DialogHeader>
+
+                    {editingFlexibility && (
+                      <div className="border rounded-lg p-3 bg-blue-50 mb-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium">Traduction automatique</p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              Remplir automatiquement les champs de traduction vides via LibreTranslate
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTranslateFlexibility(editingFlexibility.id)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            <Globe className="w-4 h-4 mr-1" />
+                            Traduire
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
                     <BudgetFlexibilityForm
                       flexibility={editingFlexibility}
                       onSave={handleSaveFlexibility}
@@ -423,8 +638,7 @@ const BudgetManagement = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Code</TableHead>
-                    <TableHead>Label FR</TableHead>
-                    <TableHead>Label EN</TableHead>
+                    <TableHead>Label</TableHead>
                     <TableHead>Variation (%)</TableHead>
                     <TableHead>Statut</TableHead>
                     <TableHead>Par défaut</TableHead>
@@ -435,8 +649,7 @@ const BudgetManagement = () => {
                   {flexibilityOptions.map((option) => (
                     <TableRow key={option.id}>
                       <TableCell className="font-mono">{option.code}</TableCell>
-                      <TableCell>{option.label_fr}</TableCell>
-                      <TableCell>{option.label_en}</TableCell>
+                      <TableCell>{getLocalizedLabel(option, i18n.language) || option.label_fr}</TableCell>
                       <TableCell>±{option.percentage_variation}%</TableCell>
                       <TableCell>
                         <Badge variant={option.is_active ? "default" : "secondary"}>
@@ -491,36 +704,47 @@ const BudgetLevelForm = ({
   onSave: (level: Partial<BudgetLevel>) => void;
   onCancel: () => void;
 }) => {
-  const initialState = {
+  const createState = () => ({
     code: level?.code || '',
     label_fr: level?.label_fr || '',
     label_en: level?.label_en || '',
+    label_es: level?.label_es || '',
+    label_de: level?.label_de || '',
+    label_it: level?.label_it || '',
+    label_pt: level?.label_pt || '',
+    label_ru: level?.label_ru || '',
+    label_ja: level?.label_ja || '',
+    label_zh: level?.label_zh || '',
+    label_hi: level?.label_hi || '',
+    label_ar: level?.label_ar || '',
     description_fr: level?.description_fr || '',
     description_en: level?.description_en || '',
+    description_es: level?.description_es || '',
+    description_de: level?.description_de || '',
+    description_it: level?.description_it || '',
+    description_pt: level?.description_pt || '',
+    description_ru: level?.description_ru || '',
+    description_ja: level?.description_ja || '',
+    description_zh: level?.description_zh || '',
+    description_hi: level?.description_hi || '',
+    description_ar: level?.description_ar || '',
     icon_emoji: level?.icon_emoji || '',
     min_daily_amount: level?.min_daily_amount ?? null,
     max_daily_amount: level?.max_daily_amount ?? null,
     default_daily_amount: level?.default_daily_amount ?? 100,
     is_active: level?.is_active ?? true,
     display_order: level?.display_order ?? 0
-  };
-  const [formData, setFormData] = useState(initialState);
+  });
+  type LevelFormState = ReturnType<typeof createState>;
+  const [formData, setFormData] = useState<LevelFormState>(createState());
 
   useEffect(() => {
-    setFormData({
-      code: level?.code || '',
-      label_fr: level?.label_fr || '',
-      label_en: level?.label_en || '',
-      description_fr: level?.description_fr || '',
-      description_en: level?.description_en || '',
-      icon_emoji: level?.icon_emoji || '',
-      min_daily_amount: level?.min_daily_amount ?? null,
-      max_daily_amount: level?.max_daily_amount ?? null,
-      default_daily_amount: level?.default_daily_amount ?? 100,
-      is_active: level?.is_active ?? true,
-      display_order: level?.display_order ?? 0
-    });
+    setFormData(createState());
   }, [level]);
+
+  const updateField = <K extends keyof LevelFormState>(field: K, value: LevelFormState[K]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="space-y-4">
@@ -560,11 +784,21 @@ const BudgetLevelForm = ({
           <Input
             id="label_en"
             value={formData.label_en}
-            onChange={(e) => setFormData({ ...formData, label_en: e.target.value })}
+            onChange={(e) => updateField('label_en', e.target.value)}
             placeholder="Standard"
           />
         </div>
       </div>
+      <TranslationFieldGrid
+        title="Labels (toutes langues)"
+        description="Ajoutez les intitulés pour les langues supportées."
+        languages={LABEL_LANGUAGE_OPTIONS}
+        valueGetter={(code) => formData[`label_${code}` as keyof LevelFormState] as string || ""}
+        onChange={(code, value) => {
+          const field = `label_${code}` as keyof LevelFormState;
+          updateField(field, value as LevelFormState[typeof field]);
+        }}
+      />
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -572,7 +806,7 @@ const BudgetLevelForm = ({
           <Textarea
             id="description_fr"
             value={formData.description_fr}
-            onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
+            onChange={(e) => updateField('description_fr', e.target.value)}
             placeholder="Hôtels 3⭐, restaurants variés"
           />
         </div>
@@ -581,11 +815,22 @@ const BudgetLevelForm = ({
           <Textarea
             id="description_en"
             value={formData.description_en}
-            onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
+            onChange={(e) => updateField('description_en', e.target.value)}
             placeholder="3⭐ hotels, various restaurants"
           />
         </div>
       </div>
+      <TranslationFieldGrid
+        title="Descriptions (toutes langues)"
+        description="Décrivez ce niveau dans chaque langue utilisée."
+        languages={DESCRIPTION_LANGUAGE_OPTIONS}
+        textarea
+        valueGetter={(code) => formData[`description_${code}` as keyof LevelFormState] as string || ""}
+        onChange={(code, value) => {
+          const field = `description_${code}` as keyof LevelFormState;
+          updateField(field, value as LevelFormState[typeof field]);
+        }}
+      />
 
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
@@ -594,7 +839,7 @@ const BudgetLevelForm = ({
             id="min_daily_amount"
             type="number"
             value={formData.min_daily_amount || ''}
-            onChange={(e) => setFormData({ ...formData, min_daily_amount: e.target.value ? parseFloat(e.target.value) : null })}
+            onChange={(e) => updateField('min_daily_amount', e.target.value ? parseFloat(e.target.value) : null)}
             placeholder="50"
           />
         </div>
@@ -604,7 +849,7 @@ const BudgetLevelForm = ({
             id="max_daily_amount"
             type="number"
             value={formData.max_daily_amount || ''}
-            onChange={(e) => setFormData({ ...formData, max_daily_amount: e.target.value ? parseFloat(e.target.value) : null })}
+            onChange={(e) => updateField('max_daily_amount', e.target.value ? parseFloat(e.target.value) : null)}
             placeholder="150"
           />
         </div>
@@ -615,7 +860,7 @@ const BudgetLevelForm = ({
             type="number"
             required
             value={formData.default_daily_amount}
-            onChange={(e) => setFormData({ ...formData, default_daily_amount: parseFloat(e.target.value) || 100 })}
+            onChange={(e) => updateField('default_daily_amount', parseFloat(e.target.value) || 100)}
             placeholder="100"
           />
         </div>
@@ -628,14 +873,14 @@ const BudgetLevelForm = ({
             id="display_order"
             type="number"
             value={formData.display_order}
-            onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+            onChange={(e) => updateField('display_order', parseInt(e.target.value) || 0)}
           />
         </div>
         <div className="flex items-center space-x-2">
           <Switch
             id="is_active"
             checked={formData.is_active}
-            onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+            onCheckedChange={(checked) => updateField('is_active', checked)}
           />
           <Label htmlFor="is_active">Actif</Label>
         </div>
@@ -667,12 +912,22 @@ const BudgetCurrencyForm = ({
     code: currency?.code || '',
     name_fr: currency?.name_fr || '',
     name_en: currency?.name_en || '',
-    symbol: currency?.symbol || '',
+    name_es: currency?.name_es || '',
+    name_de: currency?.name_de || '',
+    name_it: currency?.name_it || '',
+    name_pt: currency?.name_pt || '',
+    name_ru: currency?.name_ru || '',
+    name_ja: currency?.name_ja || '',
+    name_zh: currency?.name_zh || '',
+    name_hi: currency?.name_hi || '',
+    name_ar: currency?.name_ar || '',
+    symbol: currency?.symbol || '€',
     is_active: currency?.is_active ?? true,
     is_default: currency?.is_default ?? false,
     display_order: currency?.display_order ?? 0,
   });
-  const [formData, setFormData] = useState(buildState);
+  type CurrencyFormState = ReturnType<typeof buildState>;
+  const [formData, setFormData] = useState<CurrencyFormState>(buildState());
 
   useEffect(() => {
     setFormData(buildState());
@@ -701,6 +956,16 @@ const BudgetCurrencyForm = ({
           />
         </div>
       </div>
+      <TranslationFieldGrid
+        title="Noms supplémentaires"
+        description="Saisissez le nom de la devise pour les autres langues."
+        languages={ADDITIONAL_LANGUAGE_OPTIONS}
+        valueGetter={(code) => formData[`name_${code}` as keyof CurrencyFormState] as string || ""}
+        onChange={(code, value) => {
+          const field = `name_${code}` as keyof CurrencyFormState;
+          setFormData((prev) => ({ ...prev, [field]: value as CurrencyFormState[typeof field] }));
+        }}
+      />
       
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -777,14 +1042,33 @@ const BudgetFlexibilityForm = ({
     code: flexibility?.code || '',
     label_fr: flexibility?.label_fr || '',
     label_en: flexibility?.label_en || '',
+    label_es: flexibility?.label_es || '',
+    label_de: flexibility?.label_de || '',
+    label_it: flexibility?.label_it || '',
+    label_pt: flexibility?.label_pt || '',
+    label_ru: flexibility?.label_ru || '',
+    label_ja: flexibility?.label_ja || '',
+    label_zh: flexibility?.label_zh || '',
+    label_hi: flexibility?.label_hi || '',
+    label_ar: flexibility?.label_ar || '',
     description_fr: flexibility?.description_fr || '',
     description_en: flexibility?.description_en || '',
+    description_es: flexibility?.description_es || '',
+    description_de: flexibility?.description_de || '',
+    description_it: flexibility?.description_it || '',
+    description_pt: flexibility?.description_pt || '',
+    description_ru: flexibility?.description_ru || '',
+    description_ja: flexibility?.description_ja || '',
+    description_zh: flexibility?.description_zh || '',
+    description_hi: flexibility?.description_hi || '',
+    description_ar: flexibility?.description_ar || '',
     percentage_variation: flexibility?.percentage_variation ?? 0,
     is_active: flexibility?.is_active ?? true,
     is_default: flexibility?.is_default ?? false,
     display_order: flexibility?.display_order ?? 0,
   });
-  const [formData, setFormData] = useState(createState);
+  type FlexFormState = ReturnType<typeof createState>;
+  const [formData, setFormData] = useState<FlexFormState>(createState());
 
   useEffect(() => {
     setFormData(createState());
@@ -815,48 +1099,27 @@ const BudgetFlexibilityForm = ({
           />
         </div>
       </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="flexibility_label_fr">Label français</Label>
-          <Input
-            id="flexibility_label_fr"
-            value={formData.label_fr}
-            onChange={(e) => setFormData({ ...formData, label_fr: e.target.value })}
-            placeholder="Flexible"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="flexibility_label_en">Label anglais</Label>
-          <Input
-            id="flexibility_label_en"
-            value={formData.label_en}
-            onChange={(e) => setFormData({ ...formData, label_en: e.target.value })}
-            placeholder="Flexible"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="flexibility_description_fr">Description française</Label>
-          <Textarea
-            id="flexibility_description_fr"
-            value={formData.description_fr}
-            onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
-            placeholder="Permet d'ajuster le budget selon les circonstances"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="flexibility_description_en">Description anglaise</Label>
-          <Textarea
-            id="flexibility_description_en"
-            value={formData.description_en}
-            onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
-            placeholder="Allows budget adjustments according to circumstances"
-          />
-        </div>
-      </div>
+      <TranslationFieldGrid
+        title="Labels (toutes langues)"
+        description="Complétez les traductions de cette option."
+        languages={LABEL_LANGUAGE_OPTIONS}
+        valueGetter={(code) => formData[`label_${code}` as keyof FlexFormState] as string || ""}
+        onChange={(code, value) => {
+          const field = `label_${code}` as keyof FlexFormState;
+          setFormData((prev) => ({ ...prev, [field]: value as FlexFormState[typeof field] }));
+        }}
+      />
+      <TranslationFieldGrid
+        title="Descriptions (toutes langues)"
+        description="Ajoutez une description localisée de l'option."
+        languages={DESCRIPTION_LANGUAGE_OPTIONS}
+        textarea
+        valueGetter={(code) => formData[`description_${code}` as keyof FlexFormState] as string || ""}
+        onChange={(code, value) => {
+          const field = `description_${code}` as keyof FlexFormState;
+          setFormData((prev) => ({ ...prev, [field]: value as FlexFormState[typeof field] }));
+        }}
+      />
 
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
@@ -897,5 +1160,54 @@ const BudgetFlexibilityForm = ({
     </div>
   );
 };
+
+interface TranslationFieldGridProps {
+  title: string;
+  description?: string;
+  languages: ReadonlyArray<LanguageOption>;
+  valueGetter: (code: string) => string;
+  onChange: (code: string, value: string) => void;
+  textarea?: boolean;
+}
+
+const TranslationFieldGrid = ({
+  title,
+  description,
+  languages,
+  valueGetter,
+  onChange,
+  textarea = false,
+}: TranslationFieldGridProps) => (
+  <div className="rounded-lg border p-3 space-y-3">
+    <div>
+      <p className="text-sm font-medium">{title}</p>
+      {description && <p className="text-xs text-muted-foreground">{description}</p>}
+    </div>
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      {languages.map(({ code, label, required }) => (
+        <div key={code} className="space-y-1">
+          <Label className="text-xs font-medium text-muted-foreground uppercase flex items-center gap-1">
+            {label}
+            {required && <span className="text-destructive">*</span>}
+          </Label>
+          {textarea ? (
+            <Textarea
+              value={valueGetter(code)}
+              required={required}
+              onChange={(e) => onChange(code, e.target.value)}
+            />
+          ) : (
+            <Input
+              value={valueGetter(code)}
+              required={required}
+              onChange={(e) => onChange(code, e.target.value)}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 
 export default BudgetManagement;

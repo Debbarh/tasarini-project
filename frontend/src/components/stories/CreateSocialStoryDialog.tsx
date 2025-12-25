@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -67,6 +68,7 @@ interface ItineraryData {
 }
 
 export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledData }: CreateSocialStoryDialogProps) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { categories, intensityLevels, loading: activityLoading } = useActivitySettings();
   const [loading, setLoading] = useState(false);
@@ -114,7 +116,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
 
   const generateStoryFromItinerary = async () => {
     if (!selectedItinerary) {
-      toast.error('Veuillez sélectionner un itinéraire');
+      toast.error(t('travelStories.createDialog.aiItinerary.selectPlaceholder'));
       return;
     }
 
@@ -140,11 +142,11 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
       }));
 
       setActiveTab('manual'); // Switch to manual tab to allow editing
-      toast.success('Story générée avec l\'IA ! Vous pouvez maintenant la personnaliser.');
+      toast.success(t('travelStories.createDialog.toast.aiGenerated'));
 
     } catch (error: any) {
       console.error('Error generating story:', error);
-      toast.error('Erreur lors de la génération automatique');
+      toast.error(t('travelStories.createDialog.toast.generationError'));
     } finally {
       setAiGenerating(false);
     }
@@ -165,11 +167,11 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
       }));
 
       setActiveTab('manual');
-      toast.success('Story générée ! Personnalisez-la selon vos envies.');
+      toast.success(t('travelStories.createDialog.toast.instantGenerated'));
 
     } catch (error: any) {
       console.error('Error generating instant story:', error);
-      toast.error('Erreur lors de la génération instantanée');
+      toast.error(t('travelStories.createDialog.toast.generationError'));
     } finally {
       setAiGenerating(false);
     }
@@ -240,12 +242,12 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
     e.preventDefault();
     
     if (!user) {
-      toast.error('Vous devez être connecté pour créer une story');
+      toast.error(t('travelStories.createDialog.toast.loginRequired'));
       return;
     }
 
     if (!formData.title.trim() || !formData.content.trim()) {
-      toast.error('Le titre et le contenu sont requis');
+      toast.error(t('travelStories.createDialog.toast.fieldsRequired'));
       return;
     }
 
@@ -253,17 +255,21 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
 
     try {
       // Create the story
+      const lat = Number(formData.location_lat);
+      const lon = Number(formData.location_lon);
+      const hasCoords = Number.isFinite(lat) && Number.isFinite(lon);
+
       const storyData = {
         title: formData.title.trim(),
         content: formData.content.trim(),
         tags: formData.tags,
-        location_name: formData.location_name.trim() || null,
-        location_lat: formData.location_lat || null,
-        location_lon: formData.location_lon || null,
+        location_name: formData.location_name.trim() || '',
+        location_lat: hasCoords ? lat : null,
+        location_lon: hasCoords ? lon : null,
         trip_date: formData.trip_date ? format(formData.trip_date, 'yyyy-MM-dd') : null,
         is_public: formData.is_public,
         story_type: formData.story_type,
-        ai_generated_from: formData.ai_generated_from || null,
+        ai_generated_from: formData.ai_generated_from ? String(formData.ai_generated_from) : '',
         media_images: formData.media_images,
         media_videos: formData.media_videos,
         is_verified: false,
@@ -281,8 +287,9 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
       onStoryCreated();
       
     } catch (error: any) {
-      console.error('Erreur lors de la création de la story:', error);
-      toast.error(`Erreur lors de la création: ${error.message}`);
+      const detail = error?.payload?.detail || error?.message;
+      console.error('Erreur lors de la création de la story:', error?.payload || error);
+      toast.error(detail || t('travelStories.createDialog.toast.createError'));
     } finally {
       setLoading(false);
     }
@@ -294,15 +301,15 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="ai-itinerary" className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
-            Depuis Itinéraire
+            {t('travelStories.createDialog.tabs.aiItinerary')}
           </TabsTrigger>
           <TabsTrigger value="ai-instant" className="flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
-            Génération IA
+            {t('travelStories.createDialog.tabs.aiInstant')}
           </TabsTrigger>
           <TabsTrigger value="manual" className="flex items-center gap-2">
             <Activity className="w-4 h-4" />
-            Manuel
+            {t('travelStories.createDialog.tabs.manual')}
           </TabsTrigger>
         </TabsList>
 
@@ -311,15 +318,15 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5" />
-                Générer depuis un itinéraire
+                {t('travelStories.createDialog.aiItinerary.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Sélectionnez un itinéraire</Label>
+                <Label>{t('travelStories.createDialog.aiItinerary.selectLabel')}</Label>
                 <Select value={selectedItinerary} onValueChange={setSelectedItinerary}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choisir un itinéraire..." />
+                    <SelectValue placeholder={t('travelStories.createDialog.aiItinerary.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {userItineraries.map((itinerary) => (
@@ -339,12 +346,12 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                 {aiGenerating ? (
                   <>
                     <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-                    Génération en cours...
+                    {t('travelStories.createDialog.aiItinerary.generating')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Générer la story
+                    {t('travelStories.createDialog.aiItinerary.generate')}
                   </>
                 )}
               </Button>
@@ -357,7 +364,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
-                Génération instantanée par IA
+                {t('travelStories.createDialog.aiInstant.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -369,8 +376,8 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                   className="h-auto p-4 text-left"
                 >
                   <div>
-                    <div className="font-medium">🗼 Paris Romantique</div>
-                    <div className="text-sm text-muted-foreground">Voyage en amoureux avec monuments</div>
+                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.paris.title')}</div>
+                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.paris.description')}</div>
                   </div>
                 </Button>
                 
@@ -381,8 +388,8 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                   className="h-auto p-4 text-left"
                 >
                   <div>
-                    <div className="font-medium">🏔️ Aventure Montagne</div>
-                    <div className="text-sm text-muted-foreground">Trekking et paysages sauvages</div>
+                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.mountain.title')}</div>
+                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.mountain.description')}</div>
                   </div>
                 </Button>
                 
@@ -393,8 +400,8 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                   className="h-auto p-4 text-left"
                 >
                   <div>
-                    <div className="font-medium">🏖️ Road Trip Côtier</div>
-                    <div className="text-sm text-muted-foreground">Plages et couchers de soleil</div>
+                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.coastal.title')}</div>
+                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.coastal.description')}</div>
                   </div>
                 </Button>
                 
@@ -405,8 +412,8 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                   className="h-auto p-4 text-left"
                 >
                   <div>
-                    <div className="font-medium">🎨 Culture Urbaine</div>
-                    <div className="text-sm text-muted-foreground">Art de rue et gastronomie</div>
+                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.urban.title')}</div>
+                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.urban.description')}</div>
                   </div>
                 </Button>
               </div>
@@ -414,7 +421,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
               {aiGenerating && (
                 <div className="text-center py-4">
                   <Sparkles className="w-6 h-6 mx-auto animate-spin text-primary mb-2" />
-                  <p className="text-sm text-muted-foreground">L'IA prépare votre story...</p>
+                  <p className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.preparing')}</p>
                 </div>
               )}
             </CardContent>
@@ -424,23 +431,23 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
         <TabsContent value="manual" className="mt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Titre de votre story *</Label>
+              <Label htmlFor="title">{t('travelStories.createDialog.form.title')}</Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
-                placeholder="Un titre accrocheur pour votre expérience..."
+                placeholder={t('travelStories.createDialog.form.titlePlaceholder')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content">Votre histoire *</Label>
+              <Label htmlFor="content">{t('travelStories.createDialog.form.content')}</Label>
               <Textarea
                 id="content"
                 value={formData.content}
                 onChange={(e) => handleInputChange('content', e.target.value)}
-                placeholder="Racontez votre expérience, vos émotions, vos découvertes..."
+                placeholder={t('travelStories.createDialog.form.contentPlaceholder')}
                 rows={8}
                 required
               />
@@ -449,10 +456,10 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <ImageIcon className="h-4 w-4" />
-                Images et vidéos
+                {t('travelStories.createDialog.form.media')}
               </Label>
               <p className="text-sm text-muted-foreground">
-                Ajoutez des photos et vidéos pour enrichir votre récit
+                {t('travelStories.createDialog.form.mediaHelper')}
               </p>
               <MediaUploader
                 onMediaChange={(images, videos) => {
@@ -473,10 +480,10 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <div className="space-y-3">
               <Label className="flex items-center gap-2">
                 <Activity className="h-4 w-4" />
-                Catégories d'activités
+                {t('travelStories.createDialog.form.activities')}
               </Label>
               {activityLoading ? (
-                <div className="text-sm text-muted-foreground">Chargement des catégories...</div>
+                <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.form.activitiesLoading')}</div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {categories.filter(cat => cat.is_active).map((category) => (
@@ -505,10 +512,10 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <div className="space-y-3">
               <Label className="flex items-center gap-2">
                 <Activity className="h-4 w-4" />
-                Niveau d'intensité
+                {t('travelStories.createDialog.form.intensity')}
               </Label>
               {activityLoading ? (
-                <div className="text-sm text-muted-foreground">Chargement des niveaux...</div>
+                <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.form.intensityLoading')}</div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {intensityLevels.filter(level => level.is_active).map((level) => (
@@ -529,7 +536,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             </div>
 
             <div className="space-y-2">
-              <Label>Date du voyage</Label>
+              <Label>{t('travelStories.createDialog.form.date')}</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -537,7 +544,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                     className="w-full justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.trip_date ? format(formData.trip_date, "PPP", { locale: fr }) : "Choisir une date"}
+                    {formData.trip_date ? format(formData.trip_date, "PPP", { locale: fr }) : t('travelStories.createDialog.form.datePlaceholder')}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -554,12 +561,12 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <MapIcon className="h-4 w-4" />
-                Lieu de votre voyage
+                {t('travelStories.createDialog.form.location')}
               </Label>
               <p className="text-sm text-muted-foreground">
-                Cliquez sur la carte pour sélectionner le lieu ou utilisez votre position actuelle
+                {t('travelStories.createDialog.form.locationHelper')}
               </p>
-              <div className="h-[400px] w-full rounded-lg border">
+              <div className="h-64 sm:h-72 lg:h-80 w-full rounded-lg border overflow-hidden">
                 <LocationPicker
                   latitude={formData.location_lat}
                   longitude={formData.location_lon}
@@ -580,13 +587,13 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <Tag className="h-4 w-4" />
-                Tags personnalisés (optionnel)
+                {t('travelStories.createDialog.form.tags')}
               </Label>
               <div className="flex gap-2">
                 <Input
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
-                  placeholder="Ajouter un tag personnalisé..."
+                  placeholder={t('travelStories.createDialog.form.tagsPlaceholder')}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                 />
                 <Button type="button" onClick={addTag} size="sm">
@@ -619,17 +626,17 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                 onCheckedChange={(checked) => handleInputChange('is_public', checked)}
               />
               <Label htmlFor="is_public">
-                {formData.is_public ? 'Story publique' : 'Story privée'}
+                {formData.is_public ? t('travelStories.createDialog.form.public') : t('travelStories.createDialog.form.private')}
               </Label>
             </div>
 
             {/* Actions */}
             <div className="flex items-center justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={onCancel}>
-                Annuler
+                {t('travelStories.createDialog.form.cancel')}
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? 'Création...' : 'Créer la story'}
+                {loading ? t('travelStories.createDialog.form.creating') : t('travelStories.createDialog.form.create')}
               </Button>
             </div>
           </form>

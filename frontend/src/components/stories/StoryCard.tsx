@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { storyService, Story } from "@/services/storyService";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface StoryCardProps {
   story: Story;
@@ -22,6 +23,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const storyType = (story.story_type as 'user' | 'ai_generated' | 'partner_sponsored') || 'user';
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -53,13 +55,22 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
     }
   };
 
-  const authorName = story.author_name || 'Voyageur';
-  const authorInitials = authorName
-    .split(' ')
-    .map(part => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase() || 'V';
+  // Build author display name from first and last name if available
+  const firstName = story.author_first_name?.trim() || '';
+  const lastName = story.author_last_name?.trim() || '';
+  const fullName = firstName && lastName ? `${firstName} ${lastName}` : '';
+
+  const authorName = fullName || (story.author_name && story.author_name.trim()) || 'Voyageur';
+  const displayText = fullName || (story.author_name && story.author_name.trim()) ? `par ${authorName}` : 'Créé par voyageur';
+
+  const authorInitials = firstName && lastName
+    ? `${firstName[0]}${lastName[0]}`.toUpperCase()
+    : authorName
+        .split(' ')
+        .map(part => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase() || 'V';
 
   const handleBookmarkClick = async () => {
     if (!onBookmark || !currentUserId) {
@@ -122,7 +133,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
-                par {authorName}
+                {displayText}
               </p>
             </div>
           </div>
@@ -260,6 +271,13 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
           <div className="text-xs text-muted-foreground">
             {format(new Date(story.created_at), "dd MMM", { locale: fr })}
           </div>
+        </div>
+
+        <div className="pt-2 flex justify-end">
+          <Button variant="outline" size="sm" onClick={() => navigate(`/travel-stories/${story.id}`)}>
+            <ExternalLink className="w-4 h-4 mr-1" />
+            Voir les détails
+          </Button>
         </div>
       </CardContent>
     </Card>

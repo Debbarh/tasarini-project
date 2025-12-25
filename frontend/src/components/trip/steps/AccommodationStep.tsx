@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -7,6 +8,50 @@ import { Badge } from "@/components/ui/badge";
 import { Home, Shield, MapPin, Heart, Accessibility } from "lucide-react";
 import { TripFormData, AccommodationPreferences } from "@/types/trip";
 import { useAccommodationSettings } from "@/hooks/useAccommodationSettings";
+import { AccommodationTaxonomyEntry } from "@/services/accommodationSettingsService";
+import { getLocalizedLabel } from "@/utils/multilingualHelpers";
+
+const matchEntryByValue = (value: string, entries: AccommodationTaxonomyEntry[]) => {
+  return entries.find((entry) =>
+    entry.code === value ||
+    entry.label_fr === value ||
+    entry.label_en === value ||
+    entry.label_es === value ||
+    entry.label_de === value ||
+    entry.label_it === value ||
+    entry.label_pt === value ||
+    entry.label_ru === value ||
+    entry.label_ja === value ||
+    entry.label_zh === value ||
+    entry.label_hi === value ||
+    entry.label_ar === value
+  );
+};
+
+const normalizeSelection = (values: string[], entries: AccommodationTaxonomyEntry[]) => {
+  if (!values || values.length === 0) return [];
+
+  const normalized: string[] = [];
+  values.forEach((value) => {
+    const match = matchEntryByValue(value, entries);
+    const nextValue = match ? match.code : value;
+    if (nextValue && !normalized.includes(nextValue)) {
+      normalized.push(nextValue);
+    }
+  });
+
+  return normalized;
+};
+
+const arraysEqual = (a: string[], b: string[]) => {
+  if (a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
+};
+
+const getLabelFromCode = (code: string, entries: AccommodationTaxonomyEntry[], language: string) => {
+  const item = entries.find((entry) => entry.code === code);
+  return getLocalizedLabel(item, language) || code;
+};
 
 interface AccommodationStepProps {
   data: Partial<TripFormData>;
@@ -15,6 +60,7 @@ interface AccommodationStepProps {
 }
 
 export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationStepProps) => {
+  const { t, i18n } = useTranslation();
   const { 
     accommodationTypes, 
     accommodationAmenities, 
@@ -37,6 +83,46 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
   );
 
   useEffect(() => {
+    if (loading) return;
+
+    setAccommodation((prev) => {
+      const normalized = {
+        type: normalizeSelection(prev.type, accommodationTypes),
+        amenities: normalizeSelection(prev.amenities, accommodationAmenities),
+        location: normalizeSelection(prev.location, accommodationLocations),
+        accessibility: normalizeSelection(prev.accessibility, accommodationAccessibility),
+        security: normalizeSelection(prev.security, accommodationSecurity),
+        ambiance: normalizeSelection(prev.ambiance, accommodationAmbiance),
+      };
+
+      const unchanged =
+        arraysEqual(prev.type, normalized.type) &&
+        arraysEqual(prev.amenities, normalized.amenities) &&
+        arraysEqual(prev.location, normalized.location) &&
+        arraysEqual(prev.accessibility, normalized.accessibility) &&
+        arraysEqual(prev.security, normalized.security) &&
+        arraysEqual(prev.ambiance, normalized.ambiance);
+
+      if (unchanged) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        ...normalized,
+      };
+    });
+  }, [
+    loading,
+    accommodationTypes,
+    accommodationAmenities,
+    accommodationLocations,
+    accommodationAccessibility,
+    accommodationSecurity,
+    accommodationAmbiance,
+  ]);
+
+  useEffect(() => {
     const isValid = accommodation.type.length > 0;
     onValidate(isValid);
     onUpdate({ accommodationPreferences: accommodation });
@@ -46,51 +132,39 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
     setAccommodation(prev => ({ ...prev, ...updates }));
   };
 
-  const toggleType = (type: string) => {
+  const toggleType = (code: string) => {
     const current = accommodation.type;
-    const updated = current.includes(type)
-      ? current.filter(t => t !== type)
-      : [...current, type];
+    const updated = current.includes(code) ? current.filter((t) => t !== code) : [...current, code];
     updateAccommodation({ type: updated });
   };
 
-  const toggleAmenity = (amenity: string) => {
+  const toggleAmenity = (code: string) => {
     const current = accommodation.amenities;
-    const updated = current.includes(amenity)
-      ? current.filter(a => a !== amenity)
-      : [...current, amenity];
+    const updated = current.includes(code) ? current.filter((a) => a !== code) : [...current, code];
     updateAccommodation({ amenities: updated });
   };
 
-  const toggleLocation = (location: string) => {
+  const toggleLocation = (code: string) => {
     const current = accommodation.location;
-    const updated = current.includes(location)
-      ? current.filter(l => l !== location)
-      : [...current, location];
+    const updated = current.includes(code) ? current.filter((l) => l !== code) : [...current, code];
     updateAccommodation({ location: updated });
   };
 
-  const toggleAccessibility = (accessibility: string) => {
+  const toggleAccessibility = (code: string) => {
     const current = accommodation.accessibility;
-    const updated = current.includes(accessibility)
-      ? current.filter(a => a !== accessibility)
-      : [...current, accessibility];
+    const updated = current.includes(code) ? current.filter((a) => a !== code) : [...current, code];
     updateAccommodation({ accessibility: updated });
   };
 
-  const toggleSecurity = (security: string) => {
+  const toggleSecurity = (code: string) => {
     const current = accommodation.security;
-    const updated = current.includes(security)
-      ? current.filter(s => s !== security)
-      : [...current, security];
+    const updated = current.includes(code) ? current.filter((s) => s !== code) : [...current, code];
     updateAccommodation({ security: updated });
   };
 
-  const toggleAmbiance = (ambiance: string) => {
+  const toggleAmbiance = (code: string) => {
     const current = accommodation.ambiance;
-    const updated = current.includes(ambiance)
-      ? current.filter(a => a !== ambiance)
-      : [...current, ambiance];
+    const updated = current.includes(code) ? current.filter((a) => a !== code) : [...current, code];
     updateAccommodation({ ambiance: updated });
   };
 
@@ -98,8 +172,8 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">Préférences d'hébergement</h3>
-          <p className="text-muted-foreground">Chargement...</p>
+          <h3 className="text-lg font-semibold mb-2">{t('planTrip.accommodationStep.title')}</h3>
+          <p className="text-muted-foreground">{t('planTrip.accommodationStep.loading')}</p>
         </div>
       </div>
     );
@@ -108,9 +182,9 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Préférences d'hébergement</h3>
+        <h3 className="text-lg font-semibold mb-2">{t('planTrip.accommodationStep.title')}</h3>
         <p className="text-muted-foreground">
-          Choisissez le type d'hébergement et les services qui vous importent
+          {t('planTrip.accommodationStep.description')}
         </p>
       </div>
 
@@ -119,7 +193,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Home className="h-4 w-4 text-primary" />
-            Type d'hébergement
+            {t('planTrip.accommodationStep.accommodationType')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -127,12 +201,14 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
             {accommodationTypes.filter(t => t.is_active).map((type) => (
               <Button
                 key={type.id}
-                variant={accommodation.type.includes(type.label_fr) ? "default" : "outline"}
+                variant={accommodation.type.includes(type.code) ? "default" : "outline"}
                 className="h-auto flex-col gap-2 p-4"
-                onClick={() => toggleType(type.label_fr)}
+                onClick={() => toggleType(type.code)}
               >
                 <span className="text-2xl">{type.icon_emoji}</span>
-                <span className="text-sm text-center">{type.label_fr}</span>
+                <span className="text-sm text-center">
+                  {getLabelFromCode(type.code, accommodationTypes, i18n.language)}
+                </span>
               </Button>
             ))}
           </div>
@@ -144,26 +220,26 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Heart className="h-4 w-4 text-primary" />
-            Services et équipements
+            {t('planTrip.accommodationStep.amenities')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {accommodationAmenities.filter(a => a.is_active).map((amenity) => (
-              <div key={amenity.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`amenity-${amenity.id}`}
-                  checked={accommodation.amenities.includes(amenity.label_fr)}
-                  onCheckedChange={() => toggleAmenity(amenity.label_fr)}
-                />
-                <Label htmlFor={`amenity-${amenity.id}`} className="text-sm flex items-center gap-1">
-                  {amenity.icon_emoji && <span>{amenity.icon_emoji}</span>}
-                  <span>{amenity.label_fr}</span>
-                  {amenity.category && (
-                    <Badge variant="outline" className="text-xs ml-1">{amenity.category}</Badge>
-                  )}
-                </Label>
-              </div>
+                <div key={amenity.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`amenity-${amenity.id}`}
+                    checked={accommodation.amenities.includes(amenity.code)}
+                    onCheckedChange={() => toggleAmenity(amenity.code)}
+                  />
+                  <Label htmlFor={`amenity-${amenity.id}`} className="text-sm flex items-center gap-1">
+                    {amenity.icon_emoji && <span>{amenity.icon_emoji}</span>}
+                    <span>{getLabelFromCode(amenity.code, accommodationAmenities, i18n.language)}</span>
+                    {amenity.category && (
+                      <Badge variant="outline" className="text-xs ml-1">{amenity.category}</Badge>
+                    )}
+                  </Label>
+                </div>
             ))}
           </div>
         </CardContent>
@@ -174,7 +250,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <MapPin className="h-4 w-4 text-primary" />
-            Localisation préférée
+            {t('planTrip.accommodationStep.location')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -182,12 +258,14 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
             {accommodationLocations.filter(l => l.is_active).map((location) => (
               <Button
                 key={location.id}
-                variant={accommodation.location.includes(location.label_fr) ? "default" : "outline"}
+                variant={accommodation.location.includes(location.code) ? "default" : "outline"}
                 className="h-auto flex-col gap-2 p-3"
-                onClick={() => toggleLocation(location.label_fr)}
+                onClick={() => toggleLocation(location.code)}
               >
                 <span className="text-xl">{location.icon_emoji}</span>
-                <span className="text-xs text-center">{location.label_fr}</span>
+                <span className="text-xs text-center">
+                  {getLabelFromCode(location.code, accommodationLocations, i18n.language)}
+                </span>
               </Button>
             ))}
           </div>
@@ -200,7 +278,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Accessibility className="h-4 w-4 text-primary" />
-              Accessibilité
+              {t('planTrip.accommodationStep.accessibility')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -209,12 +287,12 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
                 <div key={accessibility.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={`accessibility-${accessibility.id}`}
-                    checked={accommodation.accessibility.includes(accessibility.label_fr)}
-                    onCheckedChange={() => toggleAccessibility(accessibility.label_fr)}
+                    checked={accommodation.accessibility.includes(accessibility.code)}
+                    onCheckedChange={() => toggleAccessibility(accessibility.code)}
                   />
                   <Label htmlFor={`accessibility-${accessibility.id}`} className="text-sm">
                     {accessibility.icon_emoji && <span className="mr-1">{accessibility.icon_emoji}</span>}
-                    {accessibility.label_fr}
+                    {getLabelFromCode(accessibility.code, accommodationAccessibility, i18n.language)}
                   </Label>
                 </div>
               ))}
@@ -227,7 +305,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Shield className="h-4 w-4 text-primary" />
-              Sécurité
+              {t('planTrip.accommodationStep.security')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -236,12 +314,12 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
                 <div key={security.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={`security-${security.id}`}
-                    checked={accommodation.security.includes(security.label_fr)}
-                    onCheckedChange={() => toggleSecurity(security.label_fr)}
+                    checked={accommodation.security.includes(security.code)}
+                    onCheckedChange={() => toggleSecurity(security.code)}
                   />
                   <Label htmlFor={`security-${security.id}`} className="text-sm">
                     {security.icon_emoji && <span className="mr-1">{security.icon_emoji}</span>}
-                    {security.label_fr}
+                    {getLabelFromCode(security.code, accommodationSecurity, i18n.language)}
                   </Label>
                 </div>
               ))}
@@ -254,7 +332,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Heart className="h-4 w-4 text-primary" />
-              Ambiance
+              {t('planTrip.accommodationStep.ambiance')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -263,12 +341,12 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
                 <div key={ambiance.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={`ambiance-${ambiance.id}`}
-                    checked={accommodation.ambiance.includes(ambiance.label_fr)}
-                    onCheckedChange={() => toggleAmbiance(ambiance.label_fr)}
+                    checked={accommodation.ambiance.includes(ambiance.code)}
+                    onCheckedChange={() => toggleAmbiance(ambiance.code)}
                   />
                   <Label htmlFor={`ambiance-${ambiance.id}`} className="text-sm">
                     {ambiance.icon_emoji && <span className="mr-1">{ambiance.icon_emoji}</span>}
-                    {ambiance.label_fr}
+                    {getLabelFromCode(ambiance.code, accommodationAmbiance, i18n.language)}
                   </Label>
                 </div>
               ))}
@@ -281,14 +359,14 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
       <Card className="bg-secondary/50">
         <CardContent className="p-4">
           <div className="space-y-2">
-            <h4 className="font-medium">Résumé de vos préférences d'hébergement</h4>
+            <h4 className="font-medium">{t('planTrip.accommodationStep.summary')}</h4>
             <div className="space-y-2">
               {accommodation.type.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  <span className="text-sm font-medium">Types :</span>
-                  {accommodation.type.map(type => (
-                    <Badge key={type} variant="outline" className="text-xs">
-                      {type}
+                  <span className="text-sm font-medium">{t('planTrip.accommodationStep.types')} :</span>
+                  {accommodation.type.map(code => (
+                    <Badge key={code} variant="outline" className="text-xs">
+                      {getLabelFromCode(code, accommodationTypes, i18n.language)}
                     </Badge>
                   ))}
                 </div>
@@ -296,15 +374,15 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
               
               {accommodation.amenities.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  <span className="text-sm font-medium">Services :</span>
-                  {accommodation.amenities.slice(0, 3).map(amenity => (
-                    <Badge key={amenity} variant="outline" className="text-xs">
-                      {amenity}
+                  <span className="text-sm font-medium">{t('planTrip.accommodationStep.services')} :</span>
+                  {accommodation.amenities.slice(0, 3).map(code => (
+                    <Badge key={code} variant="outline" className="text-xs">
+                      {getLabelFromCode(code, accommodationAmenities, i18n.language)}
                     </Badge>
                   ))}
                   {accommodation.amenities.length > 3 && (
                     <Badge variant="outline" className="text-xs">
-                      +{accommodation.amenities.length - 3} autres
+                      +{accommodation.amenities.length - 3} {t('planTrip.accommodationStep.others')}
                     </Badge>
                   )}
                 </div>
@@ -312,15 +390,15 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
 
               {accommodation.location.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  <span className="text-sm font-medium">Emplacements :</span>
-                  {accommodation.location.slice(0, 2).map(location => (
-                    <Badge key={location} variant="outline" className="text-xs">
-                      {location}
+                  <span className="text-sm font-medium">{t('planTrip.accommodationStep.locations')} :</span>
+                  {accommodation.location.slice(0, 2).map(code => (
+                    <Badge key={code} variant="outline" className="text-xs">
+                      {getLabelFromCode(code, accommodationLocations, i18n.language)}
                     </Badge>
                   ))}
                   {accommodation.location.length > 2 && (
                     <Badge variant="outline" className="text-xs">
-                      +{accommodation.location.length - 2} autres
+                      +{accommodation.location.length - 2} {t('planTrip.accommodationStep.others')}
                     </Badge>
                   )}
                 </div>

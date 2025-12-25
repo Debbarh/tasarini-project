@@ -30,11 +30,26 @@ export interface EnrichmentProgress {
   data: Partial<EnrichmentOptions>;
 }
 
+type TripEnrichmentConstructorArg =
+  | {
+      onProgress?: (progress: EnrichmentProgress) => void;
+      enablePersonalization?: boolean;
+    }
+  | ((progress: EnrichmentProgress) => void)
+  | undefined;
+
 export class TripEnrichmentService {
   private onProgress?: (progress: EnrichmentProgress) => void;
+  private enablePersonalization: boolean;
 
-  constructor(onProgress?: (progress: EnrichmentProgress) => void) {
-    this.onProgress = onProgress;
+  constructor(options?: TripEnrichmentConstructorArg) {
+    if (typeof options === 'function') {
+      this.onProgress = options;
+      this.enablePersonalization = false;
+    } else {
+      this.onProgress = options?.onProgress;
+      this.enablePersonalization = options?.enablePersonalization ?? false;
+    }
   }
 
   async enrichItinerary(
@@ -42,10 +57,20 @@ export class TripEnrichmentService {
     originalTripData: TripFormData
   ): Promise<EnrichmentOptions> {
     // Vérifier le cache d'abord
+    const normalizedTripStart = this.normalizeDate(originalTripData.startDate);
+    const normalizedTripEnd = this.normalizeDate(originalTripData.endDate);
+    const fallbackStart = normalizedTripStart ?? this.getItineraryBoundaryDate(itinerary, 'start');
+    const fallbackEnd = normalizedTripEnd ?? this.getItineraryBoundaryDate(itinerary, 'end');
+
+    const dateRange =
+      fallbackStart && fallbackEnd
+        ? `${fallbackStart.toISOString()}-${fallbackEnd.toISOString()}`
+        : 'flexible';
+
     const cacheKey = cacheService.generateSearchKey({
       type: 'hotels',
       city: originalTripData.destinations[0]?.city,
-      dates: `${originalTripData.startDate.toISOString()}-${originalTripData.endDate.toISOString()}`,
+      dates: dateRange,
       passengers: originalTripData.travelGroup.size,
       budget: originalTripData.budget.level
     });
@@ -111,8 +136,8 @@ export class TripEnrichmentService {
     tripData: TripFormData
   ): Promise<void> {
     try {
-      // Récupérer le profil utilisateur pour la personnalisation
-      const userProfile = await userPreferencesService.getUserProfile();
+      const usePersonalization = this.enablePersonalization;
+      const userProfile = usePersonalization ? await userPreferencesService.getUserProfile() : null;
 
       // Appliquer le scoring et A/B testing pour chaque catégorie
       const categories: Array<'hotels' | 'flights' | 'restaurants' | 'activities'> = 
@@ -124,11 +149,13 @@ export class TripEnrichmentService {
           const scoredItems = await recommendationEngine.scoreRecommendations(
             enrichmentData[category],
             category,
-            tripData
+            tripData,
+            undefined,
+            { useUserContext: usePersonalization }
           );
 
           // Appliquer personnalisation si profil disponible
-          if (userProfile) {
+          if (usePersonalization && userProfile) {
             const personalizedItems = await userPreferencesService.getPersonalizedRecommendations(
               scoredItems.map(item => item.originalItem),
               category,
@@ -294,12 +321,21 @@ export class TripEnrichmentService {
         const destination = originalTripData.destinations[i];
         const originCity = i === 0 ? 'CDG' : originalTripData.destinations[i - 1].city || 'CDG';
         const originCountry = i === 0 ? 'France' : originalTripData.destinations[i - 1].country || 'France';
+        if (!destination.city) {
+          continue;
+        }
+
+        const departureDate = this.formatDate(destination.startDate);
+        if (!departureDate) {
+          console.warn(`Impossible de déterminer la date de départ pour ${destination.city}, saut de la recherche de vols.`);
+          continue;
+        }
         
         try {
           const flightOffers = await amadeusService.searchFlightsByRoute(
             originCity,
-            destination.city!,
-            destination.startDate!.toISOString().split('T')[0],
+            destination.city,
+            departureDate,
             undefined, // Pas de retour pour l'instant
             originalTripData.travelGroup.size
           );
@@ -309,7 +345,7 @@ export class TripEnrichmentService {
             id: `flight_${i}_${offerIndex}`,
             destination: `${destination.city}, ${destination.country}`,
             departure: `${originCity}, ${originCountry}`,
-            departureDate: destination.startDate?.toISOString().split('T')[0],
+            departureDate,
             price: {
               amount: offer.price.total,
               currency: offer.price.currency
@@ -330,7 +366,7 @@ export class TripEnrichmentService {
             id: `flight_${i}_fallback`,
             destination: `${destination.city}, ${destination.country}`,
             departure: `${originCity}, ${originCountry}`,
-            departureDate: destination.startDate?.toISOString().split('T')[0],
+            departureDate,
             price: {
               amount: Math.floor(Math.random() * 500 + 200),
               currency: originalTripData.budget.currency
@@ -998,6 +1034,29 @@ export class TripEnrichmentService {
     
     // Par défaut, retourner une catégorie populaire
     return { category: 'culture' };
+  }
+
+  private normalizeDate(value?: Date | string | null): Date | undefined {
+    if (!value) return undefined;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? undefined : date;
+  }
+
+  private formatDate(value?: Date | string | null): string | null {
+    const date = this.normalizeDate(value);
+    return date ? date.toISOString().split('T')[0] : null;
+  }
+
+  private getItineraryBoundaryDate(
+    itinerary: DetailedItinerary,
+    boundary: 'start' | 'end'
+  ): Date | undefined {
+    if (!itinerary?.days?.length) {
+      return undefined;
+    }
+    const index = boundary === 'start' ? 0 : itinerary.days.length - 1;
+    const targetDay = itinerary.days[index];
+    return this.normalizeDate(targetDay?.date);
   }
 }
 

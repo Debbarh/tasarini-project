@@ -5,8 +5,26 @@ export interface TravelGroupType {
   code: string;
   label_fr: string;
   label_en: string;
+  label_es?: string;
+  label_de?: string;
+  label_it?: string;
+  label_pt?: string;
+  label_ru?: string;
+  label_ja?: string;
+  label_zh?: string;
+  label_hi?: string;
+  label_ar?: string;
   description_fr?: string;
   description_en?: string;
+  description_es?: string;
+  description_de?: string;
+  description_it?: string;
+  description_pt?: string;
+  description_ru?: string;
+  description_ja?: string;
+  description_zh?: string;
+  description_hi?: string;
+  description_ar?: string;
   icon?: string;
   color?: string;
   is_active: boolean;
@@ -21,8 +39,26 @@ export interface TravelGroupSubtype {
   code: string;
   label_fr: string;
   label_en: string;
+  label_es?: string;
+  label_de?: string;
+  label_it?: string;
+  label_pt?: string;
+  label_ru?: string;
+  label_ja?: string;
+  label_zh?: string;
+  label_hi?: string;
+  label_ar?: string;
   description_fr?: string;
   description_en?: string;
+  description_es?: string;
+  description_de?: string;
+  description_it?: string;
+  description_pt?: string;
+  description_ru?: string;
+  description_ja?: string;
+  description_zh?: string;
+  description_hi?: string;
+  description_ar?: string;
   icon?: string;
   is_active: boolean;
   display_order: number;
@@ -53,16 +89,32 @@ const typeCrud = crud<TravelGroupType>('travel-groups/types/');
 const subtypeCrud = crud<TravelGroupSubtype>('travel-groups/subtypes/');
 const configCrud = crud<TravelGroupConfiguration>('travel-groups/configurations/');
 
+interface TypeTranslationResponse {
+  message: string;
+  languages: string[];
+  travel_group_type: TravelGroupType;
+}
+
+interface SubtypeTranslationResponse {
+  message: string;
+  languages: string[];
+  travel_group_subtype: TravelGroupSubtype;
+}
+
 export const travelGroupService = {
   listTypes: typeCrud.list,
   createType: typeCrud.create,
   updateType: typeCrud.update,
   deleteType: typeCrud.delete,
+  translateType: (id: string) =>
+    apiClient.post<TypeTranslationResponse>(`travel-groups/types/${id}/translate/`, {}),
 
   listSubtypes: subtypeCrud.list,
   createSubtype: subtypeCrud.create,
   updateSubtype: subtypeCrud.update,
   deleteSubtype: subtypeCrud.delete,
+  translateSubtype: (id: string) =>
+    apiClient.post<SubtypeTranslationResponse>(`travel-groups/subtypes/${id}/translate/`, {}),
 
   listConfigs: configCrud.list,
   createConfig: configCrud.create,

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DetailedItinerary } from "@/types/trip";
+import { useTranslation } from 'react-i18next';
 import { savedItineraryService, SavedItinerary as ApiSavedItinerary } from "@/services/savedItineraryService";
+import { extractArrayFromResponse } from "@/integrations/api/client";
 
 export interface SavedItinerary {
   id: string;
@@ -17,22 +19,32 @@ export interface SavedItinerary {
 }
 
 export const useSavedItineraries = () => {
+  const { t } = useTranslation();
   const [savedItineraries, setSavedItineraries] = useState<SavedItinerary[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   const fetchSavedItineraries = async () => {
+    // Skip call when not authenticated to avoid 401 spam
+    const token = typeof window !== 'undefined' ? localStorage.getItem('tasarini_access_token') : null;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const data = await savedItineraryService.list();
-      setSavedItineraries((data || []).map(item => ({
+      // Handle both array and paginated response formats
+      const itinerariesArray = extractArrayFromResponse<ApiSavedItinerary>(data);
+      setSavedItineraries(itinerariesArray.map(item => ({
         ...item,
         itinerary_data: item.itinerary_data as DetailedItinerary
       })));
     } catch (error) {
       console.error('Erreur lors du chargement des itinéraires:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger vos itinéraires sauvegardés",
+        title: t('toast.hooks.savedItineraries.loadError'),
+        description: t('toast.hooks.savedItineraries.loadError'),
         variant: "destructive",
       });
     } finally {
@@ -70,16 +82,16 @@ export const useSavedItineraries = () => {
       }, ...prev]);
       
       toast({
-        title: "Itinéraire sauvegardé !",
-        description: `"${title}" a été ajouté à vos itinéraires sauvegardés`,
+        title: t('toast.hooks.savedItineraries.saved'),
+        description: `"${title}" ${t('toast.hooks.savedItineraries.saved')}`,
       });
 
       return true;
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder l'itinéraire",
+        title: t('toast.hooks.savedItineraries.saveError'),
+        description: t('toast.hooks.savedItineraries.saveError'),
         variant: "destructive",
       });
       return false;
@@ -93,14 +105,14 @@ export const useSavedItineraries = () => {
       setSavedItineraries(prev => prev.filter(item => item.id !== id));
       
       toast({
-        title: "Itinéraire supprimé",
-        description: "L'itinéraire a été supprimé de vos sauvegardes",
+        title: t('toast.hooks.savedItineraries.deleted'),
+        description: t('toast.hooks.savedItineraries.deleted'),
       });
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer l'itinéraire",
+        title: t('toast.hooks.savedItineraries.deleteError'),
+        description: t('toast.hooks.savedItineraries.deleteError'),
         variant: "destructive",
       });
     }
@@ -140,16 +152,16 @@ export const useSavedItineraries = () => {
       );
 
       toast({
-        title: "Itinéraire mis à jour !",
-        description: "Vos modifications ont été sauvegardées avec succès",
+        title: t('toast.hooks.savedItineraries.updated'),
+        description: t('toast.hooks.savedItineraries.updated'),
       });
 
       return true;
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder les modifications",
+        title: t('toast.hooks.savedItineraries.updateError'),
+        description: t('toast.hooks.savedItineraries.updateError'),
         variant: "destructive",
       });
       return false;

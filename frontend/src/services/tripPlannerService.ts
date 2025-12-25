@@ -24,9 +24,13 @@ const serializeTripData = (tripData: TripFormData) => ({
 
 export const tripPlannerService = {
   planTrip(tripData: TripFormData, userId?: string | number) {
+    // Get session ID from sessionStorage to link with analytics
+    const sessionId = sessionStorage.getItem('travel_analytics_session');
+
     return apiClient.post<PlanTripResponse>(ENDPOINT, {
       tripData: serializeTripData(tripData),
       userId,
+      sessionId,
     });
   },
 };

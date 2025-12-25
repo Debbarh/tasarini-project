@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Search, Filter, Calendar as CalendarIcon, MapPin, Tag, X, SortDesc, Users } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 
 interface StoryFiltersProps {
   filters: {
@@ -27,6 +27,7 @@ interface StoryFiltersProps {
 }
 
 export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading }: StoryFiltersProps) => {
+  const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [dateFrom, setDateFrom] = useState<Date | undefined>(
     filters.dateFrom ? new Date(filters.dateFrom) : undefined
@@ -108,7 +109,7 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Rechercher dans les stories..."
+                placeholder={t('travelStories.filters.searchPlaceholder')}
                 value={filters.search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-10"
@@ -120,7 +121,7 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
               className="flex items-center gap-2"
             >
               <Filter className="w-4 h-4" />
-              Filtres
+              {t('travelStories.filters.filtersButton')}
             </Button>
           </div>
 
@@ -132,10 +133,10 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-1">
                     <MapPin className="w-4 h-4" />
-                    Lieu
+                    {t('travelStories.filters.location')}
                   </label>
                   <Input
-                    placeholder="Filtrer par lieu..."
+                    placeholder={t('travelStories.filters.locationPlaceholder')}
                     value={filters.location}
                     onChange={(e) => handleLocationChange(e.target.value)}
                   />
@@ -143,16 +144,16 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
 
                 {/* Linked type filter */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Type de lien</label>
+                  <label className="text-sm font-medium">{t('travelStories.filters.linkType')}</label>
                   <Select value={filters.linkedType || 'all'} onValueChange={handleLinkedTypeChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Tous les types" />
+                      <SelectValue placeholder={t('travelStories.filters.allTypes')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Tous les types</SelectItem>
-                      <SelectItem value="tourist_point">Points d'intérêt</SelectItem>
-                      <SelectItem value="itinerary">Itinéraires</SelectItem>
-                      <SelectItem value="activity">Activités</SelectItem>
+                      <SelectItem value="all">{t('travelStories.filters.allTypes')}</SelectItem>
+                      <SelectItem value="tourist_point">{t('travelStories.filters.touristPoints')}</SelectItem>
+                      <SelectItem value="itinerary">{t('travelStories.filters.itineraries')}</SelectItem>
+                      <SelectItem value="activity">{t('travelStories.filters.activities')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -161,13 +162,13 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-1">
                     <CalendarIcon className="w-4 h-4" />
-                    Période
+                    {t('travelStories.filters.period')}
                   </label>
                   <div className="flex gap-2">
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" size="sm" className="flex-1">
-                          {dateFrom ? format(dateFrom, "dd/MM", { locale: fr }) : "Du"}
+                          {dateFrom ? format(dateFrom, "dd/MM") : t('travelStories.filters.from')}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -183,7 +184,7 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" size="sm" className="flex-1">
-                          {dateTo ? format(dateTo, "dd/MM", { locale: fr }) : "Au"}
+                          {dateTo ? format(dateTo, "dd/MM") : t('travelStories.filters.to')}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -203,18 +204,18 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-1">
                   <Tag className="w-4 h-4" />
-                  Tags
+                  {t('travelStories.filters.tags')}
                 </label>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Ajouter un tag à filtrer..."
+                    placeholder={t('travelStories.filters.addTagPlaceholder')}
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
                   <Button type="button" onClick={addTag} size="sm">
-                    Ajouter
+                    {t('travelStories.filters.addButton')}
                   </Button>
                 </div>
                 
@@ -244,7 +245,7 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
           <div className="flex items-center justify-between pt-2">
             <div className="flex items-center gap-2">
               <Badge variant="outline">
-                {isLoading ? 'Chargement...' : `${resultCount} résultat${resultCount !== 1 ? 's' : ''}`}
+                {isLoading ? t('travelStories.filters.loading') : `${resultCount} ${resultCount !== 1 ? t('travelStories.filters.resultsPlural') : t('travelStories.filters.results')}`}
               </Badge>
               
               {hasActiveFilters && (
@@ -255,7 +256,7 @@ export const StoryFilters = ({ filters, onFiltersChange, resultCount, isLoading 
                   className="text-muted-foreground hover:text-foreground"
                 >
                   <X className="w-4 h-4 mr-1" />
-                  Effacer les filtres
+                  {t('travelStories.filters.clearFilters')}
                 </Button>
               )}
             </div>

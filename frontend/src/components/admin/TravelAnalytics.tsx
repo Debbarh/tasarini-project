@@ -85,7 +85,11 @@ export const TravelAnalytics = () => {
       }
 
       const data = await apiClient.get<AnalyticsData[]>('analytics/travel/', params);
-      setAnalyticsData(data || []);
+      // Handle both array and paginated response formats
+      const dataArray = Array.isArray(data)
+        ? data
+        : (data as any)?.results || [];
+      setAnalyticsData(dataArray);
     } catch (error) {
       console.error('Error fetching analytics:', error);
       toast({

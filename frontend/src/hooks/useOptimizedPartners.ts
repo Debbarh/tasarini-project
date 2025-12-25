@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from './useDebounce';
 import { partnerService, PartnerProfile } from '@/services/partnerService';
+import { extractArrayFromResponse } from '@/integrations/api/client';
 
 export interface OptimizedPartner {
   id: string;
@@ -105,7 +106,9 @@ export const useOptimizedPartners = () => {
         subscription_type: subscriptionFilterParam,
       });
 
-      return response.map(normalizePartner);
+      // Handle both array and paginated response formats
+      const partnersArray = extractArrayFromResponse<PartnerProfile>(response);
+      return partnersArray.map(normalizePartner);
     },
     staleTime: 2 * 60 * 1000,
     gcTime: 5 * 60 * 1000,

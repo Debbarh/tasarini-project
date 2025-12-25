@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/integrations/api/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import { MapPin, Plus, Edit, Eye, Trash2, Clock, CheckCircle, XCircle, AlertCircle, Shield, RefreshCw, MessageSquare, Bed, Calendar, Utensils } from 'lucide-react';
 import { PartnerAdvancedPOIForm, PartnerPOIEditForm } from '@/components/poi/migration';
 import { POIConversationPanel } from '../admin/POIConversationPanel';
@@ -37,6 +38,7 @@ interface POI {
 }
 
 const POIManagement: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [pois, setPois] = useState<POI[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,8 +81,8 @@ const POIManagement: React.FC = () => {
     } catch (error) {
       console.error('Error fetching POIs:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger vos points d'intérêt",
+        title: t('partnerCenter.dashboard.pois.resubmit.error'),
+        description: t('partnerCenter.dashboard.pois.loadError'),
         variant: "destructive",
       });
     } finally {
@@ -94,48 +96,48 @@ const POIManagement: React.FC = () => {
         return (
           <Badge variant="secondary" className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            Brouillon
+            {t('partnerCenter.dashboard.pois.status.draft')}
           </Badge>
         );
       case 'pending_validation':
         return (
           <Badge variant="secondary" className="flex items-center gap-1 bg-yellow-100 text-yellow-800">
             <Clock className="h-3 w-3" />
-            En attente de validation
+            {t('partnerCenter.dashboard.pois.status.pendingValidation')}
           </Badge>
         );
       case 'under_review':
         return (
           <Badge variant="secondary" className="flex items-center gap-1 bg-blue-100 text-blue-800">
             <AlertCircle className="h-3 w-3" />
-            En cours de révision
+            {t('partnerCenter.dashboard.pois.status.underReview')}
           </Badge>
         );
       case 'approved':
         return (
           <Badge variant="secondary" className="flex items-center gap-1 bg-green-100 text-green-800">{" "}
             <CheckCircle className="h-3 w-3" />
-            Approuvé
+            {t('partnerCenter.dashboard.pois.status.approved')}
           </Badge>
         );
       case 'rejected':
         return (
           <Badge variant="destructive" className="flex items-center gap-1">
             <XCircle className="h-3 w-3" />
-            Rejeté
+            {t('partnerCenter.dashboard.pois.status.rejected')}
           </Badge>
         );
       case 'blocked':
         return (
           <Badge variant="destructive" className="flex items-center gap-1 bg-red-200 text-red-900">
             <Shield className="h-3 w-3" />
-            Bloqué
+            {t('partnerCenter.dashboard.pois.status.blocked')}
           </Badge>
         );
       default:
         return (
           <Badge variant="secondary">
-            Statut inconnu
+            {t('partnerCenter.dashboard.pois.status.unknown')}
           </Badge>
         );
     }
@@ -144,19 +146,19 @@ const POIManagement: React.FC = () => {
   const getStatusDescription = (status: POIStatus) => {
     switch (status) {
       case 'draft':
-        return "Ce point d'intérêt est en cours de création et n'a pas encore été soumis pour validation.";
+        return t('partnerCenter.dashboard.pois.statusDescription.draft');
       case 'pending_validation':
-        return "Ce point d'intérêt a été soumis et est en attente de validation par notre équipe.";
+        return t('partnerCenter.dashboard.pois.statusDescription.pendingValidation');
       case 'under_review':
-        return "Ce point d'intérêt est en cours de révision par notre équipe. Vous recevrez bientôt une réponse.";
+        return t('partnerCenter.dashboard.pois.statusDescription.underReview');
       case 'approved':
-        return "Ce point d'intérêt a été approuvé et est maintenant visible par le public.";
+        return t('partnerCenter.dashboard.pois.statusDescription.approved');
       case 'rejected':
-        return "Ce point d'intérêt a été rejeté. Veuillez vérifier les commentaires et le resoumette après corrections.";
+        return t('partnerCenter.dashboard.pois.statusDescription.rejected');
       case 'blocked':
-        return "Ce point d'intérêt a été bloqué suite à une violation des conditions d'utilisation.";
+        return t('partnerCenter.dashboard.pois.statusDescription.blocked');
       default:
-        return "Statut inconnu.";
+        return t('partnerCenter.dashboard.pois.statusDescription.unknown');
     }
   };
 
@@ -176,15 +178,15 @@ const POIManagement: React.FC = () => {
       await apiClient.delete(`poi/tourist-points/${deleteDialog.poi.id}/`);
 
       toast({
-        title: "POI supprimé avec succès",
-        description: `Le point d'intérêt "${deleteDialog.poi.name}" a été supprimé définitivement`,
+        title: t('partnerCenter.dashboard.pois.delete.success'),
+        description: t('partnerCenter.dashboard.pois.delete.successDescription', { name: deleteDialog.poi.name }),
       });
       fetchPOIs();
     } catch (error) {
       console.error('Error deleting POI:', error);
       toast({
-        title: "Erreur de suppression",
-        description: "Une erreur est survenue lors de la suppression. Veuillez réessayer.",
+        title: t('partnerCenter.dashboard.pois.delete.error'),
+        description: t('partnerCenter.dashboard.pois.delete.errorDescription'),
         variant: "destructive",
       });
       throw error; // Re-throw to let the dialog handle the loading state
@@ -200,16 +202,16 @@ const POIManagement: React.FC = () => {
       });
 
       toast({
-        title: "POI resoumis",
-        description: "Votre point d'intérêt a été resoumis pour validation",
+        title: t('partnerCenter.dashboard.pois.resubmit.success'),
+        description: t('partnerCenter.dashboard.pois.resubmit.successDescription'),
       });
 
       fetchPOIs();
     } catch (error) {
       console.error('Error resubmitting POI:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de resoumettre le POI",
+        title: t('partnerCenter.dashboard.pois.resubmit.error'),
+        description: t('partnerCenter.dashboard.pois.resubmit.errorDescription'),
         variant: "destructive",
       });
     }
@@ -228,14 +230,14 @@ const POIManagement: React.FC = () => {
       {/* En-tête avec action */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">Mes Points d'Intérêt</h2>
+          <h2 className="text-2xl font-bold">{t('partnerCenter.dashboard.pois.title')}</h2>
           <p className="text-muted-foreground">
-            Gérez vos points d'intérêt et suivez leur statut de validation
+            {t('partnerCenter.dashboard.pois.subtitle')}
           </p>
         </div>
         <Button onClick={() => setShowCreateForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
-          Créer un POI
+          {t('partnerCenter.dashboard.pois.createButton')}
         </Button>
       </div>
 
@@ -251,7 +253,7 @@ const POIManagement: React.FC = () => {
                   <MapPin className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.pois.stats.total')}</p>
                   <p className="text-2xl font-bold">{pois.length}</p>
                 </div>
               </CardContent>
@@ -263,7 +265,7 @@ const POIManagement: React.FC = () => {
                   <Clock className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Brouillons</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.pois.stats.drafts')}</p>
                   <p className="text-2xl font-bold">{pois.filter(p => p.status_enum === 'draft').length}</p>
                 </div>
               </CardContent>
@@ -275,7 +277,7 @@ const POIManagement: React.FC = () => {
                   <Clock className="h-4 w-4 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">En attente</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.pois.stats.pending')}</p>
                   <p className="text-2xl font-bold">{pois.filter(p => p.status_enum === 'pending_validation').length}</p>
                 </div>
               </CardContent>
@@ -287,7 +289,7 @@ const POIManagement: React.FC = () => {
                   <AlertCircle className="h-4 w-4 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">En révision</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.pois.stats.underReview')}</p>
                   <p className="text-2xl font-bold">{pois.filter(p => p.status_enum === 'under_review').length}</p>
                 </div>
               </CardContent>
@@ -299,7 +301,7 @@ const POIManagement: React.FC = () => {
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Approuvés</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.pois.stats.approved')}</p>
                   <p className="text-2xl font-bold">{pois.filter(p => p.status_enum === 'approved').length}</p>
                 </div>
               </CardContent>
@@ -311,7 +313,7 @@ const POIManagement: React.FC = () => {
                   <XCircle className="h-4 w-4 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Rejetés</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerCenter.dashboard.pois.stats.rejected')}</p>
                   <p className="text-2xl font-bold">{pois.filter(p => p.status_enum === 'rejected').length}</p>
                 </div>
               </CardContent>
@@ -324,13 +326,13 @@ const POIManagement: React.FC = () => {
               <Card>
                 <CardContent className="text-center p-8">
                   <MapPin className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Aucun point d'intérêt</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('partnerCenter.dashboard.pois.empty.title')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    Vous n'avez pas encore créé de point d'intérêt. Commencez par en créer un !
+                    {t('partnerCenter.dashboard.pois.empty.description')}
                   </p>
                   <Button onClick={() => setShowCreateForm(true)}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Créer mon premier POI
+                    {t('partnerCenter.dashboard.pois.createFirst')}
                   </Button>
                 </CardContent>
               </Card>
@@ -342,7 +344,7 @@ const POIManagement: React.FC = () => {
                       {poi.previewImage ? (
                         <img
                           src={poi.previewImage}
-                          alt={`Illustration de ${poi.name}`}
+                          alt={t('partnerCenter.dashboard.pois.details.illustration') + ' ' + poi.name}
                           className="h-full w-full object-cover"
                           loading="lazy"
                         />
@@ -367,9 +369,9 @@ const POIManagement: React.FC = () => {
                         </p>
                         
                         <div className="text-xs text-muted-foreground mb-2">
-                          Créé le {new Date(poi.created_at).toLocaleDateString('fr-FR')}
+                          {t('partnerCenter.dashboard.pois.details.createdAt')} {new Date(poi.created_at).toLocaleDateString('fr-FR')}
                           {poi.updated_at !== poi.created_at && (
-                            <span> • Modifié le {new Date(poi.updated_at).toLocaleDateString('fr-FR')}</span>
+                            <span> • {t('partnerCenter.dashboard.pois.details.updatedAt')} {new Date(poi.updated_at).toLocaleDateString('fr-FR')}</span>
                           )}
                         </div>
 
@@ -378,14 +380,14 @@ const POIManagement: React.FC = () => {
                             {getStatusBadge(poi.status_enum)}
                             {poi.submission_count && poi.submission_count > 1 && (
                               <Badge variant="outline">
-                                Resoumission #{poi.submission_count}
+                                {t('partnerCenter.dashboard.pois.details.resubmission')}{poi.submission_count}
                               </Badge>
                             )}
                           </div>
                           <div className="flex gap-2">
                             <Button variant="outline" size="sm" onClick={() => handleEdit(poi.id)}>
                               <Edit className="h-4 w-4 mr-1" />
-                              Modifier
+                              {t('partnerCenter.dashboard.pois.actions.edit')}
                           </Button>
                           {poi.status_enum === 'approved' && (
                             <>
@@ -396,7 +398,7 @@ const POIManagement: React.FC = () => {
                                   onClick={() => setManagementDialog({ type: 'accommodation', poi })}
                                 >
                                   <Bed className="h-4 w-4 mr-1" />
-                                  Tarifs hébergement
+                                  {t('partnerCenter.dashboard.pois.actions.accommodation')}
                                 </Button>
                               )}
                               {poi.is_activity && (
@@ -406,7 +408,7 @@ const POIManagement: React.FC = () => {
                                   onClick={() => setManagementDialog({ type: 'activity', poi })}
                                 >
                                   <Calendar className="h-4 w-4 mr-1" />
-                                  Tarifs activité
+                                  {t('partnerCenter.dashboard.pois.actions.activity')}
                                 </Button>
                               )}
                               {poi.is_restaurant && (
@@ -416,7 +418,7 @@ const POIManagement: React.FC = () => {
                                   onClick={() => setManagementDialog({ type: 'restaurant', poi })}
                                 >
                                   <Utensils className="h-4 w-4 mr-1" />
-                                  Menus & tables
+                                  {t('partnerCenter.dashboard.pois.actions.restaurant')}
                                 </Button>
                               )}
                             </>
@@ -424,7 +426,7 @@ const POIManagement: React.FC = () => {
                           {(poi.status_enum === 'rejected' || poi.status_enum === 'blocked') && (
                             <Button variant="outline" size="sm" onClick={() => resubmitPOI(poi.id)}>
                               <RefreshCw className="h-4 w-4 mr-1" />
-                              Resoumettre
+                              {t('partnerCenter.dashboard.pois.actions.resubmit')}
                             </Button>
                             )}
                             {poi.conversation_id && (
@@ -436,12 +438,12 @@ const POIManagement: React.FC = () => {
                                 )}
                               >
                                 <MessageSquare className="h-4 w-4 mr-1" />
-                                {showConversation === poi.id ? 'Masquer' : 'Discussion'}
+                                {showConversation === poi.id ? t('partnerCenter.dashboard.pois.actions.hideConversation') : t('partnerCenter.dashboard.pois.actions.conversation')}
                               </Button>
                             )}
                             <Button variant="outline" size="sm" onClick={() => handleDeleteClick(poi)}>
                               <Trash2 className="h-4 w-4 mr-1" />
-                              Supprimer
+                              {t('partnerCenter.dashboard.pois.actions.delete')}
                             </Button>
                           </div>
                         </div>
@@ -453,7 +455,7 @@ const POIManagement: React.FC = () => {
                         {poi.rejection_reason && (
                           <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
                             <p className="text-sm text-red-800">
-                              <strong>Raison du rejet:</strong> {poi.rejection_reason}
+                              <strong>{t('partnerCenter.dashboard.pois.details.rejectionReason')}</strong> {poi.rejection_reason}
                             </p>
                           </div>
                         )}
@@ -461,7 +463,7 @@ const POIManagement: React.FC = () => {
                         {poi.blocked_reason && (
                           <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded">
                             <p className="text-sm text-red-900">
-                              <strong>Raison du blocage:</strong> {poi.blocked_reason}
+                              <strong>{t('partnerCenter.dashboard.pois.details.blockReason')}</strong> {poi.blocked_reason}
                             </p>
                           </div>
                         )}
@@ -509,8 +511,8 @@ const POIManagement: React.FC = () => {
           setShowEditForm(false);
           setEditingPOI(null);
           toast({
-            title: "POI modifié",
-            description: "Votre point d'intérêt a été modifié avec succès",
+            title: t('partnerCenter.dashboard.pois.edit.success'),
+            description: t('partnerCenter.dashboard.pois.edit.successDescription'),
           });
         }}
       />
@@ -520,12 +522,12 @@ const POIManagement: React.FC = () => {
         isOpen={deleteDialog.isOpen}
         onClose={() => setDeleteDialog({ isOpen: false, poi: null })}
         onConfirm={handleDeleteConfirm}
-        title="Supprimer le point d'intérêt"
+        title={t('partnerCenter.dashboard.pois.delete.title')}
         itemName={deleteDialog.poi?.name || ''}
-        itemType="POI"
+        itemType={t('partnerCenter.dashboard.pois.delete.itemType')}
         warningText={
           deleteDialog.poi?.status_enum === 'approved' 
-            ? "Ce POI est actuellement visible par le public et peut avoir des avis ou des réservations associés." 
+            ? t('partnerCenter.dashboard.pois.delete.warningApproved') 
             : undefined
         }
         requireConfirmation={deleteDialog.poi?.status_enum === 'approved'}
@@ -556,7 +558,7 @@ const POIManagement: React.FC = () => {
         <DialogContent className="max-w-5xl w-full">
           <DialogHeader>
             <DialogTitle>
-              Gestion des tarifs d'activité – {managementDialog?.poi.name}
+              {t('partnerCenter.dashboard.pois.management.activityTitle', { name: managementDialog?.poi.name })}
             </DialogTitle>
           </DialogHeader>
           {managementDialog?.type === 'activity' && (

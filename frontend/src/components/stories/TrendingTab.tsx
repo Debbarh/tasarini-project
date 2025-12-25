@@ -4,6 +4,7 @@ import { TrendingUp, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { storyService, Story } from "@/services/storyService";
+import { normalizeApiResponse } from "@/utils/apiHelpers";
 
 interface TrendingTabProps {
   currentUserId?: string | number;
@@ -22,7 +23,7 @@ export const TrendingTab = ({ currentUserId, onLike, onComment, onBookmark }: Tr
       setLoading(true);
       const days = timeframe === 'day' ? 1 : timeframe === 'week' ? 7 : 30;
       const data = await storyService.fetchTrendingStories(days);
-      setTrendingStories(data || []);
+      setTrendingStories(normalizeApiResponse(data));
     } catch (error) {
       console.error('Erreur lors du chargement des tendances:', error);
     } finally {

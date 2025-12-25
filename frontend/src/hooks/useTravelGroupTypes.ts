@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { apiClient } from '@/integrations/api/client';
+import { useState, useEffect, useCallback } from 'react';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 
 export interface TravelGroupType {
   id: string;
@@ -63,15 +63,20 @@ export const useTravelGroupTypes = () => {
         apiClient.get<TravelGroupConfiguration[]>('travel-groups/configurations/'),
       ]);
 
-      const normalizedTypes = (typesData || []).filter((type) => type.is_active !== false).sort((a, b) => a.display_order - b.display_order);
-      const normalizedSubtypes = (subtypesData || [])
+      // Handle both array and paginated response formats
+      const typesArray = extractArrayFromResponse<TravelGroupType>(typesData);
+      const subtypesArray = extractArrayFromResponse<TravelGroupSubtype>(subtypesData);
+      const configurationsArray = extractArrayFromResponse<TravelGroupConfiguration>(configurationsData);
+
+      const normalizedTypes = typesArray.filter((type) => type.is_active !== false).sort((a, b) => a.display_order - b.display_order);
+      const normalizedSubtypes = subtypesArray
         .filter((subtype) => subtype.is_active !== false)
         .map((subtype) => ({
           ...subtype,
           travel_group_type_id: subtype.travel_group_type_id ?? subtype.travel_group_type,
         }))
         .sort((a, b) => a.display_order - b.display_order);
-      const normalizedConfigs = (configurationsData || [])
+      const normalizedConfigs = configurationsArray
         .filter((config) => config.is_active !== false)
         .map((config) => ({
           ...config,
@@ -90,13 +95,13 @@ export const useTravelGroupTypes = () => {
     }
   };
 
-  const getConfigurationForType = (typeId: string) => {
-    return configurations.find(config => (config.travel_group_type_id ?? config.travel_group_type) === typeId);
-  };
+  const getConfigurationForType = useCallback((typeId: string) => {
+    return configurations.find((config) => (config.travel_group_type_id ?? config.travel_group_type) === typeId);
+  }, [configurations]);
 
-  const getSubtypesForType = (typeId: string) => {
-    return subtypes.filter(subtype => (subtype.travel_group_type_id ?? subtype.travel_group_type) === typeId);
-  };
+  const getSubtypesForType = useCallback((typeId: string) => {
+    return subtypes.filter((subtype) => (subtype.travel_group_type_id ?? subtype.travel_group_type) === typeId);
+  }, [subtypes]);
 
   return {
     types,

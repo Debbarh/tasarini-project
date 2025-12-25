@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const SavedItineraries = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { savedItineraries, loading, deleteItinerary, toggleFavorite } = useSavedItineraries();
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,9 +47,9 @@ const SavedItineraries = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Accès non autorisé</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('savedItineraries.unauthorized')}</h1>
           <p className="text-muted-foreground">
-            Vous devez être connecté pour accéder à vos itinéraires sauvegardés.
+            {t('savedItineraries.unauthorizedMessage')}
           </p>
         </div>
       </div>
@@ -66,14 +68,14 @@ const SavedItineraries = () => {
     try {
       await exportItineraryToPDF(itinerary.itinerary_data);
       toast({
-        title: "PDF exporté !",
-        description: "Votre itinéraire a été téléchargé avec succès.",
+        title: t('savedItineraries.toast.pdfExported'),
+        description: t('savedItineraries.toast.pdfExportedDesc'),
       });
     } catch (error) {
       console.error('Erreur export PDF:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'exporter le PDF",
+        title: t('savedItineraries.toast.pdfError'),
+        description: t('savedItineraries.toast.pdfErrorDesc'),
         variant: "destructive",
       });
     } finally {
@@ -87,8 +89,8 @@ const SavedItineraries = () => {
     } catch (error) {
       console.error('Erreur partage:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de partager l'itinéraire",
+        title: t('savedItineraries.toast.shareError'),
+        description: t('savedItineraries.toast.shareErrorDesc'),
         variant: "destructive",
       });
     }
@@ -106,14 +108,14 @@ const SavedItineraries = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <Helmet>
-        <title>Mes itinéraires sauvegardés | Voyage AI</title>
-        <meta name="description" content="Retrouvez tous vos itinéraires de voyage sauvegardés et planifiés avec notre IA. Gérez, modifiez et partagez vos programmes de voyage." />
+        <title>{t('savedItineraries.pageTitle')} | Voyage AI</title>
+        <meta name="description" content={t('savedItineraries.pageDescription')} />
       </Helmet>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Mes itinéraires sauvegardés</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('savedItineraries.pageTitle')}</h1>
         <p className="text-muted-foreground">
-          Retrouvez tous vos voyages planifiés et organisez vos futures aventures.
+          {t('savedItineraries.subtitle')}
         </p>
       </div>
 
@@ -122,7 +124,7 @@ const SavedItineraries = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="Rechercher un itinéraire..."
+            placeholder={t('savedItineraries.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -137,7 +139,7 @@ const SavedItineraries = () => {
             <MapPin className="w-8 h-8 text-primary mr-4" />
             <div>
               <p className="text-2xl font-bold">{savedItineraries.length}</p>
-              <p className="text-muted-foreground">Itinéraires sauvegardés</p>
+              <p className="text-muted-foreground">{t('savedItineraries.stats.saved')}</p>
             </div>
           </CardContent>
         </Card>
@@ -149,7 +151,7 @@ const SavedItineraries = () => {
               <p className="text-2xl font-bold">
                 {savedItineraries.filter(i => i.is_favorite).length}
               </p>
-              <p className="text-muted-foreground">Favoris</p>
+              <p className="text-muted-foreground">{t('savedItineraries.stats.favorites')}</p>
             </div>
           </CardContent>
         </Card>
@@ -161,7 +163,7 @@ const SavedItineraries = () => {
               <p className="text-2xl font-bold">
                 {savedItineraries.reduce((acc, i) => acc + (i.trip_duration || 0), 0)}
               </p>
-              <p className="text-muted-foreground">Jours de voyage</p>
+              <p className="text-muted-foreground">{t('savedItineraries.stats.travelDays')}</p>
             </div>
           </CardContent>
         </Card>
@@ -190,17 +192,17 @@ const SavedItineraries = () => {
           <CardContent className="text-center py-12">
             <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              {searchTerm ? "Aucun itinéraire trouvé" : "Aucun itinéraire sauvegardé"}
+              {searchTerm ? t('savedItineraries.empty.noResults') : t('savedItineraries.empty.title')}
             </h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm 
-                ? "Essayez avec d'autres mots-clés de recherche."
-                : "Commencez par créer votre premier itinéraire de voyage !"
+                ? t('savedItineraries.empty.searchMessage')
+                : t('savedItineraries.empty.createMessage')
               }
             </p>
             {!searchTerm && (
               <Button onClick={() => window.location.href = "/plan"}>
-                Créer un itinéraire
+                {t('savedItineraries.actions.create')}
               </Button>
             )}
           </CardContent>
@@ -249,7 +251,7 @@ const SavedItineraries = () => {
                   {itinerary.trip_duration && (
                     <Badge variant="secondary" className="text-xs">
                       <Calendar className="w-3 h-3 mr-1" />
-                      {itinerary.trip_duration} jours
+                      {itinerary.trip_duration} {t('savedItineraries.badges.days')}
                     </Badge>
                   )}
                   <Badge variant="outline" className="text-xs">
@@ -264,7 +266,7 @@ const SavedItineraries = () => {
                     className="flex items-center gap-1"
                   >
                     <Eye className="w-3 h-3" />
-                    Voir
+                    {t('savedItineraries.actions.view')}
                   </Button>
                   
                   <Button
@@ -275,7 +277,7 @@ const SavedItineraries = () => {
                     className="flex items-center gap-1"
                   >
                     <Download className="w-3 h-3" />
-                    PDF
+                    {t('savedItineraries.actions.export')}
                   </Button>
                   
                   <Button
@@ -285,7 +287,7 @@ const SavedItineraries = () => {
                     className="flex items-center gap-1"
                   >
                     <Share2 className="w-3 h-3" />
-                    Partager
+                    {t('savedItineraries.actions.share')}
                   </Button>
                   
                   <AlertDialog>
@@ -300,19 +302,19 @@ const SavedItineraries = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Supprimer l'itinéraire</AlertDialogTitle>
+                        <AlertDialogTitle>{t('savedItineraries.dialog.deleteTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Êtes-vous sûr de vouloir supprimer "{itinerary.title}" ? 
-                          Cette action est irréversible.
+                          {t('savedItineraries.dialog.deleteDescription')} "{itinerary.title}" ? 
+                          {t('savedItineraries.dialog.deleteWarning')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogCancel>{t('savedItineraries.dialog.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => deleteItinerary(itinerary.id)}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                          Supprimer
+                          {t('savedItineraries.dialog.confirm')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

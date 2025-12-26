@@ -152,16 +152,16 @@ const Index = () => {
               <div className="hidden sm:block absolute -top-4 -left-4 bg-background/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border animate-slide-in-right" style={{ animationDelay: '0.5s' }}>
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full" />
-                  <span className="text-xs sm:text-sm font-medium">🌟 Inspiration en direct</span>
+                  <span className="text-xs sm:text-sm font-medium">🌟 {t('home.liveInspiration')}</span>
                 </div>
               </div>
-              
+
               <div className="hidden sm:block absolute -bottom-4 -right-4 bg-background/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border animate-slide-in-right" style={{ animationDelay: '0.7s' }}>
                 <div className="flex items-center gap-2">
                   <div className="text-lg sm:text-2xl">✈️</div>
                   <div>
                     <div className="text-xs sm:text-sm font-medium">Paris → Bali</div>
-                    <div className="text-xs text-muted-foreground">Aventure trouvée !</div>
+                    <div className="text-xs text-muted-foreground">{t('home.adventureFound')}</div>
                   </div>
                 </div>
               </div>
@@ -242,10 +242,10 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-8 sm:mb-12">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
-                🏨 Centrale de Réservation
+                🏨 {t('home.bookingCenter')}
               </h2>
               <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Recherchez et réservez vos hôtels, vols et activités en quelques clics
+                {t('home.bookingCenterDesc')}
               </p>
             </div>
 
@@ -261,19 +261,19 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-              🚗 Services de Transport
+              🚗 {t('home.transportServices')}
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Location de véhicules, transferts et transport urbain
+              {t('home.transportServicesDesc')}
             </p>
           </div>
 
           <Tabs defaultValue="car-rental" className="max-w-7xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-6">
-              <TabsTrigger value="car-rental">🚗 Location</TabsTrigger>
-              <TabsTrigger value="transfers">🚕 Transferts</TabsTrigger>
-              <TabsTrigger value="public">🚌 Bus & Train</TabsTrigger>
-              <TabsTrigger value="urban">🚖 Urbain</TabsTrigger>
+              <TabsTrigger value="car-rental">🚗 {t('home.carRental')}</TabsTrigger>
+              <TabsTrigger value="transfers">🚕 {t('home.transfers')}</TabsTrigger>
+              <TabsTrigger value="public">🚌 {t('home.busAndTrain')}</TabsTrigger>
+              <TabsTrigger value="urban">🚖 {t('home.urbanTransport')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="car-rental" className="mt-0">
@@ -300,17 +300,17 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-              🎯 Activités & Expériences
+              🎯 {t('home.activitiesExperiences')}
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Découvrez les meilleures activités et restaurants
+              {t('home.activitiesDesc')}
             </p>
           </div>
 
           <Tabs defaultValue="tours" className="max-w-7xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="tours">🗺️ Tours & Visites</TabsTrigger>
-              <TabsTrigger value="dining">🍽️ Gastronomie</TabsTrigger>
+              <TabsTrigger value="tours">🗺️ {t('home.toursVisits')}</TabsTrigger>
+              <TabsTrigger value="dining">🍽️ {t('home.gastronomy')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="tours" className="mt-0">
@@ -329,18 +329,18 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-              💼 Services Voyageurs
+              💼 {t('home.travelerServices')}
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Connectivité et assistance
+              {t('home.travelerServicesDesc')}
             </p>
           </div>
 
           <Tabs defaultValue="booking" className="max-w-7xl mx-auto">
             <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="booking">✈️ Réservation</TabsTrigger>
-              <TabsTrigger value="esim">📱 Cartes eSIM</TabsTrigger>
-              <TabsTrigger value="compensation">⚖️ Indemnisation</TabsTrigger>
+              <TabsTrigger value="booking">✈️ {t('home.booking')}</TabsTrigger>
+              <TabsTrigger value="esim">📱 {t('home.esimCards')}</TabsTrigger>
+              <TabsTrigger value="compensation">⚖️ {t('home.compensation')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="booking" className="mt-0">

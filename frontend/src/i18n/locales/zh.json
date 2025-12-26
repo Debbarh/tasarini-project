@@ -112,7 +112,8 @@
       "itinerary": "行程：",
       "locationSaved": "目的地保存成功。",
       "locationSaveError": "无法保存此位置，请检查信息。",
-      "invalidAddress": "请在地图上选择有效地址。"
+      "invalidAddress": "请在地图上选择有效地址。",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "旅行伙伴",
@@ -218,14 +219,6 @@
       "moderate": "中等",
       "others": "其他"
     }
-  },
-  "beInspired": {
-    "title": "获得灵感",
-    "subtitle": "发现将唤醒您冒险灵魂的非凡地方和真实体验",
-    "aiGuide": "AI向导",
-    "shareDiscovery": "分享珍宝",
-    "exploreMap": "探索地图",
-    "findInspiration": "寻找灵感"
   },
   "beInspired": {
     "pageTitle": "获得灵感 | AI旅行",
@@ -621,7 +614,9 @@
     "delete": "删除",
     "edit": "编辑",
     "create": "创建",
-    "search": "搜索"
+    "search": "搜索",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "景点",
@@ -869,23 +864,6 @@
       "title": "仪表板",
       "subtitle": "管理您的景点并跟踪您的表现",
       "overview": "概览",
-      "analytics": "分析",
-      "pois": "我的景点",
-      "bookings": "预订",
-      "finances": "财务",
-      "subscription": "订阅",
-      "settings": "设置",
-      "notifications": "通知",
-      "notificationsShort": "通知",
-      "stats": {
-        "totalPois": "景点",
-        "totalActive": "总活跃数",
-        "viewsThisMonth": "本月浏览量",
-        "totalBookings": "总预订量",
-        "totalRevenue": "总收入",
-        "averageRating": "平均评分",
-        "pendingPayments": "待付款"
-      },
       "analytics": {
         "realTimeMetrics": "实时性能指标",
         "totalViews": "总浏览量",
@@ -990,6 +968,33 @@
           "restaurantTitle": "餐厅管理 – {name}"
         }
       },
+      "bookings": {
+        "loading": "正在加载预订数据...",
+        "loadError": "加载预订数据时出错",
+        "stats": {
+          "totalBookings": "总预订数",
+          "totalRevenue": "收入",
+          "commissions": "佣金",
+          "pending": "待处理"
+        },
+        "history": {
+          "title": "预订历史",
+          "reference": "参考号",
+          "amount": "金额",
+          "commission": "佣金",
+          "date": "日期",
+          "customer": "客户",
+          "poi": "景点",
+          "empty": "暂无预订",
+          "emptyDescription": "您景点的预订将显示在这里"
+        },
+        "status": {
+          "pending": "待处理",
+          "confirmed": "已确认",
+          "cancelled": "已取消",
+          "completed": "已完成"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "可用余额",
@@ -1054,34 +1059,6 @@
           "loadError": "加载财务数据时出错"
         }
       },
-      "charts": {
-        "viewsOverTime": "浏览量趋势",
-        "viewsDescription": "30天浏览量和转化率",
-        "bookingsRevenue": "预订和收入",
-        "revenueDescription": "每周财务业绩",
-        "performance": "业绩",
-        "topPerformer": "最佳表现"
-      },
-      "earnings": {
-        "title": "收入历史",
-        "description": "每次预订收益详情",
-        "amount": "金额",
-        "commission": "佣金",
-        "bookingDate": "预订日期",
-        "paymentStatus": "付款状态",
-        "pending": "待处理",
-        "paid": "已付款",
-        "cancelled": "已取消"
-      },
-      "notificationPanel": {
-        "title": "最新通知",
-        "description": "及时了解您景点的活动",
-        "markAsRead": "标记为已读",
-        "noNotifications": "无通知",
-        "updateError": "更新通知时出错"
-      },
-      "export": "导出数据",
-      "loadingError": "加载仪表板时出错",
       "subscription": {
         "loading": "正在加载订阅信息...",
         "loadError": "加载订阅信息时出错",
@@ -1164,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "正在加载预订数据...",
-        "loadError": "加载预订数据时出错",
-        "stats": {
-          "totalBookings": "总预订数",
-          "totalRevenue": "收入",
-          "commissions": "佣金",
-          "pending": "待处理"
-        },
-        "history": {
-          "title": "预订历史",
-          "reference": "参考号",
-          "amount": "金额",
-          "commission": "佣金",
-          "date": "日期",
-          "customer": "客户",
-          "poi": "景点",
-          "empty": "暂无预订",
-          "emptyDescription": "您景点的预订将显示在这里"
-        },
-        "status": {
-          "pending": "待处理",
-          "confirmed": "已确认",
-          "cancelled": "已取消",
-          "completed": "已完成"
-        }
-      },
+      "settings": "设置",
       "notifications": {
         "title": "通知",
         "markAllRead": "全部标记为已读",
@@ -1199,7 +1150,58 @@
         "loadError": "无法加载通知",
         "markAllSuccess": "所有通知已标记为已读",
         "reference": "参考: {reference}"
-      }
+      },
+      "notificationsShort": "通知",
+      "stats": {
+        "totalPois": "景点",
+        "totalActive": "总活跃数",
+        "viewsThisMonth": "本月浏览量",
+        "totalBookings": "总预订量",
+        "totalRevenue": "总收入",
+        "averageRating": "平均评分",
+        "pendingPayments": "待付款"
+      },
+      "charts": {
+        "viewsOverTime": "浏览量趋势",
+        "viewsDescription": "30天浏览量和转化率",
+        "bookingsRevenue": "预订和收入",
+        "revenueDescription": "每周财务业绩",
+        "performance": "业绩",
+        "topPerformer": "最佳表现"
+      },
+      "earnings": {
+        "title": "收入历史",
+        "description": "每次预订收益详情",
+        "amount": "金额",
+        "commission": "佣金",
+        "bookingDate": "预订日期",
+        "paymentStatus": "付款状态",
+        "pending": "待处理",
+        "paid": "已付款",
+        "cancelled": "已取消"
+      },
+      "notificationPanel": {
+        "title": "最新通知",
+        "description": "及时了解您景点的活动",
+        "markAsRead": "标记为已读",
+        "noNotifications": "无通知",
+        "updateError": "更新通知时出错"
+      },
+      "export": "导出数据",
+      "loadingError": "加载仪表板时出错"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

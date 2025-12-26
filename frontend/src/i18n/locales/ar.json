@@ -112,7 +112,8 @@
       "itinerary": "خط السير:",
       "locationSaved": "تم حفظ الوجهة بنجاح.",
       "locationSaveError": "تعذر حفظ هذا الموقع، يرجى التحقق من المعلومات.",
-      "invalidAddress": "يرجى تحديد عنوان صالح على الخريطة."
+      "invalidAddress": "يرجى تحديد عنوان صالح على الخريطة.",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "رفقاء السفر",
@@ -218,14 +219,6 @@
       "moderate": "معتدل",
       "others": "آخرون"
     }
-  },
-  "beInspired": {
-    "title": "استلهم",
-    "subtitle": "اكتشف أماكن استثنائية وتجارب أصيلة ستوقظ روحك المغامرة",
-    "aiGuide": "دليل الذكاء الاصطناعي",
-    "shareDiscovery": "شارك كنزاً",
-    "exploreMap": "استكشف الخريطة",
-    "findInspiration": "ابحث عن الإلهام"
   },
   "beInspired": {
     "pageTitle": "استلهم | السفر بالذكاء الاصطناعي",
@@ -621,7 +614,9 @@
     "delete": "حذف",
     "edit": "تعديل",
     "create": "إنشاء",
-    "search": "بحث"
+    "search": "بحث",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "المعالم السياحية",
@@ -869,23 +864,6 @@
       "title": "لوحة التحكم",
       "subtitle": "قم بإدارة نقاط الاهتمام الخاصة بك وتتبع أدائك",
       "overview": "نظرة عامة",
-      "analytics": "التحليلات",
-      "pois": "نقاط الاهتمام الخاصة بي",
-      "bookings": "الحجوزات",
-      "finances": "المالية",
-      "subscription": "الاشتراك",
-      "settings": "الإعدادات",
-      "notifications": "الإشعارات",
-      "notificationsShort": "الإشعارات",
-      "stats": {
-        "totalPois": "نقاط الاهتمام",
-        "totalActive": "إجمالي النشط",
-        "viewsThisMonth": "المشاهدات هذا الشهر",
-        "totalBookings": "إجمالي الحجوزات",
-        "totalRevenue": "إجمالي الإيرادات",
-        "averageRating": "متوسط التقييم",
-        "pendingPayments": "المدفوعات المعلقة"
-      },
       "analytics": {
         "realTimeMetrics": "مقاييس الأداء في الوقت الفعلي",
         "totalViews": "إجمالي المشاهدات",
@@ -990,6 +968,33 @@
           "restaurantTitle": "إدارة المطعم – {name}"
         }
       },
+      "bookings": {
+        "loading": "جاري تحميل بيانات الحجز...",
+        "loadError": "خطأ في تحميل بيانات الحجز",
+        "stats": {
+          "totalBookings": "إجمالي الحجوزات",
+          "totalRevenue": "الإيرادات",
+          "commissions": "العمولات",
+          "pending": "قيد الانتظار"
+        },
+        "history": {
+          "title": "سجل الحجوزات",
+          "reference": "المرجع",
+          "amount": "المبلغ",
+          "commission": "العمولة",
+          "date": "التاريخ",
+          "customer": "العميل",
+          "poi": "نقطة الاهتمام",
+          "empty": "لا توجد حجوزات بعد",
+          "emptyDescription": "ستظهر حجوزات نقاط الاهتمام الخاصة بك هنا"
+        },
+        "status": {
+          "pending": "قيد الانتظار",
+          "confirmed": "مؤكد",
+          "cancelled": "ملغى",
+          "completed": "مكتمل"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "الرصيد المتاح",
@@ -1054,34 +1059,6 @@
           "loadError": "خطأ في تحميل البيانات المالية"
         }
       },
-      "charts": {
-        "viewsOverTime": "المشاهدات عبر الزمن",
-        "viewsDescription": "المشاهدات ومعدل التحويل على مدى 30 يومًا",
-        "bookingsRevenue": "الحجوزات والإيرادات",
-        "revenueDescription": "الأداء المالي الأسبوعي",
-        "performance": "الأداء",
-        "topPerformer": "الأفضل أداءً"
-      },
-      "earnings": {
-        "title": "تاريخ الإيرادات",
-        "description": "تفاصيل أرباحك لكل حجز",
-        "amount": "المبلغ",
-        "commission": "العمولة",
-        "bookingDate": "تاريخ الحجز",
-        "paymentStatus": "حالة الدفع",
-        "pending": "قيد الانتظار",
-        "paid": "مدفوع",
-        "cancelled": "ملغى"
-      },
-      "notificationPanel": {
-        "title": "الإشعارات الأخيرة",
-        "description": "ابقَ على اطلاع بالنشاط على نقاط الاهتمام الخاصة بك",
-        "markAsRead": "وضع علامة كمقروء",
-        "noNotifications": "لا توجد إشعارات",
-        "updateError": "خطأ في تحديث الإشعار"
-      },
-      "export": "تصدير البيانات",
-      "loadingError": "خطأ في تحميل لوحة التحكم",
       "subscription": {
         "loading": "جاري تحميل معلومات الاشتراك...",
         "loadError": "خطأ في تحميل معلومات الاشتراك",
@@ -1164,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "جاري تحميل بيانات الحجز...",
-        "loadError": "خطأ في تحميل بيانات الحجز",
-        "stats": {
-          "totalBookings": "إجمالي الحجوزات",
-          "totalRevenue": "الإيرادات",
-          "commissions": "العمولات",
-          "pending": "قيد الانتظار"
-        },
-        "history": {
-          "title": "سجل الحجوزات",
-          "reference": "المرجع",
-          "amount": "المبلغ",
-          "commission": "العمولة",
-          "date": "التاريخ",
-          "customer": "العميل",
-          "poi": "نقطة الاهتمام",
-          "empty": "لا توجد حجوزات بعد",
-          "emptyDescription": "ستظهر حجوزات نقاط الاهتمام الخاصة بك هنا"
-        },
-        "status": {
-          "pending": "قيد الانتظار",
-          "confirmed": "مؤكد",
-          "cancelled": "ملغى",
-          "completed": "مكتمل"
-        }
-      },
+      "settings": "الإعدادات",
       "notifications": {
         "title": "الإشعارات",
         "markAllRead": "وضع علامة مقروء على الكل",
@@ -1199,7 +1150,58 @@
         "loadError": "تعذر تحميل الإشعارات",
         "markAllSuccess": "تم وضع علامة مقروء على جميع الإشعارات",
         "reference": "المرجع: {reference}"
-      }
+      },
+      "notificationsShort": "الإشعارات",
+      "stats": {
+        "totalPois": "نقاط الاهتمام",
+        "totalActive": "إجمالي النشط",
+        "viewsThisMonth": "المشاهدات هذا الشهر",
+        "totalBookings": "إجمالي الحجوزات",
+        "totalRevenue": "إجمالي الإيرادات",
+        "averageRating": "متوسط التقييم",
+        "pendingPayments": "المدفوعات المعلقة"
+      },
+      "charts": {
+        "viewsOverTime": "المشاهدات عبر الزمن",
+        "viewsDescription": "المشاهدات ومعدل التحويل على مدى 30 يومًا",
+        "bookingsRevenue": "الحجوزات والإيرادات",
+        "revenueDescription": "الأداء المالي الأسبوعي",
+        "performance": "الأداء",
+        "topPerformer": "الأفضل أداءً"
+      },
+      "earnings": {
+        "title": "تاريخ الإيرادات",
+        "description": "تفاصيل أرباحك لكل حجز",
+        "amount": "المبلغ",
+        "commission": "العمولة",
+        "bookingDate": "تاريخ الحجز",
+        "paymentStatus": "حالة الدفع",
+        "pending": "قيد الانتظار",
+        "paid": "مدفوع",
+        "cancelled": "ملغى"
+      },
+      "notificationPanel": {
+        "title": "الإشعارات الأخيرة",
+        "description": "ابقَ على اطلاع بالنشاط على نقاط الاهتمام الخاصة بك",
+        "markAsRead": "وضع علامة كمقروء",
+        "noNotifications": "لا توجد إشعارات",
+        "updateError": "خطأ في تحديث الإشعار"
+      },
+      "export": "تصدير البيانات",
+      "loadingError": "خطأ في تحميل لوحة التحكم"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

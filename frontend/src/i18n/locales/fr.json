@@ -518,7 +518,7 @@
       "creating": "Création en cours...",
       "types": {
         "restaurant": "Restaurant",
-        "hotel": "Hôtel / Hébergement", 
+        "hotel": "Hôtel / Hébergement",
         "activity": "Activité / Loisirs"
       },
       "subscriptions": {
@@ -538,7 +538,7 @@
     }
   },
   "auth": {
-    "title": "Authentification", 
+    "title": "Authentification",
     "welcome": "Bienvenue sur",
     "subtitle": "Connectez-vous pour accéder à vos fonctionnalités personnalisées",
     "description": "Connectez-vous ou créez un compte pour continuer",
@@ -547,7 +547,7 @@
     "email": "Email",
     "password": "Mot de passe",
     "firstName": "Prénom",
-    "lastName": "Nom", 
+    "lastName": "Nom",
     "emailPlaceholder": "votre@email.com",
     "passwordPlaceholder": "••••••••",
     "firstNamePlaceholder": "Prénom",

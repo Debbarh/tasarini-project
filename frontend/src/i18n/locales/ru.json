@@ -112,7 +112,8 @@
       "itinerary": "Маршрут:",
       "locationSaved": "Направление успешно сохранено.",
       "locationSaveError": "Не удалось сохранить это местоположение, пожалуйста, проверьте информацию.",
-      "invalidAddress": "Пожалуйста, выберите действительный адрес на карте."
+      "invalidAddress": "Пожалуйста, выберите действительный адрес на карте.",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "Спутники",
@@ -218,14 +219,6 @@
       "moderate": "Умеренный",
       "others": "другие"
     }
-  },
-  "beInspired": {
-    "title": "Вдохновитесь",
-    "subtitle": "Откройте для себя необыкновенные места и аутентичные впечатления, которые пробудят вашу душу авантюриста",
-    "aiGuide": "ИИ-гид",
-    "shareDiscovery": "Поделиться сокровищем",
-    "exploreMap": "Исследовать карту",
-    "findInspiration": "Найти вдохновение"
   },
   "beInspired": {
     "pageTitle": "Вдохновитесь | ИИ-Путешествие",
@@ -621,7 +614,9 @@
     "delete": "Удалить",
     "edit": "Редактировать",
     "create": "Создать",
-    "search": "Поиск"
+    "search": "Поиск",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "Достопримечательности",
@@ -869,23 +864,6 @@
       "title": "Панель управления",
       "subtitle": "Управляйте своими достопримечательностями и отслеживайте эффективность",
       "overview": "Обзор",
-      "analytics": "Аналитика",
-      "pois": "Мои ДП",
-      "bookings": "Бронирования",
-      "finances": "Финансы",
-      "subscription": "Подписка",
-      "settings": "Настройки",
-      "notifications": "Уведомления",
-      "notificationsShort": "Уведом.",
-      "stats": {
-        "totalPois": "Достопримечательности",
-        "totalActive": "Всего активных",
-        "viewsThisMonth": "Просмотров в этом месяце",
-        "totalBookings": "Всего бронирований",
-        "totalRevenue": "Общий доход",
-        "averageRating": "Средний рейтинг",
-        "pendingPayments": "Ожидающие платежи"
-      },
       "analytics": {
         "realTimeMetrics": "Метрики производительности в реальном времени",
         "totalViews": "Всего просмотров",
@@ -990,6 +968,33 @@
           "restaurantTitle": "Управление рестораном – {name}"
         }
       },
+      "bookings": {
+        "loading": "Загрузка данных о бронированиях...",
+        "loadError": "Ошибка при загрузке данных о бронированиях",
+        "stats": {
+          "totalBookings": "Всего бронирований",
+          "totalRevenue": "Доход",
+          "commissions": "Комиссии",
+          "pending": "В ожидании"
+        },
+        "history": {
+          "title": "История бронирований",
+          "reference": "Ссылка",
+          "amount": "Сумма",
+          "commission": "Комиссия",
+          "date": "Дата",
+          "customer": "Клиент",
+          "poi": "Достопримечательность",
+          "empty": "Пока нет бронирований",
+          "emptyDescription": "Бронирования ваших достопримечательностей появятся здесь"
+        },
+        "status": {
+          "pending": "В ожидании",
+          "confirmed": "Подтверждено",
+          "cancelled": "Отменено",
+          "completed": "Завершено"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "Доступный баланс",
@@ -1054,34 +1059,6 @@
           "loadError": "Ошибка при загрузке финансовых данных"
         }
       },
-      "charts": {
-        "viewsOverTime": "Просмотры со временем",
-        "viewsDescription": "Просмотры и коэффициент конверсии за 30 дней",
-        "bookingsRevenue": "Бронирования и доход",
-        "revenueDescription": "Еженедельная финансовая производительность",
-        "performance": "Производительность",
-        "topPerformer": "Лучший исполнитель"
-      },
-      "earnings": {
-        "title": "История доходов",
-        "description": "Детали ваших заработков по бронированиям",
-        "amount": "Сумма",
-        "commission": "Комиссия",
-        "bookingDate": "Дата бронирования",
-        "paymentStatus": "Статус платежа",
-        "pending": "Ожидает",
-        "paid": "Оплачено",
-        "cancelled": "Отменено"
-      },
-      "notificationPanel": {
-        "title": "Последние уведомления",
-        "description": "Будьте в курсе активности ваших достопримечательностей",
-        "markAsRead": "Отметить как прочитанное",
-        "noNotifications": "Нет уведомлений",
-        "updateError": "Ошибка при обновлении уведомления"
-      },
-      "export": "Экспортировать данные",
-      "loadingError": "Ошибка при загрузке панели управления",
       "subscription": {
         "loading": "Загрузка информации о подписке...",
         "loadError": "Ошибка при загрузке информации о подписке",
@@ -1164,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "Загрузка данных о бронированиях...",
-        "loadError": "Ошибка при загрузке данных о бронированиях",
-        "stats": {
-          "totalBookings": "Всего бронирований",
-          "totalRevenue": "Доход",
-          "commissions": "Комиссии",
-          "pending": "В ожидании"
-        },
-        "history": {
-          "title": "История бронирований",
-          "reference": "Ссылка",
-          "amount": "Сумма",
-          "commission": "Комиссия",
-          "date": "Дата",
-          "customer": "Клиент",
-          "poi": "Достопримечательность",
-          "empty": "Пока нет бронирований",
-          "emptyDescription": "Бронирования ваших достопримечательностей появятся здесь"
-        },
-        "status": {
-          "pending": "В ожидании",
-          "confirmed": "Подтверждено",
-          "cancelled": "Отменено",
-          "completed": "Завершено"
-        }
-      },
+      "settings": "Настройки",
       "notifications": {
         "title": "Уведомления",
         "markAllRead": "Отметить все как прочитанные",
@@ -1199,7 +1150,58 @@
         "loadError": "Невозможно загрузить уведомления",
         "markAllSuccess": "Все уведомления отмечены как прочитанные",
         "reference": "Ссылка: {reference}"
-      }
+      },
+      "notificationsShort": "Уведом.",
+      "stats": {
+        "totalPois": "Достопримечательности",
+        "totalActive": "Всего активных",
+        "viewsThisMonth": "Просмотров в этом месяце",
+        "totalBookings": "Всего бронирований",
+        "totalRevenue": "Общий доход",
+        "averageRating": "Средний рейтинг",
+        "pendingPayments": "Ожидающие платежи"
+      },
+      "charts": {
+        "viewsOverTime": "Просмотры со временем",
+        "viewsDescription": "Просмотры и коэффициент конверсии за 30 дней",
+        "bookingsRevenue": "Бронирования и доход",
+        "revenueDescription": "Еженедельная финансовая производительность",
+        "performance": "Производительность",
+        "topPerformer": "Лучший исполнитель"
+      },
+      "earnings": {
+        "title": "История доходов",
+        "description": "Детали ваших заработков по бронированиям",
+        "amount": "Сумма",
+        "commission": "Комиссия",
+        "bookingDate": "Дата бронирования",
+        "paymentStatus": "Статус платежа",
+        "pending": "Ожидает",
+        "paid": "Оплачено",
+        "cancelled": "Отменено"
+      },
+      "notificationPanel": {
+        "title": "Последние уведомления",
+        "description": "Будьте в курсе активности ваших достопримечательностей",
+        "markAsRead": "Отметить как прочитанное",
+        "noNotifications": "Нет уведомлений",
+        "updateError": "Ошибка при обновлении уведомления"
+      },
+      "export": "Экспортировать данные",
+      "loadingError": "Ошибка при загрузке панели управления"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

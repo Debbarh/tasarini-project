@@ -112,7 +112,8 @@
       "itinerary": "旅程：",
       "locationSaved": "目的地が正常に保存されました。",
       "locationSaveError": "この場所を保存できませんでした。情報を確認してください。",
-      "invalidAddress": "地図上で有効な住所を選択してください。"
+      "invalidAddress": "地図上で有効な住所を選択してください。",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "旅の仕間",
@@ -218,14 +219,6 @@
       "moderate": "中程度",
       "others": "その他"
     }
-  },
-  "beInspired": {
-    "title": "インスピレーションを得る",
-    "subtitle": "あなたの冒険的な魂を目覚めさせる特別な場所と本物の体験を発見してください",
-    "aiGuide": "AIガイド",
-    "shareDiscovery": "宝物を共有",
-    "exploreMap": "地図を探索",
-    "findInspiration": "インスピレーションを見つける"
   },
   "beInspired": {
     "pageTitle": "インスピレーションを得る | AIトラベル",
@@ -621,7 +614,9 @@
     "delete": "削除",
     "edit": "編集",
     "create": "作成",
-    "search": "検索"
+    "search": "検索",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "観光名所",
@@ -869,23 +864,6 @@
       "title": "ダッシュボード",
       "subtitle": "観光スポットを管理し、パフォーマンスを追跡する",
       "overview": "概要",
-      "analytics": "分析",
-      "pois": "私のPOI",
-      "bookings": "予約",
-      "finances": "財務",
-      "subscription": "サブスクリプション",
-      "settings": "設定",
-      "notifications": "通知",
-      "notificationsShort": "通知",
-      "stats": {
-        "totalPois": "観光スポット",
-        "totalActive": "アクティブ合計",
-        "viewsThisMonth": "今月の閲覧数",
-        "totalBookings": "予約総数",
-        "totalRevenue": "総収益",
-        "averageRating": "平均評価",
-        "pendingPayments": "保留中の支払い"
-      },
       "analytics": {
         "realTimeMetrics": "リアルタイムパフォーマンスメトリクス",
         "totalViews": "総閲覧数",
@@ -990,6 +968,33 @@
           "restaurantTitle": "レストラン管理 – {name}"
         }
       },
+      "bookings": {
+        "loading": "予約データを読み込んでいます...",
+        "loadError": "予約データの読み込み中にエラーが発生しました",
+        "stats": {
+          "totalBookings": "予約総数",
+          "totalRevenue": "収益",
+          "commissions": "手数料",
+          "pending": "保留中"
+        },
+        "history": {
+          "title": "予約履歴",
+          "reference": "参照番号",
+          "amount": "金額",
+          "commission": "手数料",
+          "date": "日付",
+          "customer": "顧客",
+          "poi": "観光スポット",
+          "empty": "まだ予約がありません",
+          "emptyDescription": "観光スポットの予約がここに表示されます"
+        },
+        "status": {
+          "pending": "保留中",
+          "confirmed": "確認済み",
+          "cancelled": "キャンセル済み",
+          "completed": "完了"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "利用可能残高",
@@ -1054,34 +1059,6 @@
           "loadError": "財務データの読み込みエラー"
         }
       },
-      "charts": {
-        "viewsOverTime": "閲覧数の推移",
-        "viewsDescription": "30日間の閲覧数とコンバージョン率",
-        "bookingsRevenue": "予約と収益",
-        "revenueDescription": "週次財務パフォーマンス",
-        "performance": "パフォーマンス",
-        "topPerformer": "トップパフォーマー"
-      },
-      "earnings": {
-        "title": "収益履歴",
-        "description": "予約ごとの収益詳細",
-        "amount": "金額",
-        "commission": "手数料",
-        "bookingDate": "予約日",
-        "paymentStatus": "支払いステータス",
-        "pending": "保留中",
-        "paid": "支払い済み",
-        "cancelled": "キャンセル済み"
-      },
-      "notificationPanel": {
-        "title": "最新の通知",
-        "description": "観光スポットのアクティビティについて最新情報を入手",
-        "markAsRead": "既読にする",
-        "noNotifications": "通知はありません",
-        "updateError": "通知の更新中にエラーが発生しました"
-      },
-      "export": "データをエクスポート",
-      "loadingError": "ダッシュボードの読み込み中にエラーが発生しました",
       "subscription": {
         "loading": "サブスクリプション情報を読み込んでいます...",
         "loadError": "サブスクリプション情報の読み込み中にエラーが発生しました",
@@ -1164,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "予約データを読み込んでいます...",
-        "loadError": "予約データの読み込み中にエラーが発生しました",
-        "stats": {
-          "totalBookings": "予約総数",
-          "totalRevenue": "収益",
-          "commissions": "手数料",
-          "pending": "保留中"
-        },
-        "history": {
-          "title": "予約履歴",
-          "reference": "参照番号",
-          "amount": "金額",
-          "commission": "手数料",
-          "date": "日付",
-          "customer": "顧客",
-          "poi": "観光スポット",
-          "empty": "まだ予約がありません",
-          "emptyDescription": "観光スポットの予約がここに表示されます"
-        },
-        "status": {
-          "pending": "保留中",
-          "confirmed": "確認済み",
-          "cancelled": "キャンセル済み",
-          "completed": "完了"
-        }
-      },
+      "settings": "設定",
       "notifications": {
         "title": "通知",
         "markAllRead": "すべて既読にする",
@@ -1199,7 +1150,58 @@
         "loadError": "通知を読み込めません",
         "markAllSuccess": "すべての通知を既読にしました",
         "reference": "参照: {reference}"
-      }
+      },
+      "notificationsShort": "通知",
+      "stats": {
+        "totalPois": "観光スポット",
+        "totalActive": "アクティブ合計",
+        "viewsThisMonth": "今月の閲覧数",
+        "totalBookings": "予約総数",
+        "totalRevenue": "総収益",
+        "averageRating": "平均評価",
+        "pendingPayments": "保留中の支払い"
+      },
+      "charts": {
+        "viewsOverTime": "閲覧数の推移",
+        "viewsDescription": "30日間の閲覧数とコンバージョン率",
+        "bookingsRevenue": "予約と収益",
+        "revenueDescription": "週次財務パフォーマンス",
+        "performance": "パフォーマンス",
+        "topPerformer": "トップパフォーマー"
+      },
+      "earnings": {
+        "title": "収益履歴",
+        "description": "予約ごとの収益詳細",
+        "amount": "金額",
+        "commission": "手数料",
+        "bookingDate": "予約日",
+        "paymentStatus": "支払いステータス",
+        "pending": "保留中",
+        "paid": "支払い済み",
+        "cancelled": "キャンセル済み"
+      },
+      "notificationPanel": {
+        "title": "最新の通知",
+        "description": "観光スポットのアクティビティについて最新情報を入手",
+        "markAsRead": "既読にする",
+        "noNotifications": "通知はありません",
+        "updateError": "通知の更新中にエラーが発生しました"
+      },
+      "export": "データをエクスポート",
+      "loadingError": "ダッシュボードの読み込み中にエラーが発生しました"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

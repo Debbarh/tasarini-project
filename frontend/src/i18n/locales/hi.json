@@ -112,7 +112,8 @@
       "itinerary": "यात्रा कार्यक्रम:",
       "locationSaved": "गंतव्य सफलतापूर्वक सहेजा गया।",
       "locationSaveError": "यह स्थान सहेजने में असमर्थ, कृपया जानकारी की जांच करें।",
-      "invalidAddress": "कृपया मानचित्र पर एक वैध पता चुनें।"
+      "invalidAddress": "कृपया मानचित्र पर एक वैध पता चुनें।",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "यात्रा साथी",
@@ -218,14 +219,6 @@
       "moderate": "मध्यम",
       "others": "अन्य"
     }
-  },
-  "beInspired": {
-    "title": "प्रेरणा लें",
-    "subtitle": "असाधारण स्थानों और प्रामाणिक अनुभवों की खोज करें जो आपकी साहसिक आत्मा को जगाएंगे",
-    "aiGuide": "AI गाइड",
-    "shareDiscovery": "एक खजाना साझा करें",
-    "exploreMap": "मानचित्र का अन्वेषण करें",
-    "findInspiration": "प्रेरणा खोजें"
   },
   "beInspired": {
     "pageTitle": "प्रेरित हों | AI यात्रा",
@@ -621,7 +614,9 @@
     "delete": "हटाएं",
     "edit": "संपादित करें",
     "create": "बनाएं",
-    "search": "खोजें"
+    "search": "खोजें",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "पर्यटन स्थल",
@@ -869,23 +864,6 @@
       "title": "डैशबोर्ड",
       "subtitle": "अपने रुचि के स्थानों का प्रबंधन करें और अपने प्रदर्शन को ट्रैक करें",
       "overview": "अवलोकन",
-      "analytics": "विश्लेषण",
-      "pois": "मेरे पीओआई",
-      "bookings": "बुकिंग",
-      "finances": "वित्त",
-      "subscription": "सदस्यता",
-      "settings": "सेटिंग्स",
-      "notifications": "सूचनाएं",
-      "notificationsShort": "सूचनाएं",
-      "stats": {
-        "totalPois": "रुचि के स्थान",
-        "totalActive": "कुल सक्रिय",
-        "viewsThisMonth": "इस महीने के दृश्य",
-        "totalBookings": "कुल बुकिंग",
-        "totalRevenue": "कुल राजस्व",
-        "averageRating": "औसत रेटिंग",
-        "pendingPayments": "लंबित भुगतान"
-      },
       "analytics": {
         "realTimeMetrics": "रीयल-टाइम प्रदर्शन मेट्रिक्स",
         "totalViews": "कुल दृश्य",
@@ -990,6 +968,33 @@
           "restaurantTitle": "रेस्तरां प्रबंधन – {name}"
         }
       },
+      "bookings": {
+        "loading": "बुकिंग डेटा लोड हो रहा है...",
+        "loadError": "बुकिंग डेटा लोड करने में त्रुटि",
+        "stats": {
+          "totalBookings": "कुल बुकिंग",
+          "totalRevenue": "राजस्व",
+          "commissions": "कमीशन",
+          "pending": "लंबित"
+        },
+        "history": {
+          "title": "बुकिंग इतिहास",
+          "reference": "संदर्भ",
+          "amount": "राशि",
+          "commission": "कमीशन",
+          "date": "तारीख",
+          "customer": "ग्राहक",
+          "poi": "रुचि का स्थल",
+          "empty": "अभी तक कोई बुकिंग नहीं",
+          "emptyDescription": "आपके रुचि के स्थलों की बुकिंग यहां दिखाई देंगी"
+        },
+        "status": {
+          "pending": "लंबित",
+          "confirmed": "पुष्टिकृत",
+          "cancelled": "रद्द",
+          "completed": "पूर्ण"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "उपलब्ध शेष",
@@ -1054,34 +1059,6 @@
           "loadError": "वित्तीय डेटा लोड करने में त्रुटि"
         }
       },
-      "charts": {
-        "viewsOverTime": "समय के साथ दृश्य",
-        "viewsDescription": "30 दिनों में दृश्य और रूपांतरण दर",
-        "bookingsRevenue": "बुकिंग और राजस्व",
-        "revenueDescription": "साप्ताहिक वित्तीय प्रदर्शन",
-        "performance": "प्रदर्शन",
-        "topPerformer": "शीर्ष प्रदर्शक"
-      },
-      "earnings": {
-        "title": "राजस्व इतिहास",
-        "description": "प्रति बुकिंग आपकी कमाई का विवरण",
-        "amount": "राशि",
-        "commission": "कमीशन",
-        "bookingDate": "बुकिंग तिथि",
-        "paymentStatus": "भुगतान स्थिति",
-        "pending": "लंबित",
-        "paid": "भुगतान किया गया",
-        "cancelled": "रद्द किया गया"
-      },
-      "notificationPanel": {
-        "title": "हालिया सूचनाएं",
-        "description": "अपने रुचि के स्थानों पर गतिविधि के बारे में सूचित रहें",
-        "markAsRead": "पढ़ा हुआ चिह्नित करें",
-        "noNotifications": "कोई सूचना नहीं",
-        "updateError": "सूचना अपडेट करने में त्रुटि"
-      },
-      "export": "डेटा निर्यात करें",
-      "loadingError": "डैशबोर्ड लोड करने में त्रुटि",
       "subscription": {
         "loading": "सदस्यता जानकारी लोड हो रही है...",
         "loadError": "सदस्यता जानकारी लोड करने में त्रुटि",
@@ -1164,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "बुकिंग डेटा लोड हो रहा है...",
-        "loadError": "बुकिंग डेटा लोड करने में त्रुटि",
-        "stats": {
-          "totalBookings": "कुल बुकिंग",
-          "totalRevenue": "राजस्व",
-          "commissions": "कमीशन",
-          "pending": "लंबित"
-        },
-        "history": {
-          "title": "बुकिंग इतिहास",
-          "reference": "संदर्भ",
-          "amount": "राशि",
-          "commission": "कमीशन",
-          "date": "तारीख",
-          "customer": "ग्राहक",
-          "poi": "रुचि का स्थल",
-          "empty": "अभी तक कोई बुकिंग नहीं",
-          "emptyDescription": "आपके रुचि के स्थलों की बुकिंग यहां दिखाई देंगी"
-        },
-        "status": {
-          "pending": "लंबित",
-          "confirmed": "पुष्टिकृत",
-          "cancelled": "रद्द",
-          "completed": "पूर्ण"
-        }
-      },
+      "settings": "सेटिंग्स",
       "notifications": {
         "title": "सूचनाएं",
         "markAllRead": "सभी को पढ़ा गया चिह्नित करें",
@@ -1199,7 +1150,58 @@
         "loadError": "सूचनाएं लोड करने में असमर्थ",
         "markAllSuccess": "सभी सूचनाएं पढ़ी गई चिह्नित",
         "reference": "संदर्भ: {reference}"
-      }
+      },
+      "notificationsShort": "सूचनाएं",
+      "stats": {
+        "totalPois": "रुचि के स्थान",
+        "totalActive": "कुल सक्रिय",
+        "viewsThisMonth": "इस महीने के दृश्य",
+        "totalBookings": "कुल बुकिंग",
+        "totalRevenue": "कुल राजस्व",
+        "averageRating": "औसत रेटिंग",
+        "pendingPayments": "लंबित भुगतान"
+      },
+      "charts": {
+        "viewsOverTime": "समय के साथ दृश्य",
+        "viewsDescription": "30 दिनों में दृश्य और रूपांतरण दर",
+        "bookingsRevenue": "बुकिंग और राजस्व",
+        "revenueDescription": "साप्ताहिक वित्तीय प्रदर्शन",
+        "performance": "प्रदर्शन",
+        "topPerformer": "शीर्ष प्रदर्शक"
+      },
+      "earnings": {
+        "title": "राजस्व इतिहास",
+        "description": "प्रति बुकिंग आपकी कमाई का विवरण",
+        "amount": "राशि",
+        "commission": "कमीशन",
+        "bookingDate": "बुकिंग तिथि",
+        "paymentStatus": "भुगतान स्थिति",
+        "pending": "लंबित",
+        "paid": "भुगतान किया गया",
+        "cancelled": "रद्द किया गया"
+      },
+      "notificationPanel": {
+        "title": "हालिया सूचनाएं",
+        "description": "अपने रुचि के स्थानों पर गतिविधि के बारे में सूचित रहें",
+        "markAsRead": "पढ़ा हुआ चिह्नित करें",
+        "noNotifications": "कोई सूचना नहीं",
+        "updateError": "सूचना अपडेट करने में त्रुटि"
+      },
+      "export": "डेटा निर्यात करें",
+      "loadingError": "डैशबोर्ड लोड करने में त्रुटि"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

@@ -112,7 +112,8 @@
       "itinerary": "Itinerário:",
       "locationSaved": "Destino salvo com sucesso.",
       "locationSaveError": "Não foi possível salvar esta localização, por favor verifique as informações.",
-      "invalidAddress": "Por favor, selecione um endereço válido no mapa."
+      "invalidAddress": "Por favor, selecione um endereço válido no mapa.",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "Companheiros de viagem",
@@ -218,14 +219,6 @@
       "moderate": "Moderado",
       "others": "outros"
     }
-  },
-  "beInspired": {
-    "title": "Deixe-se inspirar",
-    "subtitle": "Descubra lugares extraordinários e experiências autênticas que despertarão sua alma aventureira",
-    "aiGuide": "Guia IA",
-    "shareDiscovery": "Compartilhar um tesouro",
-    "exploreMap": "Explorar o mapa",
-    "findInspiration": "Encontrar inspiração"
   },
   "beInspired": {
     "pageTitle": "Deixe-se Inspirar | Viagem IA",
@@ -509,6 +502,38 @@
         "restaurant": "Restaurante",
         "hotel": "Hotel / Hospedagem",
         "activity": "Atividade / Lazer"
+      },
+      "address": "Point of Interest Address",
+      "addressPlaceholder": "123 Peace Street, 75001 Paris, France",
+      "addressHelp": "Enter the complete address or use the map below",
+      "mapLocation": "Location on Map",
+      "mapHelp": "Click on the map to refine the position or use the address field above",
+      "photos": "Point of Interest Photos",
+      "photosHelp": "Add photos to showcase your point of interest",
+      "photosNote": "Maximum 10MB per image. Accepted formats: JPG, PNG, WebP",
+      "addPhotos": "Add Photos",
+      "uploading": "Uploading...",
+      "contactEmail": "Professional Email",
+      "contactPhone": "Phone",
+      "website": "Website",
+      "subscriptionType": "Desired Subscription Type",
+      "important": "Important:",
+      "importantNote": "Your application will be reviewed by our team. You will receive a notification once approved.",
+      "createAccount": "Create My Partner Account",
+      "creating": "Creating...",
+      "subscriptions": {
+        "basic": {
+          "name": "Basic - Free",
+          "description": "Partner badge, 1 point of interest"
+        },
+        "premium": {
+          "name": "Premium - €19/month",
+          "description": "Featured placement, 5 points of interest, statistics"
+        },
+        "enterprise": {
+          "name": "Enterprise - €49/month",
+          "description": "Unlimited points, priority support, API"
+        }
       }
     }
   },
@@ -589,7 +614,9 @@
     "delete": "Excluir",
     "edit": "Editar",
     "create": "Criar",
-    "search": "Pesquisar"
+    "search": "Pesquisar",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "Pontos de Interesse",
@@ -837,23 +864,6 @@
       "title": "Painel de Controle",
       "subtitle": "Gerencie seus pontos de interesse e acompanhe seu desempenho",
       "overview": "Visão Geral",
-      "analytics": "Análises",
-      "pois": "Meus PDIs",
-      "bookings": "Reservas",
-      "finances": "Finanças",
-      "subscription": "Assinatura",
-      "settings": "Configurações",
-      "notifications": "Notificações",
-      "notificationsShort": "Notif.",
-      "stats": {
-        "totalPois": "Pontos de Interesse",
-        "totalActive": "Total ativos",
-        "viewsThisMonth": "Visualizações este mês",
-        "totalBookings": "Reservas totais",
-        "totalRevenue": "Receita total",
-        "averageRating": "Classificação média",
-        "pendingPayments": "Pagamentos pendentes"
-      },
       "analytics": {
         "realTimeMetrics": "Métricas de desempenho em tempo real",
         "totalViews": "Visualizações totais",
@@ -958,6 +968,33 @@
           "restaurantTitle": "Gestão do restaurante – {name}"
         }
       },
+      "bookings": {
+        "loading": "Carregando dados de reservas...",
+        "loadError": "Erro ao carregar dados de reservas",
+        "stats": {
+          "totalBookings": "Total de Reservas",
+          "totalRevenue": "Receita",
+          "commissions": "Comissões",
+          "pending": "Pendente"
+        },
+        "history": {
+          "title": "Histórico de Reservas",
+          "reference": "Referência",
+          "amount": "Valor",
+          "commission": "Comissão",
+          "date": "Data",
+          "customer": "Cliente",
+          "poi": "Ponto de interesse",
+          "empty": "Nenhuma reserva ainda",
+          "emptyDescription": "As reservas dos seus pontos de interesse aparecerão aqui"
+        },
+        "status": {
+          "pending": "Pendente",
+          "confirmed": "Confirmado",
+          "cancelled": "Cancelado",
+          "completed": "Concluído"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "Saldo disponível",
@@ -1022,34 +1059,6 @@
           "loadError": "Erro ao carregar dados financeiros"
         }
       },
-      "charts": {
-        "viewsOverTime": "Visualizações ao Longo do Tempo",
-        "viewsDescription": "Visualizações e taxa de conversão em 30 dias",
-        "bookingsRevenue": "Reservas e Receita",
-        "revenueDescription": "Desempenho financeiro semanal",
-        "performance": "Desempenho",
-        "topPerformer": "Melhor desempenho"
-      },
-      "earnings": {
-        "title": "Histórico de Receitas",
-        "description": "Detalhes dos seus ganhos por reserva",
-        "amount": "Valor",
-        "commission": "Comissão",
-        "bookingDate": "Data da reserva",
-        "paymentStatus": "Status do pagamento",
-        "pending": "Pendente",
-        "paid": "Pago",
-        "cancelled": "Cancelado"
-      },
-      "notificationPanel": {
-        "title": "Notificações Recentes",
-        "description": "Mantenha-se informado sobre a atividade nos seus pontos de interesse",
-        "markAsRead": "Marcar como lida",
-        "noNotifications": "Sem notificações",
-        "updateError": "Erro ao atualizar a notificação"
-      },
-      "export": "Exportar dados",
-      "loadingError": "Erro ao carregar o painel de controle",
       "subscription": {
         "loading": "Carregando informações de assinatura...",
         "loadError": "Erro ao carregar informações da assinatura",
@@ -1132,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "Carregando dados de reservas...",
-        "loadError": "Erro ao carregar dados de reservas",
-        "stats": {
-          "totalBookings": "Total de Reservas",
-          "totalRevenue": "Receita",
-          "commissions": "Comissões",
-          "pending": "Pendente"
-        },
-        "history": {
-          "title": "Histórico de Reservas",
-          "reference": "Referência",
-          "amount": "Valor",
-          "commission": "Comissão",
-          "date": "Data",
-          "customer": "Cliente",
-          "poi": "Ponto de interesse",
-          "empty": "Nenhuma reserva ainda",
-          "emptyDescription": "As reservas dos seus pontos de interesse aparecerão aqui"
-        },
-        "status": {
-          "pending": "Pendente",
-          "confirmed": "Confirmado",
-          "cancelled": "Cancelado",
-          "completed": "Concluído"
-        }
-      },
+      "settings": "Configurações",
       "notifications": {
         "title": "Notificações",
         "markAllRead": "Marcar todas como lidas",
@@ -1167,7 +1150,58 @@
         "loadError": "Não é possível carregar notificações",
         "markAllSuccess": "Todas as notificações marcadas como lidas",
         "reference": "Ref: {reference}"
-      }
+      },
+      "notificationsShort": "Notif.",
+      "stats": {
+        "totalPois": "Pontos de Interesse",
+        "totalActive": "Total ativos",
+        "viewsThisMonth": "Visualizações este mês",
+        "totalBookings": "Reservas totais",
+        "totalRevenue": "Receita total",
+        "averageRating": "Classificação média",
+        "pendingPayments": "Pagamentos pendentes"
+      },
+      "charts": {
+        "viewsOverTime": "Visualizações ao Longo do Tempo",
+        "viewsDescription": "Visualizações e taxa de conversão em 30 dias",
+        "bookingsRevenue": "Reservas e Receita",
+        "revenueDescription": "Desempenho financeiro semanal",
+        "performance": "Desempenho",
+        "topPerformer": "Melhor desempenho"
+      },
+      "earnings": {
+        "title": "Histórico de Receitas",
+        "description": "Detalhes dos seus ganhos por reserva",
+        "amount": "Valor",
+        "commission": "Comissão",
+        "bookingDate": "Data da reserva",
+        "paymentStatus": "Status do pagamento",
+        "pending": "Pendente",
+        "paid": "Pago",
+        "cancelled": "Cancelado"
+      },
+      "notificationPanel": {
+        "title": "Notificações Recentes",
+        "description": "Mantenha-se informado sobre a atividade nos seus pontos de interesse",
+        "markAsRead": "Marcar como lida",
+        "noNotifications": "Sem notificações",
+        "updateError": "Erro ao atualizar a notificação"
+      },
+      "export": "Exportar dados",
+      "loadingError": "Erro ao carregar o painel de controle"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

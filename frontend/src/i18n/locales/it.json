@@ -112,7 +112,8 @@
       "itinerary": "Itinerario:",
       "locationSaved": "Destinazione salvata con successo.",
       "locationSaveError": "Impossibile salvare questa posizione, si prega di verificare le informazioni.",
-      "invalidAddress": "Si prega di selezionare un indirizzo valido sulla mappa."
+      "invalidAddress": "Si prega di selezionare un indirizzo valido sulla mappa.",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "Compagni di viaggio",
@@ -218,14 +219,6 @@
       "moderate": "Moderato",
       "others": "altri"
     }
-  },
-  "beInspired": {
-    "title": "Lasciati ispirare",
-    "subtitle": "Scopri luoghi straordinari ed esperienze autentiche che risveglieranno la tua anima avventurosa",
-    "aiGuide": "Guida IA",
-    "shareDiscovery": "Condividi un tesoro",
-    "exploreMap": "Esplora la mappa",
-    "findInspiration": "Trova ispirazione"
   },
   "beInspired": {
     "pageTitle": "Lasciati Ispirare | Viaggio IA",
@@ -509,6 +502,38 @@
         "restaurant": "Ristorante",
         "hotel": "Hotel / Alloggio",
         "activity": "Attività / Tempo Libero"
+      },
+      "address": "Point of Interest Address",
+      "addressPlaceholder": "123 Peace Street, 75001 Paris, France",
+      "addressHelp": "Enter the complete address or use the map below",
+      "mapLocation": "Location on Map",
+      "mapHelp": "Click on the map to refine the position or use the address field above",
+      "photos": "Point of Interest Photos",
+      "photosHelp": "Add photos to showcase your point of interest",
+      "photosNote": "Maximum 10MB per image. Accepted formats: JPG, PNG, WebP",
+      "addPhotos": "Add Photos",
+      "uploading": "Uploading...",
+      "contactEmail": "Professional Email",
+      "contactPhone": "Phone",
+      "website": "Website",
+      "subscriptionType": "Desired Subscription Type",
+      "important": "Important:",
+      "importantNote": "Your application will be reviewed by our team. You will receive a notification once approved.",
+      "createAccount": "Create My Partner Account",
+      "creating": "Creating...",
+      "subscriptions": {
+        "basic": {
+          "name": "Basic - Free",
+          "description": "Partner badge, 1 point of interest"
+        },
+        "premium": {
+          "name": "Premium - €19/month",
+          "description": "Featured placement, 5 points of interest, statistics"
+        },
+        "enterprise": {
+          "name": "Enterprise - €49/month",
+          "description": "Unlimited points, priority support, API"
+        }
       }
     }
   },
@@ -589,7 +614,9 @@
     "delete": "Elimina",
     "edit": "Modifica",
     "create": "Crea",
-    "search": "Cerca"
+    "search": "Cerca",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "Punti di Interesse",
@@ -837,23 +864,6 @@
       "title": "Dashboard",
       "subtitle": "Gestisci i tuoi punti di interesse e monitora le tue prestazioni",
       "overview": "Panoramica",
-      "analytics": "Analisi",
-      "pois": "I Miei PDI",
-      "bookings": "Prenotazioni",
-      "finances": "Finanze",
-      "subscription": "Abbonamento",
-      "settings": "Impostazioni",
-      "notifications": "Notifiche",
-      "notificationsShort": "Notif.",
-      "stats": {
-        "totalPois": "Punti di Interesse",
-        "totalActive": "Totale attivi",
-        "viewsThisMonth": "Visualizzazioni questo mese",
-        "totalBookings": "Prenotazioni totali",
-        "totalRevenue": "Entrate totali",
-        "averageRating": "Valutazione media",
-        "pendingPayments": "Pagamenti in sospeso"
-      },
       "analytics": {
         "realTimeMetrics": "Metriche di performance in tempo reale",
         "totalViews": "Visualizzazioni totali",
@@ -958,6 +968,33 @@
           "restaurantTitle": "Gestione ristorante – {name}"
         }
       },
+      "bookings": {
+        "loading": "Caricamento dati prenotazioni...",
+        "loadError": "Errore nel caricamento dei dati delle prenotazioni",
+        "stats": {
+          "totalBookings": "Prenotazioni totali",
+          "totalRevenue": "Ricavi",
+          "commissions": "Commissioni",
+          "pending": "In sospeso"
+        },
+        "history": {
+          "title": "Storico Prenotazioni",
+          "reference": "Riferimento",
+          "amount": "Importo",
+          "commission": "Commissione",
+          "date": "Data",
+          "customer": "Cliente",
+          "poi": "Punto di interesse",
+          "empty": "Nessuna prenotazione ancora",
+          "emptyDescription": "Le prenotazioni per i tuoi punti di interesse appariranno qui"
+        },
+        "status": {
+          "pending": "In sospeso",
+          "confirmed": "Confermato",
+          "cancelled": "Annullato",
+          "completed": "Completato"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "Saldo disponibile",
@@ -1022,34 +1059,6 @@
           "loadError": "Errore nel caricamento dei dati finanziari"
         }
       },
-      "charts": {
-        "viewsOverTime": "Visualizzazioni nel Tempo",
-        "viewsDescription": "Visualizzazioni e tasso di conversione in 30 giorni",
-        "bookingsRevenue": "Prenotazioni e Entrate",
-        "revenueDescription": "Prestazioni finanziarie settimanali",
-        "performance": "Prestazioni",
-        "topPerformer": "Migliore performance"
-      },
-      "earnings": {
-        "title": "Storico Entrate",
-        "description": "Dettagli dei tuoi guadagni per prenotazione",
-        "amount": "Importo",
-        "commission": "Commissione",
-        "bookingDate": "Data prenotazione",
-        "paymentStatus": "Stato pagamento",
-        "pending": "In attesa",
-        "paid": "Pagato",
-        "cancelled": "Annullato"
-      },
-      "notificationPanel": {
-        "title": "Notifiche Recenti",
-        "description": "Rimani informato sull'attività dei tuoi punti di interesse",
-        "markAsRead": "Segna come letto",
-        "noNotifications": "Nessuna notifica",
-        "updateError": "Errore durante l'aggiornamento della notifica"
-      },
-      "export": "Esporta dati",
-      "loadingError": "Errore nel caricamento della dashboard",
       "subscription": {
         "loading": "Caricamento informazioni abbonamento...",
         "loadError": "Errore nel caricamento delle informazioni sull'abbonamento",
@@ -1132,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "Caricamento dati prenotazioni...",
-        "loadError": "Errore nel caricamento dei dati delle prenotazioni",
-        "stats": {
-          "totalBookings": "Prenotazioni totali",
-          "totalRevenue": "Ricavi",
-          "commissions": "Commissioni",
-          "pending": "In sospeso"
-        },
-        "history": {
-          "title": "Storico Prenotazioni",
-          "reference": "Riferimento",
-          "amount": "Importo",
-          "commission": "Commissione",
-          "date": "Data",
-          "customer": "Cliente",
-          "poi": "Punto di interesse",
-          "empty": "Nessuna prenotazione ancora",
-          "emptyDescription": "Le prenotazioni per i tuoi punti di interesse appariranno qui"
-        },
-        "status": {
-          "pending": "In sospeso",
-          "confirmed": "Confermato",
-          "cancelled": "Annullato",
-          "completed": "Completato"
-        }
-      },
+      "settings": "Impostazioni",
       "notifications": {
         "title": "Notifiche",
         "markAllRead": "Segna tutte come lette",
@@ -1167,7 +1150,58 @@
         "loadError": "Impossibile caricare le notifiche",
         "markAllSuccess": "Tutte le notifiche segnate come lette",
         "reference": "Rif: {reference}"
-      }
+      },
+      "notificationsShort": "Notif.",
+      "stats": {
+        "totalPois": "Punti di Interesse",
+        "totalActive": "Totale attivi",
+        "viewsThisMonth": "Visualizzazioni questo mese",
+        "totalBookings": "Prenotazioni totali",
+        "totalRevenue": "Entrate totali",
+        "averageRating": "Valutazione media",
+        "pendingPayments": "Pagamenti in sospeso"
+      },
+      "charts": {
+        "viewsOverTime": "Visualizzazioni nel Tempo",
+        "viewsDescription": "Visualizzazioni e tasso di conversione in 30 giorni",
+        "bookingsRevenue": "Prenotazioni e Entrate",
+        "revenueDescription": "Prestazioni finanziarie settimanali",
+        "performance": "Prestazioni",
+        "topPerformer": "Migliore performance"
+      },
+      "earnings": {
+        "title": "Storico Entrate",
+        "description": "Dettagli dei tuoi guadagni per prenotazione",
+        "amount": "Importo",
+        "commission": "Commissione",
+        "bookingDate": "Data prenotazione",
+        "paymentStatus": "Stato pagamento",
+        "pending": "In attesa",
+        "paid": "Pagato",
+        "cancelled": "Annullato"
+      },
+      "notificationPanel": {
+        "title": "Notifiche Recenti",
+        "description": "Rimani informato sull'attività dei tuoi punti di interesse",
+        "markAsRead": "Segna come letto",
+        "noNotifications": "Nessuna notifica",
+        "updateError": "Errore durante l'aggiornamento della notifica"
+      },
+      "export": "Esporta dati",
+      "loadingError": "Errore nel caricamento della dashboard"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

@@ -112,7 +112,8 @@
       "itinerary": "Reiseroute:",
       "locationSaved": "Reiseziel erfolgreich gespeichert.",
       "locationSaveError": "Dieser Standort konnte nicht gespeichert werden, bitte überprüfen Sie die Informationen.",
-      "invalidAddress": "Bitte wählen Sie eine gültige Adresse auf der Karte aus."
+      "invalidAddress": "Bitte wählen Sie eine gültige Adresse auf der Karte aus.",
+      "fetchingTranslations": "Fetching multilingual translations..."
     },
     "travelDetailsStep": {
       "title": "Reisebegleiter",
@@ -218,14 +219,6 @@
       "moderate": "Mäßig",
       "others": "weitere"
     }
-  },
-  "beInspired": {
-    "title": "Lassen Sie sich inspirieren",
-    "subtitle": "Entdecken Sie außergewöhnliche Orte und authentische Erlebnisse, die Ihre abenteuerlustige Seele erwecken werden",
-    "aiGuide": "KI-Leitfaden",
-    "shareDiscovery": "Einen Schatz teilen",
-    "exploreMap": "Die Karte erkunden",
-    "findInspiration": "Inspiration finden"
   },
   "beInspired": {
     "pageTitle": "Lassen Sie sich inspirieren | KI-Reise",
@@ -509,6 +502,38 @@
         "restaurant": "Restaurant",
         "hotel": "Hotel / Unterkunft",
         "activity": "Aktivität / Freizeit"
+      },
+      "address": "Point of Interest Address",
+      "addressPlaceholder": "123 Peace Street, 75001 Paris, France",
+      "addressHelp": "Enter the complete address or use the map below",
+      "mapLocation": "Location on Map",
+      "mapHelp": "Click on the map to refine the position or use the address field above",
+      "photos": "Point of Interest Photos",
+      "photosHelp": "Add photos to showcase your point of interest",
+      "photosNote": "Maximum 10MB per image. Accepted formats: JPG, PNG, WebP",
+      "addPhotos": "Add Photos",
+      "uploading": "Uploading...",
+      "contactEmail": "Professional Email",
+      "contactPhone": "Phone",
+      "website": "Website",
+      "subscriptionType": "Desired Subscription Type",
+      "important": "Important:",
+      "importantNote": "Your application will be reviewed by our team. You will receive a notification once approved.",
+      "createAccount": "Create My Partner Account",
+      "creating": "Creating...",
+      "subscriptions": {
+        "basic": {
+          "name": "Basic - Free",
+          "description": "Partner badge, 1 point of interest"
+        },
+        "premium": {
+          "name": "Premium - €19/month",
+          "description": "Featured placement, 5 points of interest, statistics"
+        },
+        "enterprise": {
+          "name": "Enterprise - €49/month",
+          "description": "Unlimited points, priority support, API"
+        }
       }
     }
   },
@@ -589,7 +614,9 @@
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "create": "Erstellen",
-    "search": "Suchen"
+    "search": "Suchen",
+    "close": "Close",
+    "back": "Back"
   },
   "touristPoints": {
     "pageTitle": "Sehenswürdigkeiten",
@@ -837,23 +864,6 @@
       "title": "Dashboard",
       "subtitle": "Verwalten Sie Ihre Sehenswürdigkeiten und verfolgen Sie Ihre Leistung",
       "overview": "Übersicht",
-      "analytics": "Analytik",
-      "pois": "Meine POIs",
-      "bookings": "Buchungen",
-      "finances": "Finanzen",
-      "subscription": "Abonnement",
-      "settings": "Einstellungen",
-      "notifications": "Benachrichtigungen",
-      "notificationsShort": "Benachr.",
-      "stats": {
-        "totalPois": "Sehenswürdigkeiten",
-        "totalActive": "Gesamt aktiv",
-        "viewsThisMonth": "Aufrufe diesen Monat",
-        "totalBookings": "Gesamte Buchungen",
-        "totalRevenue": "Gesamtumsatz",
-        "averageRating": "Durchschnittliche Bewertung",
-        "pendingPayments": "Ausstehende Zahlungen"
-      },
       "analytics": {
         "realTimeMetrics": "Echtzeit-Leistungsmetriken",
         "totalViews": "Gesamtaufrufe",
@@ -958,6 +968,33 @@
           "restaurantTitle": "Restaurantverwaltung – {name}"
         }
       },
+      "bookings": {
+        "loading": "Buchungsdaten werden geladen...",
+        "loadError": "Fehler beim Laden der Buchungsdaten",
+        "stats": {
+          "totalBookings": "Buchungen gesamt",
+          "totalRevenue": "Umsatz",
+          "commissions": "Provisionen",
+          "pending": "Ausstehend"
+        },
+        "history": {
+          "title": "Buchungsverlauf",
+          "reference": "Referenz",
+          "amount": "Betrag",
+          "commission": "Provision",
+          "date": "Datum",
+          "customer": "Kunde",
+          "poi": "Sehenswürdigkeit",
+          "empty": "Noch keine Buchungen",
+          "emptyDescription": "Buchungen für Ihre Sehenswürdigkeiten werden hier angezeigt"
+        },
+        "status": {
+          "pending": "Ausstehend",
+          "confirmed": "Bestätigt",
+          "cancelled": "Storniert",
+          "completed": "Abgeschlossen"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "Verfügbares Guthaben",
@@ -1022,34 +1059,6 @@
           "loadError": "Fehler beim Laden der Finanzdaten"
         }
       },
-      "charts": {
-        "viewsOverTime": "Aufrufe im Zeitverlauf",
-        "viewsDescription": "Aufrufe und Conversion-Rate über 30 Tage",
-        "bookingsRevenue": "Buchungen und Umsatz",
-        "revenueDescription": "Wöchentliche finanzielle Leistung",
-        "performance": "Leistung",
-        "topPerformer": "Top-Performer"
-      },
-      "earnings": {
-        "title": "Umsatzhistorie",
-        "description": "Details Ihrer Einnahmen pro Buchung",
-        "amount": "Betrag",
-        "commission": "Provision",
-        "bookingDate": "Buchungsdatum",
-        "paymentStatus": "Zahlungsstatus",
-        "pending": "Ausstehend",
-        "paid": "Bezahlt",
-        "cancelled": "Storniert"
-      },
-      "notificationPanel": {
-        "title": "Neueste Benachrichtigungen",
-        "description": "Bleiben Sie über Aktivitäten an Ihren Sehenswürdigkeiten informiert",
-        "markAsRead": "Als gelesen markieren",
-        "noNotifications": "Keine Benachrichtigungen",
-        "updateError": "Fehler beim Aktualisieren der Benachrichtigung"
-      },
-      "export": "Daten exportieren",
-      "loadingError": "Fehler beim Laden des Dashboards",
       "subscription": {
         "loading": "Abonnementinformationen werden geladen...",
         "loadError": "Fehler beim Laden der Abonnementinformationen",
@@ -1132,33 +1141,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "Buchungsdaten werden geladen...",
-        "loadError": "Fehler beim Laden der Buchungsdaten",
-        "stats": {
-          "totalBookings": "Buchungen gesamt",
-          "totalRevenue": "Umsatz",
-          "commissions": "Provisionen",
-          "pending": "Ausstehend"
-        },
-        "history": {
-          "title": "Buchungsverlauf",
-          "reference": "Referenz",
-          "amount": "Betrag",
-          "commission": "Provision",
-          "date": "Datum",
-          "customer": "Kunde",
-          "poi": "Sehenswürdigkeit",
-          "empty": "Noch keine Buchungen",
-          "emptyDescription": "Buchungen für Ihre Sehenswürdigkeiten werden hier angezeigt"
-        },
-        "status": {
-          "pending": "Ausstehend",
-          "confirmed": "Bestätigt",
-          "cancelled": "Storniert",
-          "completed": "Abgeschlossen"
-        }
-      },
+      "settings": "Einstellungen",
       "notifications": {
         "title": "Benachrichtigungen",
         "markAllRead": "Alle als gelesen markieren",
@@ -1167,7 +1150,58 @@
         "loadError": "Benachrichtigungen können nicht geladen werden",
         "markAllSuccess": "Alle Benachrichtigungen als gelesen markiert",
         "reference": "Ref: {reference}"
-      }
+      },
+      "notificationsShort": "Benachr.",
+      "stats": {
+        "totalPois": "Sehenswürdigkeiten",
+        "totalActive": "Gesamt aktiv",
+        "viewsThisMonth": "Aufrufe diesen Monat",
+        "totalBookings": "Gesamte Buchungen",
+        "totalRevenue": "Gesamtumsatz",
+        "averageRating": "Durchschnittliche Bewertung",
+        "pendingPayments": "Ausstehende Zahlungen"
+      },
+      "charts": {
+        "viewsOverTime": "Aufrufe im Zeitverlauf",
+        "viewsDescription": "Aufrufe und Conversion-Rate über 30 Tage",
+        "bookingsRevenue": "Buchungen und Umsatz",
+        "revenueDescription": "Wöchentliche finanzielle Leistung",
+        "performance": "Leistung",
+        "topPerformer": "Top-Performer"
+      },
+      "earnings": {
+        "title": "Umsatzhistorie",
+        "description": "Details Ihrer Einnahmen pro Buchung",
+        "amount": "Betrag",
+        "commission": "Provision",
+        "bookingDate": "Buchungsdatum",
+        "paymentStatus": "Zahlungsstatus",
+        "pending": "Ausstehend",
+        "paid": "Bezahlt",
+        "cancelled": "Storniert"
+      },
+      "notificationPanel": {
+        "title": "Neueste Benachrichtigungen",
+        "description": "Bleiben Sie über Aktivitäten an Ihren Sehenswürdigkeiten informiert",
+        "markAsRead": "Als gelesen markieren",
+        "noNotifications": "Keine Benachrichtigungen",
+        "updateError": "Fehler beim Aktualisieren der Benachrichtigung"
+      },
+      "export": "Daten exportieren",
+      "loadingError": "Fehler beim Laden des Dashboards"
+    }
+  },
+  "legal": {
+    "lastUpdate": "Last update",
+    "terms": {
+      "title": "Terms of Service",
+      "description": "View our terms of service",
+      "footer": "These terms are governed by French law"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we protect your personal data",
+      "footer": "GDPR Compliant - Your data is protected"
     }
   }
 }

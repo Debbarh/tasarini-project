@@ -8,7 +8,8 @@
     "administration": "Verwaltung",
     "myProfile": "Mein Profil",
     "logout": "Abmelden",
-    "login": "Anmelden"
+    "login": "Anmelden",
+    "notifications": "Benachrichtigungen"
   },
   "notFound": {
     "title": "404",
@@ -30,33 +31,44 @@
     "statsDestinations": "Erkundete Reiseziele",
     "statsAdventurers": "Abenteurer",
     "statsDreams": "Erfüllte Träume",
-    "liveInspiration": "Live inspiration",
-    "adventureFound": "Adventure found!",
-    "howItWorksTitle": "How does it work?",
-    "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
-    "howStep1Title": "Get inspired",
-    "howStep1Desc": "Browse stories and travel ideas tailored to your desires.",
-    "howStep2Title": "Plan",
-    "howStep2Desc": "Use our assistant to create an itinerary and book hotels and transport.",
-    "howStep3Title": "Travel worry-free",
-    "howStep3Desc": "Receive confirmations, share your stories and enjoy the trip.",
-    "bookingCenter": "Booking Center",
-    "bookingCenterDesc": "Search and book your hotels, flights and activities in just a few clicks",
-    "transportServices": "Transport Services",
-    "transportServicesDesc": "Vehicle rental, transfers and urban transport",
-    "carRental": "Rental",
+    "liveInspiration": "Live-Inspiration",
+    "adventureFound": "Abenteuer gefunden!",
+    "howItWorksTitle": "Wie funktioniert das?",
+    "howItWorksSubtitle": "3 einfache Schritte, um von der Idee zur gebuchten Reise zu gelangen.",
+    "howStep1Title": "Lass dich inspirieren",
+    "howStep1Desc": "Durchsuche Geschichten und Reiseideen, die auf deine Wünsche zugeschnitten sind.",
+    "howStep2Title": "Planen",
+    "howStep2Desc": "Nutze unseren Assistenten, um eine Reiseroute zu erstellen und Hotels und Transport zu buchen.",
+    "howStep3Title": "Sorglos reisen",
+    "howStep3Desc": "Erhalte Bestätigungen, teile deine Geschichten und genieße die Reise.",
+    "bookingCenter": "Buchungszentrum",
+    "bookingCenterDesc": "Suche und buche Hotels, Flüge und Aktivitäten mit nur wenigen Klicks",
+    "transportServices": "Transportdienste",
+    "transportServicesDesc": "Fahrzeugvermietung, Transfers und öffentlicher Verkehr",
+    "carRental": "Mietwagen",
     "transfers": "Transfers",
-    "busAndTrain": "Bus & Train",
-    "urbanTransport": "Urban",
-    "activitiesExperiences": "Activities & Experiences",
-    "activitiesDesc": "Discover the best activities and restaurants",
-    "toursVisits": "Tours & Visits",
-    "gastronomy": "Gastronomy",
-    "travelerServices": "Traveler Services",
-    "travelerServicesDesc": "Connectivity and assistance",
-    "booking": "Booking",
-    "esimCards": "eSIM Cards",
-    "compensation": "Compensation"
+    "busAndTrain": "Bus & Zug",
+    "urbanTransport": "Städtischer Verkehr",
+    "activitiesExperiences": "Aktivitäten & Erlebnisse",
+    "activitiesDesc": "Entdecke die besten Aktivitäten und Restaurants",
+    "toursVisits": "Touren & Besichtigungen",
+    "gastronomy": "Gastronomie",
+    "travelerServices": "Reisendenservices",
+    "travelerServicesDesc": "Konnektivität und Unterstützung",
+    "booking": "Buchung",
+    "esimCards": "eSIM-Karten",
+    "compensation": "Entschädigung",
+    "testimonialsTitle": "Sie sind mit uns gereist",
+    "testimonialsSubtitle": "Bewertungen unserer Reisegemeinschaft",
+    "captionHero": "Dein nächstes Abenteuer",
+    "captionBeach": "Urlaub am Meer",
+    "captionMountain": "Abenteuer in den Bergen",
+    "captionCity": "Städtereisen",
+    "captionCultural": "Kulturelles Eintauchen",
+    "goToImage": "Zum Bild {{index}}",
+    "searchDestination": "Wohin gehen Sie?",
+    "searchCta": "Suchen",
+    "openBookingCenter": "Die Reservierungszentrale öffnen"
   },
   "planTrip": {
     "title": "Planen Sie Ihren perfekten Kurzurlaub",
@@ -108,7 +120,11 @@
           "title": "Aktivitäten",
           "description": "Erlebnisse und Interessen"
         }
-      }
+      },
+      "autosaved": "Fortschritt gespeichert",
+      "estimatedTime": "~3 Min.",
+      "skipStep": "Diesen Schritt überspringen",
+      "generateNow": "Jetzt generieren"
     },
     "destinationStep": {
       "selectCountry": "Land auswählen",
@@ -140,7 +156,9 @@
       "locationSaved": "Reiseziel erfolgreich gespeichert.",
       "locationSaveError": "Dieser Standort konnte nicht gespeichert werden, bitte überprüfen Sie die Informationen.",
       "invalidAddress": "Bitte wählen Sie eine gültige Adresse auf der Karte aus.",
-      "fetchingTranslations": "Fetching multilingual translations..."
+      "fetchingTranslations": "Fetching multilingual translations...",
+      "geocodeFailed": "Für diesen Punkt kann die Stadt nicht ermittelt werden. Wählen Sie einen anderen Standort aus oder geben Sie die Stadt manuell ein.",
+      "chooseOnMapHint": "Öffnen Sie eine interaktive Karte, um Ihr Ziel genau zu markieren und die Koordinaten abzurufen."
     },
     "travelDetailsStep": {
       "title": "Reisebegleiter",
@@ -174,7 +192,9 @@
       "availablePlural": "verfügbar",
       "remains": "bleibt",
       "remainsPlural": "bleiben",
-      "error": "Fehler"
+      "error": "Fehler",
+      "singleChoiceHint": "Wählen Sie einen Typ aus",
+      "maxLevelTooltip": "Maximaler Schwierigkeitsgrad hinsichtlich der Erreichbarkeit und der körperlichen Anforderungen der für diese Gruppe empfohlenen Orte."
     },
     "budgetStep": {
       "title": "Reisebudget",
@@ -225,7 +245,8 @@
       "types": "Typen",
       "services": "Dienstleistungen",
       "locations": "Standorte",
-      "others": "weitere"
+      "others": "weitere",
+      "typeRequired": "Wählen Sie mindestens eine Unterkunftsart aus, um fortzufahren."
     },
     "activitiesStep": {
       "title": "Aktivitäten und Erlebnisse",
@@ -625,13 +646,34 @@
           "veryStrong": "Sehr stark"
         }
       }
+    },
+    "emailNotConfirmed": "Bitte überprüfen Sie Ihre E-Mails und klicken Sie auf den Bestätigungslink, um Ihr Konto zu aktivieren",
+    "invalidCredentials": "Falsche E-Mail-Adresse oder falsches Passwort",
+    "forgotPassword": {
+      "link": "Passwort vergessen?",
+      "title": "Passwort zurücksetzen",
+      "description": "Geben Sie Ihre E-Mail-Adresse ein, und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+      "sendButton": "Link senden",
+      "sending": "Senden...",
+      "successTitle": "E-Mail gesendet",
+      "successDescription": "Wenn Ihre E-Mail-Adresse mit einem Konto verknüpft ist, erhalten Sie einen Link zum Zurücksetzen des Passworts.",
+      "emailSent": "Bitte überprüfen Sie Ihren E-Mail-Posteingang (und Ihren Spam-Ordner) auf den Link zum Zurücksetzen des Passworts.",
+      "emailSentMessage": "Wenn Ihre E-Mail-Adresse in unserem System hinterlegt ist, erhalten Sie einen Link zum Zurücksetzen Ihres Passworts."
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. Alle Rechte vorbehalten.",
     "becomePartner": "Partner werden",
     "madeWith": "Gemacht mit",
-    "by": "von"
+    "by": "von",
+    "tagline": "Inspiration, Planung und Buchung von Reisen – unterstützt durch KI.",
+    "discover": "Entdecken",
+    "company": "Unternehmen",
+    "legal": "Rechtliches",
+    "contact": "Kontakt",
+    "terms": "Allgemeine Geschäftsbedingungen",
+    "privacy": "Datenschutzerklärung",
+    "rights": "Alle Rechte vorbehalten."
   },
   "common": {
     "loading": "Wird geladen...",
@@ -1215,7 +1257,13 @@
         "updateError": "Fehler beim Aktualisieren der Benachrichtigung"
       },
       "export": "Daten exportieren",
-      "loadingError": "Fehler beim Laden des Dashboards"
+      "loadingError": "Fehler beim Laden des Dashboards",
+      "analyticsTab": "Analytik",
+      "poisTab": "Meine POIs",
+      "bookingsTab": "Reservierungen",
+      "financesTab": "Finanzen",
+      "subscriptionTab": "Abonnement",
+      "notificationsTab": "Benachrichtigungen"
     }
   },
   "legal": {
@@ -1230,5 +1278,711 @@
       "description": "Learn how we protect your personal data",
       "footer": "GDPR Compliant - Your data is protected"
     }
+  },
+  "booking": {
+    "title": "Reservierungszentrale",
+    "subtitle": "Suchen und buchen Sie Ihre Hotels, Flüge, Transfers und Aktivitäten",
+    "info": "Keine automatischen Suchanfragen mehr! Sie entscheiden jetzt selbst, wann die Suche durchgeführt wird.",
+    "tabs": {
+      "hotels": "Hotels",
+      "flights": "Flüge",
+      "transfers": "Transfers",
+      "restaurants": "Restaurants",
+      "activities": "Aktivitäten"
+    },
+    "searchHotel": "Ein Hotel suchen",
+    "searchFlight": "Flug suchen",
+    "searchTransfer": "Transfer suchen",
+    "searchActivity": "Eine Aktivität suchen",
+    "destination": "Reiseziel",
+    "selectDestination": "Wählen Sie ein Reiseziel aus...",
+    "selectOriginAirport": "Wählen Sie einen Abflughafen aus...",
+    "selectDestAirport": "Wählen Sie einen Ankunftsflughafen aus...",
+    "guests": "Anzahl der Personen",
+    "passengers": "Anzahl der Passagiere",
+    "participants": "Anzahl der Teilnehmer",
+    "checkIn": "Ankunftsdatum",
+    "checkOut": "Abreisedatum",
+    "departDate": "Abreisedatum",
+    "returnDate": "Rückgabedatum (optional)",
+    "origin": "Start",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "searching": "Suche läuft...",
+    "searchHotelsBtn": "Hotels suchen",
+    "searchFlightsBtn": "Flüge suchen",
+    "searchActivitiesBtn": "Aktivitäten suchen",
+    "searchTransfersBtnSoon": "Transfers suchen (in Kürze verfügbar)",
+    "transfersSoon": "Die Transfer-Suche wird bald verfügbar sein",
+    "transferFromPlaceholder": "Flughafen, Hotel...",
+    "transferToPlaceholder": "Hotel, Stadtzentrum...",
+    "emptyTitle": "Geben Sie oben Ihre Suchkriterien ein",
+    "emptyDesc": "Die Ergebnisse werden nach der Suche hier angezeigt",
+    "moreAmenities": "+{{count}} und weitere",
+    "amenitiesUnspecified": "Nicht angegebene Ausstattungsmerkmale",
+    "fromPrice": "Ab",
+    "perNight": "/Nacht",
+    "priceUnavailable": "Preis nicht verfügbar",
+    "details": "Details",
+    "book": "Buchen",
+    "stops": "{{count}} Zwischenstopp(s)",
+    "restaurantsIncludedTitle": "Die Restaurants sind bereits in Ihrem Reiseplan enthalten",
+    "restaurantsIncludedDesc": "Empfehlungen für Restaurants finden Sie oben im Abschnitt „Detaillierte Wegbeschreibung“",
+    "toastRequiredTitle": "Pflichtfelder",
+    "toastRequiredDesc": "Bitte füllen Sie alle Suchfelder aus",
+    "toastInvalidCodeTitle": "Ungültiger Zielcode",
+    "toastInvalidCodeDesc": "Wählen Sie über die Autovervollständigung einen HotelBeds-Code aus (z. B. PAR, BCN, ROM).",
+    "toastInvalidDatesTitle": "Ungültige Daten",
+    "toastInvalidDatesDesc": "Das Abreisedatum muss mindestens einen Tag nach dem Anreisedatum liegen",
+    "toastDoneTitle": "Suche abgeschlossen",
+    "toastErrorTitle": "Suchfehler",
+    "toastHotelsFound": "{{count}} Hotel(s) gefunden",
+    "toastFlightsFound": "{{count}} Flug(e) gefunden",
+    "toastActivitiesFound": "{{count}} Aktivität(en) gefunden",
+    "toastHotelsError": "Es können keine Hotels gefunden werden. Bitte überprüfen Sie den Zielcode.",
+    "toastFlightsError": "Die Flugsuche ist nicht möglich. Bitte überprüfen Sie die IATA-Codes.",
+    "toastActivitiesError": "Es können keine Aktivitäten gefunden werden. Bitte überprüfen Sie den Zielcode."
+  },
+  "savedItineraries": {
+    "pageTitle": "Meine gespeicherten Routen",
+    "pageDescription": "Hier finden Sie alle Ihre gespeicherten und mit unserer KI geplanten Reiserouten. Verwalten, bearbeiten und teilen Sie Ihre Reisepläne.",
+    "subtitle": "Hier finden Sie alle Ihre geplanten Reisen und können Ihre zukünftigen Abenteuer organisieren.",
+    "searchPlaceholder": "Route suchen...",
+    "unauthorized": "Unbefugter Zugriff",
+    "unauthorizedMessage": "Sie müssen angemeldet sein, um auf Ihre gespeicherten Routen zugreifen zu können.",
+    "stats": {
+      "saved": "Gespeicherte Routen",
+      "favorites": "Favoriten",
+      "travelDays": "Reisetage"
+    },
+    "empty": {
+      "title": "Es sind keine Routen gespeichert",
+      "noResults": "Es wurde keine Route gefunden",
+      "searchMessage": "Versuchen Sie es mit anderen Suchbegriffen.",
+      "createMessage": "Erstellen Sie zunächst Ihre erste Reiseroute!"
+    },
+    "actions": {
+      "view": "Siehe",
+      "viewDetails": "Details anzeigen",
+      "export": "PDF",
+      "exportPDF": "Als PDF exportieren",
+      "share": "Teilen",
+      "delete": "Löschen",
+      "favorite": "Favorit",
+      "create": "Route erstellen"
+    },
+    "badges": {
+      "days": "Tage"
+    },
+    "dialog": {
+      "deleteTitle": "Route löschen",
+      "deleteDescription": "Möchten Sie das wirklich löschen?",
+      "deleteWarning": "Dieser Vorgang kann nicht rückgängig gemacht werden.",
+      "cancel": "Abbrechen",
+      "confirm": "Löschen"
+    },
+    "toast": {
+      "pdfExported": "PDF exportiert!",
+      "pdfExportedDesc": "Ihre Route wurde erfolgreich heruntergeladen.",
+      "pdfError": "Fehler",
+      "pdfErrorDesc": "Das PDF kann nicht exportiert werden",
+      "shareError": "Fehler",
+      "shareErrorDesc": "Die Route kann nicht geteilt werden",
+      "deleted": "Route gelöscht",
+      "deleteError": "Fehler beim Löschen"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "Meine Entdeckungen",
+    "pageDescription": "Verwalten Sie Ihre Lieblingsorte und individuellen Entdeckungstouren.",
+    "subtitle": "Finden Sie Ihre Lieblingsorte und personalisierten Routen",
+    "loginMessage": "Melden Sie sich an, um Ihre Favoriten und Routen anzuzeigen.",
+    "tabs": {
+      "favorites": "Favoriten",
+      "itineraries": "Meine Routen",
+      "community": "Gemeinschaft"
+    },
+    "favorites": {
+      "empty": "Keine Favoriten",
+      "emptyMessage": "Fügen Sie zunächst Orte auf der Karte zu Ihren Favoriten hinzu",
+      "exploreMap": "Die Karte erkunden"
+    },
+    "itineraries": {
+      "empty": "Keine Route",
+      "emptyMessage": "Erstellen Sie Ihre erste Route, indem Sie Sehenswürdigkeiten auswählen",
+      "createNew": "Route erstellen",
+      "places": "Orte"
+    },
+    "community": {
+      "empty": "Keine öffentliche Route",
+      "emptyMessage": "Die Community hat noch keine Routen geteilt",
+      "title": "Routen der Gemeinde",
+      "description": "Entdecken Sie die Routen, die andere Nutzer geteilt haben",
+      "public": "Öffentlich",
+      "by": "Von",
+      "defaultUsername": "Reisender Tasarini"
+    },
+    "stats": {
+      "distance": "Entfernung"
+    },
+    "difficulty": {
+      "easy": "Einfach",
+      "medium": "Mäßig",
+      "hard": "Schwierig"
+    },
+    "actions": {
+      "view": "Auf der Karte anzeigen",
+      "share": "Teilen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "makePublic": "veröffentlichen",
+      "makePrivate": "Als privat markieren"
+    },
+    "toast": {
+      "deleted": "Route gelöscht",
+      "deleteError": "Fehler beim Löschen",
+      "madePublic": "veröffentlicht",
+      "madePrivate": "als privat markiert",
+      "updateError": "Fehler beim Aktualisieren",
+      "linkCopied": "Link in die Zwischenablage kopiert!",
+      "copyError": "Der Link kann nicht kopiert werden",
+      "loadError": "Fehler beim Laden der Routen",
+      "loadPublicError": "Fehler beim Laden der öffentlichen Routen"
+    },
+    "confirmDelete": "Möchten Sie diese Route wirklich löschen?"
+  },
+  "verifyEmailRequired": {
+    "title": "Überprüfen Sie Ihre E-Mails",
+    "subtitle": "Ein letzter Schritt, bevor es losgeht",
+    "sentTo": "Eine Bestätigungs-E-Mail wurde gesendet an:",
+    "limitedAccess": {
+      "title": "Eingeschränkter Zugriff",
+      "description": "Bitte überprüfen Sie Ihre E-Mails, um alle Funktionen von Tasarini nutzen zu können."
+    },
+    "steps": {
+      "title": "Vorgehensweise:",
+      "step1": "Öffnen Sie Ihr E-Mail-Postfach",
+      "step2": "Suchen Sie nach der E-Mail-Adresse von",
+      "step2Bold": "Tasarini",
+      "step3": "Klicken Sie auf den Bestätigungslink",
+      "step4": "Kommen Sie wieder hierher und aktualisieren Sie die Seite"
+    },
+    "notReceived": {
+      "title": "Haben Sie die E-Mail nicht erhalten?",
+      "checkSpam": "Bitte überprüfen Sie Ihren Spam-Ordner",
+      "checkEmail": "Bitte überprüfen Sie, ob die E-Mail-Adresse korrekt ist",
+      "waitTime": "Warten Sie ein paar Minuten (es kann etwas dauern, bis die E-Mail eintrifft)"
+    },
+    "buttons": {
+      "resend": "Bestätigungs-E-Mail erneut senden",
+      "sending": "Wird gesendet...",
+      "sent": "E-Mail gesendet!",
+      "signOut": "Abmelden und ein anderes Konto verwenden"
+    },
+    "footer": {
+      "validity": "Der Bestätigungslink ist gültig für",
+      "hours": "24 Stunden"
+    },
+    "toast": {
+      "success": "Bestätigungs-E-Mail erneut gesendet!",
+      "error": "Fehler beim Versenden der E-Mail"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "Partnerkonto gesperrt",
+    "description": "Ihre Partnerbewerbung wurde abgelehnt oder Ihr Konto wurde gesperrt. Wenn Sie der Meinung sind, dass es sich um einen Fehler handelt, können Sie uns über das untenstehende Formular kontaktieren.",
+    "reasons": {
+      "title": "Mögliche Gründe:",
+      "incorrect": "Falsche oder unvollständige Angaben",
+      "terms": "Nichteinhaltung der Nutzungsbedingungen",
+      "suspicious": "Verdächtige Aktivität festgestellt",
+      "criteria": "Partnerkriterien nicht erfüllt"
+    },
+    "contact": {
+      "title": "Kontakt zur Verwaltung",
+      "subtitle": "Schreiben Sie uns, wie Ihre Situation aussieht, und wir werden Ihren Antrag prüfen.",
+      "nameLabel": "Vollständiger Name",
+      "namePlaceholder": "Ihr vollständiger Name",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "votre@email.com",
+      "subjectLabel": "Thema",
+      "subjectPlaceholder": "Betreff Ihrer Anfrage",
+      "subjectDefault": "Antrag auf Neubewertung meines Partnerkontos",
+      "messageLabel": "Nachricht",
+      "messagePlaceholder": "Beschreiben Sie Ihre Situation und die Gründe, warum Ihr Konto neu bewertet werden sollte...",
+      "submitButton": "Meine Anfrage absenden",
+      "submitting": "Wird gesendet...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "Reaktionszeit:",
+      "responseTimeText": "Wir bemühen uns, innerhalb von 48 bis 72 Stunden zu antworten.",
+      "urgentQuestion": "Bei dringenden Fragen können Sie uns auch unter folgender Nummer erreichen:",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "Ihre Nachricht wurde gesendet. Wir werden Ihnen so schnell wie möglich antworten.",
+      "error": "Beim Senden der Nachricht ist ein Fehler aufgetreten. Bitte versuche es erneut."
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "Überprüfung läuft...",
+      "success": "E-Mail-Adresse bestätigt!",
+      "error": "Überprüfungsfehler"
+    },
+    "description": {
+      "loading": "Bitte haben Sie einen Moment Geduld, während wir Ihre E-Mail-Adresse überprüfen.",
+      "successPartner": "Ihr Partnerkonto wurde erfolgreich aktiviert.",
+      "successUser": "Ihr Konto wurde erfolgreich aktiviert.",
+      "error": "Wir konnten Ihre E-Mail-Adresse nicht überprüfen."
+    },
+    "messages": {
+      "tokenMissing": "Verifizierungs-Token fehlt.",
+      "success": "Ihre E-Mail-Adresse wurde erfolgreich bestätigt!",
+      "verificationError": "Ungültiges oder abgelaufenes Token.",
+      "autoLoginInfo": "Wir versuchen, Sie automatisch anzumelden. Sollte dies nicht gelingen, klicken Sie bitte auf die Schaltfläche unten.",
+      "manualLoginInfo": "Melden Sie sich an, um die Sitzung zu aktivieren und mit dem nächsten Schritt fortzufahren.",
+      "autoLoginFailed": "Die automatische Anmeldung ist fehlgeschlagen. Bitte klicke auf die Schaltfläche oben, um fortzufahren.",
+      "waiting": "Das sollte nur ein paar Sekunden dauern..."
+    },
+    "partner": {
+      "nextStep": "Nächster Schritt: Vervollständigen Sie Ihr Partnerprofil",
+      "continueButton": "Weiter zu meinem Partnerprofil",
+      "continueButtonLoading": "Anmelden..."
+    },
+    "user": {
+      "continueButton": "Zu meinem Profil",
+      "continueButtonLoading": "Anmelden..."
+    },
+    "buttons": {
+      "resend": "Bestätigungslink erneut senden",
+      "backToLogin": "Zurück zur Anmeldung",
+      "requestNewLink": "Bestätigungs-E-Mail erneut senden"
+    },
+    "error": {
+      "title": "Was tun?",
+      "checkLink": "Überprüfen Sie, ob der Link vollständig ist",
+      "expired": "Der Link läuft nach 24 Stunden ab",
+      "requestNew": "Fordern Sie einen neuen Bestätigungslink an"
+    },
+    "toast": {
+      "success": "E-Mail-Adresse erfolgreich überprüft!",
+      "error": "Überprüfungsfehler",
+      "verifying": "E-Mail-Adresse bestätigt, Anmeldung läuft...",
+      "loginSuccess": "Anmeldung erfolgreich, Weiterleitung...",
+      "loginError": "Eine automatische Anmeldung ist nicht möglich. Bitte melden Sie sich an, um fortzufahren.",
+      "resendSuccess": "Es wurde eine neue Bestätigungs-E-Mail gesendet.",
+      "resendError": "Der Link kann nicht erneut gesendet werden. Melde dich an, um es erneut zu versuchen.",
+      "resendAuthRequired": "Bitte melden Sie sich an, um den Bestätigungslink erneut zu senden.",
+      "completeError": "Die Überprüfung konnte nicht abgeschlossen werden."
+    }
+  },
+  "theme": {
+    "toggleLabel": "Design ändern",
+    "light": "Klar",
+    "dark": "Düster",
+    "system": "System"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "markAllRead": "Alles als gelesen markieren",
+    "markRead": "Als gelesen markieren",
+    "delete": "Löschen",
+    "empty": "Keine Benachrichtigung",
+    "timePrefix": "In",
+    "sent": "Gesendet",
+    "settings": {
+      "title": "Benachrichtigungseinstellungen",
+      "description": "Richten Sie Ihre Benachrichtigungen für Aktivitäten und Reisen ein",
+      "loading": "Einstellungen werden geladen...",
+      "types": {
+        "title": "Arten von Benachrichtigungen",
+        "activityReminders": "Aktivitätserinnerungen",
+        "activityRemindersDesc": "Erhalten Sie Erinnerungen vor Ihren geplanten Aktivitäten",
+        "tripStart": "Reiseantritt",
+        "tripStartDesc": "Benachrichtigung zu Beginn Ihrer Reise",
+        "tripEnd": "Ende der Reise",
+        "tripEndDesc": "Benachrichtigung nach Beendigung Ihrer Reise"
+      },
+      "timing": {
+        "title": "Zeitplan für die Auffrischungsimpfungen",
+        "before": "Hinweis vor der Aktivität",
+        "1h": "1 Stunde vorher",
+        "2h": "2 Stunden vorher",
+        "6h": "6 Stunden vorher",
+        "12h": "12 Stunden vorher",
+        "24h": "24 Stunden vorher",
+        "48h": "48 Stunden vorher"
+      },
+      "channels": {
+        "title": "Benachrichtigungskanäle",
+        "inApp": "Benachrichtigungen in der App",
+        "inAppDesc": "Benachrichtigungen in der App anzeigen",
+        "email": "E-Mail-Benachrichtigungen",
+        "emailDesc": "Erinnerungs-E-Mails erhalten (in Kürze verfügbar)"
+      }
+    }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "PDF erfolgreich exportiert",
+      "pdfExportSuccessDesc": "Ihre Reiseroute wurde als PDF heruntergeladen.",
+      "pdfExportError": "Exportfehler",
+      "pdfExportErrorDesc": "Das PDF kann nicht exportiert werden. Bitte versuchen Sie es erneut.",
+      "shareError": "Fehler bei der Freigabe",
+      "shareErrorDesc": "Das Teilen ist nicht möglich. Bitte versuche es erneut.",
+      "linkCopied": "Link kopiert",
+      "linkCopiedDesc": "Der Link zu Ihrer Route wurde in die Zwischenablage kopiert.",
+      "copyError": "Fehler",
+      "copyErrorDesc": "Der Link kann nicht kopiert werden.",
+      "activityUpdated": "Aktivität erfolgreich aktualisiert",
+      "dayUpdated": "Tag erfolgreich aktualisiert",
+      "activityAdded": "Aktivität erfolgreich hinzugefügt",
+      "activityMoved": "Termin auf einen anderen Tag verschoben",
+      "orderUpdated": "Aktualisierte Reihenfolge der Aktivitäten",
+      "dayAdded": "Neuer Tag hinzugefügt",
+      "dayDeleted": "Tag gestrichen",
+      "cannotDeleteLastDay": "Der letzte Tag kann nicht gelöscht werden",
+      "saved": "Route erfolgreich gespeichert"
+    },
+    "poi": {
+      "loadError": "Fehler beim Laden der Sonderziele",
+      "updateSuccess": "Sonderziel erfolgreich aktualisiert",
+      "createSuccess": "Sonderziel erfolgreich erstellt",
+      "createSuccessPartner": "Sehenswürdigkeit erfolgreich angelegt – Als Partnerort markiert",
+      "saveError": "Fehler beim Speichern",
+      "deleteSuccess": "Sonderziel erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen",
+      "toggleSuccess": "Sonderziel {status} erfolgreich",
+      "toggleError": "Fehler beim Bearbeiten",
+      "activated": "aktiviert",
+      "deactivated": "deaktiviert"
+    },
+    "form": {
+      "validationError": "Bitte korrigieren Sie die Fehler, bevor Sie fortfahren",
+      "submitError": "Bei der Übermittlung ist ein Fehler aufgetreten",
+      "loadError": "Fehler beim Laden der Daten"
+    },
+    "share": {
+      "loadError": "Fehler beim Laden der Freigaben",
+      "userNotFound": "Es wurde kein Benutzer mit dieser E-Mail-Adresse gefunden",
+      "alreadyShared": "Dieser Benutzer hat bereits Zugriff auf diese Route",
+      "success": "Route mit {email} im Modus {mode} geteilt",
+      "editMode": "Änderung",
+      "viewMode": "Lesen",
+      "shareError": "Fehler beim Freigeben",
+      "removeSuccess": "Beitrag gelöscht",
+      "removeError": "Fehler beim Löschen",
+      "updateSuccess": "Aktualisierte Berechtigungen",
+      "updateError": "Fehler beim Aktualisieren"
+    },
+    "media": {
+      "uploadError": "Fehler beim Hochladen: {error}",
+      "deleteSuccess": "Datei gelöscht",
+      "deleteError": "Fehler beim Löschen",
+      "uploadSuccess": "{count} {type} erfolgreich hochgeladen",
+      "image": "Bild(er)",
+      "video": "Video(s)"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "Fehler beim Laden der Benachrichtigungen",
+        "preferencesUpdated": "Einstellungen aktualisiert",
+        "updateError": "Fehler beim Aktualisieren",
+        "allMarkedRead": "Alle als gelesen markierten Benachrichtigungen",
+        "notificationDeleted": "Benachrichtigung gelöscht",
+        "deleteError": "Fehler beim Löschen"
+      },
+      "savedItineraries": {
+        "saved": "Route erfolgreich gespeichert",
+        "saveError": "Fehler beim Speichern der Route",
+        "loadError": "Fehler beim Laden der Routen",
+        "deleteConfirm": "Möchten Sie diese Route wirklich löschen?",
+        "deleted": "Route erfolgreich gelöscht",
+        "deleteError": "Fehler beim Löschen",
+        "updated": "Route erfolgreich aktualisiert",
+        "updateError": "Fehler beim Aktualisieren"
+      },
+      "favorites": {
+        "loadError": "Fehler beim Laden der Lesezeichen",
+        "loginRequired": "Sie müssen angemeldet sein, um Lesezeichen hinzuzufügen",
+        "added": "Sehenswürdigkeit zu den Favoriten hinzugefügt!",
+        "addError": "Fehler beim Hinzufügen zu den Lesezeichen",
+        "removed": "Sehenswürdigkeit aus den Favoriten entfernt",
+        "removeError": "Fehler beim Löschen der Favoriten"
+      },
+      "poi": {
+        "draftSaved": "Entwurf erfolgreich gespeichert!",
+        "submitted": "POI erfolgreich eingereicht!",
+        "draftUpdated": "Entwurf erfolgreich aktualisiert!",
+        "updated": "POI erfolgreich aktualisiert!"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "Eine Bestätigungs-E-Mail wurde versendet. Bitte bestätigen Sie Ihre E-Mail-Adresse, um Ihr Konto zu aktivieren.",
+      "methodNotAvailable": "Diese Verbindungsmethode ist noch nicht verfügbar.",
+      "passwordResetSoon": "Die Passwortzurücksetzung wird in Kürze verfügbar sein."
+    },
+    "touristPoints": {
+      "loadError": "Fehler beim Laden der Sonderziele"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "Abbrechen",
+      "confirm": "Buchung bestätigen",
+      "confirming": "Reservierung wird bearbeitet...",
+      "error": "Fehler",
+      "bookingConfirmedTitle": "Buchung bestätigt",
+      "selectDate": "Datum auswählen",
+      "arrivalDate": "Ankunftsdatum",
+      "departureDate": "Abreisedatum",
+      "guests": "Anzahl der Personen",
+      "guestsCount": "{{count}} Person(en)",
+      "clientInfo": "Kundenangaben",
+      "fullName": "Vollständiger Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "specialRequests": "Sonderwünsche",
+      "summary": "Zusammenfassung der Buchung",
+      "total": "Insgesamt",
+      "more": "+{{count}} und weitere"
+    },
+    "accommodation": {
+      "title": "Eine Unterkunft buchen - {{name}}",
+      "selectRoom": "Zimmer auswählen",
+      "loadingRooms": "Zimmer werden geladen...",
+      "noRooms": "Keine Zimmer verfügbar",
+      "upToGuests": "Bis zu {{count}} -Personen",
+      "perNightPrice": "{{price}}€ pro Nacht",
+      "roomLabel": "Zimmer",
+      "stayDuration": "Aufenthaltsdauer",
+      "nights": "{{count}} Nacht(en)",
+      "specialPlaceholder": "Sonderwünsche...",
+      "errLoadRooms": "Fehler beim Laden der Zimmer",
+      "datesUnavailable": "Diese Termine sind für dieses Zimmer nicht verfügbar",
+      "errAvailability": "Fehler bei der Verfügbarkeitsprüfung",
+      "selectDatesErr": "Bitte wählen Sie das An- und Abreisedatum aus",
+      "selectRoomErr": "Bitte wählen Sie ein Zimmer aus",
+      "bookingConfirmed": "Buchung bestätigt!",
+      "bookingError": "Fehler bei der Buchung"
+    },
+    "activity": {
+      "title": "Buchen {{name}}",
+      "errLoadData": "Die Aktivitätsdaten können nicht geladen werden",
+      "errLoadSlots": "Die verfügbaren Zeitfenster können nicht geladen werden",
+      "requirementsNotMet": "Bedingungen nicht erfüllt",
+      "selectSlotErr": "Bitte wählen Sie einen Termin aus",
+      "bookingSuccessDesc": "Ihre Buchung wurde erfolgreich gespeichert",
+      "errCreate": "Die Buchung kann nicht erstellt werden",
+      "date": "Datum der Veranstaltung",
+      "availableSlots": "Verfügbare Zeitfenster",
+      "maxParticipants": "Maximal {{count}} Teilnehmer",
+      "participants": "Anzahl der Teilnehmer",
+      "adults": "Erwachsene",
+      "children": "Kinder",
+      "seniors": "Senioren",
+      "equipmentRental": "Leihausrüstung (optional)",
+      "requirements": "Bedingungen und Voraussetzungen",
+      "mandatory": "Obligatorisch",
+      "recommended": "Empfohlen",
+      "equipment": "Ausstattung",
+      "provided": "Im Lieferumfang enthalten",
+      "toBring": "Mitzubringen",
+      "specialPlaceholder": "Medizinische Informationen, Allergien, besondere Bedürfnisse...",
+      "totalToPay": "Gesamtbetrag"
+    },
+    "restaurant": {
+      "unavailable": "Nicht verfügbar",
+      "noTable": "Für diesen Termin ist kein Tisch verfügbar",
+      "errCheck": "Die Verfügbarkeit kann nicht überprüft werden",
+      "fillRequired": "Bitte füllen Sie alle Pflichtfelder aus",
+      "requestSentDesc": "Ihre Reservierungsanfrage wurde an das Restaurant gesendet",
+      "errCreate": "Fehler beim Erstellen der Reservierung",
+      "title": "Einen Tisch reservieren bei {{name}}",
+      "date": "Buchungsdatum",
+      "time": "Uhrzeit der Reservierung",
+      "selectTime": "Eine Uhrzeit auswählen",
+      "checking": "Verfügbarkeit wird geprüft...",
+      "tablesAvailable": "✓ Tische für diesen Termin verfügbar",
+      "yourInfo": "Ihre Angaben",
+      "namePlaceholder": "Jean Dupont",
+      "emailPlaceholder": "jean.dupont@email.com",
+      "phonePlaceholder": "06 12 34 56 78",
+      "preferences": "Einstellungen",
+      "tablePreferences": "Tabelleneinstellungen",
+      "noPrefPlaceholder": "Keine besonderen Vorlieben",
+      "noPref": "Keine Präferenz",
+      "terrace": "Terrasse",
+      "indoor": "Innenraum",
+      "window": "In der Nähe eines Fensters",
+      "quiet": "Ruhige Gegend",
+      "easyAccess": "Einfacher Zugang",
+      "specialPlaceholder": "Geburtstag, Nahrungsmittelallergien, Hochstuhl für Babys...",
+      "summary": "Zusammenfassung Ihrer Buchung",
+      "dateLabel": "Datum",
+      "timeLabel": "Uhrzeit",
+      "restaurantLabel": "Restaurant",
+      "disclaimer": "Mit der Bestätigung Ihrer Reservierung erklären Sie sich damit einverstanden, dass das Restaurant Sie kontaktiert, um Ihre Anfrage zu bestätigen."
+    }
+  },
+  "widgets": {
+    "loadButton": "Anzeigen"
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "Foto von {{city}}",
+    "destination": "Reiseziel",
+    "destinationCapitalized": "Reiseziel",
+    "inspireYourTrip": "Lassen Sie sich für Ihre Reise inspirieren",
+    "iconicView": "Ein unverzichtbarer, symbolträchtiger Ausblick",
+    "viewLarge": "Groß denken",
+    "playbackPaused": "Wiedergabe angehalten",
+    "previousImage": "Vorheriges Bild",
+    "nextImage": "Nächstes Bild",
+    "goToImage": "Zum Bild {{number}}",
+    "thumbnailAlt": "Miniatur {{number}}",
+    "travelInspiration": "Reiseinspiration",
+    "inspiringSnapshot": "Ein inspirierender Moment",
+    "generatingTitle": "Ihre Route wird berechnet...",
+    "generatingDescription": "Die KI erstellt Ihr individuelles Programm. Die einzelnen Abschnitte werden nach und nach angezeigt.",
+    "loadingErrorTitle": "Problem beim Laden",
+    "loadingErrorDescription": "Die Route konnte nicht ordnungsgemäß geladen werden. Dies kann an einem vorübergehenden Problem liegen.",
+    "createNewItinerary": "Neue Route erstellen",
+    "pdfExportSuccessTitle": "PDF erfolgreich exportiert",
+    "pdfExportSuccessDescription": "Ihre Reiseroute wurde als PDF heruntergeladen.",
+    "pdfExportErrorTitle": "Exportfehler",
+    "pdfExportErrorDescription": "Das PDF kann nicht exportiert werden. Bitte versuchen Sie es erneut.",
+    "shareErrorTitle": "Fehler bei der Freigabe",
+    "shareErrorDescription": "Das Teilen ist nicht möglich. Bitte versuche es erneut.",
+    "linkCopiedTitle": "Link kopiert",
+    "linkCopiedDescription": "Der Link zu Ihrer Route wurde in die Zwischenablage kopiert.",
+    "errorTitle": "Fehler",
+    "copyLinkError": "Der Link kann nicht kopiert werden.",
+    "breakfast": "Frühstück",
+    "lunch": "Mittagessen",
+    "dinner": "Abendessen",
+    "atLocation": "zu",
+    "soloTrip": "Alleinreise",
+    "coupleTrip": "Reise zu zweit",
+    "family": "Familie",
+    "familyWithChildren": "Familie mit {{count}} Kind(ern)",
+    "groupOfPeople": "Gruppe von {{count}} Personen",
+    "preparingTitle": "Ihr Programm wird gerade erstellt…",
+    "preparingDescription": "Unsere KI erstellt Ihre individuelle Reiseroute. Das Programm wird nach und nach angezeigt – noch einen Moment bitte.",
+    "personalizedItineraryTitle": "Ihre individuelle Reiseroute",
+    "generatedWithPreferences": "Eine Reise, die nach Ihren persönlichen Vorlieben zusammengestellt wurde",
+    "save": "Speichern",
+    "newTrip": "Neue Reise",
+    "exportPdf": "Als PDF exportieren",
+    "share": "Teilen",
+    "copyLink": "Link kopieren",
+    "loadingDestinationImages": "Bilder der Reiseziele werden geladen...",
+    "whyThisTripTitle": "Warum dieses Programm genau das Richtige für Sie ist",
+    "matchPercentage": "{{score}}Übereinstimmungsgrad",
+    "tripOverview": "Reiseübersicht",
+    "dates": "Termine",
+    "datesToDefine": "Termine noch festzulegen",
+    "daysCount": "{{count}} Tag(e)",
+    "group": "Gruppe",
+    "budget": "Budget",
+    "budgetPerDay": "{{amount}}€/Tag",
+    "estimatedTotal": "Geschätzter Gesamtbetrag: {{amount}}€",
+    "destinations": "Reiseziele",
+    "destinationLine": "{{city}}, {{country}} ({{duration}}j)",
+    "budgetBreakdownTitle": "Aufteilung des Budgets",
+    "categoryAccommodation": "Unterkunft",
+    "categoryFood": "Essen",
+    "categoryActivities": "Aktivitäten",
+    "categoryTransport": "Transport",
+    "categoryShopping": "Einkaufen",
+    "categoryMiscellaneous": "Verschiedenes",
+    "detailedItinerary": "Detaillierte Wegbeschreibung",
+    "dayLabel": "Tag {{number}}",
+    "dailyBudget": "Tagesbudget",
+    "scheduledActivities": "Geplante Aktivitäten",
+    "locationUnspecified": "Ort nicht angegeben",
+    "difficultyEasy": "Einfach",
+    "difficultyModerate": "Mäßig",
+    "difficultyHard": "Schwierig",
+    "tipsWithCount": "Tipps ({{count}})",
+    "bookThisActivity": "Diese Aktivität buchen",
+    "recommendedMeals": "Empfohlene Mahlzeiten",
+    "book": "Buchen",
+    "transport": "Transport",
+    "estimatedWalkingDistance": "Geschätzte Gehstrecke",
+    "generatingDayByDay": "Tägliche Routenplanung...",
+    "generatingDayByDayDescription": "Die KI erstellt Ihr individuelles Programm mit allen Aktivitäten",
+    "daysWillAppear": "Die Etappen Ihrer Reiseroute werden nach und nach oben angezeigt, mit einem „Typing“-Effekt...",
+    "dayByDayProgram": "Ein individuelles Tagesprogramm, das ganz auf Ihre Vorlieben zugeschnitten ist",
+    "generationImproving": "Derzeit wird daran gearbeitet",
+    "generationImprovingDescription": "Der detaillierte Reiseplan mit minutengenauen Aktivitäten wird in Kürze verfügbar sein. Vorerst können Sie oben eine Übersicht über Ihre Reise einsehen.",
+    "additionalInformation": "Weitere Informationen",
+    "enrichedContentPlaceholder": "Diese Informationen werden angezeigt, sobald die Route erweiterte Inhalte enthält.",
+    "personalizedRecommendations": "Individuelle Empfehlungen",
+    "specialtiesToDiscover": "Spezialitäten, die es zu entdecken gilt",
+    "giftIdeas": "Ideen für Souvenirs",
+    "packingList": "Reiseplan",
+    "culturalTips": "Kulturelle Tipps",
+    "bestPeriods": "Beste Reisezeiten",
+    "localEvents": "Lokale Veranstaltungen",
+    "transportTips": "Tipps zum Transport",
+    "safetyTips": "Sicherheitstipps",
+    "budgetDistribution": "Budgetaufteilung",
+    "similarDestinations": "Ähnliche Reiseziele",
+    "practicalInformation": "Praktische Informationen",
+    "visaAndDocuments": "Visum &amp; Dokumente",
+    "currency": "Währung",
+    "languages": "Sprachen",
+    "climate": "Klima",
+    "emergencies": "Notfälle",
+    "health": "Gesundheit",
+    "localCustoms": "Lokale Bräuche",
+    "customize": "Anpassen",
+    "loginToEdit": "Anmelden, um Änderungen vorzunehmen"
+  },
+  "editor": {
+    "editActivity": "Aktivität bearbeiten",
+    "deleteActivity": "Aktivität löschen",
+    "locationUnspecified": "Ort nicht angegeben",
+    "toastActivityUpdated": "Aktivität aktualisiert",
+    "editActivityTitle": "Aktivität bearbeiten",
+    "title": "Titel",
+    "location": "Ort",
+    "description": "Beschreibung",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "cost": "Kosten (€)",
+    "duration": "Dauer",
+    "category": "Kategorie",
+    "difficulty": "Schwierigkeitsgrad",
+    "difficultyEasy": "Einfach",
+    "difficultyModerate": "Mäßig",
+    "difficultyHard": "Schwierig",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "dayN": "Tag {{n}}",
+    "moveDayUp": "Den Tag beginnen",
+    "moveDayDown": "Den Tag ausklingen lassen",
+    "editDay": "Tag ändern",
+    "deleteDay": "Tag löschen",
+    "toastDayUpdated": "Aktualisiert am",
+    "editDayN": "Tag ändern {{n}}",
+    "destination": "Reiseziel",
+    "theme": "Thema",
+    "toastActivityAdded": "Aktivität hinzugefügt",
+    "addActivity": "Aktivität hinzufügen",
+    "add": "Hinzufügen",
+    "toastActivityMoved": "Termin auf einen anderen Tag verschoben",
+    "toastActivitiesReordered": "Aktualisierte Reihenfolge der Aktivitäten",
+    "toastDayAdded": "Tag hinzugefügt",
+    "toastCannotDeleteLastDay": "Der letzte Tag kann nicht gelöscht werden",
+    "toastDayDeleted": "Tag gestrichen",
+    "toastActivityDeleted": "Aktivität gelöscht",
+    "toastItinerarySaved": "Gespeicherte Route",
+    "subtitle": "Passen Sie Ihren Plan an – ordnen Sie die Aktivitäten per Drag &amp; Drop neu an, bearbeiten oder löschen Sie sie.",
+    "addDay": "Einen Tag hinzufügen",
+    "close": "Schließen",
+    "dropActivitiesHint": "Tragen Sie hier Aktivitäten ein oder fügen Sie eine neue hinzu"
   }
 }

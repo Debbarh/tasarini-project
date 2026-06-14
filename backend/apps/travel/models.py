@@ -10,6 +10,7 @@ class AIProviderConfig(models.Model):
         OPENAI = 'openai', 'OpenAI'
         GEMINI = 'gemini', 'Gemini'
         PERPLEXITY = 'perplexity', 'Perplexity'
+        OLLAMA = 'ollama', 'Ollama'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.CharField(max_length=50, choices=Provider.choices, unique=True)

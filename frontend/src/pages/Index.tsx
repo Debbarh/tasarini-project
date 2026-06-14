@@ -1,13 +1,31 @@
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "react-router-dom";
+import { DestinationCodeAutocomplete } from "@/components/ui/destination-code-autocomplete";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { BookingEnrichmentPanel } from "@/components/trip/BookingEnrichmentPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
+import Testimonials from "@/components/home/Testimonials";
+import {
+  Hotel,
+  Car,
+  CarTaxiFront,
+  Bus,
+  CarFront,
+  Compass,
+  Map as MapIcon,
+  UtensilsCrossed,
+  Briefcase,
+  Plane,
+  Smartphone,
+  Scale,
+  Sparkles,
+  Search,
+} from "lucide-react";
 
 import hero from "@/assets/hero-travel.jpg";
 import beach from "@/assets/inspire-beach.jpg";
@@ -18,15 +36,47 @@ import cultural from "@/assets/inspire-cultural.jpg";
 const Index = () => {
   const { t } = useTranslation();
   const { settings } = useSystemSettings();
+  const navigate = useNavigate();
+
+  // Recherche rapide du hero -> page /booking
+  const [searchDest, setSearchDest] = useState('');
+  const [searchCheckIn, setSearchCheckIn] = useState('');
+  const [searchCheckOut, setSearchCheckOut] = useState('');
+
+  const handleQuickSearch = () => {
+    const params = new URLSearchParams();
+    if (searchDest) params.set('destination', searchDest.toUpperCase());
+    if (searchCheckIn) params.set('checkIn', searchCheckIn);
+    if (searchCheckOut) params.set('checkOut', searchCheckOut);
+    navigate(`/booking?${params.toString()}`);
+  };
+
   const images = [
-    { src: hero, alt: t('home.heroTitle') },
-    { src: beach, alt: t('home.exploreWorldDesc') },
-    { src: mountain, alt: t('home.exploreWorldDesc') },
-    { src: city, alt: t('home.exploreWorldDesc') },
-    { src: cultural, alt: t('home.exploreWorldDesc') }
+    { src: hero, alt: t('home.heroTitle'), caption: t('home.captionHero') },
+    { src: beach, alt: t('home.exploreWorldDesc'), caption: t('home.captionBeach') },
+    { src: mountain, alt: t('home.exploreWorldDesc'), caption: t('home.captionMountain') },
+    { src: city, alt: t('home.exploreWorldDesc'), caption: t('home.captionCity') },
+    { src: cultural, alt: t('home.exploreWorldDesc'), caption: t('home.captionCultural') }
   ];
 
+  // Live inspiration : routes affichées en rotation (noms de villes réels)
+  const inspirationRoutes = [
+    { from: 'Paris', to: 'Bali' },
+    { from: 'Tokyo', to: 'Rome' },
+    { from: 'New York', to: 'Marrakech' },
+    { from: 'Londres', to: 'Bangkok' },
+    { from: 'Barcelone', to: 'Lisbonne' }
+  ];
+  const [routeIndex, setRouteIndex] = useState(0);
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRouteIndex((prev) => (prev + 1) % inspirationRoutes.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [inspirationRoutes.length]);
 
   // Debug: log booking center setting
   useEffect(() => {
@@ -63,7 +113,8 @@ const Index = () => {
               <div className="space-y-4 sm:space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-primary animate-scale-in">
                   <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  ✨ {t('planTrip.smartRecommendations')}
+                  <Sparkles className="h-3.5 w-3.5" />
+                  {t('planTrip.smartRecommendations')}
                 </div>
                 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight leading-tight">
@@ -92,6 +143,36 @@ const Index = () => {
                   </Link>
                 </Button>
               </div>
+
+              {/* Barre de recherche rapide -> /booking */}
+              <div className="bg-background/80 backdrop-blur-sm border rounded-2xl p-3 shadow-lg flex flex-col sm:flex-row gap-2 relative z-10">
+                <div className="flex-1 min-w-0">
+                  <DestinationCodeAutocomplete
+                    value={searchDest}
+                    onValueChange={(code) => setSearchDest(code.toUpperCase())}
+                    placeholder={t('home.searchDestination')}
+                  />
+                </div>
+                <Input
+                  type="date"
+                  aria-label={t('booking.checkIn')}
+                  value={searchCheckIn}
+                  onChange={(e) => setSearchCheckIn(e.target.value)}
+                  className="sm:w-36"
+                />
+                <Input
+                  type="date"
+                  aria-label={t('booking.checkOut')}
+                  value={searchCheckOut}
+                  min={searchCheckIn || undefined}
+                  onChange={(e) => setSearchCheckOut(e.target.value)}
+                  className="sm:w-36"
+                />
+                <Button onClick={handleQuickSearch} size="lg" className="shrink-0">
+                  <Search className="h-4 w-4 mr-2" />
+                  {t('home.searchCta')}
+                </Button>
+              </div>
               
               {/* Stats */}
               <div className="flex justify-center sm:justify-start gap-4 sm:gap-8 pt-6 sm:pt-8 border-t border-border/50">
@@ -104,7 +185,7 @@ const Index = () => {
                   <div className="text-xs sm:text-sm text-muted-foreground">{t('home.statsAdventurers')}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary">98%</div>
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-success">98%</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">{t('home.statsDreams')}</div>
                 </div>
               </div>
@@ -122,13 +203,19 @@ const Index = () => {
                   style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                 >
                   {images.map((image, index) => (
-                    <img 
-                      key={index}
-                      src={image.src} 
-                      alt={image.alt}
-                      className="w-full max-w-lg h-[250px] sm:h-[350px] lg:h-[400px] object-cover flex-shrink-0"
-                      loading={index === 0 ? "eager" : "lazy"}
-                    />
+                    <div key={index} className="relative w-full max-w-lg flex-shrink-0">
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="w-full h-[250px] sm:h-[350px] lg:h-[400px] object-cover"
+                        loading={index === 0 ? "eager" : "lazy"}
+                      />
+                      {image.caption && (
+                        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-3 sm:p-4 pb-8 sm:pb-10">
+                          <span className="text-white text-sm sm:text-base font-medium drop-shadow">{image.caption}</span>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
                 
@@ -138,9 +225,11 @@ const Index = () => {
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
+                      aria-label={t('home.goToImage', { index: index + 1 })}
+                      aria-current={index === currentImageIndex}
                       className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
-                        index === currentImageIndex 
-                          ? 'bg-white scale-125' 
+                        index === currentImageIndex
+                          ? 'bg-white scale-125'
                           : 'bg-white/50 hover:bg-white/75'
                       }`}
                     />
@@ -152,15 +241,17 @@ const Index = () => {
               <div className="hidden sm:block absolute -top-4 -left-4 bg-background/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border animate-slide-in-right" style={{ animationDelay: '0.5s' }}>
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full" />
-                  <span className="text-xs sm:text-sm font-medium">🌟 {t('home.liveInspiration')}</span>
+                  <span className="text-xs sm:text-sm font-medium inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-primary" />{t('home.liveInspiration')}</span>
                 </div>
               </div>
 
               <div className="hidden sm:block absolute -bottom-4 -right-4 bg-background/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border animate-slide-in-right" style={{ animationDelay: '0.7s' }}>
                 <div className="flex items-center gap-2">
-                  <div className="text-lg sm:text-2xl">✈️</div>
+                  <div className="text-lg sm:text-2xl"><Plane className="h-5 w-5 sm:h-6 sm:w-6 text-primary" /></div>
                   <div>
-                    <div className="text-xs sm:text-sm font-medium">Paris → Bali</div>
+                    <div className="text-xs sm:text-sm font-medium transition-all duration-500">
+                      {inspirationRoutes[routeIndex].from} → {inspirationRoutes[routeIndex].to}
+                    </div>
                     <div className="text-xs text-muted-foreground">{t('home.adventureFound')}</div>
                   </div>
                 </div>
@@ -238,30 +329,37 @@ const Index = () => {
 
       {/* Booking Engine Section - Controlled by admin settings */}
       {settings.bookingCenterEnabled && (
-        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-primary/5">
+        <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-primary/5">
           <div className="container mx-auto px-4">
             <div className="text-center mb-8 sm:mb-12">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
-                🏨 {t('home.bookingCenter')}
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 flex items-center justify-center gap-2">
+                <Hotel className="h-7 w-7 text-primary" />
+                {t('home.bookingCenter')}
               </h2>
               <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
                 {t('home.bookingCenterDesc')}
               </p>
             </div>
 
-            <div className="max-w-7xl mx-auto">
-              <BookingEnrichmentPanel standalone={true} />
+            <div className="text-center">
+              <Button asChild size="lg" className="hover-scale">
+                <Link to="/booking">
+                  <Search className="h-4 w-4 mr-2" />
+                  {t('home.openBookingCenter')}
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
       )}
 
       {/* Transport Section with Tabs */}
-      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-primary/5 to-background">
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-              🚗 {t('home.transportServices')}
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 flex items-center justify-center gap-2">
+              <Car className="h-6 w-6 text-primary" />
+              {t('home.transportServices')}
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground">
               {t('home.transportServicesDesc')}
@@ -270,10 +368,10 @@ const Index = () => {
 
           <Tabs defaultValue="car-rental" className="max-w-7xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-6">
-              <TabsTrigger value="car-rental">🚗 {t('home.carRental')}</TabsTrigger>
-              <TabsTrigger value="transfers">🚕 {t('home.transfers')}</TabsTrigger>
-              <TabsTrigger value="public">🚌 {t('home.busAndTrain')}</TabsTrigger>
-              <TabsTrigger value="urban">🚖 {t('home.urbanTransport')}</TabsTrigger>
+              <TabsTrigger value="car-rental" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><Car className="h-4 w-4 shrink-0" />{t('home.carRental')}</TabsTrigger>
+              <TabsTrigger value="transfers" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><CarTaxiFront className="h-4 w-4 shrink-0" />{t('home.transfers')}</TabsTrigger>
+              <TabsTrigger value="public" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><Bus className="h-4 w-4 shrink-0" />{t('home.busAndTrain')}</TabsTrigger>
+              <TabsTrigger value="urban" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><CarFront className="h-4 w-4 shrink-0" />{t('home.urbanTransport')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="car-rental" className="mt-0">
@@ -296,11 +394,12 @@ const Index = () => {
       </section>
 
       {/* Activities & Experiences Section with Tabs */}
-      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-background to-primary/5">
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-              🎯 {t('home.activitiesExperiences')}
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 flex items-center justify-center gap-2">
+              <Compass className="h-6 w-6 text-primary" />
+              {t('home.activitiesExperiences')}
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground">
               {t('home.activitiesDesc')}
@@ -309,8 +408,8 @@ const Index = () => {
 
           <Tabs defaultValue="tours" className="max-w-7xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="tours">🗺️ {t('home.toursVisits')}</TabsTrigger>
-              <TabsTrigger value="dining">🍽️ {t('home.gastronomy')}</TabsTrigger>
+              <TabsTrigger value="tours" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><MapIcon className="h-4 w-4 shrink-0" />{t('home.toursVisits')}</TabsTrigger>
+              <TabsTrigger value="dining" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><UtensilsCrossed className="h-4 w-4 shrink-0" />{t('home.gastronomy')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="tours" className="mt-0">
@@ -325,11 +424,12 @@ const Index = () => {
       </section>
 
       {/* Services Section with Tabs */}
-      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-primary/5 to-background">
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-              💼 {t('home.travelerServices')}
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 flex items-center justify-center gap-2">
+              <Briefcase className="h-6 w-6 text-primary" />
+              {t('home.travelerServices')}
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground">
               {t('home.travelerServicesDesc')}
@@ -338,9 +438,9 @@ const Index = () => {
 
           <Tabs defaultValue="booking" className="max-w-7xl mx-auto">
             <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="booking">✈️ {t('home.booking')}</TabsTrigger>
-              <TabsTrigger value="esim">📱 {t('home.esimCards')}</TabsTrigger>
-              <TabsTrigger value="compensation">⚖️ {t('home.compensation')}</TabsTrigger>
+              <TabsTrigger value="booking" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><Plane className="h-4 w-4 shrink-0" />{t('home.booking')}</TabsTrigger>
+              <TabsTrigger value="esim" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><Smartphone className="h-4 w-4 shrink-0" />{t('home.esimCards')}</TabsTrigger>
+              <TabsTrigger value="compensation" className="flex items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm px-1 sm:px-3"><Scale className="h-4 w-4 shrink-0" />{t('home.compensation')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="booking" className="mt-0">
@@ -358,8 +458,11 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Testimonials - vrais avis utilisateurs (masqué si aucun) */}
+      <Testimonials />
+
       {/* Dynamic Widgets Section - Managed from Admin */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-primary/5">
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4">
           <WidgetRenderer placement="home" className="max-w-7xl mx-auto" />
         </div>

@@ -8,7 +8,8 @@
     "administration": "管理",
     "myProfile": "マイプロフィール",
     "logout": "ログアウト",
-    "login": "ログイン"
+    "login": "ログイン",
+    "notifications": "通知"
   },
   "notFound": {
     "title": "404",
@@ -30,33 +31,44 @@
     "statsDestinations": "探索された目的地",
     "statsAdventurers": "冒険者",
     "statsDreams": "実現した夢",
-    "liveInspiration": "Live inspiration",
-    "adventureFound": "Adventure found!",
-    "howItWorksTitle": "How does it work?",
-    "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
-    "howStep1Title": "Get inspired",
-    "howStep1Desc": "Browse stories and travel ideas tailored to your desires.",
-    "howStep2Title": "Plan",
-    "howStep2Desc": "Use our assistant to create an itinerary and book hotels and transport.",
-    "howStep3Title": "Travel worry-free",
-    "howStep3Desc": "Receive confirmations, share your stories and enjoy the trip.",
-    "bookingCenter": "Booking Center",
-    "bookingCenterDesc": "Search and book your hotels, flights and activities in just a few clicks",
-    "transportServices": "Transport Services",
-    "transportServicesDesc": "Vehicle rental, transfers and urban transport",
-    "carRental": "Rental",
-    "transfers": "Transfers",
-    "busAndTrain": "Bus & Train",
-    "urbanTransport": "Urban",
-    "activitiesExperiences": "Activities & Experiences",
-    "activitiesDesc": "Discover the best activities and restaurants",
-    "toursVisits": "Tours & Visits",
-    "gastronomy": "Gastronomy",
-    "travelerServices": "Traveler Services",
-    "travelerServicesDesc": "Connectivity and assistance",
-    "booking": "Booking",
-    "esimCards": "eSIM Cards",
-    "compensation": "Compensation"
+    "liveInspiration": "ライブインスピレーション",
+    "adventureFound": "冒険が見つかりました！",
+    "howItWorksTitle": "使い方",
+    "howItWorksSubtitle": "アイデアから確定した旅行へ、簡単な3ステップです。",
+    "howStep1Title": "インスピレーションを得る",
+    "howStep1Desc": "あなたの希望に合わせたストーリーや旅行アイデアを閲覧しましょう。",
+    "howStep2Title": "計画する",
+    "howStep2Desc": "アシスタントを使って旅程を作成し、ホテルや交通を予約しましょう。",
+    "howStep3Title": "安心して旅行を楽しむ",
+    "howStep3Desc": "確認を受け取り、ストーリーを共有して旅行を楽しんでください。",
+    "bookingCenter": "予約センター",
+    "bookingCenterDesc": "ホテル、フライト、アクティビティを数クリックで検索・予約",
+    "transportServices": "交通サービス",
+    "transportServicesDesc": "車両レンタル、送迎、都市内交通",
+    "carRental": "レンタカー",
+    "transfers": "送迎",
+    "busAndTrain": "バス＆電車",
+    "urbanTransport": "都市交通",
+    "activitiesExperiences": "アクティビティ＆体験",
+    "activitiesDesc": "最高のアクティビティやレストランを見つけましょう",
+    "toursVisits": "ツアー＆訪問",
+    "gastronomy": "ガストロノミー",
+    "travelerServices": "旅行者サービス",
+    "travelerServicesDesc": "接続性とサポート",
+    "booking": "予約",
+    "esimCards": "eSIMカード",
+    "compensation": "補償",
+    "testimonialsTitle": "彼らは私たちと一緒に旅をしました",
+    "testimonialsSubtitle": "旅行者コミュニティからの口コミ",
+    "captionHero": "あなたの次の冒険",
+    "captionBeach": "海辺での休暇",
+    "captionMountain": "山での冒険",
+    "captionCity": "都会の小旅行",
+    "captionCultural": "文化体験",
+    "goToImage": "画像へ移動{{index}}",
+    "searchDestination": "どこへ行くんですか？",
+    "searchCta": "検索",
+    "openBookingCenter": "予約センターを開く"
   },
   "planTrip": {
     "title": "完璧な休暧を計画",
@@ -108,7 +120,11 @@
           "title": "アクティビティ",
           "description": "体験と興味"
         }
-      }
+      },
+      "autosaved": "進行状況の保存",
+      "estimatedTime": "約3分",
+      "skipStep": "このステップをスキップする",
+      "generateNow": "今すぐ生成"
     },
     "destinationStep": {
       "selectCountry": "国を選択",
@@ -140,7 +156,9 @@
       "locationSaved": "目的地が正常に保存されました。",
       "locationSaveError": "この場所を保存できませんでした。情報を確認してください。",
       "invalidAddress": "地図上で有効な住所を選択してください。",
-      "fetchingTranslations": "Fetching multilingual translations..."
+      "fetchingTranslations": "Fetching multilingual translations...",
+      "geocodeFailed": "この地点の都市を特定できません。別の位置を選択するか、都市名を手動で入力してください。",
+      "chooseOnMapHint": "インタラクティブマップを開き、目的地を正確に指定して座標を取得してください。"
     },
     "travelDetailsStep": {
       "title": "旅の仕間",
@@ -174,7 +192,9 @@
       "availablePlural": "利用可能",
       "remains": "残り",
       "remainsPlural": "残り",
-      "error": "エラー"
+      "error": "エラー",
+      "singleChoiceHint": "1つのタイプを選んでください",
+      "maxLevelTooltip": "このグループにおすすめの場所における、アクセスや身体的な難易度の最高レベル。"
     },
     "budgetStep": {
       "title": "旅行予算",
@@ -225,7 +245,8 @@
       "types": "タイプ",
       "services": "サービス",
       "locations": "場所",
-      "others": "その他"
+      "others": "その他",
+      "typeRequired": "続行するには、少なくとも1つの宿泊施設の種類を選択してください。"
     },
     "activitiesStep": {
       "title": "アクティビティと体験",
@@ -625,13 +646,34 @@
           "veryStrong": "非常に強い"
         }
       }
+    },
+    "emailNotConfirmed": "メールをご確認の上、確認リンクをクリックしてアカウントを有効にしてください",
+    "invalidCredentials": "メールアドレスまたはパスワードが間違っています",
+    "forgotPassword": {
+      "link": "パスワードをお忘れですか？",
+      "title": "パスワードをリセットする",
+      "description": "メールアドレスを入力してください。パスワードをリセットするためのリンクをお送りします。",
+      "sendButton": "リンクを送信",
+      "sending": "送信中...",
+      "successTitle": "メールを送信しました",
+      "successDescription": "メールアドレスがアカウントに登録されている場合、パスワード再設定用のリンクが送信されます。",
+      "emailSent": "メールボックス（および迷惑メールフォルダ）を確認し、パスワード再設定用のリンクをお探しください。",
+      "emailSentMessage": "当社のシステムにそのメールアドレスが登録されている場合、パスワード再設定用のリンクをお送りします。"
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. 全ての権利を保有しています。",
     "becomePartner": "パートナーになる",
     "madeWith": "で作られた",
-    "by": "による"
+    "by": "による",
+    "tagline": "AIを活用した旅行のアイデア探し、計画、予約。",
+    "discover": "発見する",
+    "company": "企業",
+    "legal": "法的",
+    "contact": "お問い合わせ",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー",
+    "rights": "無断転載・複製を禁じます。"
   },
   "common": {
     "loading": "読み込み中...",
@@ -1215,7 +1257,13 @@
         "updateError": "通知の更新中にエラーが発生しました"
       },
       "export": "データをエクスポート",
-      "loadingError": "ダッシュボードの読み込み中にエラーが発生しました"
+      "loadingError": "ダッシュボードの読み込み中にエラーが発生しました",
+      "analyticsTab": "分析",
+      "poisTab": "マイPOI",
+      "bookingsTab": "ご予約",
+      "financesTab": "財務",
+      "subscriptionTab": "購読",
+      "notificationsTab": "通知"
     }
   },
   "legal": {
@@ -1230,5 +1278,711 @@
       "description": "Learn how we protect your personal data",
       "footer": "GDPR Compliant - Your data is protected"
     }
+  },
+  "booking": {
+    "title": "予約センター",
+    "subtitle": "ホテル、航空券、送迎、アクティビティを検索・予約",
+    "info": "自動検索はもうありません！検索を行うタイミングは、あなたが自由に決められます。",
+    "tabs": {
+      "hotels": "ホテル",
+      "flights": "フライト",
+      "transfers": "移籍",
+      "restaurants": "レストラン",
+      "activities": "活動"
+    },
+    "searchHotel": "ホテルを検索する",
+    "searchFlight": "フライトを検索",
+    "searchTransfer": "移籍情報を検索",
+    "searchActivity": "アクティビティを検索",
+    "destination": "目的地",
+    "selectDestination": "目的地を選択してください...",
+    "selectOriginAirport": "出発空港を選択してください...",
+    "selectDestAirport": "到着空港を選択してください...",
+    "guests": "人数",
+    "passengers": "乗客数",
+    "participants": "参加者数",
+    "checkIn": "到着日",
+    "checkOut": "出発日",
+    "departDate": "出発日",
+    "returnDate": "返却日（任意）",
+    "origin": "出発",
+    "date": "日付",
+    "time": "時間",
+    "searching": "検索中...",
+    "searchHotelsBtn": "ホテルを検索する",
+    "searchFlightsBtn": "フライトを検索",
+    "searchActivitiesBtn": "アクティビティを検索",
+    "searchTransfersBtnSoon": "移籍情報を検索（近日公開予定）",
+    "transfersSoon": "移籍情報の検索機能がまもなく利用可能になります",
+    "transferFromPlaceholder": "空港、ホテル…",
+    "transferToPlaceholder": "ホテル、都心…",
+    "emptyTitle": "上記の検索条件を入力してください",
+    "emptyDesc": "検索後、結果がここに表示されます",
+    "moreAmenities": "+{{count}} その他",
+    "amenitiesUnspecified": "記載のない設備",
+    "fromPrice": "～から",
+    "perNight": "／泊",
+    "priceUnavailable": "料金情報はありません",
+    "details": "詳細",
+    "book": "予約する",
+    "stops": "{{count}} 経由地",
+    "restaurantsIncludedTitle": "レストランはすでに旅程に含まれています",
+    "restaurantsIncludedDesc": "レストランのおすすめについては、上記の「詳細なルート」のセクションをご覧ください",
+    "toastRequiredTitle": "必須項目",
+    "toastRequiredDesc": "検索欄のすべての項目にご入力ください",
+    "toastInvalidCodeTitle": "宛先コードが無効です",
+    "toastInvalidCodeDesc": "オートコンプリート機能を使用して、HotelBedsコード（例：PAR、BCN、ROM）を選択してください。",
+    "toastInvalidDatesTitle": "無効な日付",
+    "toastInvalidDatesDesc": "出発日は、到着日から少なくとも1日後である必要があります",
+    "toastDoneTitle": "検索が完了しました",
+    "toastErrorTitle": "検索エラー",
+    "toastHotelsFound": "{{count}} 見つかったホテル",
+    "toastFlightsFound": "{{count}} 見つかったフライト",
+    "toastActivitiesFound": "{{count}} 見つかった活動",
+    "toastHotelsError": "ホテルを検索できません。目的地コードを確認してください。",
+    "toastFlightsError": "フライトを検索できません。IATAコードをご確認ください。",
+    "toastActivitiesError": "アクティビティを検索できません。宛先コードを確認してください。"
+  },
+  "savedItineraries": {
+    "pageTitle": "保存したルート",
+    "pageDescription": "AIを使って保存・計画したすべての旅行プランを確認できます。旅行プランの管理、編集、共有が可能です。",
+    "subtitle": "計画中のすべての旅行を確認し、これからの冒険を計画しましょう。",
+    "searchPlaceholder": "ルートを検索...",
+    "unauthorized": "不正アクセス",
+    "unauthorizedMessage": "保存したルートにアクセスするには、ログインする必要があります。",
+    "stats": {
+      "saved": "保存されたルート",
+      "favorites": "お気に入り",
+      "travelDays": "旅行日数"
+    },
+    "empty": {
+      "title": "保存されたルートはありません",
+      "noResults": "ルートが見つかりませんでした",
+      "searchMessage": "別の検索キーワードを試してみてください。",
+      "createMessage": "まずは、初めての旅行プランを作成してみましょう！"
+    },
+    "actions": {
+      "view": "参照",
+      "viewDetails": "詳細を見る",
+      "export": "PDF",
+      "exportPDF": "PDFをエクスポート",
+      "share": "共有する",
+      "delete": "削除",
+      "favorite": "お気に入り",
+      "create": "ルートを作成する"
+    },
+    "badges": {
+      "days": "日"
+    },
+    "dialog": {
+      "deleteTitle": "ルートを削除する",
+      "deleteDescription": "本当に削除してもよろしいですか",
+      "deleteWarning": "この操作は元に戻せません。",
+      "cancel": "キャンセル",
+      "confirm": "削除"
+    },
+    "toast": {
+      "pdfExported": "PDFがエクスポートされました！",
+      "pdfExportedDesc": "旅程のダウンロードが完了しました。",
+      "pdfError": "エラー",
+      "pdfErrorDesc": "PDFをエクスポートできません",
+      "shareError": "エラー",
+      "shareErrorDesc": "ルートを共有できません",
+      "deleted": "ルートが削除されました",
+      "deleteError": "削除中にエラーが発生しました"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "私のお気に入り",
+    "pageDescription": "お気に入りの場所や、自分だけの探索ルートを管理しましょう。",
+    "subtitle": "お気に入りの場所やカスタマイズされたルートを確認しましょう",
+    "loginMessage": "ログインして、お気に入りや旅程を確認してください。",
+    "tabs": {
+      "favorites": "お気に入り",
+      "itineraries": "マイルート",
+      "community": "コミュニティ"
+    },
+    "favorites": {
+      "empty": "お気に入りはありません",
+      "emptyMessage": "まずは地図からお気に入りの場所を追加しましょう",
+      "exploreMap": "地図を見る"
+    },
+    "itineraries": {
+      "empty": "ルートはありません",
+      "emptyMessage": "見どころを選んで、初めてのルートを作成しましょう",
+      "createNew": "ルートを作成する",
+      "places": "場所"
+    },
+    "community": {
+      "empty": "公開されているルートはありません",
+      "emptyMessage": "コミュニティではまだルートが共有されていません",
+      "title": "コミュニティのルート",
+      "description": "他のユーザーが共有したルートをご覧ください",
+      "public": "一般",
+      "by": "著者：",
+      "defaultUsername": "旅行者 タサリーニ"
+    },
+    "stats": {
+      "distance": "距離"
+    },
+    "difficulty": {
+      "easy": "簡単",
+      "medium": "中程度",
+      "hard": "難しい"
+    },
+    "actions": {
+      "view": "地図で見る",
+      "share": "共有する",
+      "edit": "編集",
+      "delete": "削除",
+      "makePublic": "公表する",
+      "makePrivate": "非公開にする"
+    },
+    "toast": {
+      "deleted": "ルートが削除されました",
+      "deleteError": "削除中にエラーが発生しました",
+      "madePublic": "公表された",
+      "madePrivate": "非公開にする",
+      "updateError": "更新中にエラーが発生しました",
+      "linkCopied": "リンクがクリップボードにコピーされました！",
+      "copyError": "リンクをコピーできません",
+      "loadError": "ルートの読み込み中にエラーが発生しました",
+      "loadPublicError": "公開ルートの読み込み中にエラーが発生しました"
+    },
+    "confirmDelete": "このルートを削除してもよろしいですか？"
+  },
+  "verifyEmailRequired": {
+    "title": "メールをご確認ください",
+    "subtitle": "始める前の最後のステップ",
+    "sentTo": "確認メールが以下のアドレスに送信されました：",
+    "limitedAccess": {
+      "title": "アクセス制限あり",
+      "description": "Tasariniのすべての機能をご利用いただくには、メールを確認する必要があります。"
+    },
+    "steps": {
+      "title": "手順：",
+      "step1": "メールボックスを開いてください",
+      "step2": "次のメールアドレスを検索してください",
+      "step2Bold": "タサリーニ",
+      "step3": "確認リンクをクリックしてください",
+      "step4": "このページに戻って、ページを更新してください"
+    },
+    "notReceived": {
+      "title": "メールが届きませんでしたか？",
+      "checkSpam": "迷惑メールフォルダをご確認ください",
+      "checkEmail": "メールアドレスが正しいか確認してください",
+      "waitTime": "数分お待ちください（メールが届くまで時間がかかる場合があります）"
+    },
+    "buttons": {
+      "resend": "確認メールを再送信する",
+      "sending": "送信中...",
+      "sent": "メールを送信しました！",
+      "signOut": "ログアウトして別のアカウントを使用する"
+    },
+    "footer": {
+      "validity": "確認用リンクの有効期間は",
+      "hours": "24時間"
+    },
+    "toast": {
+      "success": "確認メールを再送信しました！",
+      "error": "メールの転送中にエラーが発生しました"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "パートナーアカウントがロックされました",
+    "description": "パートナー登録のお申し込みが却下されたか、アカウントが停止されました。もしこれが誤りであると思われる場合は、以下のフォームからお問い合わせください。",
+    "reasons": {
+      "title": "考えられる理由：",
+      "incorrect": "不正確または不完全な情報",
+      "terms": "利用規約の違反",
+      "suspicious": "不審な動きが検出されました",
+      "criteria": "パートナーシップの基準が満たされていない"
+    },
+    "contact": {
+      "title": "管理部門へのお問い合わせ",
+      "subtitle": "お客様の状況を詳しくお聞かせください。ご依頼内容を検討させていただきます。",
+      "nameLabel": "氏名",
+      "namePlaceholder": "氏名（フルネーム）",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "votre@email.com",
+      "subjectLabel": "件名",
+      "subjectPlaceholder": "お問い合わせの内容",
+      "subjectDefault": "パートナーアカウントの再評価依頼",
+      "messageLabel": "メッセージ",
+      "messagePlaceholder": "お客様の状況と、アカウントの再審査が必要な理由をご説明ください...",
+      "submitButton": "リクエストを送信する",
+      "submitting": "送信中...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "応答時間：",
+      "responseTimeText": "48～72時間以内にご返信できるよう努めております。",
+      "urgentQuestion": "緊急のご用件につきましては、以下の連絡先までお問い合わせください：",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "メッセージは送信されました。できるだけ早くご返信いたします。",
+      "error": "メッセージの送信中にエラーが発生しました。もう一度お試しください。"
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "確認中...",
+      "success": "メールアドレスの確認が完了しました！",
+      "error": "検証エラー"
+    },
+    "description": {
+      "loading": "メールの確認を行っておりますので、少々お待ちください。",
+      "successPartner": "パートナーアカウントの有効化が完了しました。",
+      "successUser": "アカウントの有効化が完了しました。",
+      "error": "メールアドレスを確認できませんでした。"
+    },
+    "messages": {
+      "tokenMissing": "認証トークンがありません。",
+      "success": "メールアドレスの確認が完了しました！",
+      "verificationError": "トークンが無効か、有効期限が切れています。",
+      "autoLoginInfo": "自動的にログインを試みます。ログインに失敗した場合は、下のボタンをご利用ください。",
+      "manualLoginInfo": "次のステップに進むには、ログインしてセッションを有効にしてください。",
+      "autoLoginFailed": "自動ログインに失敗しました。続行するには、上のボタンをご利用ください。",
+      "waiting": "ほんの数秒で終わるはずです…"
+    },
+    "partner": {
+      "nextStep": "次のステップ：パートナープロフィールを完成させてください",
+      "continueButton": "パートナープロフィールへ進む",
+      "continueButtonLoading": "接続中..."
+    },
+    "user": {
+      "continueButton": "プロフィールへ",
+      "continueButtonLoading": "接続中..."
+    },
+    "buttons": {
+      "resend": "確認リンクを再送信する",
+      "backToLogin": "ログイン画面に戻る",
+      "requestNewLink": "確認メールを再送信する"
+    },
+    "error": {
+      "title": "どうすればいい？",
+      "checkLink": "リンクが完全であることを確認してください",
+      "expired": "リンクは24時間後に無効になります",
+      "requestNew": "新しい確認用リンクをリクエストする"
+    },
+    "toast": {
+      "success": "メールアドレスの確認が完了しました！",
+      "error": "検証エラー",
+      "verifying": "メールアドレスの確認が完了しました。ログイン中です...",
+      "loginSuccess": "ログインに成功しました。リダイレクト中...",
+      "loginError": "自動ログインできませんでした。続行するにはログインしてください。",
+      "resendSuccess": "確認用の新しいメールが送信されました。",
+      "resendError": "リンクを再送信できません。ログインして、もう一度お試しください。",
+      "resendAuthRequired": "確認用リンクを再送信するには、ログインしてください。",
+      "completeError": "確認を完了できませんでした。"
+    }
+  },
+  "theme": {
+    "toggleLabel": "テーマを変更する",
+    "light": "クレール",
+    "dark": "暗い",
+    "system": "システム"
+  },
+  "notifications": {
+    "title": "通知",
+    "markAllRead": "すべて既読にする",
+    "markRead": "既読にする",
+    "delete": "削除",
+    "empty": "通知なし",
+    "timePrefix": "～において",
+    "sent": "送信済み",
+    "settings": {
+      "title": "通知設定",
+      "description": "アクティビティや旅行に関する通知を設定する",
+      "loading": "設定を読み込んでいます...",
+      "types": {
+        "title": "通知の種類",
+        "activityReminders": "イベントのお知らせ",
+        "activityRemindersDesc": "予定されているアクティビティの前にリマインダーを受け取る",
+        "tripStart": "旅の始まり",
+        "tripStartDesc": "旅行開始時の通知",
+        "tripEnd": "旅の終わり",
+        "tripEndDesc": "旅行終了時の通知"
+      },
+      "timing": {
+        "title": "追加接種の時期",
+        "before": "アクティビティ開始前の注意事項",
+        "1h": "1時間前",
+        "2h": "2時間前",
+        "6h": "6時間前",
+        "12h": "12時間前",
+        "24h": "24時間前",
+        "48h": "48時間前"
+      },
+      "channels": {
+        "title": "通知チャネル",
+        "inApp": "アプリ内の通知",
+        "inAppDesc": "アプリで通知を表示する",
+        "email": "メール通知",
+        "emailDesc": "リマインダーメールを受け取る（近日公開予定）"
+      }
+    }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "PDFのエクスポートに成功しました",
+      "pdfExportSuccessDesc": "旅程表がPDF形式でダウンロードされました。",
+      "pdfExportError": "エクスポートエラー",
+      "pdfExportErrorDesc": "PDFをエクスポートできません。もう一度お試しください。",
+      "shareError": "共有エラー",
+      "shareErrorDesc": "共有できません。もう一度お試しください。",
+      "linkCopied": "リンクをコピーしました",
+      "linkCopiedDesc": "旅程のリンクがクリップボードにコピーされました。",
+      "copyError": "エラー",
+      "copyErrorDesc": "リンクをコピーできません。",
+      "activityUpdated": "アクティビティの更新に成功しました",
+      "dayUpdated": "更新完了",
+      "activityAdded": "アクティビティが正常に追加されました",
+      "activityMoved": "イベントの日程が変更されました",
+      "orderUpdated": "更新された活動スケジュール",
+      "dayAdded": "新しい日が追加されました",
+      "dayDeleted": "削除された日",
+      "cannotDeleteLastDay": "最終日を削除できません",
+      "saved": "ルートを正常に保存しました"
+    },
+    "poi": {
+      "loadError": "スポットの読み込み中にエラーが発生しました",
+      "updateSuccess": "スポットの更新に成功しました",
+      "createSuccess": "スポットの作成に成功しました",
+      "createSuccessPartner": "スポットの作成に成功しました - パートナースポットとして登録されました",
+      "saveError": "保存中にエラーが発生しました",
+      "deleteSuccess": "スポットが正常に削除されました",
+      "deleteError": "削除中にエラーが発生しました",
+      "toggleSuccess": "{status} のスポットが正常に追加されました",
+      "toggleError": "変更中にエラーが発生しました",
+      "activated": "有効",
+      "deactivated": "無効"
+    },
+    "form": {
+      "validationError": "先に進む前に、誤りを修正してください",
+      "submitError": "送信中にエラーが発生しました",
+      "loadError": "データの読み込み中にエラーが発生しました"
+    },
+    "share": {
+      "loadError": "共有フォルダの読み込み中にエラーが発生しました",
+      "userNotFound": "このメールアドレスに一致するユーザーは見つかりませんでした",
+      "alreadyShared": "このユーザーはすでにこのルートにアクセスできます",
+      "success": "{mode}モードで{email}と共有されたルート",
+      "editMode": "変更",
+      "viewMode": "読書",
+      "shareError": "共有中にエラーが発生しました",
+      "removeSuccess": "投稿を削除しました",
+      "removeError": "削除中にエラーが発生しました",
+      "updateSuccess": "権限の更新",
+      "updateError": "更新中にエラーが発生しました"
+    },
+    "media": {
+      "uploadError": "アップロード中にエラーが発生しました：{error}",
+      "deleteSuccess": "ファイルが削除されました",
+      "deleteError": "削除中にエラーが発生しました",
+      "uploadSuccess": "{count} 個の {type} が正常にアップロードされました",
+      "image": "画像",
+      "video": "動画"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "通知の読み込み中にエラーが発生しました",
+        "preferencesUpdated": "設定が更新されました",
+        "updateError": "更新中にエラーが発生しました",
+        "allMarkedRead": "「既読」にマークされたすべての通知",
+        "notificationDeleted": "通知が削除されました",
+        "deleteError": "削除中にエラーが発生しました"
+      },
+      "savedItineraries": {
+        "saved": "ルートを正常に保存しました",
+        "saveError": "ルートの保存中にエラーが発生しました",
+        "loadError": "ルートの読み込み中にエラーが発生しました",
+        "deleteConfirm": "このルートを削除してもよろしいですか？",
+        "deleted": "ルートの削除に成功しました",
+        "deleteError": "削除中にエラーが発生しました",
+        "updated": "ルートの更新が完了しました",
+        "updateError": "更新中にエラーが発生しました"
+      },
+      "favorites": {
+        "loadError": "お気に入りの読み込み中にエラーが発生しました",
+        "loginRequired": "お気に入りに追加するには、ログインする必要があります",
+        "added": "スポットをお気に入りに追加しました！",
+        "addError": "お気に入りに追加中にエラーが発生しました",
+        "removed": "お気に入りからスポットを削除しました",
+        "removeError": "お気に入りの削除中にエラーが発生しました"
+      },
+      "poi": {
+        "draftSaved": "下書きが正常に保存されました！",
+        "submitted": "POIの送信に成功しました！",
+        "draftUpdated": "下書きの更新に成功しました！",
+        "updated": "POIの更新に成功しました！"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "確認メールを送信しました。アカウントを有効にするため、メールアドレスの確認をお願いします。",
+      "methodNotAvailable": "この接続方法はまだ利用できません。",
+      "passwordResetSoon": "まもなくパスワードのリセット機能が利用可能になります。"
+    },
+    "touristPoints": {
+      "loadError": "スポットの読み込み中にエラーが発生しました"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "キャンセル",
+      "confirm": "予約を確認する",
+      "confirming": "予約処理中...",
+      "error": "エラー",
+      "bookingConfirmedTitle": "予約確定",
+      "selectDate": "日付を選択してください",
+      "arrivalDate": "到着日",
+      "departureDate": "出発日",
+      "guests": "人数",
+      "guestsCount": "{{count}} 人",
+      "clientInfo": "お客様情報",
+      "fullName": "氏名",
+      "email": "メールアドレス",
+      "phone": "電話番号",
+      "specialRequests": "特別なご要望",
+      "summary": "予約の概要",
+      "total": "合計",
+      "more": "+{{count}} その他"
+    },
+    "accommodation": {
+      "title": "宿泊施設を予約する -{{name}}",
+      "selectRoom": "客室を選ぶ",
+      "loadingRooms": "客室の読み込み中...",
+      "noRooms": "空室はありません",
+      "upToGuests": "最大{{count}} 名",
+      "perNightPrice": "{{price}}1泊あたり€",
+      "roomLabel": "客室",
+      "stayDuration": "滞在期間",
+      "nights": "{{count}} 泊",
+      "specialPlaceholder": "特別なご要望がございましたら…",
+      "errLoadRooms": "部屋の読み込み中にエラーが発生しました",
+      "datesUnavailable": "この部屋は、これらの日程ではご利用いただけません",
+      "errAvailability": "空き状況の確認中にエラーが発生しました",
+      "selectDatesErr": "ご到着日とご出発日をお選びください",
+      "selectRoomErr": "お部屋をお選びください",
+      "bookingConfirmed": "ご予約確定しました！",
+      "bookingError": "予約中にエラーが発生しました"
+    },
+    "activity": {
+      "title": "予約する{{name}}",
+      "errLoadData": "アクティビティのデータを読み込めません",
+      "errLoadSlots": "利用可能な時間帯を読み込めません",
+      "requirementsNotMet": "条件を満たしていない",
+      "selectSlotErr": "ご希望の時間帯をお選びください",
+      "bookingSuccessDesc": "ご予約は正常に完了しました",
+      "errCreate": "予約を作成できません",
+      "date": "活動日",
+      "availableSlots": "利用可能な時間帯",
+      "maxParticipants": "{{count}} 名まで",
+      "participants": "参加者数",
+      "adults": "大人",
+      "children": "お子様",
+      "seniors": "シニア",
+      "equipmentRental": "レンタル用品（オプション）",
+      "requirements": "条件と前提条件",
+      "mandatory": "必須",
+      "recommended": "おすすめ",
+      "equipment": "設備",
+      "provided": "付属",
+      "toBring": "持参するもの",
+      "specialPlaceholder": "医療情報、アレルギー、特別なご要望など…",
+      "totalToPay": "お支払い総額"
+    },
+    "restaurant": {
+      "unavailable": "在庫切れ",
+      "noTable": "この時間帯には空いているテーブルがありません",
+      "errCheck": "在庫状況を確認できません",
+      "fillRequired": "必須項目はすべてご記入ください",
+      "requestSentDesc": "ご予約のお申し込みがレストランに送信されました",
+      "errCreate": "予約の作成中にエラーが発生しました",
+      "title": "『』でテーブルを予約する{{name}}",
+      "date": "予約日",
+      "time": "予約時間",
+      "selectTime": "時間を選択してください",
+      "checking": "空き状況を確認中...",
+      "tablesAvailable": "✓ この時間帯に空席あり",
+      "yourInfo": "お客様の情報",
+      "namePlaceholder": "ジャン・デュポン",
+      "emailPlaceholder": "jean.dupont@email.com",
+      "phonePlaceholder": "06 12 34 56 78",
+      "preferences": "設定",
+      "tablePreferences": "テーブルの設定",
+      "noPrefPlaceholder": "特に希望はありません",
+      "noPref": "特に希望はありません",
+      "terrace": "テラス",
+      "indoor": "インテリア",
+      "window": "窓のそばで",
+      "quiet": "静かなエリア",
+      "easyAccess": "アクセスが便利",
+      "specialPlaceholder": "誕生日、食物アレルギー、ベビーチェア……",
+      "summary": "ご予約の概要",
+      "dateLabel": "日付",
+      "timeLabel": "時間",
+      "restaurantLabel": "レストラン",
+      "disclaimer": "ご予約を確定することで、当店からご予約内容の確認のためご連絡させていただくことに同意いただいたものとみなします。"
+    }
+  },
+  "widgets": {
+    "loadButton": "表示"
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "写真：{{city}}",
+    "destination": "目的地",
+    "destinationCapitalized": "目的地",
+    "inspireYourTrip": "旅のインスピレーションを",
+    "iconicView": "見逃せない象徴的な景色",
+    "viewLarge": "拡大表示",
+    "playbackPaused": "再生を一時停止",
+    "previousImage": "前の画像",
+    "nextImage": "次の画像",
+    "goToImage": "画像へ移動{{number}}",
+    "thumbnailAlt": "ミニチュア{{number}}",
+    "travelInspiration": "旅のインスピレーション",
+    "inspiringSnapshot": "心に響くひとコマ",
+    "generatingTitle": "ルートを生成中...",
+    "generatingDescription": "AIがあなた専用のプログラムを作成します。各セクションは順次表示されます。",
+    "loadingErrorTitle": "読み込みに関する問題",
+    "loadingErrorDescription": "ルートを正しく読み込めませんでした。一時的な不具合の可能性があります。",
+    "createNewItinerary": "新しいルートを作成する",
+    "pdfExportSuccessTitle": "PDFのエクスポートに成功しました",
+    "pdfExportSuccessDescription": "旅程表がPDF形式でダウンロードされました。",
+    "pdfExportErrorTitle": "エクスポートエラー",
+    "pdfExportErrorDescription": "PDFをエクスポートできません。もう一度お試しください。",
+    "shareErrorTitle": "共有エラー",
+    "shareErrorDescription": "共有できません。もう一度お試しください。",
+    "linkCopiedTitle": "リンクをコピーしました",
+    "linkCopiedDescription": "旅程のリンクがクリップボードにコピーされました。",
+    "errorTitle": "エラー",
+    "copyLinkError": "リンクをコピーできません。",
+    "breakfast": "朝食",
+    "lunch": "昼食",
+    "dinner": "夕食",
+    "atLocation": "～",
+    "soloTrip": "一人旅",
+    "coupleTrip": "カップルでの旅行",
+    "family": "家族",
+    "familyWithChildren": "{{count}} 人の子供がいる家族",
+    "groupOfPeople": "{{count}} 名のグループ",
+    "preparingTitle": "プログラムの準備中……",
+    "preparingDescription": "当社のAIが、お客様に合わせた旅程を提案します。スケジュールは順次表示されますので、もうしばらくお待ちください。",
+    "personalizedItineraryTitle": "お客様専用の旅程",
+    "generatedWithPreferences": "お客様の好みに合わせて作成された旅行プラン",
+    "save": "保存",
+    "newTrip": "新たな旅",
+    "exportPdf": "PDFをエクスポート",
+    "share": "共有する",
+    "copyLink": "リンクをコピー",
+    "loadingDestinationImages": "旅行先の画像を読み込んでいます...",
+    "whyThisTripTitle": "なぜこのプログラムがあなたにぴったりなのか",
+    "matchPercentage": "{{score}}適合率",
+    "tripOverview": "旅行の概要",
+    "dates": "日程",
+    "datesToDefine": "日程は未定",
+    "daysCount": "{{count}} 日",
+    "group": "グループ",
+    "budget": "予算",
+    "budgetPerDay": "{{amount}}€/日",
+    "estimatedTotal": "推定総額：{{amount}}ユーロ",
+    "destinations": "目的地",
+    "destinationLine": "{{city}},{{country}} ({{duration}}j)",
+    "budgetBreakdownTitle": "予算の内訳",
+    "categoryAccommodation": "宿泊",
+    "categoryFood": "食べ物",
+    "categoryActivities": "活動",
+    "categoryTransport": "輸送",
+    "categoryShopping": "ショッピング",
+    "categoryMiscellaneous": "その他",
+    "detailedItinerary": "詳細な行程",
+    "dayLabel": "日{{number}}",
+    "dailyBudget": "1日あたりの予算",
+    "scheduledActivities": "予定されている活動",
+    "locationUnspecified": "場所未指定",
+    "difficultyEasy": "簡単",
+    "difficultyModerate": "中程度",
+    "difficultyHard": "難しい",
+    "tipsWithCount": "アドバイス ({{count}})",
+    "bookThisActivity": "このアクティビティを予約する",
+    "recommendedMeals": "おすすめの食事",
+    "book": "予約する",
+    "transport": "輸送",
+    "estimatedWalkingDistance": "推定歩行距離",
+    "generatingDayByDay": "日ごとの旅程の作成...",
+    "generatingDayByDayDescription": "AIが、すべてのアクティビティを含むあなた専用のプログラムを作成します",
+    "daysWillAppear": "旅程の日程が、タイピング効果とともに徐々に上に表示されます…",
+    "dayByDayProgram": "お客様のご希望に合わせて毎日カスタマイズされたプログラム",
+    "generationImproving": "現在改良中",
+    "generationImprovingDescription": "分単位のアクティビティを含む詳細な旅程は、まもなく公開されます。現時点では、上記の旅行概要をご確認ください。",
+    "additionalInformation": "詳細情報",
+    "enrichedContentPlaceholder": "ルートにリッチコンテンツが含まれるようになると、これらの情報が表示されます。",
+    "personalizedRecommendations": "おすすめ",
+    "specialtiesToDiscover": "ぜひ味わっていただきたい名物",
+    "giftIdeas": "お土産のアイデア",
+    "packingList": "旅行リスト",
+    "culturalTips": "文化に関するアドバイス",
+    "bestPeriods": "おすすめの時期",
+    "localEvents": "地域のイベント",
+    "transportTips": "輸送に関するアドバイス",
+    "safetyTips": "安全に関するアドバイス",
+    "budgetDistribution": "予算配分",
+    "similarDestinations": "類似の目的地",
+    "practicalInformation": "実用情報",
+    "visaAndDocuments": "ビザと必要書類",
+    "currency": "通貨",
+    "languages": "言語",
+    "climate": "気候",
+    "emergencies": "救急",
+    "health": "健康",
+    "localCustoms": "地元の風習",
+    "customize": "カスタマイズ",
+    "loginToEdit": "編集するにはログインしてください"
+  },
+  "editor": {
+    "editActivity": "アクティビティを編集する",
+    "deleteActivity": "アクティビティを削除する",
+    "locationUnspecified": "場所未指定",
+    "toastActivityUpdated": "アクティビティの更新",
+    "editActivityTitle": "アクティビティを編集する",
+    "title": "タイトル",
+    "location": "場所",
+    "description": "説明",
+    "startTime": "開始時刻",
+    "endTime": "終了時刻",
+    "cost": "費用（ユーロ）",
+    "duration": "所要時間",
+    "category": "カテゴリ",
+    "difficulty": "難易度",
+    "difficultyEasy": "簡単",
+    "difficultyModerate": "中程度",
+    "difficultyHard": "難しい",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "dayN": "日{{n}}",
+    "moveDayUp": "日が昇る",
+    "moveDayDown": "日が沈む",
+    "editDay": "日付を変更する",
+    "deleteDay": "その日を削除する",
+    "toastDayUpdated": "更新日",
+    "editDayN": "日付を変更する{{n}}",
+    "destination": "目的地",
+    "theme": "テーマ",
+    "toastActivityAdded": "アクティビティが追加されました",
+    "addActivity": "アクティビティを追加する",
+    "add": "追加",
+    "toastActivityMoved": "イベントの日程が変更されました",
+    "toastActivitiesReordered": "更新された活動スケジュール",
+    "toastDayAdded": "日付を追加",
+    "toastCannotDeleteLastDay": "最終日を削除できません",
+    "toastDayDeleted": "削除された日",
+    "toastActivityDeleted": "アクティビティが削除されました",
+    "toastItinerarySaved": "保存されたルート",
+    "subtitle": "スケジュールを自由にカスタマイズしましょう。ドラッグ＆ドロップでアクティビティの順番を変更したり、編集や削除を行ったりできます。",
+    "addDay": "日を追加する",
+    "close": "閉じる",
+    "dropActivitiesHint": "ここにアクティビティを投稿するか、新しいアクティビティを追加してください"
   }
 }

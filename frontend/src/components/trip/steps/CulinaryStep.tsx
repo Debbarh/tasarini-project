@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Utensils, Wine } from "lucide-react";
 import { TripFormData, CulinaryPreferences } from "@/types/trip";
 import { useCulinarySettings } from "@/hooks/useCulinarySettings";
+import { getLocalizedLabel, getLocalizedDescription } from "@/utils/multilingualHelpers";
 
 interface CulinaryStepProps {
   data: Partial<TripFormData>;
@@ -16,7 +17,7 @@ interface CulinaryStepProps {
 }
 
 export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { dietaryRestrictions, cuisineTypes, adventureLevels, restaurantCategories, loading } = useCulinarySettings();
   
   const [culinary, setCulinary] = useState<CulinaryPreferences>(
@@ -103,7 +104,7 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
                   onCheckedChange={() => toggleCuisineType(cuisine.label_fr)}
                 />
                 <Label htmlFor={`cuisine-${cuisine.id}`} className="text-sm">
-                  {cuisine.label_fr}
+                  {getLocalizedLabel(cuisine, i18n.language)}
                   {cuisine.region && <span className="text-xs text-muted-foreground ml-1">({cuisine.region})</span>}
                 </Label>
               </div>
@@ -130,7 +131,7 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
                 />
                 <Label htmlFor={`category-${category.id}`} className="text-sm flex items-center gap-1">
                   {category.icon_emoji && <span>{category.icon_emoji}</span>}
-                  <span>{category.label_fr}</span>
+                  <span>{getLocalizedLabel(category, i18n.language)}</span>
                   {category.price_range_min && category.price_range_max && (
                     <span className="text-xs text-muted-foreground">
                       ({category.price_range_min}-{category.price_range_max}€)
@@ -159,8 +160,8 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
                 className="h-auto flex-col gap-1 p-3"
                 onClick={() => updateCulinary({ foodAdventure: level.code as CulinaryPreferences['foodAdventure'] })}
               >
-                <div className="font-medium">{level.label_fr}</div>
-                <div className="text-xs text-muted-foreground">{level.description_fr}</div>
+                <div className="font-medium">{getLocalizedLabel(level, i18n.language)}</div>
+                <div className="text-xs text-muted-foreground">{getLocalizedDescription(level, i18n.language)}</div>
               </Button>
             ))}
           </div>
@@ -197,7 +198,7 @@ export const CulinaryStep = ({ data, onUpdate, onValidate }: CulinaryStepProps) 
                 />
                 <Label htmlFor={`restriction-${restriction.id}`} className="text-sm">
                   {restriction.icon_emoji && <span className="mr-1">{restriction.icon_emoji}</span>}
-                  {restriction.label_fr}
+                  {getLocalizedLabel(restriction, i18n.language)}
                 </Label>
               </div>
             ))}

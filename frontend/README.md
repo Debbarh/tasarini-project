@@ -1,73 +1,31 @@
-# Welcome to your Tasarini project
+# Tasarini — Frontend
 
-## Project info
+Application web de Tasarini : inspiration, planification et recommandations de voyage personnalisées par IA.
 
-**URL**: https://tasarini.com/projects/3aed293a-2337-49a3-800c-ba14934c3189
+## Stack
 
-## How can I edit this code?
+- React + TypeScript + Vite
+- Tailwind CSS + shadcn/ui
+- react-i18next (11 langues)
+- React Router, TanStack Query
 
-There are several ways of editing your application.
+## Démarrage en local
 
-**Use Tasarini**
-
-Simply visit the [Tasarini Project](https://tasarini.com/projects/3aed293a-2337-49a3-800c-ba14934c3189) and start prompting.
-
-Changes made via Tasarini will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Tasarini.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Prérequis : Node.js (LTS) et npm.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm install
+npm run dev      # serveur de dev (http://localhost:5173)
+npm run build    # build de production (dossier dist/)
+npm run preview  # prévisualiser le build
 ```
 
-**Edit a file directly in GitHub**
+## Configuration
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Le frontend consomme l'API backend Django. L'URL d'API se configure via les variables
+d'environnement Vite (`VITE_*`). Voir le fichier `.env` / la configuration de déploiement.
 
-**Use GitHub Codespaces**
+## Déploiement
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Tasarini](https://tasarini.com/projects/3aed293a-2337-49a3-800c-ba14934c3189) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Tasarini project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.tasarini.com/tips-tricks/custom-domain#step-by-step-guide)
+Le frontend est conteneurisé (voir `docker-compose.prod.yml` à la racine du projet) et
+servi derrière nginx. Le build est intégré à l'image Docker.

@@ -225,7 +225,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
                 onLocationSelectRef.current(
                   Number(lat.toFixed(8)),
                   Number(lng.toFixed(8)),
-                  `Position sélectionnée: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+                  ''
                 );
               }
             } else {
@@ -233,7 +233,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
               onLocationSelectRef.current(
                 Number(lat.toFixed(8)),
                 Number(lng.toFixed(8)),
-                `Position sélectionnée: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+                ''
               );
             }
           } catch (error) {
@@ -242,7 +242,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
             onLocationSelectRef.current(
               Number(lat.toFixed(8)),
               Number(lng.toFixed(8)),
-              `Position sélectionnée: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+              ''
             );
           }
         });

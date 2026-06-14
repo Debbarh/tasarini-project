@@ -8,7 +8,8 @@
     "administration": "管理",
     "myProfile": "我的档案",
     "logout": "登出",
-    "login": "登录"
+    "login": "登录",
+    "notifications": "通知"
   },
   "notFound": {
     "title": "404",
@@ -30,33 +31,44 @@
     "statsDestinations": "探索的目的地",
     "statsAdventurers": "冒险者",
     "statsDreams": "实现的梦想",
-    "liveInspiration": "Live inspiration",
-    "adventureFound": "Adventure found!",
-    "howItWorksTitle": "How does it work?",
-    "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
-    "howStep1Title": "Get inspired",
-    "howStep1Desc": "Browse stories and travel ideas tailored to your desires.",
-    "howStep2Title": "Plan",
-    "howStep2Desc": "Use our assistant to create an itinerary and book hotels and transport.",
-    "howStep3Title": "Travel worry-free",
-    "howStep3Desc": "Receive confirmations, share your stories and enjoy the trip.",
-    "bookingCenter": "Booking Center",
-    "bookingCenterDesc": "Search and book your hotels, flights and activities in just a few clicks",
-    "transportServices": "Transport Services",
-    "transportServicesDesc": "Vehicle rental, transfers and urban transport",
-    "carRental": "Rental",
-    "transfers": "Transfers",
-    "busAndTrain": "Bus & Train",
-    "urbanTransport": "Urban",
-    "activitiesExperiences": "Activities & Experiences",
-    "activitiesDesc": "Discover the best activities and restaurants",
-    "toursVisits": "Tours & Visits",
-    "gastronomy": "Gastronomy",
-    "travelerServices": "Traveler Services",
-    "travelerServicesDesc": "Connectivity and assistance",
-    "booking": "Booking",
-    "esimCards": "eSIM Cards",
-    "compensation": "Compensation"
+    "liveInspiration": "现场灵感",
+    "adventureFound": "发现冒险！",
+    "howItWorksTitle": "如何运作？",
+    "howItWorksSubtitle": "从创意到确认旅行的3个简单步骤。",
+    "howStep1Title": "获取灵感",
+    "howStep1Desc": "浏览符合您愿望的故事和旅行点子。",
+    "howStep2Title": "规划",
+    "howStep2Desc": "使用我们的助手创建行程并预订酒店和交通。",
+    "howStep3Title": "无忧旅行",
+    "howStep3Desc": "接收确认，分享您的故事，享受旅程。",
+    "bookingCenter": "预订中心",
+    "bookingCenterDesc": "只需几次点击即可搜索并预订酒店、航班和活动",
+    "transportServices": "交通服务",
+    "transportServicesDesc": "车辆租赁、接送和城市交通",
+    "carRental": "租车",
+    "transfers": "接送",
+    "busAndTrain": "公交与火车",
+    "urbanTransport": "城市交通",
+    "activitiesExperiences": "活动与体验",
+    "activitiesDesc": "发现最佳活动和餐厅",
+    "toursVisits": "旅游与参观",
+    "gastronomy": "美食",
+    "travelerServices": "旅客服务",
+    "travelerServicesDesc": "连接与支持",
+    "booking": "预订",
+    "esimCards": "eSIM 卡",
+    "compensation": "赔偿",
+    "testimonialsTitle": "他们与我们同行",
+    "testimonialsSubtitle": "来自我们旅行者社区的评价",
+    "captionHero": "您的下一次冒险",
+    "captionBeach": "海滨度假",
+    "captionMountain": "山间探险",
+    "captionCity": "城市短途游",
+    "captionCultural": "文化浸入",
+    "goToImage": "跳转到图片{{index}}",
+    "searchDestination": "你要去哪里？",
+    "searchCta": "搜索",
+    "openBookingCenter": "打开预订中心"
   },
   "planTrip": {
     "title": "计划您的完美度假",
@@ -108,7 +120,11 @@
           "title": "活动",
           "description": "体验和兴趣爱好"
         }
-      }
+      },
+      "autosaved": "已保存的进度",
+      "estimatedTime": "约3分钟",
+      "skipStep": "跳过此步骤",
+      "generateNow": "立即生成"
     },
     "destinationStep": {
       "selectCountry": "选择国家",
@@ -140,7 +156,9 @@
       "locationSaved": "目的地保存成功。",
       "locationSaveError": "无法保存此位置，请检查信息。",
       "invalidAddress": "请在地图上选择有效地址。",
-      "fetchingTranslations": "Fetching multilingual translations..."
+      "fetchingTranslations": "Fetching multilingual translations...",
+      "geocodeFailed": "无法确定该位置所在的城市。请选择其他位置或手动输入城市名称。",
+      "chooseOnMapHint": "打开交互式地图，精确定位您的目的地并获取其坐标。"
     },
     "travelDetailsStep": {
       "title": "旅行伙伴",
@@ -174,7 +192,9 @@
       "availablePlural": "可用",
       "remains": "剩余",
       "remainsPlural": "剩余",
-      "error": "错误"
+      "error": "错误",
+      "singleChoiceHint": "请选择一种类型",
+      "maxLevelTooltip": "该群体所推荐场所的最高通行难度/体能要求。"
     },
     "budgetStep": {
       "title": "旅行预算",
@@ -225,7 +245,8 @@
       "types": "类型",
       "services": "服务",
       "locations": "位置",
-      "others": "其他"
+      "others": "其他",
+      "typeRequired": "请至少选择一种住宿类型，以便继续。"
     },
     "activitiesStep": {
       "title": "活动和体验",
@@ -625,13 +646,34 @@
           "veryStrong": "非常强"
         }
       }
+    },
+    "emailNotConfirmed": "请查收您的邮箱，并点击确认链接以激活您的账户",
+    "invalidCredentials": "电子邮件或密码有误",
+    "forgotPassword": {
+      "link": "忘记密码了吗？",
+      "title": "重置密码",
+      "description": "请输入您的电子邮箱地址，我们将向您发送一个重置密码的链接。",
+      "sendButton": "发送链接",
+      "sending": "正在发送...",
+      "successTitle": "邮件已发送",
+      "successDescription": "如果您的电子邮箱已关联到某个账户，您将收到一个重置链接。",
+      "emailSent": "请检查您的邮箱（包括垃圾邮件文件夹），查找重置链接。",
+      "emailSentMessage": "如果您的邮箱地址已在我们的系统中注册，您将收到一个重置密码的链接。"
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. 版权所有。",
     "becomePartner": "成为合作伙伴",
     "madeWith": "制作于",
-    "by": "由"
+    "by": "由",
+    "tagline": "由人工智能驱动的旅行灵感、规划与预订。",
+    "discover": "探索",
+    "company": "企业",
+    "legal": "法律",
+    "contact": "联系我们",
+    "terms": "一般条款",
+    "privacy": "隐私政策",
+    "rights": "保留所有权利。"
   },
   "common": {
     "loading": "加载中...",
@@ -1215,7 +1257,13 @@
         "updateError": "更新通知时出错"
       },
       "export": "导出数据",
-      "loadingError": "加载仪表板时出错"
+      "loadingError": "加载仪表板时出错",
+      "analyticsTab": "分析",
+      "poisTab": "我的兴趣点",
+      "bookingsTab": "预订",
+      "financesTab": "财务",
+      "subscriptionTab": "订阅",
+      "notificationsTab": "通知"
     }
   },
   "legal": {
@@ -1230,5 +1278,711 @@
       "description": "Learn how we protect your personal data",
       "footer": "GDPR Compliant - Your data is protected"
     }
+  },
+  "booking": {
+    "title": "预订中心",
+    "subtitle": "搜索并预订酒店、机票、接送服务及旅游活动",
+    "info": "不再有自动查询！现在您可以自行决定何时进行搜索。",
+    "tabs": {
+      "hotels": "酒店",
+      "flights": "航班",
+      "transfers": "转会",
+      "restaurants": "餐厅",
+      "activities": "活动"
+    },
+    "searchHotel": "搜索酒店",
+    "searchFlight": "查询航班",
+    "searchTransfer": "查找接送服务",
+    "searchActivity": "搜索活动",
+    "destination": "目的地",
+    "selectDestination": "请选择目的地...",
+    "selectOriginAirport": "请选择出发机场...",
+    "selectDestAirport": "请选择抵达机场...",
+    "guests": "人数",
+    "passengers": "乘客人数",
+    "participants": "参与人数",
+    "checkIn": "抵达日期",
+    "checkOut": "出发日期",
+    "departDate": "出发日期",
+    "returnDate": "归还日期（可选）",
+    "origin": "出发",
+    "date": "日期",
+    "time": "时间",
+    "searching": "正在搜索...",
+    "searchHotelsBtn": "搜索酒店",
+    "searchFlightsBtn": "搜索航班",
+    "searchActivitiesBtn": "搜索活动",
+    "searchTransfersBtnSoon": "查询转账（即将推出）",
+    "transfersSoon": "转会搜索功能即将上线",
+    "transferFromPlaceholder": "机场、酒店……",
+    "transferToPlaceholder": "酒店，市中心……",
+    "emptyTitle": "请在上面输入您的搜索条件",
+    "emptyDesc": "搜索后，结果将显示在此处",
+    "moreAmenities": "+{{count}} 及其他",
+    "amenitiesUnspecified": "未列明的设备",
+    "fromPrice": "自",
+    "perNight": "/晚",
+    "priceUnavailable": "价格暂未公布",
+    "details": "详情",
+    "book": "预订",
+    "stops": "{{count}} 中转站",
+    "restaurantsIncludedTitle": "餐厅已包含在您的行程中",
+    "restaurantsIncludedDesc": "请参阅上方的“详细路线”部分，查看餐厅推荐",
+    "toastRequiredTitle": "必填字段",
+    "toastRequiredDesc": "请填写所有搜索字段",
+    "toastInvalidCodeTitle": "目的地代码无效",
+    "toastInvalidCodeDesc": "请通过自动完成功能选择一个HotelBeds代码（例如：PAR、BCN、ROM）。",
+    "toastInvalidDatesTitle": "日期无效",
+    "toastInvalidDatesDesc": "离店日期必须比入住日期晚至少1天",
+    "toastDoneTitle": "搜索完成",
+    "toastErrorTitle": "搜索错误",
+    "toastHotelsFound": "{{count}} 找到的酒店",
+    "toastFlightsFound": "{{count}} 找到的航班",
+    "toastActivitiesFound": "{{count}} 找到的活动",
+    "toastHotelsError": "无法搜索酒店。请检查目的地代码。",
+    "toastFlightsError": "无法搜索航班。请检查IATA代码。",
+    "toastActivitiesError": "无法搜索活动。请检查目的地代码。"
+  },
+  "savedItineraries": {
+    "pageTitle": "我的已保存路线",
+    "pageDescription": "查看您所有已保存和通过我们的AI规划的旅行路线。管理、修改和分享您的旅行计划。",
+    "subtitle": "查看您所有已规划的行程，并安排未来的旅行。",
+    "searchPlaceholder": "搜索路线...",
+    "unauthorized": "未经授权的访问",
+    "unauthorizedMessage": "您必须登录才能查看已保存的路线。",
+    "stats": {
+      "saved": "已保存的路线",
+      "favorites": "收藏",
+      "travelDays": "旅行天数"
+    },
+    "empty": {
+      "title": "没有保存的路线",
+      "noResults": "未找到任何路线",
+      "searchMessage": "请尝试使用其他搜索关键词。",
+      "createMessage": "快来规划你的第一条旅行路线吧！"
+    },
+    "actions": {
+      "view": "查看",
+      "viewDetails": "查看详情",
+      "export": "PDF",
+      "exportPDF": "导出PDF",
+      "share": "分享",
+      "delete": "删除",
+      "favorite": "收藏",
+      "create": "创建路线"
+    },
+    "badges": {
+      "days": "天"
+    },
+    "dialog": {
+      "deleteTitle": "删除路线",
+      "deleteDescription": "您确定要删除吗",
+      "deleteWarning": "此操作无法撤销。",
+      "cancel": "取消",
+      "confirm": "删除"
+    },
+    "toast": {
+      "pdfExported": "PDF已导出！",
+      "pdfExportedDesc": "您的行程已成功下载。",
+      "pdfError": "错误",
+      "pdfErrorDesc": "无法导出PDF",
+      "shareError": "错误",
+      "shareErrorDesc": "无法分享路线",
+      "deleted": "路线已删除",
+      "deleteError": "删除时发生错误"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "我的发现",
+    "pageDescription": "管理您的收藏地点和个性化探索路线。",
+    "subtitle": "查看您收藏的地点和个性化路线",
+    "loginMessage": "请登录以查看您的收藏和行程。",
+    "tabs": {
+      "favorites": "收藏",
+      "itineraries": "我的行程",
+      "community": "社区"
+    },
+    "favorites": {
+      "empty": "没有收藏",
+      "emptyMessage": "首先，请从地图上将地点添加到收藏夹",
+      "exploreMap": "浏览地图"
+    },
+    "itineraries": {
+      "empty": "没有路线",
+      "emptyMessage": "通过选择兴趣点来创建您的首个行程",
+      "createNew": "创建路线",
+      "places": "地点"
+    },
+    "community": {
+      "empty": "没有公开的路线",
+      "emptyMessage": "社区尚未分享任何路线",
+      "title": "社区路线",
+      "description": "探索其他用户分享的路线",
+      "public": "公众",
+      "by": "作者：",
+      "defaultUsername": "塔萨里尼旅客"
+    },
+    "stats": {
+      "distance": "距离"
+    },
+    "difficulty": {
+      "easy": "简单",
+      "medium": "中等",
+      "hard": "很难"
+    },
+    "actions": {
+      "view": "在地图上查看",
+      "share": "分享",
+      "edit": "编辑",
+      "delete": "删除",
+      "makePublic": "公开发布",
+      "makePrivate": "设为私密"
+    },
+    "toast": {
+      "deleted": "路线已删除",
+      "deleteError": "删除时发生错误",
+      "madePublic": "公之于众",
+      "madePrivate": "设为私密",
+      "updateError": "更新时发生错误",
+      "linkCopied": "链接已复制到剪贴板！",
+      "copyError": "无法复制链接",
+      "loadError": "加载路线时发生错误",
+      "loadPublicError": "加载公共路线时发生错误"
+    },
+    "confirmDelete": "您确定要删除此路线吗？"
+  },
+  "verifyEmailRequired": {
+    "title": "请检查您的邮箱",
+    "subtitle": "开始前的最后一步",
+    "sentTo": "一封验证邮件已发送至：",
+    "limitedAccess": {
+      "title": "访问受限",
+      "description": "您需要验证您的邮箱，才能使用Tasarini的所有功能。"
+    },
+    "steps": {
+      "title": "操作步骤：",
+      "step1": "请打开您的邮箱",
+      "step2": "查找来自",
+      "step2Bold": "塔萨里尼",
+      "step3": "点击验证链接",
+      "step4": "请返回此处并刷新页面"
+    },
+    "notReceived": {
+      "title": "您没有收到邮件吗？",
+      "checkSpam": "请检查您的垃圾邮件文件夹",
+      "checkEmail": "请确认电子邮件地址是否正确",
+      "waitTime": "请稍等几分钟（发送邮件可能需要一些时间）"
+    },
+    "buttons": {
+      "resend": "重新发送验证邮件",
+      "sending": "正在发送...",
+      "sent": "邮件已发送！",
+      "signOut": "退出登录并使用其他账户"
+    },
+    "footer": {
+      "validity": "验证链接的有效期为",
+      "hours": "24小时"
+    },
+    "toast": {
+      "success": "验证邮件已重新发送！",
+      "error": "发送电子邮件时发生错误"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "合作伙伴账户已被冻结",
+    "description": "您的合作伙伴申请已被拒绝，或您的账户已被暂停。如果您认为这是个误会，可以通过下方的表单联系我们。",
+    "reasons": {
+      "title": "可能的原因：",
+      "incorrect": "信息有误或不完整",
+      "terms": "违反使用条款",
+      "suspicious": "检测到可疑活动",
+      "criteria": "未遵守合作伙伴标准"
+    },
+    "contact": {
+      "title": "联系行政部门",
+      "subtitle": "请说明您的情况，我们将对您的申请进行审核。",
+      "nameLabel": "全名",
+      "namePlaceholder": "您的全名",
+      "emailLabel": "电子邮件",
+      "emailPlaceholder": "votre@email.com",
+      "subjectLabel": "主题",
+      "subjectPlaceholder": "申请事项",
+      "subjectDefault": "申请重新评估我的合作伙伴账户",
+      "messageLabel": "消息",
+      "messagePlaceholder": "请描述您的情况以及为何应重新评估您的账户……",
+      "submitButton": "提交我的申请",
+      "submitting": "正在发送...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "响应时间：",
+      "responseTimeText": "我们力求在48至72小时内回复。",
+      "urgentQuestion": "如有紧急问题，您也可以通过以下方式联系我们：",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "您的消息已发送。我们将尽快回复您。",
+      "error": "发送消息时发生错误。请重试。"
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "正在验证中...",
+      "success": "邮箱已验证！",
+      "error": "验证错误"
+    },
+    "description": {
+      "loading": "请稍候，我们正在验证您的邮箱。",
+      "successPartner": "您的合作伙伴账户已成功激活。",
+      "successUser": "您的账户已成功激活。",
+      "error": "我们无法验证您的电子邮件地址。"
+    },
+    "messages": {
+      "tokenMissing": "缺少验证令牌。",
+      "success": "您的邮箱已成功验证！",
+      "verificationError": "令牌无效或已过期。",
+      "autoLoginInfo": "我们正在尝试为您自动登录。如果登录失败，请点击下方的按钮。",
+      "manualLoginInfo": "请登录以激活您的会话，然后继续进行下一步。",
+      "autoLoginFailed": "自动登录失败。请点击上方按钮继续。",
+      "waiting": "这只需要几秒钟……"
+    },
+    "partner": {
+      "nextStep": "下一步：完善您的合作伙伴资料",
+      "continueButton": "继续前往我的合作伙伴个人资料",
+      "continueButtonLoading": "正在登录..."
+    },
+    "user": {
+      "continueButton": "查看我的个人资料",
+      "continueButtonLoading": "正在登录..."
+    },
+    "buttons": {
+      "resend": "重新发送验证链接",
+      "backToLogin": "返回登录页面",
+      "requestNewLink": "重新发送验证邮件"
+    },
+    "error": {
+      "title": "该怎么办？",
+      "checkLink": "请确认链接是否完整",
+      "expired": "该链接将在24小时后失效",
+      "requestNew": "申请新的验证链接"
+    },
+    "toast": {
+      "success": "邮箱已验证成功！",
+      "error": "验证错误",
+      "verifying": "邮箱已验证，正在登录...",
+      "loginSuccess": "登录成功，正在重定向...",
+      "loginError": "无法自动登录。请登录以继续。",
+      "resendSuccess": "已发送一封新的验证邮件。",
+      "resendError": "无法重新发送链接。请登录后重试。",
+      "resendAuthRequired": "请登录以重新发送验证链接。",
+      "completeError": "无法完成验证。"
+    }
+  },
+  "theme": {
+    "toggleLabel": "更改主题",
+    "light": "克莱尔",
+    "dark": "阴沉",
+    "system": "系统"
+  },
+  "notifications": {
+    "title": "通知",
+    "markAllRead": "将所有内容标记为已读",
+    "markRead": "标记为已读",
+    "delete": "删除",
+    "empty": "无通知",
+    "timePrefix": "在",
+    "sent": "已发送",
+    "settings": {
+      "title": "通知设置",
+      "description": "设置活动和行程的通知",
+      "loading": "正在加载偏好设置...",
+      "types": {
+        "title": "通知类型",
+        "activityReminders": "活动提醒",
+        "activityRemindersDesc": "在计划的活动开始前接收提醒",
+        "tripStart": "旅程开始",
+        "tripStartDesc": "行程开始时的通知",
+        "tripEnd": "旅程结束",
+        "tripEndDesc": "行程结束时的通知"
+      },
+      "timing": {
+        "title": "加强针接种时间安排",
+        "before": "活动前的提醒",
+        "1h": "1小时前",
+        "2h": "2小时前",
+        "6h": "6小时前",
+        "12h": "12小时前",
+        "24h": "24小时前",
+        "48h": "48小时前"
+      },
+      "channels": {
+        "title": "通知渠道",
+        "inApp": "应用内通知",
+        "inAppDesc": "在应用中显示通知",
+        "email": "电子邮件通知",
+        "emailDesc": "接收提醒邮件（即将推出）"
+      }
+    }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "PDF 已成功导出",
+      "pdfExportSuccessDesc": "您的行程已下载为PDF格式。",
+      "pdfExportError": "导出错误",
+      "pdfExportErrorDesc": "无法导出PDF文件。请重试。",
+      "shareError": "共享错误",
+      "shareErrorDesc": "无法分享。请重试。",
+      "linkCopied": "链接已复制",
+      "linkCopiedDesc": "您的行程链接已复制到剪贴板。",
+      "copyError": "错误",
+      "copyErrorDesc": "无法复制该链接。",
+      "activityUpdated": "活动已成功更新",
+      "dayUpdated": "日期已成功更新",
+      "activityAdded": "活动已成功添加",
+      "activityMoved": "活动已改期",
+      "orderUpdated": "更新后的活动顺序",
+      "dayAdded": "新增日期",
+      "dayDeleted": "已删除的日期",
+      "cannotDeleteLastDay": "无法删除最后一天",
+      "saved": "路线已成功保存"
+    },
+    "poi": {
+      "loadError": "加载兴趣点时发生错误",
+      "updateSuccess": "兴趣点已成功更新",
+      "createSuccess": "兴趣点已成功创建",
+      "createSuccessPartner": "兴趣点已成功创建 - 已标记为合作伙伴点",
+      "saveError": "保存时发生错误",
+      "deleteSuccess": "兴趣点已成功删除",
+      "deleteError": "删除时发生错误",
+      "toggleSuccess": "兴趣点 {status} 已成功",
+      "toggleError": "修改时发生错误",
+      "activated": "已启用",
+      "deactivated": "已禁用"
+    },
+    "form": {
+      "validationError": "请先更正错误，然后再继续",
+      "submitError": "提交时发生错误",
+      "loadError": "加载数据时发生错误"
+    },
+    "share": {
+      "loadError": "加载共享时发生错误",
+      "userNotFound": "未找到与该邮箱匹配的用户",
+      "alreadyShared": "该用户已可查看此路线",
+      "success": "已通过 {mode} 模式与 {email} 共享行程",
+      "editMode": "修改",
+      "viewMode": "阅读",
+      "shareError": "共享时发生错误",
+      "removeSuccess": "已删除的分享",
+      "removeError": "删除时发生错误",
+      "updateSuccess": "权限已更新",
+      "updateError": "更新时发生错误"
+    },
+    "media": {
+      "uploadError": "上传时发生错误：{error}",
+      "deleteSuccess": "文件已删除",
+      "deleteError": "删除时发生错误",
+      "uploadSuccess": "已成功上传 {count} 个 {type}",
+      "image": "图片",
+      "video": "视频"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "加载通知时发生错误",
+        "preferencesUpdated": "已更新偏好设置",
+        "updateError": "更新时发生错误",
+        "allMarkedRead": "所有已标记为已读的通知",
+        "notificationDeleted": "通知已删除",
+        "deleteError": "删除时发生错误"
+      },
+      "savedItineraries": {
+        "saved": "路线已成功保存",
+        "saveError": "保存路线时发生错误",
+        "loadError": "加载路线时发生错误",
+        "deleteConfirm": "您确定要删除此路线吗？",
+        "deleted": "路线已成功删除",
+        "deleteError": "删除时发生错误",
+        "updated": "行程已成功更新",
+        "updateError": "更新时发生错误"
+      },
+      "favorites": {
+        "loadError": "加载收藏夹时发生错误",
+        "loginRequired": "您必须登录才能添加收藏",
+        "added": "该景点已添加到收藏夹！",
+        "addError": "添加到收藏夹时发生错误",
+        "removed": "该兴趣点已从收藏夹中移除",
+        "removeError": "删除收藏时发生错误"
+      },
+      "poi": {
+        "draftSaved": "草稿已成功保存！",
+        "submitted": "兴趣点已成功提交！",
+        "draftUpdated": "草稿已成功更新！",
+        "updated": "POI 已成功更新！"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "我们已向您发送了一封验证邮件。请确认您的邮箱地址以激活账户。",
+      "methodNotAvailable": "此连接方式目前尚不可用。",
+      "passwordResetSoon": "密码重置功能即将上线。"
+    },
+    "touristPoints": {
+      "loadError": "加载兴趣点时发生错误"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "取消",
+      "confirm": "确认预订",
+      "confirming": "正在预订中...",
+      "error": "错误",
+      "bookingConfirmedTitle": "预订已确认",
+      "selectDate": "选择日期",
+      "arrivalDate": "抵达日期",
+      "departureDate": "出发日期",
+      "guests": "人数",
+      "guestsCount": "{{count}} 人",
+      "clientInfo": "客户信息",
+      "fullName": "全名",
+      "email": "电子邮件",
+      "phone": "电话",
+      "specialRequests": "特殊要求",
+      "summary": "预订摘要",
+      "total": "合计",
+      "more": "+{{count}} 及其他"
+    },
+    "accommodation": {
+      "title": "预订住宿 -{{name}}",
+      "selectRoom": "选择房间",
+      "loadingRooms": "正在加载客房信息...",
+      "noRooms": "无空房",
+      "upToGuests": "最多{{count}} 人",
+      "perNightPrice": "{{price}}每晚€",
+      "roomLabel": "客房",
+      "stayDuration": "停留时间",
+      "nights": "{{count}} 晚",
+      "specialPlaceholder": "如有特殊要求……",
+      "errLoadRooms": "加载房间时发生错误",
+      "datesUnavailable": "该房型在这些日期无法预订",
+      "errAvailability": "检查可用性时发生错误",
+      "selectDatesErr": "请选择入住和退房日期",
+      "selectRoomErr": "请选择房间",
+      "bookingConfirmed": "预订已确认！",
+      "bookingError": "预订时出现错误"
+    },
+    "activity": {
+      "title": "预订{{name}}",
+      "errLoadData": "无法加载活动数据",
+      "errLoadSlots": "无法加载可用时段",
+      "requirementsNotMet": "条件未满足",
+      "selectSlotErr": "请选择一个时间段",
+      "bookingSuccessDesc": "您的预订已成功提交",
+      "errCreate": "无法创建预订",
+      "date": "活动日期",
+      "availableSlots": "可选时段",
+      "maxParticipants": "{{count}} 名参与者",
+      "participants": "参与人数",
+      "adults": "成人",
+      "children": "儿童",
+      "seniors": "老年人",
+      "equipmentRental": "可租赁设备（可选）",
+      "requirements": "条件与先决条件",
+      "mandatory": "必填",
+      "recommended": "推荐",
+      "equipment": "设备",
+      "provided": "随附",
+      "toBring": "请自备",
+      "specialPlaceholder": "医疗信息、过敏史、特殊需求……",
+      "totalToPay": "应付总额"
+    },
+    "restaurant": {
+      "unavailable": "暂无",
+      "noTable": "该时段无空位",
+      "errCheck": "无法核实库存情况",
+      "fillRequired": "请填写所有必填项",
+      "requestSentDesc": "您的预订请求已发送至餐厅",
+      "errCreate": "创建预订时发生错误",
+      "title": "在{{name}}",
+      "date": "预订日期",
+      "time": "预订时间",
+      "selectTime": "选择时间",
+      "checking": "正在检查可用性...",
+      "tablesAvailable": "✓ 该时段有空位",
+      "yourInfo": "您的信息",
+      "namePlaceholder": "让·杜邦",
+      "emailPlaceholder": "jean.dupont@email.com",
+      "phonePlaceholder": "06 12 34 56 78",
+      "preferences": "首选项",
+      "tablePreferences": "表格设置",
+      "noPrefPlaceholder": "没有特别的偏好",
+      "noPref": "无偏好",
+      "terrace": "露台",
+      "indoor": "内饰",
+      "window": "窗边",
+      "quiet": "安静区域",
+      "easyAccess": "交通便利",
+      "specialPlaceholder": "生日、食物过敏、婴儿高脚椅……",
+      "summary": "预订摘要",
+      "dateLabel": "日期",
+      "timeLabel": "时间",
+      "restaurantLabel": "餐厅",
+      "disclaimer": "确认预订即表示您同意餐厅联系您以确认您的请求。"
+    }
+  },
+  "widgets": {
+    "loadButton": "显示"
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "照片来自{{city}}",
+    "destination": "目的地",
+    "destinationCapitalized": "目的地",
+    "inspireYourTrip": "为您的旅程注入灵感",
+    "iconicView": "不容错过的标志性景观",
+    "viewLarge": "放眼未来",
+    "playbackPaused": "暂停播放",
+    "previousImage": "上一张图片",
+    "nextImage": "下一张图片",
+    "goToImage": "跳转到图片{{number}}",
+    "thumbnailAlt": "缩略图{{number}}",
+    "travelInspiration": "旅行灵感",
+    "inspiringSnapshot": "令人振奋的瞬间",
+    "generatingTitle": "正在生成您的行程...",
+    "generatingDescription": "人工智能将为您定制专属课程计划。各章节将陆续显示。",
+    "loadingErrorTitle": "加载问题",
+    "loadingErrorDescription": "无法正确加载路线。这可能是由于临时故障所致。",
+    "createNewItinerary": "创建新路线",
+    "pdfExportSuccessTitle": "PDF 已成功导出",
+    "pdfExportSuccessDescription": "您的行程已下载为PDF格式。",
+    "pdfExportErrorTitle": "导出错误",
+    "pdfExportErrorDescription": "无法导出PDF文件。请重试。",
+    "shareErrorTitle": "共享错误",
+    "shareErrorDescription": "无法分享。请重试。",
+    "linkCopiedTitle": "链接已复制",
+    "linkCopiedDescription": "您的行程链接已复制到剪贴板。",
+    "errorTitle": "错误",
+    "copyLinkError": "无法复制该链接。",
+    "breakfast": "早餐",
+    "lunch": "午餐",
+    "dinner": "晚餐",
+    "atLocation": "至",
+    "soloTrip": "独自旅行",
+    "coupleTrip": "情侣旅行",
+    "family": "家庭",
+    "familyWithChildren": "家庭成员：{{count}} 名子女",
+    "groupOfPeople": "{{count}} 人的团队",
+    "preparingTitle": "正在为您准备课程安排……",
+    "preparingDescription": "我们的AI将为您量身定制行程。行程安排正在逐步显示——请稍候片刻。",
+    "personalizedItineraryTitle": "您的个性化行程",
+    "generatedWithPreferences": "根据您的个人偏好生成的行程",
+    "save": "保存",
+    "newTrip": "新的旅程",
+    "exportPdf": "导出PDF",
+    "share": "分享",
+    "copyLink": "复制链接",
+    "loadingDestinationImages": "正在加载目的地图片...",
+    "whyThisTripTitle": "为什么这个项目适合您",
+    "matchPercentage": "{{score}}匹配度",
+    "tripOverview": "行程概览",
+    "dates": "日期",
+    "datesToDefine": "日期待定",
+    "daysCount": "{{count}} 天",
+    "group": "集团",
+    "budget": "预算",
+    "budgetPerDay": "{{amount}}€/天",
+    "estimatedTotal": "估计总额：{{amount}}欧元",
+    "destinations": "目的地",
+    "destinationLine": "{{city}},{{country}} ({{duration}}j)",
+    "budgetBreakdownTitle": "预算分配",
+    "categoryAccommodation": "住宿",
+    "categoryFood": "食物",
+    "categoryActivities": "活动",
+    "categoryTransport": "运输",
+    "categoryShopping": "购物",
+    "categoryMiscellaneous": "其他",
+    "detailedItinerary": "详细行程",
+    "dayLabel": "天{{number}}",
+    "dailyBudget": "每日预算",
+    "scheduledActivities": "活动安排",
+    "locationUnspecified": "地点未指定",
+    "difficultyEasy": "简单",
+    "difficultyModerate": "中等",
+    "difficultyHard": "很难",
+    "tipsWithCount": "建议 ({{count}})",
+    "bookThisActivity": "预订此活动",
+    "recommendedMeals": "推荐餐点",
+    "book": "预订",
+    "transport": "运输",
+    "estimatedWalkingDistance": "预计步行距离",
+    "generatingDayByDay": "生成每日行程...",
+    "generatingDayByDayDescription": "人工智能将根据您的需求为您量身定制包含所有活动的专属计划",
+    "daysWillAppear": "您的行程中的各天内容将以上面的“打字”效果逐步显示出来……",
+    "dayByDayProgram": "根据您的喜好量身定制的每日行程",
+    "generationImproving": "正在改进中",
+    "generationImprovingDescription": "包含每分钟活动的详细行程即将发布。目前，您可以在上方查看行程摘要。",
+    "additionalInformation": "更多信息",
+    "enrichedContentPlaceholder": "一旦路线包含增强内容，这些信息就会显示出来。",
+    "personalizedRecommendations": "个性化推荐",
+    "specialtiesToDiscover": "不容错过的特色美食",
+    "giftIdeas": "纪念品创意",
+    "packingList": "旅行清单",
+    "culturalTips": "文化建议",
+    "bestPeriods": "最佳时段",
+    "localEvents": "本地活动",
+    "transportTips": "运输建议",
+    "safetyTips": "安全提示",
+    "budgetDistribution": "预算分配",
+    "similarDestinations": "类似目的地",
+    "practicalInformation": "实用信息",
+    "visaAndDocuments": "签证与文件",
+    "currency": "货币",
+    "languages": "语言",
+    "climate": "气候",
+    "emergencies": "急诊",
+    "health": "健康",
+    "localCustoms": "当地习俗",
+    "customize": "自定义",
+    "loginToEdit": "登录以进行编辑"
+  },
+  "editor": {
+    "editActivity": "编辑活动",
+    "deleteActivity": "删除该活动",
+    "locationUnspecified": "地点未指定",
+    "toastActivityUpdated": "活动更新",
+    "editActivityTitle": "编辑活动",
+    "title": "标题",
+    "location": "地点",
+    "description": "描述",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "cost": "费用（欧元）",
+    "duration": "时长",
+    "category": "分类",
+    "difficulty": "难度",
+    "difficultyEasy": "简单",
+    "difficultyModerate": "中等",
+    "difficultyHard": "很难",
+    "cancel": "取消",
+    "save": "保存",
+    "dayN": "天{{n}}",
+    "moveDayUp": "迎接新的一天",
+    "moveDayDown": "日落",
+    "editDay": "更改日期",
+    "deleteDay": "删除该天",
+    "toastDayUpdated": "更新日期",
+    "editDayN": "更改日期{{n}}",
+    "destination": "目的地",
+    "theme": "主题",
+    "toastActivityAdded": "已添加的活动",
+    "addActivity": "添加活动",
+    "add": "添加",
+    "toastActivityMoved": "活动已改期",
+    "toastActivitiesReordered": "更新后的活动顺序",
+    "toastDayAdded": "新增日期",
+    "toastCannotDeleteLastDay": "无法删除最后一天",
+    "toastDayDeleted": "已删除的日期",
+    "toastActivityDeleted": "活动已删除",
+    "toastItinerarySaved": "已保存的路线",
+    "subtitle": "自定义您的日程——通过拖放重新排列活动，进行编辑或删除。",
+    "addDay": "添加一天",
+    "close": "关闭",
+    "dropActivitiesHint": "在此发布活动或添加新活动"
   }
 }

@@ -101,6 +101,7 @@ const SavedItineraries = () => {
       <DetailedItineraryView
         itinerary={selectedItinerary.itinerary_data}
         onStartOver={() => setSelectedItinerary(null)}
+        savedItineraryId={selectedItinerary.id}
       />
     );
   }

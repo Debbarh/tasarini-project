@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,12 +29,13 @@ interface ActivityBookingProps {
 
 export function ActivityBooking({ touristPointId, activityName, onClose }: ActivityBookingProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [timeSlots, setTimeSlots] = useState<ActivityTimeSlot[]>([]);
   const [equipment, setEquipment] = useState<ActivityEquipment[]>([]);
   const [requirements, setRequirements] = useState<ActivityRequirement[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  
+
   const [formData, setFormData] = useState({
     customerName: '',
     customerEmail: '',
@@ -70,14 +72,14 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
         getActivityEquipment(touristPointId),
         getActivityRequirements(touristPointId)
       ]);
-      
+
       setEquipment(equipmentData);
       setRequirements(requirementsData);
     } catch (error) {
       console.error('Error fetching activity data:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les données de l'activité",
+        title: t('bookingDialog.common.error'),
+        description: t('bookingDialog.activity.errLoadData'),
         variant: "destructive"
       });
     }
@@ -90,8 +92,8 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
     } catch (error) {
       console.error('Error fetching time slots:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les créneaux disponibles",
+        title: t('bookingDialog.common.error'),
+        description: t('bookingDialog.activity.errLoadSlots'),
         variant: "destructive"
       });
     }
@@ -122,7 +124,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
       const validation = await validateBookingRequirements(touristPointId, formData.participantDetails);
       if (!validation.valid) {
         toast({
-          title: "Conditions non remplies",
+          title: t('bookingDialog.activity.requirementsNotMet'),
           description: validation.violations.join(', '),
           variant: "destructive"
         });
@@ -132,8 +134,8 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
       const selectedSlot = timeSlots.find(slot => slot.id === formData.timeSlotId);
       if (!selectedSlot) {
         toast({
-          title: "Erreur",
-          description: "Veuillez sélectionner un créneau horaire",
+          title: t('bookingDialog.common.error'),
+          description: t('bookingDialog.activity.selectSlotErr'),
           variant: "destructive"
         });
         return;
@@ -160,18 +162,18 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
       };
 
       await createActivityBooking(touristPointId, booking);
-      
+
       toast({
-        title: "Réservation confirmée",
-        description: "Votre réservation a été enregistrée avec succès"
+        title: t('bookingDialog.common.bookingConfirmedTitle'),
+        description: t('bookingDialog.activity.bookingSuccessDesc')
       });
-      
+
       onClose();
     } catch (error) {
       console.error('Error creating booking:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de créer la réservation",
+        title: t('bookingDialog.common.error'),
+        description: t('bookingDialog.activity.errCreate'),
         variant: "destructive"
       });
     } finally {
@@ -199,7 +201,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Réserver {activityName}
+            {t('bookingDialog.activity.title', { name: activityName })}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -207,7 +209,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
             {/* Customer Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="customerName">Nom complet *</Label>
+                <Label htmlFor="customerName">{t('bookingDialog.common.fullName')} *</Label>
                 <Input
                   id="customerName"
                   value={formData.customerName}
@@ -216,7 +218,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
                 />
               </div>
               <div>
-                <Label htmlFor="customerEmail">Email *</Label>
+                <Label htmlFor="customerEmail">{t('bookingDialog.common.email')} *</Label>
                 <Input
                   id="customerEmail"
                   type="email"
@@ -226,7 +228,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
                 />
               </div>
               <div>
-                <Label htmlFor="customerPhone">Téléphone</Label>
+                <Label htmlFor="customerPhone">{t('bookingDialog.common.phone')}</Label>
                 <Input
                   id="customerPhone"
                   value={formData.customerPhone}
@@ -234,7 +236,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
                 />
               </div>
               <div>
-                <Label htmlFor="bookingDate">Date de l'activité *</Label>
+                <Label htmlFor="bookingDate">{t('bookingDialog.activity.date')} *</Label>
                 <Input
                   id="bookingDate"
                   type="date"
@@ -249,14 +251,14 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
             {/* Time Slots */}
             {timeSlots.length > 0 && (
               <div>
-                <Label>Créneaux horaires disponibles</Label>
+                <Label>{t('bookingDialog.activity.availableSlots')}</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
                   {timeSlots.map((slot) => (
-                    <Card 
-                      key={slot.id} 
+                    <Card
+                      key={slot.id}
                       className={`cursor-pointer transition-colors ${
-                        formData.timeSlotId === slot.id 
-                          ? 'border-primary bg-primary/5' 
+                        formData.timeSlotId === slot.id
+                          ? 'border-primary bg-primary/5'
                           : 'hover:border-primary/50'
                       }`}
                       onClick={() => setFormData(prev => ({ ...prev, timeSlotId: slot.id }))}
@@ -267,7 +269,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
                           <span className="font-medium">{slot.start_time} - {slot.end_time}</span>
                         </div>
                         <div className="text-sm text-muted-foreground mt-1">
-                          Max {slot.max_participants} participants
+                          {t('bookingDialog.activity.maxParticipants', { count: slot.max_participants })}
                         </div>
                       </CardContent>
                     </Card>
@@ -278,10 +280,10 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
 
             {/* Participants */}
             <div>
-              <Label>Nombre de participants</Label>
+              <Label>{t('bookingDialog.activity.participants')}</Label>
               <div className="grid grid-cols-3 gap-4 mt-2">
                 <div>
-                  <Label htmlFor="adults">Adultes</Label>
+                  <Label htmlFor="adults">{t('bookingDialog.activity.adults')}</Label>
                   <Input
                     id="adults"
                     type="number"
@@ -291,7 +293,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
                   />
                 </div>
                 <div>
-                  <Label htmlFor="children">Enfants</Label>
+                  <Label htmlFor="children">{t('bookingDialog.activity.children')}</Label>
                   <Input
                     id="children"
                     type="number"
@@ -301,7 +303,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
                   />
                 </div>
                 <div>
-                  <Label htmlFor="seniors">Seniors</Label>
+                  <Label htmlFor="seniors">{t('bookingDialog.activity.seniors')}</Label>
                   <Input
                     id="seniors"
                     type="number"
@@ -316,12 +318,12 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
             {/* Equipment Rentals */}
             {equipment.filter(e => e.type === 'optional' && e.rental_price && e.rental_price > 0).length > 0 && (
               <div>
-                <Label>Équipements en location (optionnel)</Label>
+                <Label>{t('bookingDialog.activity.equipmentRental')}</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                   {equipment
                     .filter(e => e.type === 'optional' && e.rental_price && e.rental_price > 0)
                     .map((item) => (
-                      <Card 
+                      <Card
                         key={item.id}
                         className={`cursor-pointer transition-colors ${
                           formData.equipmentRentals.includes(item.id)
@@ -355,14 +357,14 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
             {/* Requirements Display */}
             {requirements.length > 0 && (
               <div>
-                <Label>Conditions et prérequis</Label>
+                <Label>{t('bookingDialog.activity.requirements')}</Label>
                 <div className="space-y-2 mt-2">
                   {requirements.map((req) => (
                     <div key={req.id} className="flex items-start gap-2">
                       <AlertTriangle className={`h-4 w-4 mt-0.5 ${req.is_mandatory ? 'text-destructive' : 'text-warning'}`} />
                       <div>
                         <Badge variant={req.is_mandatory ? 'destructive' : 'secondary'} className="mb-1">
-                          {req.is_mandatory ? 'Obligatoire' : 'Recommandé'}
+                          {req.is_mandatory ? t('bookingDialog.activity.mandatory') : t('bookingDialog.activity.recommended')}
                         </Badge>
                         <div className="text-sm">
                           <strong>{req.type.replace(/_/g, ' ').toUpperCase()}:</strong> {req.value}
@@ -378,10 +380,10 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
             {/* Equipment Provided/Required */}
             {equipment.filter(e => e.type !== 'optional').length > 0 && (
               <div>
-                <Label>Équipements</Label>
+                <Label>{t('bookingDialog.activity.equipment')}</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                   <div>
-                    <h4 className="font-medium text-sm mb-2 text-primary">Fourni</h4>
+                    <h4 className="font-medium text-sm mb-2 text-primary">{t('bookingDialog.activity.provided')}</h4>
                     {equipment.filter(e => e.type === 'provided').map((item) => (
                       <div key={item.id} className="flex items-center gap-2 text-sm">
                         <CheckCircle className="h-4 w-4 text-primary" />
@@ -390,7 +392,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
                     ))}
                   </div>
                   <div>
-                    <h4 className="font-medium text-sm mb-2 text-destructive">À apporter</h4>
+                    <h4 className="font-medium text-sm mb-2 text-destructive">{t('bookingDialog.activity.toBring')}</h4>
                     {equipment.filter(e => e.type === 'required').map((item) => (
                       <div key={item.id} className="flex items-center gap-2 text-sm">
                         <AlertTriangle className="h-4 w-4 text-destructive" />
@@ -404,12 +406,12 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
 
             {/* Special Requests */}
             <div>
-              <Label htmlFor="specialRequests">Demandes spéciales</Label>
+              <Label htmlFor="specialRequests">{t('bookingDialog.common.specialRequests')}</Label>
               <Textarea
                 id="specialRequests"
                 value={formData.specialRequests}
                 onChange={(e) => setFormData(prev => ({ ...prev, specialRequests: e.target.value }))}
-                placeholder="Informations médicales, allergies, besoins particuliers..."
+                placeholder={t('bookingDialog.activity.specialPlaceholder')}
               />
             </div>
 
@@ -418,7 +420,7 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
             {/* Price Summary */}
             <div className="bg-muted p-4 rounded-lg">
               <div className="flex justify-between items-center">
-                <span className="font-medium">Total à payer:</span>
+                <span className="font-medium">{t('bookingDialog.activity.totalToPay')}:</span>
                 <span className="text-2xl font-bold text-primary">{totalPrice.toFixed(2)}€</span>
               </div>
             </div>
@@ -426,10 +428,10 @@ export function ActivityBooking({ touristPointId, activityName, onClose }: Activ
             {/* Submit */}
             <div className="flex gap-3">
               <Button type="button" variant="outline" onClick={onClose}>
-                Annuler
+                {t('bookingDialog.common.cancel')}
               </Button>
               <Button type="submit" disabled={loading} className="flex-1">
-                {loading ? 'Réservation en cours...' : 'Confirmer la réservation'}
+                {loading ? t('bookingDialog.common.confirming') : t('bookingDialog.common.confirm')}
               </Button>
             </div>
           </form>

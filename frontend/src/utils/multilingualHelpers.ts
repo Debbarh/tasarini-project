@@ -49,8 +49,24 @@ export interface MultilingualDescriptionField {
 }
 
 /**
+ * Décode les entités HTML courantes (&amp; -> &, etc.) qui peuvent se retrouver
+ * dans les données de taxonomie (ex: "Bed &amp; Breakfast").
+ */
+export const decodeEntities = (str: string): string => {
+  if (!str) return str;
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+};
+
+/**
  * Extrait le nom localisé d'un objet avec des champs name_XX
- * 
+ *
  * @param item - Objet contenant les champs multilingues
  * @param language - Code de langue (ex: 'fr', 'en', 'es')
  * @returns Le nom dans la langue demandée, ou fallback sur français puis 'name'
@@ -73,26 +89,13 @@ export const getLocalizedName = (
   const nameField = `name_${langCode}` as keyof MultilingualField;
   const localizedName = item[nameField];
   
-  if (localizedName && typeof localizedName === 'string') {
-    return localizedName;
-  }
-  
-  // Fallback 1: Français
-  if (item.name_fr) {
-    return item.name_fr;
-  }
-  
-  // Fallback 2: Champ 'name' générique
-  if (item.name) {
-    return item.name;
-  }
-  
-  // Fallback 3: Anglais
-  if (item.name_en) {
-    return item.name_en;
-  }
-  
-  return '';
+  const raw =
+    (typeof localizedName === 'string' && localizedName) ||
+    item.name_fr ||
+    item.name ||
+    item.name_en ||
+    '';
+  return decodeEntities(raw);
 };
 
 /**
@@ -119,21 +122,12 @@ export const getLocalizedLabel = (
   const labelField = `label_${langCode}` as keyof MultilingualLabelField;
   const localizedLabel = item[labelField];
   
-  if (localizedLabel && typeof localizedLabel === 'string') {
-    return localizedLabel;
-  }
-  
-  // Fallback 1: Français
-  if (item.label_fr) {
-    return item.label_fr;
-  }
-  
-  // Fallback 2: Anglais
-  if (item.label_en) {
-    return item.label_en;
-  }
-  
-  return '';
+  const raw =
+    (typeof localizedLabel === 'string' && localizedLabel) ||
+    item.label_fr ||
+    item.label_en ||
+    '';
+  return decodeEntities(raw);
 };
 
 /**

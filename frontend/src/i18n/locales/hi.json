@@ -8,7 +8,8 @@
     "administration": "प्रशासन",
     "myProfile": "मेरी प्रोफ़ाइल",
     "logout": "लॉग आउट",
-    "login": "लॉग इन"
+    "login": "लॉग इन",
+    "notifications": "अधिसूचनाएं"
   },
   "notFound": {
     "title": "404",
@@ -30,33 +31,44 @@
     "statsDestinations": "खोजे गए गंतव्य",
     "statsAdventurers": "साहसिक लोग",
     "statsDreams": "पूरे हुए सपने",
-    "liveInspiration": "Live inspiration",
-    "adventureFound": "Adventure found!",
-    "howItWorksTitle": "How does it work?",
-    "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
-    "howStep1Title": "Get inspired",
-    "howStep1Desc": "Browse stories and travel ideas tailored to your desires.",
-    "howStep2Title": "Plan",
-    "howStep2Desc": "Use our assistant to create an itinerary and book hotels and transport.",
-    "howStep3Title": "Travel worry-free",
-    "howStep3Desc": "Receive confirmations, share your stories and enjoy the trip.",
-    "bookingCenter": "Booking Center",
-    "bookingCenterDesc": "Search and book your hotels, flights and activities in just a few clicks",
-    "transportServices": "Transport Services",
-    "transportServicesDesc": "Vehicle rental, transfers and urban transport",
-    "carRental": "Rental",
-    "transfers": "Transfers",
-    "busAndTrain": "Bus & Train",
-    "urbanTransport": "Urban",
-    "activitiesExperiences": "Activities & Experiences",
-    "activitiesDesc": "Discover the best activities and restaurants",
-    "toursVisits": "Tours & Visits",
-    "gastronomy": "Gastronomy",
-    "travelerServices": "Traveler Services",
-    "travelerServicesDesc": "Connectivity and assistance",
-    "booking": "Booking",
-    "esimCards": "eSIM Cards",
-    "compensation": "Compensation"
+    "liveInspiration": "लाइव प्रेरणा",
+    "adventureFound": "रोमांच मिला!",
+    "howItWorksTitle": "यह कैसे काम करता है?",
+    "howItWorksSubtitle": "विचार से पुष्टि किए गए यात्रा तक जाने के लिए 3 सरल कदम।",
+    "howStep1Title": "प्रेरणा प्राप्त करें",
+    "howStep1Desc": "अपनी इच्छाओं के अनुरूप कहानियों और यात्रा आइडियाज़ को ब्राउज़ करें।",
+    "howStep2Title": "योजना बनाएं",
+    "howStep2Desc": "हमारे असिस्टेंट का उपयोग करके यात्रा कार्यक्रम बनाएं और होटल व परिवहन बुक करें।",
+    "howStep3Title": "निश्चिंत होकर यात्रा करें",
+    "howStep3Desc": "पुष्टियाँ प्राप्त करें, अपनी कहानियाँ साझा करें और यात्रा का आनंद लें।",
+    "bookingCenter": "बुकिंग सेंटर",
+    "bookingCenterDesc": "केवल कुछ क्लिक में अपने होटल, फ्लाइट और गतिविधियों को खोजें और बुक करें",
+    "transportServices": "परिवहन सेवाएं",
+    "transportServicesDesc": "वाहन किराया, ट्रांसफर और शहरी परिवहन",
+    "carRental": "किराये की कार",
+    "transfers": "ट्रांसफर",
+    "busAndTrain": "बस और ट्रेन",
+    "urbanTransport": "शहरी परिवहन",
+    "activitiesExperiences": "गतिविधियाँ और अनुभव",
+    "activitiesDesc": "सर्वश्रेष्ठ गतिविधियों और रेस्टॉरेंट की खोज करें",
+    "toursVisits": "दौरे और यात्राएँ",
+    "gastronomy": "गैस्ट्रोनॉमी",
+    "travelerServices": "यात्रा सेवाएँ",
+    "travelerServicesDesc": "कनेक्टिविटी और सहायता",
+    "booking": "बुकिंग",
+    "esimCards": "eSIM कार्ड",
+    "compensation": "मुआवज़ा",
+    "testimonialsTitle": "वे हमारे साथ यात्रा करते हैं",
+    "testimonialsSubtitle": "हमारे यात्री समुदाय की राय",
+    "captionHero": "आपका अगला साहसिक",
+    "captionBeach": "समुद्र तट",
+    "captionMountain": "पर्वत साहसिक",
+    "captionCity": "शहरी छुट्टी",
+    "captionCultural": "सांस्कृतिक विसर्जन",
+    "goToImage": "छवि {{index}}",
+    "searchDestination": "आप कहाँ जा रहे हैं?",
+    "searchCta": "खोज",
+    "openBookingCenter": "आरक्षण केन्द्र खोलें"
   },
   "planTrip": {
     "title": "अपनी परफेक्ट छुट्टी की योजना बनाएं",
@@ -108,7 +120,11 @@
           "title": "गतिविधियां",
           "description": "अनुभव और रुचियां"
         }
-      }
+      },
+      "autosaved": "प्रोग्रेस सेव",
+      "estimatedTime": "~3 min",
+      "skipStep": "इस चरण को पास करें",
+      "generateNow": "अब उत्पन्न"
     },
     "destinationStep": {
       "selectCountry": "एक देश चुनें",
@@ -140,7 +156,9 @@
       "locationSaved": "गंतव्य सफलतापूर्वक सहेजा गया।",
       "locationSaveError": "यह स्थान सहेजने में असमर्थ, कृपया जानकारी की जांच करें।",
       "invalidAddress": "कृपया मानचित्र पर एक वैध पता चुनें।",
-      "fetchingTranslations": "Fetching multilingual translations..."
+      "fetchingTranslations": "Fetching multilingual translations...",
+      "geocodeFailed": "इस बिंदु के लिए शहर का निर्धारण नहीं कर सका। दूसरे स्थान का चयन करें या शहर में मैन्युअल रूप से प्रवेश करें।.",
+      "chooseOnMapHint": "अपने गंतव्य को सही ढंग से रखने और अपने निर्देशांक को पुनः प्राप्त करने के लिए एक इंटरैक्टिव मानचित्र खोलें।."
     },
     "travelDetailsStep": {
       "title": "यात्रा साथी",
@@ -174,7 +192,9 @@
       "availablePlural": "उपलब्ध",
       "remains": "शेष",
       "remainsPlural": "शेष",
-      "error": "त्रुटि"
+      "error": "त्रुटि",
+      "singleChoiceHint": "एक प्रकार का चयन",
+      "maxLevelTooltip": "इस समूह के लिए एक्सेस / भौतिक अधिकतम अनुशंसित स्थानों में कठिनाई का स्तर।."
     },
     "budgetStep": {
       "title": "यात्रा बजट",
@@ -225,7 +245,8 @@
       "types": "प्रकार",
       "services": "सेवाएं",
       "locations": "स्थान",
-      "others": "अन्य"
+      "others": "अन्य",
+      "typeRequired": "रहने के लिए कम से कम एक प्रकार का आवास चुनें।."
     },
     "activitiesStep": {
       "title": "गतिविधियाँ और अनुभव",
@@ -625,13 +646,34 @@
           "veryStrong": "बहुत मजबूत"
         }
       }
+    },
+    "emailNotConfirmed": "कृपया अपने ईमेल को चेक करें और अपने खाते को सक्रिय करने के लिए पुष्टिकरण लिंक पर क्लिक करें।",
+    "invalidCredentials": "Invalid Email or password",
+    "forgotPassword": {
+      "link": "अपने पासवर्ड भूल गए?",
+      "title": "पासवर्ड रीसेट करें",
+      "description": "अपना ईमेल पता दर्ज करें और हम आपको पासवर्ड रीसेट करने के लिए एक लिंक भेज देंगे।.",
+      "sendButton": "लिंक भेजें",
+      "sending": "भेजें.",
+      "successTitle": "ईमेल भेजे गए",
+      "successDescription": "यदि आपका ईमेल पता किसी खाते से जुड़ा हुआ है, तो आपको एक रीसेट लिंक प्राप्त होगा।.",
+      "emailSent": "अपने ईमेल बॉक्स (और स्पैम) को रीसेट लिंक के लिए चेक करें।.",
+      "emailSentMessage": "यदि आपका ईमेल हमारे सिस्टम में मौजूद है, तो आपको एक रीसेट लिंक प्राप्त होगा।."
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. सभी अधिकार सुरक्षित हैं।",
     "becomePartner": "साझेदार बनें",
     "madeWith": "के साथ बनाया गया",
-    "by": "द्वारा"
+    "by": "द्वारा",
+    "tagline": "प्रेरणा, योजना और बुकिंग, एआई द्वारा संचालित।.",
+    "discover": "खोज",
+    "company": "उद्यम",
+    "legal": "कानूनी",
+    "contact": "संपर्क",
+    "terms": "सामान्य स्थिति",
+    "privacy": "गोपनीयता नीति",
+    "rights": "सर्वाधिकार सुरक्षित."
   },
   "common": {
     "loading": "लोड हो रहा है...",
@@ -1215,7 +1257,13 @@
         "updateError": "सूचना अपडेट करने में त्रुटि"
       },
       "export": "डेटा निर्यात करें",
-      "loadingError": "डैशबोर्ड लोड करने में त्रुटि"
+      "loadingError": "डैशबोर्ड लोड करने में त्रुटि",
+      "analyticsTab": "विश्लेषण",
+      "poisTab": "मेरा POI",
+      "bookingsTab": "आरक्षण",
+      "financesTab": "वित्त",
+      "subscriptionTab": "सदस्यता",
+      "notificationsTab": "अधिसूचनाएं"
     }
   },
   "legal": {
@@ -1230,5 +1278,711 @@
       "description": "Learn how we protect your personal data",
       "footer": "GDPR Compliant - Your data is protected"
     }
+  },
+  "booking": {
+    "title": "आरक्षण केन्द्र",
+    "subtitle": "अपने होटल, उड़ानें, स्थानांतरण और गतिविधियों को खोजें और बुक करें",
+    "info": "अधिक स्वचालित अनुरोध नहीं! अब आप खोजते समय नियंत्रण करते हैं।.",
+    "tabs": {
+      "hotels": "होटल",
+      "flights": "उड़ान",
+      "transfers": "स्थानांतरण",
+      "restaurants": "रेस्टोरेंट",
+      "activities": "गतिविधियाँ"
+    },
+    "searchHotel": "एक होटल के लिए खोजें",
+    "searchFlight": "उड़ान का पता लगाएं",
+    "searchTransfer": "स्थानांतरण के लिए खोजें",
+    "searchActivity": "गतिविधि का पता लगाएं",
+    "destination": "गंतव्य",
+    "selectDestination": "एक गंतव्य चुनें...",
+    "selectOriginAirport": "प्रस्थान के एक हवाई अड्डे का चयन करें ...",
+    "selectDestAirport": "एक हवाई अड्डे का चयन करें...",
+    "guests": "व्यक्तियों की संख्या",
+    "passengers": "यात्रियों की संख्या",
+    "participants": "प्रतिभागियों की संख्या",
+    "checkIn": "आगमन की तिथि",
+    "checkOut": "प्रस्थान की तिथि",
+    "departDate": "प्रस्थान की तिथि",
+    "returnDate": "वापसी की तारीख (वैकल्पिक)",
+    "origin": "प्रस्थान",
+    "date": "तारीख",
+    "time": "समय",
+    "searching": "प्रगति में खोजें...",
+    "searchHotelsBtn": "होटल खोजें",
+    "searchFlightsBtn": "खोज उड़ान",
+    "searchActivitiesBtn": "गतिविधियाँ",
+    "searchTransfersBtnSoon": "हस्तांतरण के लिए खोज (पहले उपलब्ध)",
+    "transfersSoon": "स्थानांतरण की खोज जल्द ही उपलब्ध होगी",
+    "transferFromPlaceholder": "हवाई अड्डे, होटल...",
+    "transferToPlaceholder": "होटल, शहर...",
+    "emptyTitle": "ऊपर अपने खोज मानदंड दर्ज करें",
+    "emptyDesc": "खोज के बाद परिणाम यहां प्रदर्शित होंगे",
+    "moreAmenities": "{{count}} अन्य",
+    "amenitiesUnspecified": "उपकरण निर्दिष्ट नहीं",
+    "fromPrice": "से",
+    "perNight": "रात",
+    "priceUnavailable": "टैरिफ उपलब्ध नहीं",
+    "details": "विवरण",
+    "book": "रिजर्व",
+    "stops": "{{count}} स्टॉपओवर(s)",
+    "restaurantsIncludedTitle": "रेस्तरां पहले से ही आपके यात्रा कार्यक्रम में शामिल हैं",
+    "restaurantsIncludedDesc": "रेस्तरां सिफारिशों के लिए ऊपर \"विस्तृत रूट\" अनुभाग देखें",
+    "toastRequiredTitle": "आवश्यक फ़ील्ड",
+    "toastRequiredDesc": "कृपया सभी खोज क्षेत्रों में भरें",
+    "toastInvalidCodeTitle": "अवैध गंतव्य कोड",
+    "toastInvalidCodeDesc": "एक होटलBeds कोड (जैसे PAR, BCN, ROM) का चयन स्वयं पूर्ण के माध्यम से करें।.",
+    "toastInvalidDatesTitle": "अमान्य तिथि",
+    "toastInvalidDatesDesc": "आगमन की तारीख के कम से कम 1 दिन बाद प्रस्थान की तारीख होना चाहिए",
+    "toastDoneTitle": "अनुसंधान पूरा",
+    "toastErrorTitle": "खोज त्रुटि",
+    "toastHotelsFound": "{{count}} होटल पाया",
+    "toastFlightsFound": "{{count}} उड़ान (s) पाया",
+    "toastActivitiesFound": "{{count}} पाया गतिविधि",
+    "toastHotelsError": "मुझे होटल नहीं मिल सकता। गंतव्य कोड की जाँच करें।.",
+    "toastFlightsError": "मैं उड़ानों की तलाश नहीं कर सकता। IATA कोड की जाँच करें।.",
+    "toastActivitiesError": "गतिविधियों की खोज नहीं कर सका। गंतव्य कोड की जाँच करें।."
+  },
+  "savedItineraries": {
+    "pageTitle": "मेरे बचाया मार्ग",
+    "pageDescription": "हमारे IA के साथ अपने सभी बचाया और योजनाबद्ध यात्रा मार्गों का पता लगाएं। अपने यात्रा कार्यक्रमों को प्रबंधित, संपादित और साझा करें।.",
+    "subtitle": "अपने सभी नियोजित यात्राओं का पता लगाएं और अपने भविष्य के रोमांच का आयोजन करें।.",
+    "searchPlaceholder": "एक मार्ग खोजें...",
+    "unauthorized": "अनधिकृत पहुँच",
+    "unauthorizedMessage": "आपको अपने सहेजे गए मार्गों तक पहुंचने के लिए लॉग इन करना होगा।.",
+    "stats": {
+      "saved": "सेव्ड मार्ग",
+      "favorites": "Favourite",
+      "travelDays": "यात्रा के दिन"
+    },
+    "empty": {
+      "title": "कोई मार्ग नहीं बचा",
+      "noResults": "कोई मार्ग नहीं मिला",
+      "searchMessage": "अन्य खोज कीवर्ड के साथ प्रयास करें।.",
+      "createMessage": "अपनी पहली यात्रा यात्रा यात्रा कार्यक्रम तैयार करके शुरू करें!"
+    },
+    "actions": {
+      "view": "देखें",
+      "viewDetails": "विवरण देखें",
+      "export": "PDF",
+      "exportPDF": "PDF निर्यात करें",
+      "share": "शेयर",
+      "delete": "निकालें",
+      "favorite": "पसंदीदा",
+      "create": "एक मार्ग बनाएं"
+    },
+    "badges": {
+      "days": "दिन"
+    },
+    "dialog": {
+      "deleteTitle": "डिलीट रूट",
+      "deleteDescription": "क्या आप हटाना चाहते हैं",
+      "deleteWarning": "यह कार्रवाई अपरिवर्तनीय है।.",
+      "cancel": "रद्द करना",
+      "confirm": "निकालें"
+    },
+    "toast": {
+      "pdfExported": "PDF निर्यात!",
+      "pdfExportedDesc": "आपकी यात्रा को सफलतापूर्वक डाउनलोड किया गया है।.",
+      "pdfError": "त्रुटि",
+      "pdfErrorDesc": "PDF निर्यात नहीं कर सकता",
+      "shareError": "त्रुटि",
+      "shareErrorDesc": "मार्ग साझा नहीं कर सका",
+      "deleted": "Itinerary नष्ट कर दिया",
+      "deleteError": "त्रुटि हटाने"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "मेरी खोज",
+    "pageDescription": "अपने पसंदीदा स्थानों और व्यक्तिगत खोज मार्गों का प्रबंधन करें।.",
+    "subtitle": "अपने पसंदीदा स्थानों और व्यक्तिगत यात्राओं का पता लगाएं",
+    "loginMessage": "अपनी पसंदीदा और यात्राओं को देखने के लिए कनेक्ट करें।.",
+    "tabs": {
+      "favorites": "Favourite",
+      "itineraries": "मेरी यात्रा",
+      "community": "समुदाय"
+    },
+    "favorites": {
+      "empty": "कोई पसंदीदा",
+      "emptyMessage": "अपने पसंदीदा स्थानों को मानचित्र से जोड़कर शुरू करें",
+      "exploreMap": "मानचित्र का अन्वेषण करें"
+    },
+    "itineraries": {
+      "empty": "कोई मार्ग नहीं",
+      "emptyMessage": "ब्याज के अंक का चयन करके अपनी पहली यात्रा बनाएँ",
+      "createNew": "एक मार्ग बनाएं",
+      "places": "स्थान"
+    },
+    "community": {
+      "empty": "कोई सार्वजनिक मार्ग नहीं",
+      "emptyMessage": "समुदाय अभी तक साझा मार्ग नहीं है",
+      "title": "सामुदायिक मार्ग",
+      "description": "अन्य उपयोगकर्ताओं द्वारा साझा मार्गों की खोज करें",
+      "public": "सार्वजनिक",
+      "by": "द्वारा",
+      "defaultUsername": "यात्री तसरिनी"
+    },
+    "stats": {
+      "distance": "दूरी"
+    },
+    "difficulty": {
+      "easy": "आसान",
+      "medium": "मध्यम",
+      "hard": "कठिन"
+    },
+    "actions": {
+      "view": "मानचित्र पर देखें",
+      "share": "शेयर",
+      "edit": "संशोधित करें",
+      "delete": "निकालें",
+      "makePublic": "सार्वजनिक बनाना",
+      "makePrivate": "इसे निजी बनाना"
+    },
+    "toast": {
+      "deleted": "Itinerary नष्ट कर दिया",
+      "deleteError": "त्रुटि हटाने",
+      "madePublic": "सार्वजनिक",
+      "madePrivate": "निजी",
+      "updateError": "अद्यतन करने में त्रुटि",
+      "linkCopied": "लिंक क्लिपबोर्ड पर कॉपी!",
+      "copyError": "लिंक कॉपी नहीं कर सकता",
+      "loadError": "त्रुटि लोडिंग मार्ग",
+      "loadPublicError": "सार्वजनिक मार्गों को लोड करने में त्रुटि"
+    },
+    "confirmDelete": "क्या आप इस मार्ग को हटाना चाहते हैं?"
+  },
+  "verifyEmailRequired": {
+    "title": "अपना ईमेल चेक करें",
+    "subtitle": "शुरू करने से पहले",
+    "sentTo": "एक सत्यापन ईमेल भेजा गया था:",
+    "limitedAccess": {
+      "title": "सीमित पहुँच",
+      "description": "आपको Tasarini की सभी विशेषताओं तक पहुंचने के लिए अपने ईमेल की जांच करने की आवश्यकता है।."
+    },
+    "steps": {
+      "title": "चरणों का पालन करने के लिए:",
+      "step1": "अपना मेलबॉक्स खोलें",
+      "step2": "ईमेल पता",
+      "step2Bold": "तसरिनी",
+      "step3": "सत्यापन लिंक पर क्लिक करें",
+      "step4": "यहां लौटें और पृष्ठ को अद्यतन करें"
+    },
+    "notReceived": {
+      "title": "क्या आपको ईमेल नहीं मिला?",
+      "checkSpam": "अपने अवांछित स्पैम / मेल फ़ोल्डर की जाँच करें",
+      "checkEmail": "जांचें कि ईमेल पता सही है",
+      "waitTime": "कुछ मिनट प्रतीक्षा करें (ईमेल समय ले सकता है)"
+    },
+    "buttons": {
+      "resend": "सत्यापन ईमेल भेजें",
+      "sending": "में भेजना...",
+      "sent": "ईमेल भेजा!",
+      "signOut": "लॉग आउट करें और किसी अन्य खाते का उपयोग करें"
+    },
+    "footer": {
+      "validity": "सत्यापन लिंक के दौरान मान्य है",
+      "hours": "24 घंटे"
+    },
+    "toast": {
+      "success": "मेल वापसी की जाँच करें!",
+      "error": "ईमेल लौटने में त्रुटि"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "ब्लॉक पार्टनर खाता",
+    "description": "आपके पार्टनर एप्लिकेशन को मना कर दिया गया है या आपका खाता निलंबित कर दिया गया है। यदि आपको लगता है कि यह एक त्रुटि है, तो आप नीचे दिए गए फॉर्म के माध्यम से हमसे संपर्क कर सकते हैं।.",
+    "reasons": {
+      "title": "संभावित कारण:",
+      "incorrect": "गलत जानकारी",
+      "terms": "उपयोग की शर्तों के साथ गैर अनुपालन",
+      "suspicious": "संदिग्ध गतिविधि का पता लगाया",
+      "criteria": "भागीदारी मानदंड नहीं मिला"
+    },
+    "contact": {
+      "title": "प्रशासन से संपर्क करें",
+      "subtitle": "अपनी स्थिति समझाओ और हम आपके अनुरोध पर विचार करेंगे।.",
+      "nameLabel": "पूर्ण नाम",
+      "namePlaceholder": "आपका पूरा नाम",
+      "emailLabel": "ईमेल",
+      "emailPlaceholder": "email.com",
+      "subjectLabel": "विषय",
+      "subjectPlaceholder": "अपने अनुरोध का उद्देश्य",
+      "subjectDefault": "मेरे पार्टनर अकाउंट के पुनर्मूल्यांकन के लिए अनुरोध",
+      "messageLabel": "संदेश",
+      "messagePlaceholder": "अपनी स्थिति का वर्णन करें और क्यों आपका खाता फिर से मूल्यांकन किया जाना चाहिए।.",
+      "submitButton": "मेरा अनुरोध भेजें",
+      "submitting": "में भेजना...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "प्रतिक्रिया समय:",
+      "responseTimeText": "हम 48-72 घंटों के भीतर जवाब देने का प्रयास करते हैं।.",
+      "urgentQuestion": "तत्काल प्रश्नों के लिए आप हमसे संपर्क कर सकते हैं:",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "आपका संदेश भेजा गया है। हम जल्द ही जवाब देंगे।.",
+      "error": "संदेश भेजने में त्रुटि। फिर से प्रयास करें।."
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "...",
+      "success": "ईमेल सत्यापित!",
+      "error": "जांच"
+    },
+    "description": {
+      "loading": "कृपया अपने ईमेल को चेक करते समय प्रतीक्षा करें।.",
+      "successPartner": "आपका साथी खाता सफलतापूर्वक सक्रिय हो गया है।.",
+      "successUser": "आपका खाता सफलतापूर्वक सक्रिय हो गया है।.",
+      "error": "हम आपके ईमेल की जांच नहीं कर सकते।."
+    },
+    "messages": {
+      "tokenMissing": "Token लापता सत्यापन.",
+      "success": "आपका ईमेल सफलतापूर्वक सत्यापित किया गया है!",
+      "verificationError": "टोकन अमान्य या समाप्त हो गया।.",
+      "autoLoginInfo": "हम आपको स्वचालित रूप से कनेक्ट करने की कोशिश करते हैं। यदि यह विफल हो जाता है, तो नीचे दिए गए बटन का उपयोग करें।.",
+      "manualLoginInfo": "अगले चरण को जारी रखने के लिए लॉग इन करके अपने सत्र को सक्षम करें।.",
+      "autoLoginFailed": "स्वचालित कनेक्शन विफल हो गया। जारी रखने के लिए कृपया उपरोक्त बटन का उपयोग करें।.",
+      "waiting": "इसे केवल कुछ ही सेकंड में लेना चाहिए।."
+    },
+    "partner": {
+      "nextStep": "अगला कदम: अपने पार्टनर प्रोफाइल को पूरा करें",
+      "continueButton": "मेरे पार्टनर प्रोफाइल को जारी रखें",
+      "continueButtonLoading": "कनेक्शन..."
+    },
+    "user": {
+      "continueButton": "मेरी प्रोफाइल एक्सेस करें",
+      "continueButtonLoading": "कनेक्शन..."
+    },
+    "buttons": {
+      "resend": "सत्यापन लिंक भेजें",
+      "backToLogin": "सम्पर्क करने का विवरण",
+      "requestNewLink": "एक सत्यापन ईमेल भेजें"
+    },
+    "error": {
+      "title": "क्या करना है?",
+      "checkLink": "जाँच करें कि लिंक पूरा हो गया है",
+      "expired": "लिंक 24 घंटे के बाद समाप्त हो जाता है",
+      "requestNew": "नए सत्यापन लिंक का अनुरोध करें"
+    },
+    "toast": {
+      "success": "ईमेल सफलतापूर्वक सत्यापित!",
+      "error": "जांच",
+      "verifying": "ईमेल सत्यापन, प्रगति में कनेक्शन ...",
+      "loginSuccess": "सफल कनेक्शन, पुनर्निर्देशन ...",
+      "loginError": "स्वचालित रूप से कनेक्ट नहीं कर सकते। जारी रखने के लिए लॉग इन करें।.",
+      "resendSuccess": "एक नया सत्यापन ईमेल भेजा गया था।.",
+      "resendError": "लिंक वापस नहीं कर सका। फिर से कोशिश करने के लिए कनेक्ट करें।.",
+      "resendAuthRequired": "कृपया सत्यापन लिंक वापस करने के लिए लॉग इन करें।.",
+      "completeError": "जांच को पूरा नहीं कर सका।."
+    }
+  },
+  "theme": {
+    "toggleLabel": "थीम बदलें",
+    "light": "स्पष्ट",
+    "dark": "अंधेरा",
+    "system": "प्रणाली"
+  },
+  "notifications": {
+    "title": "अधिसूचनाएं",
+    "markAllRead": "सब कुछ पढ़ा",
+    "markRead": "पढ़ना",
+    "delete": "निकालें",
+    "empty": "सूचना",
+    "timePrefix": "में",
+    "sent": "Sent",
+    "settings": {
+      "title": "अधिसूचना प्राथमिकता",
+      "description": "गतिविधियों और यात्रा के लिए अपनी अधिसूचनाओं को कॉन्फ़िगर करें",
+      "loading": "Preference.",
+      "types": {
+        "title": "अधिसूचनाओं के प्रकार",
+        "activityReminders": "गतिविधियों के अनुस्मारक",
+        "activityRemindersDesc": "अपने नियोजित गतिविधियों से पहले अनुस्मारक प्राप्त करें",
+        "tripStart": "यात्रा शुरू",
+        "tripStartDesc": "अपनी यात्रा की शुरुआत में अधिसूचना",
+        "tripEnd": "यात्रा का अंत",
+        "tripEndDesc": "अपनी यात्रा के अंत में अधिसूचना"
+      },
+      "timing": {
+        "title": "अनुस्मारक समय",
+        "before": "गतिविधि से पहले अनुस्मारक",
+        "1h": "1 घंटे पहले",
+        "2h": "2 घंटे पहले",
+        "6h": "6 घंटे पहले",
+        "12h": "12 घंटे पहले",
+        "24h": "24 घंटे पहले",
+        "48h": "48 घंटे पहले"
+      },
+      "channels": {
+        "title": "रिपोर्टिंग चैनल",
+        "inApp": "ऐप में अधिसूचनाएं",
+        "inAppDesc": "आवेदन में सूचनाएं दिखाएं",
+        "email": "ईमेल सूचनाएं",
+        "emailDesc": "अनुस्मारक ईमेल प्राप्त करें (केवल उपलब्ध)"
+      }
+    }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "PDF सफलतापूर्वक निर्यात",
+      "pdfExportSuccessDesc": "आपकी यात्रा पीडीएफ प्रारूप में डाउनलोड की गई है।.",
+      "pdfExportError": "निर्यात त्रुटि",
+      "pdfExportErrorDesc": "PDF निर्यात नहीं कर सकता। फिर से प्रयास करें।.",
+      "shareError": "त्रुटि साझा करना",
+      "shareErrorDesc": "साझा नहीं कर सका। फिर से प्रयास करें।.",
+      "linkCopied": "लिंक कॉपी",
+      "linkCopiedDesc": "आपका आइटेनरी लिंक क्लिपबोर्ड पर कॉपी किया गया है।.",
+      "copyError": "त्रुटि",
+      "copyErrorDesc": "लिंक कॉपी नहीं कर सका।.",
+      "activityUpdated": "सफलतापूर्वक अद्यतन गतिविधि",
+      "dayUpdated": "सफलतापूर्वक अद्यतन",
+      "activityAdded": "सफलतापूर्वक जोड़ा गया",
+      "activityMoved": "गतिविधि दूसरे दिन चली गई",
+      "orderUpdated": "गतिविधियों का अद्यतन एजेंडा",
+      "dayAdded": "नया दिन जोड़ा",
+      "dayDeleted": "डे डिलीट",
+      "cannotDeleteLastDay": "पिछले दिन नष्ट नहीं हो सका",
+      "saved": "रूट सफलतापूर्वक बचाया"
+    },
+    "poi": {
+      "loadError": "ब्याज की त्रुटि लोडिंग अंक",
+      "updateSuccess": "सफलतापूर्वक अद्यतन ब्याज के बिंदु",
+      "createSuccess": "सफलतापूर्वक बनाई गई ब्याज का बिंदु",
+      "createSuccessPartner": "सफल रूप से बनाई गई ब्याज - साथी बिंदु के रूप में चिह्नित",
+      "saveError": "बचत",
+      "deleteSuccess": "ब्याज की अंक सफलतापूर्वक हटा दिया गया",
+      "deleteError": "त्रुटि हटाने",
+      "toggleSuccess": "पॉइंट ऑफ ब्याज {status} सफलतापूर्वक",
+      "toggleError": "त्रुटि संपादन",
+      "activated": "सक्रिय",
+      "deactivated": "विकलांग"
+    },
+    "form": {
+      "validationError": "जारी रखने से पहले त्रुटियों को ठीक करें",
+      "submitError": "प्रस्तुत करते समय त्रुटि हुई",
+      "loadError": "डेटा लोड करने में त्रुटि"
+    },
+    "share": {
+      "loadError": "त्रुटि लोडिंग शेयर",
+      "userNotFound": "इस ईमेल के साथ कोई उपयोगकर्ता नहीं मिला",
+      "alreadyShared": "इस उपयोगकर्ता के पास पहले से ही इस मार्ग तक पहुंच है",
+      "success": "रूट मोड {mode} में {email} के साथ साझा",
+      "editMode": "संशोधन",
+      "viewMode": "पढ़ना",
+      "shareError": "त्रुटि साझा करना",
+      "removeSuccess": "नष्ट करना",
+      "removeError": "त्रुटि हटाने",
+      "updateSuccess": "अद्यतन अनुमतियां",
+      "updateError": "अद्यतन करने में त्रुटि"
+    },
+    "media": {
+      "uploadError": "त्रुटि अपलोड: {error}",
+      "deleteSuccess": "फ़ाइल हटा दिया",
+      "deleteError": "त्रुटि हटाने",
+      "uploadSuccess": "{count} {type} सफलतापूर्वक डाउनलोड",
+      "image": "छवि(s)",
+      "video": "वीडियो"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "त्रुटि लोडिंग सूचनाएं",
+        "preferencesUpdated": "अद्यतन प्राथमिकता",
+        "updateError": "अद्यतन करने में त्रुटि",
+        "allMarkedRead": "सभी सूचनाएं पढ़ने के रूप में चिह्नित",
+        "notificationDeleted": "अधिसूचना हटाई गई",
+        "deleteError": "त्रुटि हटाने"
+      },
+      "savedItineraries": {
+        "saved": "रूट सफलतापूर्वक बचाया",
+        "saveError": "मार्ग की बचत",
+        "loadError": "त्रुटि लोडिंग मार्ग",
+        "deleteConfirm": "क्या आप इस मार्ग को हटाना चाहते हैं?",
+        "deleted": "सफलतापूर्वक हटाए गए मार्ग",
+        "deleteError": "त्रुटि हटाने",
+        "updated": "सफलतापूर्वक अद्यतन",
+        "updateError": "अद्यतन करने में त्रुटि"
+      },
+      "favorites": {
+        "loadError": "पसंदीदा लोड करने में त्रुटि",
+        "loginRequired": "पसंदीदा जोड़ने के लिए आपको लॉग इन करना होगा",
+        "added": "रुचि के बिंदु पसंदीदा में जोड़ा!",
+        "addError": "पसंदीदा में जोड़ने में त्रुटि",
+        "removed": "पसंदीदा से निकाले गए ब्याज के बिंदु",
+        "removeError": "पसंदीदा हटाने में त्रुटि"
+      },
+      "poi": {
+        "draftSaved": "ड्राफ्ट सफलतापूर्वक बचाया!",
+        "submitted": "POI ने सफलतापूर्वक जमा किया!",
+        "draftUpdated": "मसौदा सफलतापूर्वक अद्यतन!",
+        "updated": "POI सफलतापूर्वक अद्यतन!"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "एक सत्यापन ईमेल भेजा गया था। अपने खाते को सक्रिय करने के लिए कृपया अपने पते की पुष्टि करें।.",
+      "methodNotAvailable": "यह कनेक्शन विधि अभी तक उपलब्ध नहीं है।.",
+      "passwordResetSoon": "पासवर्ड रीसेट जल्द ही उपलब्ध होगा।."
+    },
+    "touristPoints": {
+      "loadError": "ब्याज की त्रुटि लोडिंग अंक"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "रद्द करना",
+      "confirm": "आरक्षण की पुष्टि",
+      "confirming": "प्रगति में आरक्षण...",
+      "error": "त्रुटि",
+      "bookingConfirmedTitle": "आरक्षण की पुष्टि",
+      "selectDate": "चयन तिथि",
+      "arrivalDate": "आगमन की तिथि",
+      "departureDate": "प्रस्थान की तिथि",
+      "guests": "व्यक्तियों की संख्या",
+      "guestsCount": "{{count}} व्यक्ति(s)",
+      "clientInfo": "ग्राहक सूचना",
+      "fullName": "पूर्ण नाम",
+      "email": "ईमेल",
+      "phone": "फ़ोन",
+      "specialRequests": "विशेष अनुरोध",
+      "summary": "बुकिंग का सारांश",
+      "total": "कुल",
+      "more": "{{count}} अन्य"
+    },
+    "accommodation": {
+      "title": "बुक आवास {{name}}",
+      "selectRoom": "कक्ष चुनें",
+      "loadingRooms": "कमरे लोड हो रहा है...",
+      "noRooms": "उपलब्ध नहीं है",
+      "upToGuests": "{{count}} व्यक्तियों तक",
+      "perNightPrice": "प्रति रात {{price}}€",
+      "roomLabel": "चैंबर",
+      "stayDuration": "रहने की अवधि",
+      "nights": "{{count}} रात",
+      "specialPlaceholder": "विशेष अनुरोध.",
+      "errLoadRooms": "त्रुटि लोडिंग कक्ष",
+      "datesUnavailable": "यह तारीख इस कमरे के लिए उपलब्ध नहीं है",
+      "errAvailability": "उपलब्धता की जांच करने में त्रुटि",
+      "selectDatesErr": "कृपया आगमन और प्रस्थान तिथियों का चयन करें",
+      "selectRoomErr": "कृपया एक कमरा चुनें",
+      "bookingConfirmed": "आरक्षण की पुष्टि!",
+      "bookingError": "त्रुटि बुकिंग"
+    },
+    "activity": {
+      "title": "{{name}}",
+      "errLoadData": "गतिविधि डेटा लोड नहीं कर सकता",
+      "errLoadSlots": "उपलब्ध स्लॉट लोड नहीं कर सकते",
+      "requirementsNotMet": "नहीं",
+      "selectSlotErr": "कृपया एक समय स्लॉट चुनें",
+      "bookingSuccessDesc": "आपका आरक्षण सफलतापूर्वक पंजीकृत किया गया है",
+      "errCreate": "आरक्षण नहीं बना सकता",
+      "date": "गतिविधि की तिथि",
+      "availableSlots": "उपलब्ध",
+      "maxParticipants": "मैक्स {{count}} प्रतिभागियों",
+      "participants": "प्रतिभागियों की संख्या",
+      "adults": "वयस्क",
+      "children": "बच्चे",
+      "seniors": "वरिष्ठ",
+      "equipmentRental": "किराए के लिए उपकरण (वैकल्पिक)",
+      "requirements": "शर्ते और शर्ते",
+      "mandatory": "अनिवार्य",
+      "recommended": "अनुशंसित",
+      "equipment": "उपकरण",
+      "provided": "प्रदान करना",
+      "toBring": "प्रदान किया जाना",
+      "specialPlaceholder": "चिकित्सा जानकारी, एलर्जी, विशेष आवश्यकताओं ...",
+      "totalToPay": "कुल देय"
+    },
+    "restaurant": {
+      "unavailable": "उपलब्ध",
+      "noTable": "इस आला के लिए कोई तालिका उपलब्ध नहीं है",
+      "errCheck": "उपलब्धता की जांच नहीं कर सकता",
+      "fillRequired": "कृपया सभी आवश्यक फ़ील्ड पूरा करें",
+      "requestSentDesc": "आपका बुकिंग अनुरोध रेस्तरां में भेजा गया है",
+      "errCreate": "आरक्षण बनाने में त्रुटि",
+      "title": "{{name}} पर एक तालिका बुक करें",
+      "date": "आरक्षण की तिथि",
+      "time": "बुकिंग का समय",
+      "selectTime": "एक घंटे चुनें",
+      "checking": "उपलब्धता की जाँच...",
+      "tablesAvailable": "✓ इस आला के लिए उपलब्ध टेबल",
+      "yourInfo": "आपकी जानकारी",
+      "namePlaceholder": "जीन डुपॉन्ट",
+      "emailPlaceholder": "email.com",
+      "phonePlaceholder": "123456अगलेपिछले",
+      "preferences": "प्राथमिकता",
+      "tablePreferences": "तालिका प्राथमिकता",
+      "noPrefPlaceholder": "कोई विशेष वरीयता नहीं",
+      "noPref": "कोई वरीयता नहीं",
+      "terrace": "टेरेस",
+      "indoor": "आंतरिक",
+      "window": "खिड़की के पास",
+      "quiet": "शांत क्षेत्र",
+      "easyAccess": "आसान पहुँच",
+      "specialPlaceholder": "जन्मदिन, खाद्य एलर्जी, बेबी उच्च कुर्सी ...",
+      "summary": "अपनी बुकिंग का सारांश",
+      "dateLabel": "तारीख",
+      "timeLabel": "समय",
+      "restaurantLabel": "रेस्तरां",
+      "disclaimer": "अपने आरक्षण की पुष्टि करके, आप सहमत हैं कि रेस्तरां आपके अनुरोध की पुष्टि करने के लिए आपसे संपर्क करेगा।."
+    }
+  },
+  "widgets": {
+    "loadButton": "प्रदर्शन"
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "{{city}} द्वारा फोटो",
+    "destination": "गंतव्य",
+    "destinationCapitalized": "गंतव्य",
+    "inspireYourTrip": "अपनी यात्रा प्रेरणा",
+    "iconicView": "प्रतीकात्मक दृश्य याद नहीं किया जाना चाहिए",
+    "viewLarge": "बड़ा",
+    "playbackPaused": "पढ़ना",
+    "previousImage": "पिछली छवि",
+    "nextImage": "अगली छवि",
+    "goToImage": "छवि {{number}}",
+    "thumbnailAlt": "{{number}} लघु",
+    "travelInspiration": "यात्रा प्रेरणा",
+    "inspiringSnapshot": "प्रेरणादायक",
+    "generatingTitle": "अपनी यात्रा के दौरान...",
+    "generatingDescription": "एआई आपके कस्टम प्रोग्राम को तैयार करता है। अनुभाग धीरे-धीरे दिखाई देंगे।.",
+    "loadingErrorTitle": "समस्या",
+    "loadingErrorDescription": "मार्ग ठीक से लोड नहीं किया जा सकता है। यह एक अस्थायी समस्या के कारण हो सकता है।.",
+    "createNewItinerary": "एक नया मार्ग बनाएं",
+    "pdfExportSuccessTitle": "PDF सफलतापूर्वक निर्यात",
+    "pdfExportSuccessDescription": "आपकी यात्रा पीडीएफ प्रारूप में डाउनलोड की गई है।.",
+    "pdfExportErrorTitle": "निर्यात त्रुटि",
+    "pdfExportErrorDescription": "PDF निर्यात नहीं कर सकता। फिर से प्रयास करें।.",
+    "shareErrorTitle": "त्रुटि साझा करना",
+    "shareErrorDescription": "साझा नहीं कर सका। फिर से प्रयास करें।.",
+    "linkCopiedTitle": "लिंक कॉपी",
+    "linkCopiedDescription": "आपका आइटेनरी लिंक क्लिपबोर्ड पर कॉपी किया गया है।.",
+    "errorTitle": "त्रुटि",
+    "copyLinkError": "लिंक कॉपी नहीं कर सका।.",
+    "breakfast": "नाश्ता",
+    "lunch": "दोपहर का भोजन",
+    "dinner": "डिनर",
+    "atLocation": "to",
+    "soloTrip": "एकल यात्रा",
+    "coupleTrip": "युगल यात्रा",
+    "family": "परिवार",
+    "familyWithChildren": "{{count}} बच्चे के साथ परिवार",
+    "groupOfPeople": "{{count}} व्यक्तियों का समूह",
+    "preparingTitle": "अपने वर्तमान कार्यक्रम की तैयारी..",
+    "preparingDescription": "हमारे IA अपने कस्टम आइटेनरी डिजाइन करता है। कार्यक्रम प्रदर्शित किया जाता है क्योंकि यह चला जाता है - कुछ और क्षण।.",
+    "personalizedItineraryTitle": "आपकी व्यक्तिगत यात्रा",
+    "generatedWithPreferences": "यात्रा अपनी व्यक्तिगत वरीयताओं के साथ उत्पन्न",
+    "save": "सहेजें",
+    "newTrip": "नई यात्रा",
+    "exportPdf": "PDF निर्यात करें",
+    "share": "शेयर",
+    "copyLink": "लिंक कॉपी करें",
+    "loadingDestinationImages": "गंतव्य की छवियां लोड हो रही हैं ...",
+    "whyThisTripTitle": "क्यों यह कार्यक्रम आपको फिट बैठता है",
+    "matchPercentage": "{{score}}% पर्याप्तता",
+    "tripOverview": "यात्रा अवलोकन",
+    "dates": "तारीख",
+    "datesToDefine": "निर्धारित करने की तारीख",
+    "daysCount": "{{count}} दिन",
+    "group": "समूह",
+    "budget": "बजट",
+    "budgetPerDay": "{{amount}}€/day",
+    "estimatedTotal": "कुल अनुमानित: € {{amount}}",
+    "destinations": "गंतव्य",
+    "destinationLine": "{{city}}, {{country}} ({{duration}}j)",
+    "budgetBreakdownTitle": "बजट का आवंटन",
+    "categoryAccommodation": "आवास",
+    "categoryFood": "भोजन",
+    "categoryActivities": "गतिविधियाँ",
+    "categoryTransport": "परिवहन",
+    "categoryShopping": "खरीदारी",
+    "categoryMiscellaneous": "Miscellaneous",
+    "detailedItinerary": "विस्तृत मार्ग",
+    "dayLabel": "दिन {{number}}",
+    "dailyBudget": "दैनिक बजट",
+    "scheduledActivities": "कार्यक्रमबद्ध गतिविधियाँ",
+    "locationUnspecified": "स्थान निर्दिष्ट नहीं",
+    "difficultyEasy": "आसान",
+    "difficultyModerate": "मध्यम",
+    "difficultyHard": "कठिन",
+    "tipsWithCount": "सलाह ({{count}})",
+    "bookThisActivity": "इस गतिविधि को बुक करें",
+    "recommendedMeals": "अनुशंसित भोजन",
+    "book": "रिजर्व",
+    "transport": "परिवहन",
+    "estimatedWalkingDistance": "अनुमानित पैदल दूरी",
+    "generatingDayByDay": "आज तक मार्ग का निर्माण ...",
+    "generatingDayByDayDescription": "एआई सभी गतिविधियों के साथ अपना कस्टम प्रोग्राम बनाता है",
+    "daysWillAppear": "आपकी यात्रा के दिन धीरे-धीरे टंकण प्रभाव के साथ ऊपर दिखाई देंगे।.",
+    "dayByDayProgram": "कार्यक्रम दिन के अनुसार अपनी वरीयताओं को अनुकूलित",
+    "generationImproving": "सुधार के तहत जनरेशन",
+    "generationImprovingDescription": "मिनट प्रति मिनट की गतिविधियों के साथ विस्तृत यात्रा जल्द ही उपलब्ध होगी। पल के लिए, आप ऊपर अपनी यात्रा का सारांश देख सकते हैं।.",
+    "additionalInformation": "अधिक जानकारी",
+    "enrichedContentPlaceholder": "इस जानकारी को जल्द ही प्रदर्शित किया जाएगा जब तक itinerary में समृद्ध सामग्री शामिल है।.",
+    "personalizedRecommendations": "अनुकूलित सिफारिशें",
+    "specialtiesToDiscover": "विशेषण",
+    "giftIdeas": "स्मारिका विचार",
+    "packingList": "यात्रा सूची",
+    "culturalTips": "सांस्कृतिक परिषद",
+    "bestPeriods": "सर्वोत्तम अवधि",
+    "localEvents": "स्थानीय कार्यक्रम",
+    "transportTips": "परिवहन सलाह",
+    "safetyTips": "सुरक्षा परिषद",
+    "budgetDistribution": "बजट वितरण",
+    "similarDestinations": "इसी तरह के गंतव्य",
+    "practicalInformation": "व्यावहारिक जानकारी",
+    "visaAndDocuments": "वीज़ा और दस्तावेज",
+    "currency": "मुद्रा",
+    "languages": "भाषा",
+    "climate": "जलवायु",
+    "emergencies": "आपातकालीन",
+    "health": "स्वास्थ्य",
+    "localCustoms": "स्थानीय सीमा",
+    "customize": "अनुकूलित",
+    "loginToEdit": "संपादित करें"
+  },
+  "editor": {
+    "editActivity": "गतिविधि संपादित करें",
+    "deleteActivity": "गतिविधि को हटा दें",
+    "locationUnspecified": "स्थान निर्दिष्ट नहीं",
+    "toastActivityUpdated": "अद्यतन गतिविधि",
+    "editActivityTitle": "गतिविधि संपादित करें",
+    "title": "शीर्षक",
+    "location": "स्थान",
+    "description": "विवरण",
+    "startTime": "प्रारंभ समय",
+    "endTime": "अंत समय",
+    "cost": "लागत (€)",
+    "duration": "अवधि",
+    "category": "श्रेणी",
+    "difficulty": "कठिनाई",
+    "difficultyEasy": "आसान",
+    "difficultyModerate": "मध्यम",
+    "difficultyHard": "कठिन",
+    "cancel": "रद्द करना",
+    "save": "सहेजें",
+    "dayN": "दिन {{n}}",
+    "moveDayUp": "दिन उठो",
+    "moveDayDown": "दिन बिताना",
+    "editDay": "दिन",
+    "deleteDay": "दिन",
+    "toastDayUpdated": "अद्यतन",
+    "editDayN": "{{n}} दिवस",
+    "destination": "गंतव्य",
+    "theme": "विषय",
+    "toastActivityAdded": "गतिविधि जोड़ा",
+    "addActivity": "गतिविधि जोड़ें",
+    "add": "जोड़ें",
+    "toastActivityMoved": "गतिविधि दूसरे दिन चली गई",
+    "toastActivitiesReordered": "गतिविधियों का अद्यतन एजेंडा",
+    "toastDayAdded": "दिन जोड़ा",
+    "toastCannotDeleteLastDay": "पिछले दिन नष्ट नहीं हो सका",
+    "toastDayDeleted": "डे डिलीट",
+    "toastActivityDeleted": "गतिविधि हटा दी",
+    "toastItinerarySaved": "पंजीकृत मार्ग",
+    "subtitle": "अपने कार्यक्रम को अनुकूलित करें - गतिविधियों को फिर से व्यवस्थित करने, संपादित करने या हटाने के लिए खींचें और छोड़ दें।.",
+    "addDay": "एक दिन जोड़ें",
+    "close": "बंद",
+    "dropActivitiesHint": "यहां मौजूद गतिविधियाँ या एक नया जोड़ें"
   }
 }

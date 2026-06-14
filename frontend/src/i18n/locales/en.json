@@ -7,6 +7,7 @@
     "partnerSpace": "Partner Space",
     "administration": "Administration",
     "myProfile": "My Profile",
+    "notifications": "Notifications",
     "logout": "Logout",
     "login": "Login"
   },
@@ -32,6 +33,17 @@
     "statsDreams": "Dreams fulfilled",
     "liveInspiration": "Live inspiration",
     "adventureFound": "Adventure found!",
+    "testimonialsTitle": "They traveled with us",
+    "testimonialsSubtitle": "Reviews from our community of travelers",
+    "captionHero": "Your next adventure",
+    "captionBeach": "Beach getaway",
+    "captionMountain": "Mountain adventures",
+    "captionCity": "City breaks",
+    "captionCultural": "Cultural immersion",
+    "goToImage": "Go to image {{index}}",
+    "searchDestination": "Where are you going?",
+    "searchCta": "Search",
+    "openBookingCenter": "Open the booking center",
     "howItWorksTitle": "How does it work?",
     "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
     "howStep1Title": "Get inspired",
@@ -79,6 +91,10 @@
     "wizard": {
       "title": "Plan your trip",
       "stepOf": "Step {{current}} of {{total}}",
+      "autosaved": "Progress saved",
+      "estimatedTime": "~3 min",
+      "skipStep": "Skip this step",
+      "generateNow": "Generate now",
       "previous": "Previous",
       "next": "Next",
       "generating": "Generating...",
@@ -112,6 +128,7 @@
     },
     "destinationStep": {
       "selectCountry": "Select a country",
+      "geocodeFailed": "We couldn't determine the city for this point. Pick another location or enter the city manually.",
       "selectCity": "Select a city",
       "numberOfDays": "Number of days",
       "exactDates": "Exact dates",
@@ -133,6 +150,7 @@
       "startDate": "Start date",
       "endDate": "End date",
       "chooseOnMap": "Choose on map",
+      "chooseOnMapHint": "Opens an interactive map to pinpoint your destination and fetch its coordinates.",
       "addFirstDestination": "Add a destination first",
       "selectOnMap": "Select your destination on the map",
       "mapDescription": "Select a destination by clicking on the map or searching for an address",
@@ -146,6 +164,7 @@
       "title": "Travel Companions",
       "description": "Specify the composition of your travel group",
       "travelerType": "Traveler Type",
+      "singleChoiceHint": "Choose a single type",
       "subtype": "Subtype",
       "chooseSubtype": "Choose a subtype (optional)",
       "groupSize": "Group Size",
@@ -159,6 +178,7 @@
       "summary": "Summary",
       "impactOnRecommendations": "Impact on your recommendations:",
       "maxLevel": "Max level",
+      "maxLevelTooltip": "The maximum access/physical difficulty level of the places recommended for this group.",
       "veryEasy": "Very easy",
       "easy": "Easy",
       "moderate": "Moderate",
@@ -216,6 +236,7 @@
       "description": "Choose the type of accommodation and amenities that matter to you",
       "loading": "Loading...",
       "accommodationType": "Accommodation Type",
+      "typeRequired": "Select at least one accommodation type to continue.",
       "amenities": "Services and Amenities",
       "location": "Preferred Location",
       "accessibility": "Accessibility",
@@ -625,13 +646,101 @@
           "veryStrong": "Very strong"
         }
       }
+    },
+    "emailNotConfirmed": "Please check your email and click the confirmation link to activate your account",
+    "invalidCredentials": "Incorrect email address or password",
+    "forgotPassword": {
+      "link": "Forgot your password?",
+      "title": "Reset Password",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "sendButton": "Send the link",
+      "sending": "Sending...",
+      "successTitle": "Email sent",
+      "successDescription": "If your email address is associated with an account, you will receive a reset link.",
+      "emailSent": "Check your email inbox (and your spam folder) for the reset link.",
+      "emailSentMessage": "If your email address is on file in our system, you will receive a password reset link."
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. All rights reserved.",
     "becomePartner": "Become a partner",
     "madeWith": "Made with",
-    "by": "by"
+    "by": "by",
+    "tagline": "Travel inspiration, planning and booking, powered by AI.",
+    "discover": "Discover",
+    "company": "Company",
+    "legal": "Legal",
+    "contact": "Contact",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "rights": "All rights reserved."
+  },
+  "widgets": {
+    "loadButton": "Show"
+  },
+  "booking": {
+    "title": "Booking center",
+    "subtitle": "Search and book your hotels, flights, transfers and activities",
+    "info": "No more automatic requests! You now control when to run searches.",
+    "tabs": {
+      "hotels": "Hotels",
+      "flights": "Flights",
+      "transfers": "Transfers",
+      "restaurants": "Restaurants",
+      "activities": "Activities"
+    },
+    "searchHotel": "Search for a hotel",
+    "searchFlight": "Search for a flight",
+    "searchTransfer": "Search for a transfer",
+    "searchActivity": "Search for an activity",
+    "destination": "Destination",
+    "selectDestination": "Select a destination...",
+    "selectOriginAirport": "Select a departure airport...",
+    "selectDestAirport": "Select an arrival airport...",
+    "guests": "Number of guests",
+    "passengers": "Number of passengers",
+    "participants": "Number of participants",
+    "checkIn": "Check-in date",
+    "checkOut": "Check-out date",
+    "departDate": "Departure date",
+    "returnDate": "Return date (optional)",
+    "origin": "Departure",
+    "date": "Date",
+    "time": "Time",
+    "searching": "Searching...",
+    "searchHotelsBtn": "Search hotels",
+    "searchFlightsBtn": "Search flights",
+    "searchActivitiesBtn": "Search activities",
+    "searchTransfersBtnSoon": "Search transfers (coming soon)",
+    "transfersSoon": "Transfer search will be available soon",
+    "transferFromPlaceholder": "Airport, Hotel...",
+    "transferToPlaceholder": "Hotel, City center...",
+    "emptyTitle": "Enter your search criteria above",
+    "emptyDesc": "Results will appear here after the search",
+    "moreAmenities": "+{{count}} more",
+    "amenitiesUnspecified": "Amenities not specified",
+    "fromPrice": "From",
+    "perNight": "/night",
+    "priceUnavailable": "Price unavailable",
+    "details": "Details",
+    "book": "Book",
+    "stops": "{{count}} stop(s)",
+    "restaurantsIncludedTitle": "Restaurants are already included in your itinerary",
+    "restaurantsIncludedDesc": "Check the \"Detailed itinerary\" section above to see restaurant recommendations",
+    "toastRequiredTitle": "Required fields",
+    "toastRequiredDesc": "Please fill in all search fields",
+    "toastInvalidCodeTitle": "Invalid destination code",
+    "toastInvalidCodeDesc": "Select a HotelBeds code (e.g. PAR, BCN, ROM) via the autocomplete.",
+    "toastInvalidDatesTitle": "Invalid dates",
+    "toastInvalidDatesDesc": "The check-out date must be at least 1 day after the check-in date",
+    "toastDoneTitle": "Search complete",
+    "toastErrorTitle": "Search error",
+    "toastHotelsFound": "{{count}} hotel(s) found",
+    "toastFlightsFound": "{{count}} flight(s) found",
+    "toastActivitiesFound": "{{count}} activity(ies) found",
+    "toastHotelsError": "Unable to search hotels. Check the destination code.",
+    "toastFlightsError": "Unable to search flights. Check the IATA codes.",
+    "toastActivitiesError": "Unable to search activities. Check the destination code."
   },
   "common": {
     "loading": "Loading...",
@@ -904,23 +1013,6 @@
       "title": "Dashboard",
       "subtitle": "Manage your points of interest and track your performance",
       "overview": "Overview",
-      "analytics": "Analytics",
-      "pois": "My POIs",
-      "bookings": "Bookings",
-      "finances": "Finances",
-      "subscription": "Subscription",
-      "settings": "Settings",
-      "notifications": "Notifications",
-      "notificationsShort": "Notifs",
-      "stats": {
-        "totalPois": "Points of Interest",
-        "totalActive": "Total active",
-        "viewsThisMonth": "Views this month",
-        "totalBookings": "Total bookings",
-        "totalRevenue": "Total revenue",
-        "averageRating": "Average rating",
-        "pendingPayments": "Pending payments"
-      },
       "analytics": {
         "realTimeMetrics": "Real-time performance metrics",
         "totalViews": "Total views",
@@ -1025,6 +1117,33 @@
           "restaurantTitle": "Restaurant management – {name}"
         }
       },
+      "bookings": {
+        "loading": "Loading booking data...",
+        "loadError": "Error loading booking data",
+        "stats": {
+          "totalBookings": "Total Bookings",
+          "totalRevenue": "Revenue",
+          "commissions": "Commissions",
+          "pending": "Pending"
+        },
+        "history": {
+          "title": "Booking History",
+          "reference": "Reference",
+          "amount": "Amount",
+          "commission": "Commission",
+          "date": "Date",
+          "customer": "Customer",
+          "poi": "Point of interest",
+          "empty": "No bookings yet",
+          "emptyDescription": "Bookings for your points of interest will appear here"
+        },
+        "status": {
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "cancelled": "Cancelled",
+          "completed": "Completed"
+        }
+      },
       "finances": {
         "stats": {
           "availableBalance": "Available balance",
@@ -1089,34 +1208,6 @@
           "loadError": "Error loading financial data"
         }
       },
-      "charts": {
-        "viewsOverTime": "Views Over Time",
-        "viewsDescription": "Views and conversion rate over 30 days",
-        "bookingsRevenue": "Bookings and Revenue",
-        "revenueDescription": "Weekly financial performance",
-        "performance": "Performance",
-        "topPerformer": "Top performer"
-      },
-      "earnings": {
-        "title": "Revenue History",
-        "description": "Details of your earnings per booking",
-        "amount": "Amount",
-        "commission": "Commission",
-        "bookingDate": "Booking date",
-        "paymentStatus": "Payment status",
-        "pending": "Pending",
-        "paid": "Paid",
-        "cancelled": "Cancelled"
-      },
-      "notificationPanel": {
-        "title": "Recent Notifications",
-        "description": "Stay informed about activity on your points of interest",
-        "markAsRead": "Mark as read",
-        "noNotifications": "No notifications",
-        "updateError": "Error updating notification"
-      },
-      "export": "Export data",
-      "loadingError": "Error loading dashboard",
       "subscription": {
         "loading": "Loading subscription information...",
         "loadError": "Error loading subscription information",
@@ -1199,33 +1290,7 @@
           }
         }
       },
-      "bookings": {
-        "loading": "Loading booking data...",
-        "loadError": "Error loading booking data",
-        "stats": {
-          "totalBookings": "Total Bookings",
-          "totalRevenue": "Revenue",
-          "commissions": "Commissions",
-          "pending": "Pending"
-        },
-        "history": {
-          "title": "Booking History",
-          "reference": "Reference",
-          "amount": "Amount",
-          "commission": "Commission",
-          "date": "Date",
-          "customer": "Customer",
-          "poi": "Point of interest",
-          "empty": "No bookings yet",
-          "emptyDescription": "Bookings for your points of interest will appear here"
-        },
-        "status": {
-          "pending": "Pending",
-          "confirmed": "Confirmed",
-          "cancelled": "Cancelled",
-          "completed": "Completed"
-        }
-      },
+      "settings": "Settings",
       "notifications": {
         "title": "Notifications",
         "markAllRead": "Mark all as read",
@@ -1234,7 +1299,690 @@
         "loadError": "Unable to load notifications",
         "markAllSuccess": "All notifications marked as read",
         "reference": "Ref: {reference}"
+      },
+      "notificationsShort": "Notifs",
+      "stats": {
+        "totalPois": "Points of Interest",
+        "totalActive": "Total active",
+        "viewsThisMonth": "Views this month",
+        "totalBookings": "Total bookings",
+        "totalRevenue": "Total revenue",
+        "averageRating": "Average rating",
+        "pendingPayments": "Pending payments"
+      },
+      "charts": {
+        "viewsOverTime": "Views Over Time",
+        "viewsDescription": "Views and conversion rate over 30 days",
+        "bookingsRevenue": "Bookings and Revenue",
+        "revenueDescription": "Weekly financial performance",
+        "performance": "Performance",
+        "topPerformer": "Top performer"
+      },
+      "earnings": {
+        "title": "Revenue History",
+        "description": "Details of your earnings per booking",
+        "amount": "Amount",
+        "commission": "Commission",
+        "bookingDate": "Booking date",
+        "paymentStatus": "Payment status",
+        "pending": "Pending",
+        "paid": "Paid",
+        "cancelled": "Cancelled"
+      },
+      "notificationPanel": {
+        "title": "Recent Notifications",
+        "description": "Stay informed about activity on your points of interest",
+        "markAsRead": "Mark as read",
+        "noNotifications": "No notifications",
+        "updateError": "Error updating notification"
+      },
+      "export": "Export data",
+      "loadingError": "Error loading dashboard",
+      "analyticsTab": "Analytics",
+      "poisTab": "My POIs",
+      "bookingsTab": "Reservations",
+      "financesTab": "Finance",
+      "subscriptionTab": "Subscription",
+      "notificationsTab": "Notifications"
+    }
+  },
+  "savedItineraries": {
+    "pageTitle": "My saved routes",
+    "pageDescription": "Find all your saved and planned itineraries created with our AI. Manage, edit, and share your travel plans.",
+    "subtitle": "See all your planned trips and organize your future adventures.",
+    "searchPlaceholder": "Search for a route...",
+    "unauthorized": "Unauthorized access",
+    "unauthorizedMessage": "You must be logged in to access your saved routes.",
+    "stats": {
+      "saved": "Saved routes",
+      "favorites": "Favorites",
+      "travelDays": "Travel days"
+    },
+    "empty": {
+      "title": "No saved routes",
+      "noResults": "No routes found",
+      "searchMessage": "Try using different search keywords.",
+      "createMessage": "Start by creating your first travel itinerary!"
+    },
+    "actions": {
+      "view": "See",
+      "viewDetails": "View details",
+      "export": "PDF",
+      "exportPDF": "Export as PDF",
+      "share": "Share",
+      "delete": "Delete",
+      "favorite": "Favorite",
+      "create": "Create an itinerary"
+    },
+    "badges": {
+      "days": "days"
+    },
+    "dialog": {
+      "deleteTitle": "Delete the route",
+      "deleteDescription": "Are you sure you want to delete",
+      "deleteWarning": "This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "toast": {
+      "pdfExported": "PDF exported!",
+      "pdfExportedDesc": "Your itinerary has been successfully downloaded.",
+      "pdfError": "Error",
+      "pdfErrorDesc": "Unable to export the PDF",
+      "shareError": "Error",
+      "shareErrorDesc": "Unable to share the route",
+      "deleted": "Route removed",
+      "deleteError": "Error during deletion"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "My Discoveries",
+    "pageDescription": "Manage your favorite places and personalized itineraries.",
+    "subtitle": "Find your favorite places and personalized itineraries",
+    "loginMessage": "Sign in to view your favorites and itineraries.",
+    "tabs": {
+      "favorites": "Favorites",
+      "itineraries": "My Itineraries",
+      "community": "Community"
+    },
+    "favorites": {
+      "empty": "No favorites",
+      "emptyMessage": "Start by adding places to your favorites from the map",
+      "exploreMap": "Explore the map"
+    },
+    "itineraries": {
+      "empty": "No itinerary",
+      "emptyMessage": "Create your first itinerary by selecting points of interest",
+      "createNew": "Create an itinerary",
+      "places": "places"
+    },
+    "community": {
+      "empty": "No public routes",
+      "emptyMessage": "The community hasn't shared any routes yet",
+      "title": "Community Routes",
+      "description": "Check out the routes shared by other users",
+      "public": "Public",
+      "by": "By",
+      "defaultUsername": "Tasarini Traveler"
+    },
+    "stats": {
+      "distance": "Distance"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Moderate",
+      "hard": "Difficult"
+    },
+    "actions": {
+      "view": "View on map",
+      "share": "Share",
+      "edit": "Edit",
+      "delete": "Delete",
+      "makePublic": "Make public",
+      "makePrivate": "Make private"
+    },
+    "toast": {
+      "deleted": "Route removed",
+      "deleteError": "Error during deletion",
+      "madePublic": "made public",
+      "madePrivate": "set to private",
+      "updateError": "Error during update",
+      "linkCopied": "Link copied to the clipboard!",
+      "copyError": "Unable to copy the link",
+      "loadError": "Error loading routes",
+      "loadPublicError": "Error loading public routes"
+    },
+    "confirmDelete": "Are you sure you want to delete this route?"
+  },
+  "verifyEmailRequired": {
+    "title": "Check your email",
+    "subtitle": "One last step before we begin",
+    "sentTo": "A verification email has been sent to:",
+    "limitedAccess": {
+      "title": "Restricted access",
+      "description": "You need to check your email to access all of Tasarini's features."
+    },
+    "steps": {
+      "title": "Steps to follow:",
+      "step1": "Open your email",
+      "step2": "Search for the email from",
+      "step2Bold": "Tasarini",
+      "step3": "Click the verification link",
+      "step4": "Come back here and refresh the page"
+    },
+    "notReceived": {
+      "title": "Didn't receive the email?",
+      "checkSpam": "Check your spam or junk mail folder",
+      "checkEmail": "Make sure the email address is correct",
+      "waitTime": "Please wait a few minutes (the email may take a while to arrive)"
+    },
+    "buttons": {
+      "resend": "Resend the verification email",
+      "sending": "Sending...",
+      "sent": "Email sent!",
+      "signOut": "Sign out and use a different account"
+    },
+    "footer": {
+      "validity": "The verification link is valid for",
+      "hours": "24 hours"
+    },
+    "toast": {
+      "success": "Verification email resent!",
+      "error": "Error sending the email"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "Partner Account Blocked",
+    "description": "Your partner application has been rejected or your account has been suspended. If you believe this is a mistake, you can contact us using the form below.",
+    "reasons": {
+      "title": "Possible reasons:",
+      "incorrect": "Incorrect or incomplete information",
+      "terms": "Violation of the Terms of Use",
+      "suspicious": "Suspicious activity detected",
+      "criteria": "Partnership criteria not met"
+    },
+    "contact": {
+      "title": "Contact the Administration",
+      "subtitle": "Please explain your situation, and we will review your request.",
+      "nameLabel": "Full name",
+      "namePlaceholder": "Your full name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "Subject of your request",
+      "subjectDefault": "Request for a review of my partner account",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Please describe your situation and explain why your account should be reviewed...",
+      "submitButton": "Submit my request",
+      "submitting": "Sending...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "Response time:",
+      "responseTimeText": "We strive to respond within 48–72 hours.",
+      "urgentQuestion": "For urgent inquiries, you can also contact us at:",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "Your message has been sent. We will respond as soon as possible.",
+      "error": "An error occurred while sending the message. Please try again."
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "Verification in progress...",
+      "success": "Email verified!",
+      "error": "Validation error"
+    },
+    "description": {
+      "loading": "Please wait while we verify your email address.",
+      "successPartner": "Your partner account has been successfully activated.",
+      "successUser": "Your account has been successfully activated.",
+      "error": "We were unable to verify your email address."
+    },
+    "messages": {
+      "tokenMissing": "Verification token missing.",
+      "success": "Your email address has been successfully verified!",
+      "verificationError": "Invalid or expired token.",
+      "autoLoginInfo": "We're trying to log you in automatically. If that doesn't work, use the button below.",
+      "manualLoginInfo": "Please log in to continue to the next step.",
+      "autoLoginFailed": "Automatic login failed. Please use the button above to continue.",
+      "waiting": "It should only take a few seconds..."
+    },
+    "partner": {
+      "nextStep": "Next step: Complete your partner profile",
+      "continueButton": "Continue to my partner profile",
+      "continueButtonLoading": "Logging in..."
+    },
+    "user": {
+      "continueButton": "Go to my profile",
+      "continueButtonLoading": "Logging in..."
+    },
+    "buttons": {
+      "resend": "Resend the verification link",
+      "backToLogin": "Back to login",
+      "requestNewLink": "Resend the verification email"
+    },
+    "error": {
+      "title": "What should I do?",
+      "checkLink": "Make sure the link is complete",
+      "expired": "The link expires after 24 hours",
+      "requestNew": "Request a new verification link"
+    },
+    "toast": {
+      "success": "Email successfully verified!",
+      "error": "Validation error",
+      "verifying": "Email verified, logging in...",
+      "loginSuccess": "Login successful, redirecting...",
+      "loginError": "We were unable to log you in automatically. Please log in to continue.",
+      "resendSuccess": "A new verification email has been sent.",
+      "resendError": "We were unable to send the link. Please sign in to try again.",
+      "resendAuthRequired": "Please log in to resend the verification link.",
+      "completeError": "Unable to complete the verification."
+    }
+  },
+  "theme": {
+    "toggleLabel": "Change the theme",
+    "light": "Clear",
+    "dark": "Gloomy",
+    "system": "System"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "delete": "Delete",
+    "empty": "No notification",
+    "timePrefix": "In",
+    "sent": "Sent",
+    "settings": {
+      "title": "Notification Preferences",
+      "description": "Set up your notifications for activities and trips",
+      "loading": "Loading preferences...",
+      "types": {
+        "title": "Types of notifications",
+        "activityReminders": "Activity Reminders",
+        "activityRemindersDesc": "Get reminders before your scheduled activities",
+        "tripStart": "Start of the trip",
+        "tripStartDesc": "Notification at the start of your trip",
+        "tripEnd": "End of the trip",
+        "tripEndDesc": "Notification at the end of your trip"
+      },
+      "timing": {
+        "title": "Booster shot schedule",
+        "before": "Reminder before the activity",
+        "1h": "1 hour ago",
+        "2h": "2 hours before",
+        "6h": "6 hours ago",
+        "12h": "12 hours before",
+        "24h": "24 hours in advance",
+        "48h": "48 hours before"
+      },
+      "channels": {
+        "title": "Notification channels",
+        "inApp": "In-app notifications",
+        "inAppDesc": "View notifications in the app",
+        "email": "Email notifications",
+        "emailDesc": "Receive reminder emails (coming soon)"
       }
     }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "PDF successfully exported",
+      "pdfExportSuccessDesc": "Your itinerary has been downloaded as a PDF.",
+      "pdfExportError": "Export error",
+      "pdfExportErrorDesc": "Unable to export the PDF. Please try again.",
+      "shareError": "Sharing error",
+      "shareErrorDesc": "Unable to share. Please try again.",
+      "linkCopied": "Link copied",
+      "linkCopiedDesc": "The link to your itinerary has been copied to the clipboard.",
+      "copyError": "Error",
+      "copyErrorDesc": "Unable to copy the link.",
+      "activityUpdated": "Activity successfully updated",
+      "dayUpdated": "Day successfully updated",
+      "activityAdded": "Activity added successfully",
+      "activityMoved": "Event rescheduled for another day",
+      "orderUpdated": "Updated schedule of activities",
+      "dayAdded": "New day added",
+      "dayDeleted": "Day removed",
+      "cannotDeleteLastDay": "Unable to delete the last day",
+      "saved": "Route saved successfully"
+    },
+    "poi": {
+      "loadError": "Error loading points of interest",
+      "updateSuccess": "Point of interest successfully updated",
+      "createSuccess": "Point of interest successfully created",
+      "createSuccessPartner": "Point of interest successfully created - Marked as a partner location",
+      "saveError": "Error while saving",
+      "deleteSuccess": "Point of interest successfully deleted",
+      "deleteError": "Error during deletion",
+      "toggleSuccess": "Point of interest {status} successfully",
+      "toggleError": "Error while editing",
+      "activated": "enabled",
+      "deactivated": "disabled"
+    },
+    "form": {
+      "validationError": "Please correct the errors before continuing",
+      "submitError": "An error occurred during submission",
+      "loadError": "Error loading data"
+    },
+    "share": {
+      "loadError": "Error loading shares",
+      "userNotFound": "No user found with this email address",
+      "alreadyShared": "This user already has access to this route",
+      "success": "Itinerary shared with {email} in {mode} mode",
+      "editMode": "amendment",
+      "viewMode": "reading",
+      "shareError": "Error while sharing",
+      "removeSuccess": "Post deleted",
+      "removeError": "Error during deletion",
+      "updateSuccess": "Permissions updated",
+      "updateError": "Error during update"
+    },
+    "media": {
+      "uploadError": "Error during upload: {error}",
+      "deleteSuccess": "File deleted",
+      "deleteError": "Error during deletion",
+      "uploadSuccess": "{count} {type} successfully uploaded",
+      "image": "image(s)",
+      "video": "video(s)"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "Error loading notifications",
+        "preferencesUpdated": "Preferences updated",
+        "updateError": "Error during the update",
+        "allMarkedRead": "All notifications marked as read",
+        "notificationDeleted": "Notification deleted",
+        "deleteError": "Error during deletion"
+      },
+      "savedItineraries": {
+        "saved": "Route saved successfully",
+        "saveError": "Error saving the route",
+        "loadError": "Error loading routes",
+        "deleteConfirm": "Are you sure you want to delete this route?",
+        "deleted": "Route successfully deleted",
+        "deleteError": "Error during deletion",
+        "updated": "Route successfully updated",
+        "updateError": "Error during update"
+      },
+      "favorites": {
+        "loadError": "Error loading bookmarks",
+        "loginRequired": "You must be logged in to add bookmarks",
+        "added": "Point of interest added to favorites!",
+        "addError": "Error adding to favorites",
+        "removed": "Point of interest removed from favorites",
+        "removeError": "Error deleting bookmarks"
+      },
+      "poi": {
+        "draftSaved": "Draft saved successfully!",
+        "submitted": "POI successfully submitted!",
+        "draftUpdated": "Draft successfully updated!",
+        "updated": "POI successfully updated!"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "A verification email has been sent. Please confirm your email address to activate your account.",
+      "methodNotAvailable": "This connection method is not yet available.",
+      "passwordResetSoon": "Password reset will be available soon."
+    },
+    "touristPoints": {
+      "loadError": "Error loading points of interest"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "Cancel",
+      "confirm": "Confirm reservation",
+      "confirming": "Reservation in progress...",
+      "error": "Error",
+      "bookingConfirmedTitle": "Reservation confirmed",
+      "selectDate": "Select a date",
+      "arrivalDate": "Check-in date",
+      "departureDate": "Departure date",
+      "guests": "Number of people",
+      "guestsCount": "{{count}} person(s)",
+      "clientInfo": "Customer Information",
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "specialRequests": "Special requests",
+      "summary": "Booking Summary",
+      "total": "Total",
+      "more": "+{{count}} and others"
+    },
+    "accommodation": {
+      "title": "Book accommodations - {{name}}",
+      "selectRoom": "Select a room",
+      "loadingRooms": "Loading rooms...",
+      "noRooms": "No rooms available",
+      "upToGuests": "Up to {{count}} ",
+      "perNightPrice": "{{price}}€ per night",
+      "roomLabel": "Room",
+      "stayDuration": "Length of stay",
+      "nights": "{{count}} night(s)",
+      "specialPlaceholder": "Any special requests...",
+      "errLoadRooms": "Error loading rooms",
+      "datesUnavailable": "These dates are not available for this room",
+      "errAvailability": "Error checking availability",
+      "selectDatesErr": "Please select your check-in and check-out dates",
+      "selectRoomErr": "Please select a room",
+      "bookingConfirmed": "Reservation confirmed!",
+      "bookingError": "Error during booking"
+    },
+    "activity": {
+      "title": "Book {{name}}",
+      "errLoadData": "Unable to load activity data",
+      "errLoadSlots": "Unable to load available time slots",
+      "requirementsNotMet": "Conditions not met",
+      "selectSlotErr": "Please select a time slot",
+      "bookingSuccessDesc": "Your reservation has been successfully processed",
+      "errCreate": "Unable to create the reservation",
+      "date": "Date of the activity",
+      "availableSlots": "Available time slots",
+      "maxParticipants": "Maximum number of participants {{count}} ",
+      "participants": "Number of participants",
+      "adults": "Adults",
+      "children": "Children",
+      "seniors": "Seniors",
+      "equipmentRental": "Rental equipment (optional)",
+      "requirements": "Terms and Conditions",
+      "mandatory": "Required",
+      "recommended": "Recommended",
+      "equipment": "Facilities",
+      "provided": "Included",
+      "toBring": "Please bring",
+      "specialPlaceholder": "Medical information, allergies, special needs...",
+      "totalToPay": "Total due"
+    },
+    "restaurant": {
+      "unavailable": "Out of stock",
+      "noTable": "No tables are available for this time slot",
+      "errCheck": "Unable to check availability",
+      "fillRequired": "Please fill in all required fields",
+      "requestSentDesc": "Your reservation request has been sent to the restaurant",
+      "errCreate": "Error creating the reservation",
+      "title": "Reserve a table at {{name}}",
+      "date": "Reservation Date",
+      "time": "Reservation time",
+      "selectTime": "Select a time",
+      "checking": "Checking availability...",
+      "tablesAvailable": "✓ Tables available for this time slot",
+      "yourInfo": "Your information",
+      "namePlaceholder": "Jean Dupont",
+      "emailPlaceholder": "jean.dupont@email.com",
+      "phonePlaceholder": "6-12-34-56-78",
+      "preferences": "Preferences",
+      "tablePreferences": "Table preferences",
+      "noPrefPlaceholder": "No particular preference",
+      "noPref": "No preference",
+      "terrace": "Terrace",
+      "indoor": "Interior",
+      "window": "Near a window",
+      "quiet": "Quiet area",
+      "easyAccess": "Easy access",
+      "specialPlaceholder": "Birthdays, food allergies, high chairs...",
+      "summary": "Summary of your reservation",
+      "dateLabel": "Date",
+      "timeLabel": "Time",
+      "restaurantLabel": "Restaurant",
+      "disclaimer": "By confirming your reservation, you agree that the restaurant may contact you to confirm your request."
+    }
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "Photo of {{city}}",
+    "destination": "destination",
+    "destinationCapitalized": "Destination",
+    "inspireYourTrip": "Inspire your trip",
+    "iconicView": "Iconic view not to be missed",
+    "viewLarge": "View larger",
+    "playbackPaused": "Playback paused",
+    "previousImage": "Previous image",
+    "nextImage": "Next image",
+    "goToImage": "Go to image {{number}}",
+    "thumbnailAlt": "Thumbnail {{number}}",
+    "travelInspiration": "Travel inspiration",
+    "inspiringSnapshot": "Inspiring snapshot",
+    "generatingTitle": "Generating your itinerary...",
+    "generatingDescription": "AI is preparing your personalized program. Sections will appear progressively.",
+    "loadingErrorTitle": "Loading problem",
+    "loadingErrorDescription": "The itinerary could not be loaded correctly. This may be due to a temporary issue.",
+    "createNewItinerary": "Create a new itinerary",
+    "pdfExportSuccessTitle": "PDF exported successfully",
+    "pdfExportSuccessDescription": "Your itinerary has been downloaded as a PDF.",
+    "pdfExportErrorTitle": "Export error",
+    "pdfExportErrorDescription": "Unable to export the PDF. Please try again.",
+    "shareErrorTitle": "Sharing error",
+    "shareErrorDescription": "Unable to share. Please try again.",
+    "linkCopiedTitle": "Link copied",
+    "linkCopiedDescription": "Your itinerary link has been copied to the clipboard.",
+    "errorTitle": "Error",
+    "copyLinkError": "Unable to copy the link.",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner",
+    "atLocation": "at",
+    "soloTrip": "Solo trip",
+    "coupleTrip": "Couple trip",
+    "family": "Family",
+    "familyWithChildren": "Family with {{count}} child(ren)",
+    "groupOfPeople": "Group of {{count}} people",
+    "preparingTitle": "Preparing your program…",
+    "preparingDescription": "Our AI is designing your tailor-made itinerary. The program appears as it is generated — just a few more moments.",
+    "personalizedItineraryTitle": "Your personalized itinerary",
+    "generatedWithPreferences": "Trip generated with your personal preferences",
+    "save": "Save",
+    "newTrip": "New trip",
+    "exportPdf": "Export PDF",
+    "share": "Share",
+    "copyLink": "Copy link",
+    "loadingDestinationImages": "Loading destination images...",
+    "whyThisTripTitle": "Why this program suits you",
+    "matchPercentage": "{{score}}% match",
+    "tripOverview": "Trip overview",
+    "dates": "Dates",
+    "datesToDefine": "Dates to be defined",
+    "daysCount": "{{count}} day(s)",
+    "group": "Group",
+    "budget": "Budget",
+    "budgetPerDay": "{{amount}}€/day",
+    "estimatedTotal": "Estimated total: {{amount}}€",
+    "destinations": "Destinations",
+    "destinationLine": "{{city}}, {{country}} ({{duration}}d)",
+    "budgetBreakdownTitle": "Budget breakdown",
+    "categoryAccommodation": "Accommodation",
+    "categoryFood": "Food",
+    "categoryActivities": "Activities",
+    "categoryTransport": "Transport",
+    "categoryShopping": "Shopping",
+    "categoryMiscellaneous": "Miscellaneous",
+    "detailedItinerary": "Detailed itinerary",
+    "dayLabel": "Day {{number}}",
+    "dailyBudget": "Daily budget",
+    "scheduledActivities": "Scheduled activities",
+    "locationUnspecified": "Location not specified",
+    "difficultyEasy": "Easy",
+    "difficultyModerate": "Moderate",
+    "difficultyHard": "Hard",
+    "tipsWithCount": "Tips ({{count}})",
+    "bookThisActivity": "Book this activity",
+    "recommendedMeals": "Recommended meals",
+    "book": "Book",
+    "transport": "Transport",
+    "estimatedWalkingDistance": "Estimated walking distance",
+    "generatingDayByDay": "Generating the day-by-day itinerary...",
+    "generatingDayByDayDescription": "AI is creating your personalized program with all the activities",
+    "daysWillAppear": "The days of your itinerary will appear progressively above with the typing effect...",
+    "dayByDayProgram": "Day-by-day program personalized to your preferences",
+    "generationImproving": "Generation being improved",
+    "generationImprovingDescription": "The detailed itinerary with minute-by-minute activities will be available soon. For now, you can see the summary of your trip above.",
+    "additionalInformation": "Additional information",
+    "enrichedContentPlaceholder": "This information will be displayed as soon as the itinerary includes enriched content.",
+    "personalizedRecommendations": "Personalized recommendations",
+    "specialtiesToDiscover": "Specialties to discover",
+    "giftIdeas": "Souvenir ideas",
+    "packingList": "Packing list",
+    "culturalTips": "Cultural tips",
+    "bestPeriods": "Best periods",
+    "localEvents": "Local events",
+    "transportTips": "Transport tips",
+    "safetyTips": "Safety tips",
+    "budgetDistribution": "Budget distribution",
+    "similarDestinations": "Similar destinations",
+    "practicalInformation": "Practical information",
+    "visaAndDocuments": "Visa & Documents",
+    "currency": "Currency",
+    "languages": "Languages",
+    "climate": "Climate",
+    "emergencies": "Emergencies",
+    "health": "Health",
+    "localCustoms": "Local customs",
+    "customize": "Customize",
+    "loginToEdit": "Sign in to edit"
+  },
+  "editor": {
+    "editActivity": "Edit activity",
+    "deleteActivity": "Delete activity",
+    "locationUnspecified": "Location not specified",
+    "toastActivityUpdated": "Activity updated",
+    "editActivityTitle": "Edit activity",
+    "title": "Title",
+    "location": "Location",
+    "description": "Description",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "cost": "Cost (€)",
+    "duration": "Duration",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "difficultyEasy": "Easy",
+    "difficultyModerate": "Moderate",
+    "difficultyHard": "Hard",
+    "cancel": "Cancel",
+    "save": "Save",
+    "dayN": "Day {{n}}",
+    "moveDayUp": "Move day up",
+    "moveDayDown": "Move day down",
+    "editDay": "Edit day",
+    "deleteDay": "Delete day",
+    "toastDayUpdated": "Day updated",
+    "editDayN": "Edit day {{n}}",
+    "destination": "Destination",
+    "theme": "Theme",
+    "toastActivityAdded": "Activity added",
+    "addActivity": "Add activity",
+    "add": "Add",
+    "toastActivityMoved": "Activity moved to another day",
+    "toastActivitiesReordered": "Activity order updated",
+    "toastDayAdded": "Day added",
+    "toastCannotDeleteLastDay": "Cannot delete the last day",
+    "toastDayDeleted": "Day deleted",
+    "toastActivityDeleted": "Activity deleted",
+    "toastItinerarySaved": "Itinerary saved",
+    "subtitle": "Customize your program — drag and drop to reorder activities, edit or delete.",
+    "addDay": "Add day",
+    "close": "Close",
+    "dropActivitiesHint": "Drop activities here or add a new one"
   }
 }

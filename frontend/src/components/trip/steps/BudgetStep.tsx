@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Wallet, DollarSign } from "lucide-react";
 import { TripFormData, Budget } from "@/types/trip";
 import { useBudgetSettings } from "@/hooks/useBudgetSettings";
+import { getLocalizedLabel, getLocalizedName, getLocalizedDescription } from "@/utils/multilingualHelpers";
 
 interface BudgetStepProps {
   data: Partial<TripFormData>;
@@ -18,8 +19,8 @@ interface BudgetStepProps {
 }
 
 export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
-  const { t } = useTranslation();
-  const { 
+  const { t, i18n } = useTranslation();
+  const {
     budgetLevels, 
     currencies, 
     flexibilityOptions, 
@@ -71,7 +72,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
 
   const getBudgetDescription = (levelCode: string) => {
     const level = budgetLevels.find(l => l.code === levelCode);
-    return level?.description_fr || '';
+    return getLocalizedDescription(level, i18n.language);
   };
 
   const getBudgetRange = (levelCode: string) => {
@@ -151,7 +152,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
               >
                 <span className="text-2xl">{level.icon_emoji}</span>
                 <div className="text-center">
-                  <div className="font-medium">{level.label_fr}</div>
+                  <div className="font-medium">{getLocalizedLabel(level, i18n.language)}</div>
                   <div className="text-xs text-muted-foreground">{getBudgetRange(level.code)}</div>
                 </div>
               </Button>
@@ -184,7 +185,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
                 <SelectContent>
                   {currencies.map((currency) => (
                     <SelectItem key={currency.code} value={currency.code}>
-                      {currency.name_fr} ({currency.symbol})
+                      {getLocalizedName(currency, i18n.language)} ({currency.symbol})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -203,7 +204,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
                 <SelectContent>
                   {flexibilityOptions.map((option) => (
                     <SelectItem key={option.code} value={option.code}>
-                      {option.label_fr} - {option.description_fr}
+                      {getLocalizedLabel(option, i18n.language)} - {getLocalizedDescription(option, i18n.language)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -213,7 +214,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
 
           <div className="bg-secondary/50 p-3 rounded-md text-sm">
             <p className="font-medium mb-1">
-              {t('planTrip.budgetStep.selectedLevel')} : {budgetLevels.find(l => l.code === budget.level)?.label_fr}
+              {t('planTrip.budgetStep.selectedLevel')} : {getLocalizedLabel(budgetLevels.find(l => l.code === budget.level), i18n.language)}
             </p>
             <p className="text-muted-foreground">{getBudgetDescription(budget.level)}</p>
           </div>
@@ -227,13 +228,13 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
             <h4 className="font-medium">{t('planTrip.budgetStep.summary')}</h4>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline">
-                {t('planTrip.budgetStep.budget')} {budgetLevels.find(l => l.code === budget.level)?.label_fr} : {budget.dailyBudget}{selectedCurrency?.symbol}/{t('planTrip.budgetStep.perDay')}
+                {t('planTrip.budgetStep.budget')} {getLocalizedLabel(budgetLevels.find(l => l.code === budget.level), i18n.language)} : {budget.dailyBudget}{selectedCurrency?.symbol}/{t('planTrip.budgetStep.perDay')}
               </Badge>
               <Badge variant="outline">
-                {t('planTrip.budgetStep.currency')} : {selectedCurrency?.name_fr}
+                {t('planTrip.budgetStep.currency')} : {getLocalizedName(selectedCurrency, i18n.language)}
               </Badge>
               <Badge variant="outline">
-                {t('planTrip.budgetStep.flexibility')} : {flexibilityOptions.find(o => o.code === budget.flexibility)?.label_fr}
+                {t('planTrip.budgetStep.flexibility')} : {getLocalizedLabel(flexibilityOptions.find(o => o.code === budget.flexibility), i18n.language)}
               </Badge>
             </div>
           </div>

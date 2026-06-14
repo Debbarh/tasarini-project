@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +34,7 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
   restaurantName,
   onBookingComplete
 }) => {
+  const { t, i18n } = useTranslation();
   const [availableTables, setAvailableTables] = useState<RestaurantTable[]>([]);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -84,15 +86,15 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
 
       if (!availability.available) {
         toast({
-          title: "Indisponible",
-          description: "Aucune table disponible pour ce créneau",
+          title: t('bookingDialog.restaurant.unavailable'),
+          description: t('bookingDialog.restaurant.noTable'),
           variant: "destructive"
         });
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de vérifier la disponibilité",
+        title: t('bookingDialog.common.error'),
+        description: t('bookingDialog.restaurant.errCheck'),
         variant: "destructive"
       });
     } finally {
@@ -109,8 +111,8 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
   const handleSubmitReservation = async () => {
     if (!bookingForm.customerName || !bookingForm.customerEmail || !bookingForm.reservationDate || !bookingForm.reservationTime) {
       toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        title: t('bookingDialog.common.error'),
+        description: t('bookingDialog.restaurant.fillRequired'),
         variant: "destructive"
       });
       return;
@@ -132,8 +134,8 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
       });
 
       toast({
-        title: "Réservation confirmée",
-        description: "Votre demande de réservation a été envoyée au restaurant"
+        title: t('bookingDialog.common.bookingConfirmedTitle'),
+        description: t('bookingDialog.restaurant.requestSentDesc')
       });
 
       // Reset form
@@ -151,8 +153,8 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
       onBookingComplete?.(reservation.id);
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Erreur lors de la création de la réservation",
+        title: t('bookingDialog.common.error'),
+        description: t('bookingDialog.restaurant.errCreate'),
         variant: "destructive"
       });
     } finally {
@@ -170,14 +172,14 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CalendarIcon className="h-5 w-5" />
-            Réserver une table chez {restaurantName}
+            {t('bookingDialog.restaurant.title', { name: restaurantName })}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Date and Time Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label>Date de réservation *</Label>
+              <Label>{t('bookingDialog.restaurant.date')} *</Label>
               <Calendar
                 mode="single"
                 selected={bookingForm.reservationDate}
@@ -189,13 +191,13 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="reservation-time">Heure de réservation *</Label>
-                <Select 
-                  value={bookingForm.reservationTime} 
+                <Label htmlFor="reservation-time">{t('bookingDialog.restaurant.time')} *</Label>
+                <Select
+                  value={bookingForm.reservationTime}
                   onValueChange={(value) => updateForm('reservationTime', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une heure" />
+                    <SelectValue placeholder={t('bookingDialog.restaurant.selectTime')} />
                   </SelectTrigger>
                   <SelectContent>
                     {timeSlots.map((slot) => (
@@ -211,20 +213,20 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
               </div>
 
               <div>
-                <Label htmlFor="party-size">Nombre de personnes *</Label>
-                <Select 
-                  value={bookingForm.partySize.toString()} 
+                <Label htmlFor="party-size">{t('bookingDialog.common.guests')} *</Label>
+                <Select
+                  value={bookingForm.partySize.toString()}
                   onValueChange={(value) => updateForm('partySize', parseInt(value))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Nombre de personnes" />
+                    <SelectValue placeholder={t('bookingDialog.common.guests')} />
                   </SelectTrigger>
                   <SelectContent>
                     {[1,2,3,4,5,6,7,8,9,10,11,12].map((size) => (
                       <SelectItem key={size} value={size.toString()}>
                         <div className="flex items-center gap-2">
                           <Users className="h-4 w-4" />
-                          {size} personne{size > 1 ? 's' : ''}
+                          {t('bookingDialog.common.guestsCount', { count: size })}
                         </div>
                       </SelectItem>
                     ))}
@@ -235,14 +237,14 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
               {/* Availability Display */}
               {checkingAvailability && (
                 <div className="text-sm text-muted-foreground">
-                  Vérification de la disponibilité...
+                  {t('bookingDialog.restaurant.checking')}
                 </div>
               )}
 
               {availableTables.length > 0 && !checkingAvailability && (
                 <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                   <p className="text-sm text-green-700 font-medium">
-                    ✓ Tables disponibles pour ce créneau
+                    {t('bookingDialog.restaurant.tablesAvailable')}
                   </p>
                   <div className="flex gap-2 mt-2">
                     {availableTables.slice(0, 3).map((table) => (
@@ -252,7 +254,7 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
                     ))}
                     {availableTables.length > 3 && (
                       <Badge variant="outline" className="text-green-700 border-green-300">
-                        +{availableTables.length - 3} autres
+                        {t('bookingDialog.common.more', { count: availableTables.length - 3 })}
                       </Badge>
                     )}
                   </div>
@@ -263,20 +265,20 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
 
           {/* Customer Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Vos informations</h3>
-            
+            <h3 className="text-lg font-semibold">{t('bookingDialog.restaurant.yourInfo')}</h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="customer-name">Nom complet *</Label>
+                <Label htmlFor="customer-name">{t('bookingDialog.common.fullName')} *</Label>
                 <Input
                   id="customer-name"
                   value={bookingForm.customerName}
                   onChange={(e) => updateForm('customerName', e.target.value)}
-                  placeholder="Jean Dupont"
+                  placeholder={t('bookingDialog.restaurant.namePlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="customer-email">Email *</Label>
+                <Label htmlFor="customer-email">{t('bookingDialog.common.email')} *</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
@@ -285,14 +287,14 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
                     className="pl-10"
                     value={bookingForm.customerEmail}
                     onChange={(e) => updateForm('customerEmail', e.target.value)}
-                    placeholder="jean.dupont@email.com"
+                    placeholder={t('bookingDialog.restaurant.emailPlaceholder')}
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="customer-phone">Téléphone</Label>
+              <Label htmlFor="customer-phone">{t('bookingDialog.common.phone')}</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
@@ -301,7 +303,7 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
                   className="pl-10"
                   value={bookingForm.customerPhone}
                   onChange={(e) => updateForm('customerPhone', e.target.value)}
-                  placeholder="06 12 34 56 78"
+                  placeholder={t('bookingDialog.restaurant.phonePlaceholder')}
                 />
               </div>
             </div>
@@ -309,30 +311,30 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
 
           {/* Preferences and Special Requests */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Préférences</h3>
-            
+            <h3 className="text-lg font-semibold">{t('bookingDialog.restaurant.preferences')}</h3>
+
             <div>
-              <Label htmlFor="table-preferences">Préférences de table</Label>
-              <Select 
-                value={bookingForm.tablePreferences} 
+              <Label htmlFor="table-preferences">{t('bookingDialog.restaurant.tablePreferences')}</Label>
+              <Select
+                value={bookingForm.tablePreferences}
                 onValueChange={(value) => updateForm('tablePreferences', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Aucune préférence particulière" />
+                  <SelectValue placeholder={t('bookingDialog.restaurant.noPrefPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Aucune préférence</SelectItem>
-                  <SelectItem value="terrasse">Terrasse</SelectItem>
-                  <SelectItem value="interieur">Intérieur</SelectItem>
-                  <SelectItem value="fenetre">Près d'une fenêtre</SelectItem>
-                  <SelectItem value="calme">Zone calme</SelectItem>
-                  <SelectItem value="acces_facile">Accès facile</SelectItem>
+                  <SelectItem value="">{t('bookingDialog.restaurant.noPref')}</SelectItem>
+                  <SelectItem value="terrasse">{t('bookingDialog.restaurant.terrace')}</SelectItem>
+                  <SelectItem value="interieur">{t('bookingDialog.restaurant.indoor')}</SelectItem>
+                  <SelectItem value="fenetre">{t('bookingDialog.restaurant.window')}</SelectItem>
+                  <SelectItem value="calme">{t('bookingDialog.restaurant.quiet')}</SelectItem>
+                  <SelectItem value="acces_facile">{t('bookingDialog.restaurant.easyAccess')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label htmlFor="special-requests">Demandes spéciales</Label>
+              <Label htmlFor="special-requests">{t('bookingDialog.common.specialRequests')}</Label>
               <div className="relative">
                 <MessageSquare className="absolute left-3 top-3 text-muted-foreground h-4 w-4" />
                 <Textarea
@@ -340,7 +342,7 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
                   className="pl-10"
                   value={bookingForm.specialRequests}
                   onChange={(e) => updateForm('specialRequests', e.target.value)}
-                  placeholder="Anniversaire, allergies alimentaires, chaise haute pour bébé..."
+                  placeholder={t('bookingDialog.restaurant.specialPlaceholder')}
                   rows={3}
                 />
               </div>
@@ -351,29 +353,29 @@ export const RestaurantBooking: React.FC<RestaurantBookingProps> = ({
           {bookingForm.reservationDate && bookingForm.reservationTime && (
             <Card className="bg-muted/50">
               <CardContent className="p-4">
-                <h4 className="font-medium mb-2">Récapitulatif de votre réservation</h4>
+                <h4 className="font-medium mb-2">{t('bookingDialog.restaurant.summary')}</h4>
                 <div className="space-y-1 text-sm">
-                  <p><strong>Date:</strong> {bookingForm.reservationDate.toLocaleDateString('fr-FR')}</p>
-                  <p><strong>Heure:</strong> {bookingForm.reservationTime}</p>
-                  <p><strong>Nombre de personnes:</strong> {bookingForm.partySize}</p>
-                  <p><strong>Restaurant:</strong> {restaurantName}</p>
+                  <p><strong>{t('bookingDialog.restaurant.dateLabel')}:</strong> {bookingForm.reservationDate.toLocaleDateString(i18n.language)}</p>
+                  <p><strong>{t('bookingDialog.restaurant.timeLabel')}:</strong> {bookingForm.reservationTime}</p>
+                  <p><strong>{t('bookingDialog.common.guests')}:</strong> {bookingForm.partySize}</p>
+                  <p><strong>{t('bookingDialog.restaurant.restaurantLabel')}:</strong> {restaurantName}</p>
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* Submit Button */}
-          <Button 
-            onClick={handleSubmitReservation} 
+          <Button
+            onClick={handleSubmitReservation}
             disabled={loading || !availableTables.length || checkingAvailability}
             className="w-full"
             size="lg"
           >
-            {loading ? 'Réservation en cours...' : 'Confirmer la réservation'}
+            {loading ? t('bookingDialog.common.confirming') : t('bookingDialog.common.confirm')}
           </Button>
 
           <p className="text-xs text-muted-foreground text-center">
-            En confirmant votre réservation, vous acceptez que le restaurant vous contacte pour confirmer votre demande.
+            {t('bookingDialog.restaurant.disclaimer')}
           </p>
         </CardContent>
       </Card>

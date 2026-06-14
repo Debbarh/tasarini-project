@@ -76,17 +76,19 @@ export const useSavedItineraries = () => {
 
       const data = await savedItineraryService.create(payload);
 
-      setSavedItineraries(prev => [{
+      const saved: SavedItinerary = {
         ...data,
-        itinerary_data: data.itinerary_data as DetailedItinerary
-      }, ...prev]);
-      
+        itinerary_data: data.itinerary_data as DetailedItinerary,
+      };
+      setSavedItineraries(prev => [saved, ...prev]);
+
       toast({
         title: t('toast.hooks.savedItineraries.saved'),
         description: `"${title}" ${t('toast.hooks.savedItineraries.saved')}`,
       });
 
-      return true;
+      // Renvoie l'objet créé (avec son id) pour permettre le passage en mode PATCH
+      return saved;
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
       toast({
@@ -94,7 +96,7 @@ export const useSavedItineraries = () => {
         description: t('toast.hooks.savedItineraries.saveError'),
         variant: "destructive",
       });
-      return false;
+      return null;
     }
   };
 

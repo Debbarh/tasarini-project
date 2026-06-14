@@ -194,6 +194,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
           <CardTitle className="flex items-center gap-2 text-base">
             <Home className="h-4 w-4 text-primary" />
             {t('planTrip.accommodationStep.accommodationType')}
+            <span className="text-destructive">*</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -212,6 +213,11 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
               </Button>
             ))}
           </div>
+          {accommodation.type.length === 0 && (
+            <p className="text-sm text-destructive">
+              {t('planTrip.accommodationStep.typeRequired', "Sélectionnez au moins un type d'hébergement pour continuer.")}
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -291,7 +297,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
                     onCheckedChange={() => toggleAccessibility(accessibility.code)}
                   />
                   <Label htmlFor={`accessibility-${accessibility.id}`} className="text-sm">
-                    {accessibility.icon_emoji && <span className="mr-1">{accessibility.icon_emoji}</span>}
+                    {accessibility.icon_emoji && <span className="mr-2">{accessibility.icon_emoji}</span>}
                     {getLabelFromCode(accessibility.code, accommodationAccessibility, i18n.language)}
                   </Label>
                 </div>
@@ -318,7 +324,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
                     onCheckedChange={() => toggleSecurity(security.code)}
                   />
                   <Label htmlFor={`security-${security.id}`} className="text-sm">
-                    {security.icon_emoji && <span className="mr-1">{security.icon_emoji}</span>}
+                    {security.icon_emoji && <span className="mr-2">{security.icon_emoji}</span>}
                     {getLabelFromCode(security.code, accommodationSecurity, i18n.language)}
                   </Label>
                 </div>
@@ -345,7 +351,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
                     onCheckedChange={() => toggleAmbiance(ambiance.code)}
                   />
                   <Label htmlFor={`ambiance-${ambiance.id}`} className="text-sm">
-                    {ambiance.icon_emoji && <span className="mr-1">{ambiance.icon_emoji}</span>}
+                    {ambiance.icon_emoji && <span className="mr-2">{ambiance.icon_emoji}</span>}
                     {getLabelFromCode(ambiance.code, accommodationAmbiance, i18n.language)}
                   </Label>
                 </div>

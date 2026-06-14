@@ -31,6 +31,7 @@ from .ai_providers import (
 from .models import AIProviderConfig
 from .serializers import AIProviderConfigSerializer
 from .unsplash_service import fetch_all_destination_images
+from .wikimedia_service import fetch_all_activity_images
 from .amadeus_service import amadeus_api, find_airport_by_city
 from .hotelbeds_service import hotelbeds_api
 from .hotelbeds_activities_service import hotelbeds_activities_api
@@ -533,6 +534,22 @@ class DestinationImagesView(APIView):
         return Response({'images': images})
 
 
+class ActivityImagesView(APIView):
+    """
+    Endpoint pour récupérer les images d'activités (Wikimedia) après génération.
+    Les images sont récupérées en arrière-plan et stockées en cache, indexées
+    par id d'activité (repli "dayNumber:index").
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        session_id = request.GET.get('sessionId')
+        if not session_id:
+            return Response({'images': {}})
+        images = cache.get(f"activity_images_{session_id}", {})
+        return Response({'images': images})
+
+
 class StreamingTripPlannerView(APIView):
     """
     Server-Sent Events (SSE) endpoint for streaming itinerary generation
@@ -546,6 +563,29 @@ class StreamingTripPlannerView(APIView):
             return Response({'detail': 'tripData requis'}, status=status.HTTP_400_BAD_REQUEST)
 
         session_id = request.data.get('sessionId') or trip_data.get('sessionId')
+
+        # Langue de génération = langue de navigation de l'utilisateur
+        lang_code = (request.data.get('language') or trip_data.get('language') or 'fr')[:2].lower()
+        LANG_NAMES = {
+            'fr': 'français', 'en': 'anglais', 'es': 'espagnol', 'de': 'allemand',
+            'it': 'italien', 'pt': 'portugais', 'ru': 'russe', 'ja': 'japonais',
+            'zh': 'chinois', 'hi': 'hindi', 'ar': 'arabe',
+        }
+        lang_name = LANG_NAMES.get(lang_code, 'français')
+        lang_instruction = (
+            f"IMPORTANT : rédige TOUTES les valeurs textuelles (titres, descriptions, "
+            f"thèmes, conseils, etc.) en {lang_name}. Les clés JSON restent en anglais. "
+        )
+        # Rappel placé en FIN de prompt : les LLM suivent mieux la dernière consigne.
+        # Indispensable pour les sections enrichies (longue prose) qui, sinon, basculent
+        # en anglais malgré l'instruction initiale.
+        lang_reminder = (
+            f" RAPPEL FINAL ET IMPÉRATIF : la TOTALITÉ des valeurs de chaîne du JSON "
+            f"(y compris les longues descriptions, le titre, les conseils, les noms de "
+            f"sections rédigés) doit être écrite en {lang_name}, même si le schéma, les "
+            f"noms de lieux ou les données d'entrée sont en anglais. N'écris AUCUN texte "
+            f"en anglais sauf si la langue demandée est l'anglais."
+        )
 
         def event_stream():
             """Generator function that yields SSE-formatted events"""
@@ -563,18 +603,66 @@ class StreamingTripPlannerView(APIView):
 
                 destinations = trip_data.get('destinations', [])
 
+                # Un seul modèle pour TOUT le programme : le provider actif.
+                # (Ollama gardé uniquement comme repli si le provider principal tombe.)
+                ollama_provider = AIProviderConfig.objects.filter(provider='ollama').first()
+                enriched_provider = active_provider
+
+                # Lancer le téléchargement des images TÔT (en parallèle de la
+                # génération du texte) pour qu'elles soient prêtes au plus vite.
+                if destinations and session_id:
+                    def fetch_images_async():
+                        try:
+                            images = fetch_all_destination_images(destinations)
+                            cache.set(f"dest_images_{session_id}", images, timeout=600)
+                        except Exception as exc:
+                            logger.error(f"Error fetching images in background: {exc}")
+                    threading.Thread(target=fetch_images_async, daemon=True).start()
+
+                # Intensité du programme : nb d'activités/jour selon le choix du
+                # voyageur (codes réels : relaxed/moderate/active/intense, + legacy).
+                import unicodedata as _ud
+                _raw_intensity = ((trip_data.get('activityPreferences') or {}).get('intensity') or '').strip().lower()
+                _norm_intensity = ''.join(c for c in _ud.normalize('NFD', _raw_intensity) if _ud.category(c) != 'Mn')
+                _intensity_map = {
+                    'relaxed': '2 à 3', 'relax': '2 à 3', 'light': '2 à 3', 'leger': '2 à 3', 'allege': '2 à 3', 'detendu': '2 à 3',
+                    'moderate': '4 à 5', 'modere': '4 à 5', 'standard': '4 à 5',
+                    'active': '5 à 7', 'actif': '5 à 7',
+                    'intense': '6 à 8', 'charge': '6 à 8',
+                }
+                _activity_count = _intensity_map.get(_norm_intensity)
+                intensity_instruction = (
+                    f"Chaque jour doit contenir environ {_activity_count} activités principales (hors repas), réparties harmonieusement sur la journée. "
+                    if _activity_count else ""
+                )
+
                 # Prompt 1: header + days (planning)
                 prompt_days = (
+                    lang_instruction +
+                    intensity_instruction +
                     "Génère un JSON avec uniquement les clés suivantes : "
                     '{"title": string, "description": string, "days": [ ... ], "totalCost": number, "budgetBreakdown": {...}}. '
                     "Les days doivent contenir dayNumber, date, destination, theme, activities (id,time,title,description,duration,type,cost,location,tips,difficulty), "
                     "meals (breakfast/lunch/dinner), transportation, totalCost, walkingDistance. "
                     "Réponds STRICTEMENT en JSON valide, sans texte avant/après. "
                     f"Données: {json.dumps(trip_data, ensure_ascii=False)}"
+                    + lang_reminder
                 )
                 progress_data = json.dumps({'progress': 15, 'message': "Planification des jours..."})
                 yield f"event: progress\ndata: {progress_data}\n\n"
-                days_resp = call_provider_with_prompt(active_provider, prompt_days) or {}
+                try:
+                    days_resp = call_provider_with_prompt(active_provider, prompt_days) or {}
+                except AIProviderException as e_days:
+                    # Repli sur Ollama (local) si le provider principal échoue
+                    # malgré les réessais (ex: Gemini 503 persistant). Plus lent
+                    # mais garantit que le programme se génère quand même.
+                    if ollama_provider and ollama_provider.id != active_provider.id:
+                        logger.warning(f"Jours via {active_provider.provider} échoués, repli Ollama: {e_days}")
+                        progress_data = json.dumps({'progress': 15, 'message': "Modèle principal indisponible, bascule sur le modèle local..."})
+                        yield f"event: progress\ndata: {progress_data}\n\n"
+                        days_resp = call_provider_with_prompt(ollama_provider, prompt_days) or {}
+                    else:
+                        raise
                 itinerary: dict = {
                     'trip': trip_data,
                     'destinationImages': {},
@@ -590,21 +678,79 @@ class StreamingTripPlannerView(APIView):
                         section_data = json.dumps({'key': key, 'value': val, 'progress': 40})
                         yield f"event: section\ndata: {section_data}\n\n"
 
-                # Prompt 2: enriched sections
-                prompt_enriched = (
-                    "Génère un JSON avec uniquement les clés enrichies suivantes : "
-                    '{"whyVisit": string, "bestTimeToVisit": {...}, "visaAndEntry": {...}, "healthAndSafety": {...}, '
-                    '"mustSee": [], "mustTryDishes": [], "giftIdeas": [], "similarDestinations": [], "transportationAdvice": {...}, '
-                    '"culturalTips": [], "localEvents": [], "sustainabilityTips": []}. '
+                # Images d'activités via Wikimedia (en parallèle, dès que les jours
+                # sont connus) → cache, récupéré par le front via /activity-images/.
+                if session_id and itinerary.get('days'):
+                    _days_for_images = itinerary.get('days')
+                    def fetch_activity_images_async():
+                        try:
+                            imgs = fetch_all_activity_images(_days_for_images)
+                            cache.set(f"activity_images_{session_id}", imgs, timeout=600)
+                        except Exception as exc:
+                            logger.error(f"Error fetching activity images: {exc}")
+                    threading.Thread(target=fetch_activity_images_async, daemon=True).start()
+
+                trip_json = json.dumps(trip_data, ensure_ascii=False)
+
+                # Score d'adaptation : à quel point ce programme correspond aux
+                # préférences saisies dans le stepper + paragraphe explicatif.
+                prompt_match = (
+                    lang_instruction +
+                    "Tu es un expert voyage. En te basant sur les préférences du voyageur, génère UNIQUEMENT ce JSON : "
+                    '{"matchScore": number, "whyThisTrip": string, "destinationScores": [{"destination": string, "score": number, "reason": string}]}. '
+                    "matchScore = entier 0-100 (adéquation globale du programme avec les préférences : type de voyageur, budget, cuisine, hébergement, activités). "
+                    "whyThisTrip = un paragraphe de 2 à 4 phrases expliquant POURQUOI ce programme correspond aux attentes du voyageur. "
+                    "Chaque destinationScores.score = entier 0-100. "
                     "Réponds STRICTEMENT en JSON valide, sans texte avant/après. "
-                    f"Données: {json.dumps(trip_data, ensure_ascii=False)}"
+                    f"Données voyageur: {trip_json}"
+                    + lang_reminder
                 )
-                progress_data = json.dumps({'progress': 55, 'message': "Sections enrichies..."})
+                progress_data = json.dumps({'progress': 48, 'message': "Analyse d'adéquation à vos préférences..."})
                 yield f"event: progress\ndata: {progress_data}\n\n"
-                enriched_resp = call_provider_with_prompt(active_provider, prompt_enriched) or {}
-                itinerary.update(enriched_resp)
-                section_data = json.dumps({'key': 'enriched', 'value': enriched_resp, 'progress': 75})
-                yield f"event: section\ndata: {section_data}\n\n"
+                try:
+                    match_resp = call_provider_with_prompt(active_provider, prompt_match) or {}
+                except AIProviderException:
+                    match_resp = {}
+                if match_resp:
+                    itinerary.update(match_resp)
+                    section_data = json.dumps({'key': 'enriched', 'value': match_resp, 'progress': 50})
+                    yield f"event: section\ndata: {section_data}\n\n"
+
+                # Prompt 2: sections enrichies — générées par petits groupes et
+                # émises progressivement (rendu itératif, dans l'ordre de la page
+                # résultat). Chaque groupe apparaît dès qu'il est prêt ; un échec
+                # de groupe n'interrompt pas les suivants.
+                trip_json = json.dumps(trip_data, ensure_ascii=False)
+                enriched_groups = [
+                    (60, "Points forts de la destination...",
+                     '{"whyVisit": string, "mustSee": [string], "bestTimeToVisit": {"overall": string, "seasons": {"spring": string, "summer": string, "autumn": string, "winter": string}, "avoidPeriods": [string]}}'),
+                    (68, "Infos pratiques (visa, santé, transport)...",
+                     '{"visaAndEntry": {"generalInfo": string, "requirements": [string], "processingTime": string, "cost": string}, "healthAndSafety": {"vaccinations": [string], "healthTips": [string], "insurance": string, "emergencyNumbers": {"police": string, "medical": string, "embassy": string}, "safetyTips": [string]}, "transportationAdvice": {"gettingThere": string, "localTransport": {"metro": string, "bus": string, "taxi": string}, "tips": [string]}, "packingList": [string]}'),
+                    (74, "Gastronomie & souvenirs...",
+                     '{"mustTryDishes": [{"name": string, "description": string, "whereToFind": string, "priceRange": string}], "giftIdeas": [{"item": string, "description": string, "whereToBuy": string, "priceRange": string}]}'),
+                    (78, "Culture, événements & alentours...",
+                     '{"culturalTips": [string], "localEvents": [{"name": string, "date": string, "description": string, "location": string}], "similarDestinations": [{"name": string, "country": string, "why": string}], "sustainabilityTips": [string]}'),
+                ]
+                for prog, msg, schema in enriched_groups:
+                    progress_data = json.dumps({'progress': prog, 'message': msg})
+                    yield f"event: progress\ndata: {progress_data}\n\n"
+                    prompt_part = (
+                        lang_instruction +
+                        "Tu es un expert voyage. Génère UNIQUEMENT ce JSON (rien d'autre) : "
+                        + schema + ". "
+                        "Réponds STRICTEMENT en JSON valide, sans texte avant/après. "
+                        f"Données: {trip_json}"
+                        + lang_reminder
+                    )
+                    try:
+                        part_resp = call_provider_with_prompt(enriched_provider, prompt_part) or {}
+                    except AIProviderException as part_err:
+                        logger.warning(f"Section enrichie échouée ({msg}) via {enriched_provider.provider}: {part_err}")
+                        part_resp = {}
+                    if part_resp:
+                        itinerary.update(part_resp)
+                        section_data = json.dumps({'key': 'enriched', 'value': part_resp, 'progress': prog})
+                        yield f"event: section\ndata: {section_data}\n\n"
 
                 # Prompt 3: budget (optionnel si déjà fourni)
                 if not itinerary.get("budgetBreakdown"):
@@ -616,22 +762,16 @@ class StreamingTripPlannerView(APIView):
                     )
                     progress_data = json.dumps({'progress': 80, 'message': "Budget détaillé..."})
                     yield f"event: progress\ndata: {progress_data}\n\n"
-                    budget_resp = call_provider_with_prompt(active_provider, prompt_budget) or {}
-                    itinerary.update(budget_resp)
-                    section_data = json.dumps({'key': 'budget', 'value': budget_resp, 'progress': 85})
-                    yield f"event: section\ndata: {section_data}\n\n"
+                    try:
+                        budget_resp = call_provider_with_prompt(enriched_provider, prompt_budget) or {}
+                    except AIProviderException:
+                        budget_resp = {}
+                    if budget_resp:
+                        itinerary.update(budget_resp)
+                        section_data = json.dumps({'key': 'budget', 'value': budget_resp, 'progress': 85})
+                        yield f"event: section\ndata: {section_data}\n\n"
 
-                # Background image fetching
-                if destinations and session_id:
-                    def fetch_images_async():
-                        try:
-                            images = fetch_all_destination_images(destinations)
-                            cache.set(f"dest_images_{session_id}", images, timeout=600)
-                        except Exception as exc:
-                            logger.error(f"Error fetching images in background: {exc}")
-
-                    thread = threading.Thread(target=fetch_images_async, daemon=True)
-                    thread.start()
+                # (images déjà lancées au début, en parallèle)
 
                 # Ensure defaults
                 if 'totalCost' not in itinerary:

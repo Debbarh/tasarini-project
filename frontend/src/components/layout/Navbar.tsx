@@ -5,6 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { LanguageSelector } from "@/components/ui/language-selector";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,7 +48,7 @@ const Navbar = () => {
       {settings.planYourTripEnabled && (
         <NavLink
           to="/plan"
-          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} whitespace-nowrap ${mobile ? "text-lg" : ""}`}
           onClick={onLinkClick}
         >
           {t('navigation.createTrip')}
@@ -49,7 +57,7 @@ const Navbar = () => {
       {settings.beInspiredEnabled && (
         <NavLink
           to="/inspire"
-          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} whitespace-nowrap ${mobile ? "text-lg" : ""}`}
           onClick={onLinkClick}
         >
           {t('navigation.exploreWorld')}
@@ -58,7 +66,7 @@ const Navbar = () => {
       {settings.travelStoriesEnabled && (
         <NavLink
           to="/travel-stories"
-          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} whitespace-nowrap ${mobile ? "text-lg" : ""}`}
           onClick={onLinkClick}
         >
           {t('navigation.travelStories')}
@@ -67,7 +75,7 @@ const Navbar = () => {
       {user && (
         <NavLink 
           to="/my-discoveries" 
-          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} whitespace-nowrap ${mobile ? "text-lg" : ""}`}
           onClick={onLinkClick}
         >
           {t('navigation.myTreasures')}
@@ -76,7 +84,7 @@ const Navbar = () => {
       {hasRole('partner') && (
         <NavLink 
           to="/partner-center" 
-          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} whitespace-nowrap ${mobile ? "text-lg" : ""}`}
           onClick={onLinkClick}
         >
           {t('navigation.partnerSpace')}
@@ -85,7 +93,7 @@ const Navbar = () => {
       {hasRole('admin') && (
         <NavLink 
           to="/admin" 
-          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${mobile ? "text-lg" : ""}`}
+          className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} whitespace-nowrap ${mobile ? "text-lg" : ""}`}
           onClick={onLinkClick}
         >
           {t('navigation.administration')}
@@ -112,8 +120,11 @@ const Navbar = () => {
         <NavigationLinks />
         
         <div className="flex items-center gap-2 sm:gap-4">
-          <ThemeToggle />
-          <LanguageSelector variant="compact" />
+          {/* Contrôles desktop uniquement (déplacés dans le menu sur mobile) */}
+          <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle />
+            <LanguageSelector variant="compact" />
+          </div>
 
           {/* Mobile Menu Button */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -127,7 +138,13 @@ const Navbar = () => {
               <SheetHeader>
                 <SheetTitle className="text-left">Navigation</SheetTitle>
               </SheetHeader>
-              
+
+              {/* Thème + langue dans le menu sur mobile */}
+              <div className="flex items-center gap-3 py-4 border-b">
+                <ThemeToggle />
+                <LanguageSelector variant="compact" />
+              </div>
+
               {/* Mobile Navigation Links */}
               <NavigationLinks mobile onLinkClick={() => setIsMobileMenuOpen(false)} />
               
@@ -210,6 +227,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowNotifications(true)}
+                aria-label={t('navigation.notifications')}
                 className="relative p-2"
               >
                 <Bell className="w-4 h-4" />
@@ -222,54 +240,54 @@ const Navbar = () => {
                   </Badge>
                 )}
               </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                asChild
-                className="gap-1 sm:gap-2 p-2 sm:px-3"
-              >
-                <Link to="/profile" className="flex items-center gap-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={profile?.avatar_url} alt={user.display_name || user.email} />
-                    <AvatarFallback className="text-xs bg-gradient-to-br from-primary to-primary-glow text-white">
-                      {getInitials()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden lg:inline">{t('navigation.myProfile')}</span>
-                </Link>
-              </Button>
-              
-              <div className="hidden lg:flex items-center gap-2 text-sm">
-                <span className="text-foreground/80 max-w-[120px] truncate">
-                  {user.email}
-                </span>
-                {hasRole('admin') && (
-                  <span className="px-2 py-1 text-xs bg-destructive/10 text-destructive rounded-full whitespace-nowrap">
-                    Admin
-                  </span>
-                )}
-                {hasRole('professional') && (
-                  <span className="px-2 py-1 text-xs bg-primary/10 text-primary rounded-full whitespace-nowrap">
-                    Pro
-                  </span>
-                )}
-                {hasRole('partner') && (
-                  <span className="px-2 py-1 text-xs bg-blue-500/10 text-blue-600 rounded-full whitespace-nowrap">
-                    Partenaire
-                  </span>
-                )}
-              </div>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={signOut}
-                className="gap-1 sm:gap-2 p-2 sm:px-3"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden lg:inline">{t('navigation.logout')}</span>
-              </Button>
+
+              {/* Profile dropdown: regroupe avatar, identité, rôle, profil et déconnexion */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" aria-label={t('navigation.myProfile')} className="gap-2 p-1 sm:pl-1 sm:pr-2 rounded-full">
+                    <Avatar className="h-7 w-7">
+                      <AvatarImage src={profile?.avatar_url} alt={user.display_name || user.email} />
+                      <AvatarFallback className="text-xs bg-gradient-to-br from-primary to-primary-glow text-white">
+                        {getInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden lg:inline max-w-[140px] truncate text-sm">
+                      {user.display_name || user.email}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-60">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm font-medium truncate">{user.display_name || user.email}</span>
+                      <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {hasRole('admin') && (
+                          <span className="px-2 py-0.5 text-xs bg-destructive/10 text-destructive rounded-full">Admin</span>
+                        )}
+                        {hasRole('professional') && (
+                          <span className="px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">Pro</span>
+                        )}
+                        {hasRole('partner') && (
+                          <span className="px-2 py-0.5 text-xs bg-blue-500/10 text-blue-600 rounded-full">Partenaire</span>
+                        )}
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer">
+                      <User className="w-4 h-4 mr-2" />
+                      {t('navigation.myProfile')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    {t('navigation.logout')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             <Button asChild size="sm" className="px-3 sm:px-4 hidden md:flex">
@@ -286,6 +304,7 @@ const Navbar = () => {
               variant="ghost"
               size="sm"
               onClick={() => setShowNotifications(true)}
+              aria-label={t('navigation.notifications')}
               className="relative p-2 md:hidden"
             >
               <Bell className="w-4 h-4" />

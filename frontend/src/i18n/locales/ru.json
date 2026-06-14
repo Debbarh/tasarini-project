@@ -8,7 +8,8 @@
     "administration": "Администрирование",
     "myProfile": "Мой профиль",
     "logout": "Выйти",
-    "login": "Войти"
+    "login": "Войти",
+    "notifications": "Уведомления"
   },
   "notFound": {
     "title": "404",
@@ -30,33 +31,44 @@
     "statsDestinations": "Исследованные направления",
     "statsAdventurers": "Искатели приключений",
     "statsDreams": "Осуществленные мечты",
-    "liveInspiration": "Live inspiration",
-    "adventureFound": "Adventure found!",
-    "howItWorksTitle": "How does it work?",
-    "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
-    "howStep1Title": "Get inspired",
-    "howStep1Desc": "Browse stories and travel ideas tailored to your desires.",
-    "howStep2Title": "Plan",
-    "howStep2Desc": "Use our assistant to create an itinerary and book hotels and transport.",
-    "howStep3Title": "Travel worry-free",
-    "howStep3Desc": "Receive confirmations, share your stories and enjoy the trip.",
-    "bookingCenter": "Booking Center",
-    "bookingCenterDesc": "Search and book your hotels, flights and activities in just a few clicks",
-    "transportServices": "Transport Services",
-    "transportServicesDesc": "Vehicle rental, transfers and urban transport",
-    "carRental": "Rental",
-    "transfers": "Transfers",
-    "busAndTrain": "Bus & Train",
-    "urbanTransport": "Urban",
-    "activitiesExperiences": "Activities & Experiences",
-    "activitiesDesc": "Discover the best activities and restaurants",
-    "toursVisits": "Tours & Visits",
-    "gastronomy": "Gastronomy",
-    "travelerServices": "Traveler Services",
-    "travelerServicesDesc": "Connectivity and assistance",
-    "booking": "Booking",
-    "esimCards": "eSIM Cards",
-    "compensation": "Compensation"
+    "liveInspiration": "Вдохновение в реальном времени",
+    "adventureFound": "Приключение найдено!",
+    "howItWorksTitle": "Как это работает?",
+    "howItWorksSubtitle": "3 простых шага от идеи до подтвержденного путешествия.",
+    "howStep1Title": "Вдохновляйтесь",
+    "howStep1Desc": "Просматривайте истории и идеи путешествий, соответствующие вашим желаниям.",
+    "howStep2Title": "Планируйте",
+    "howStep2Desc": "Используйте нашего помощника для создания маршрута и бронирования отелей и транспорта.",
+    "howStep3Title": "Путешествуйте без забот",
+    "howStep3Desc": "Получайте подтверждения, делитесь историями и наслаждайтесь поездкой.",
+    "bookingCenter": "Центр бронирования",
+    "bookingCenterDesc": "Ищите и бронируйте отели, рейсы и активности в несколько кликов",
+    "transportServices": "Транспортные услуги",
+    "transportServicesDesc": "Аренда транспорта, трансферы и городской транспорт",
+    "carRental": "Прокат автомобилей",
+    "transfers": "Трансферы",
+    "busAndTrain": "Автобус и поезд",
+    "urbanTransport": "Городской транспорт",
+    "activitiesExperiences": "Активности и впечатления",
+    "activitiesDesc": "Откройте лучшие активности и рестораны",
+    "toursVisits": "Туры и экскурсии",
+    "gastronomy": "Гастрономия",
+    "travelerServices": "Сервисы для путешественников",
+    "travelerServicesDesc": "Связь и поддержка",
+    "booking": "Бронирование",
+    "esimCards": "eSIM карты",
+    "compensation": "Компенсация",
+    "testimonialsTitle": "Они путешествовали вместе с нами",
+    "testimonialsSubtitle": "Отзывы нашего сообщества путешественников",
+    "captionHero": "Ваше следующее приключение",
+    "captionBeach": "Отдых на море",
+    "captionMountain": "Приключения в горах",
+    "captionCity": "Городские прогулки",
+    "captionCultural": "Погружение в культуру",
+    "goToImage": "Перейти к изображению {{index}}",
+    "searchDestination": "Куда вы идете?",
+    "searchCta": "Поиск",
+    "openBookingCenter": "Открыть систему бронирования"
   },
   "planTrip": {
     "title": "Спланируйте свой идеальный отдых",
@@ -108,7 +120,11 @@
           "title": "Деятельность",
           "description": "Опыт и интересы"
         }
-      }
+      },
+      "autosaved": "Сохраненный прогресс",
+      "estimatedTime": "~3 мин",
+      "skipStep": "Пропустить этот шаг",
+      "generateNow": "Создать сейчас"
     },
     "destinationStep": {
       "selectCountry": "Выберите страну",
@@ -140,7 +156,9 @@
       "locationSaved": "Направление успешно сохранено.",
       "locationSaveError": "Не удалось сохранить это местоположение, пожалуйста, проверьте информацию.",
       "invalidAddress": "Пожалуйста, выберите действительный адрес на карте.",
-      "fetchingTranslations": "Fetching multilingual translations..."
+      "fetchingTranslations": "Fetching multilingual translations...",
+      "geocodeFailed": "Не удалось определить город для этой точки. Выберите другое местоположение или введите город вручную.",
+      "chooseOnMapHint": "Откройте интерактивную карту, чтобы точно указать пункт назначения и получить его координаты."
     },
     "travelDetailsStep": {
       "title": "Спутники",
@@ -174,7 +192,9 @@
       "availablePlural": "доступно",
       "remains": "остается",
       "remainsPlural": "остаются",
-      "error": "Ошибка"
+      "error": "Ошибка",
+      "singleChoiceHint": "Выберите один тип",
+      "maxLevelTooltip": "Максимальный уровень сложности доступа/физической нагрузки для мест, рекомендованных для этой группы."
     },
     "budgetStep": {
       "title": "Бюджет путешествия",
@@ -225,7 +245,8 @@
       "types": "Типы",
       "services": "Услуги",
       "locations": "Места",
-      "others": "другие"
+      "others": "другие",
+      "typeRequired": "Выберите хотя бы один тип размещения, чтобы продолжить."
     },
     "activitiesStep": {
       "title": "Активности и опыт",
@@ -625,13 +646,34 @@
           "veryStrong": "Очень сильный"
         }
       }
+    },
+    "emailNotConfirmed": "Пожалуйста, проверьте свою электронную почту и перейдите по ссылке для подтверждения, чтобы активировать свою учетную запись",
+    "invalidCredentials": "Неверный адрес электронной почты или пароль",
+    "forgotPassword": {
+      "link": "Забыли пароль?",
+      "title": "Сбросить пароль",
+      "description": "Введите свой адрес электронной почты, и мы вышлем вам ссылку для сброса пароля.",
+      "sendButton": "Отправить ссылку",
+      "sending": "Отправка...",
+      "successTitle": "Письмо отправлено",
+      "successDescription": "Если ваш адрес электронной почты привязан к учетной записи, вы получите ссылку для сброса пароля.",
+      "emailSent": "Проверьте свой почтовый ящик (в том числе папку «Спам») на наличие ссылки для сброса пароля.",
+      "emailSentMessage": "Если ваш адрес электронной почты зарегистрирован в нашей системе, вы получите ссылку для сброса пароля."
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. Все права защищены.",
     "becomePartner": "Стать партнером",
     "madeWith": "Сделано с",
-    "by": "от"
+    "by": "от",
+    "tagline": "Вдохновение, планирование и бронирование путешествий с помощью искусственного интеллекта.",
+    "discover": "Узнать больше",
+    "company": "Компания",
+    "legal": "Юридическая информация",
+    "contact": "Контакты",
+    "terms": "Общие условия",
+    "privacy": "Политика конфиденциальности",
+    "rights": "Все права защищены."
   },
   "common": {
     "loading": "Загрузка...",
@@ -1215,7 +1257,13 @@
         "updateError": "Ошибка при обновлении уведомления"
       },
       "export": "Экспортировать данные",
-      "loadingError": "Ошибка при загрузке панели управления"
+      "loadingError": "Ошибка при загрузке панели управления",
+      "analyticsTab": "Аналитика",
+      "poisTab": "Мои POI",
+      "bookingsTab": "Бронирование",
+      "financesTab": "Финансы",
+      "subscriptionTab": "Подписка",
+      "notificationsTab": "Уведомления"
     }
   },
   "legal": {
@@ -1230,5 +1278,711 @@
       "description": "Learn how we protect your personal data",
       "footer": "GDPR Compliant - Your data is protected"
     }
+  },
+  "booking": {
+    "title": "Центр бронирования",
+    "subtitle": "Найдите и забронируйте отели, авиабилеты, трансферы и развлечения",
+    "info": "Больше никаких автоматических запросов! Теперь вы сами решаете, когда проводить поиск.",
+    "tabs": {
+      "hotels": "Отели",
+      "flights": "Рейсы",
+      "transfers": "Переводы",
+      "restaurants": "Рестораны",
+      "activities": "Деятельность"
+    },
+    "searchHotel": "Найти отель",
+    "searchFlight": "Найти рейс",
+    "searchTransfer": "Найти трансфер",
+    "searchActivity": "Найти мероприятие",
+    "destination": "Пункт назначения",
+    "selectDestination": "Выберите пункт назначения...",
+    "selectOriginAirport": "Выберите аэропорт вылета...",
+    "selectDestAirport": "Выберите аэропорт прибытия...",
+    "guests": "Количество человек",
+    "passengers": "Количество пассажиров",
+    "participants": "Количество участников",
+    "checkIn": "Дата прибытия",
+    "checkOut": "Дата отправления",
+    "departDate": "Дата отправления",
+    "returnDate": "Дата возврата (необязательно)",
+    "origin": "Старт",
+    "date": "Дата",
+    "time": "Время",
+    "searching": "Поиск выполняется...",
+    "searchHotelsBtn": "Поиск отелей",
+    "searchFlightsBtn": "Поиск рейсов",
+    "searchActivitiesBtn": "Поиск мероприятий",
+    "searchTransfersBtnSoon": "Поиск трансферов (скоро будет доступно)",
+    "transfersSoon": "Функция поиска трансферов скоро станет доступна",
+    "transferFromPlaceholder": "Аэропорт, отель...",
+    "transferToPlaceholder": "Отель, центр города...",
+    "emptyTitle": "Введите критерии поиска выше",
+    "emptyDesc": "Результаты появятся здесь после поиска",
+    "moreAmenities": "+{{count}} и др.",
+    "amenitiesUnspecified": "Неуказанное оборудование",
+    "fromPrice": "Начиная с",
+    "perNight": "/ночь",
+    "priceUnavailable": "Цена отсутствует",
+    "details": "Подробности",
+    "book": "Забронировать",
+    "stops": "{{count}} пересадка(и)",
+    "restaurantsIncludedTitle": "Рестораны уже включены в ваш маршрут",
+    "restaurantsIncludedDesc": "Ознакомьтесь с разделом «Подробный маршрут» выше, чтобы увидеть рекомендации по ресторанам",
+    "toastRequiredTitle": "Обязательные поля",
+    "toastRequiredDesc": "Пожалуйста, заполните все поля поиска",
+    "toastInvalidCodeTitle": "Неверный код пункта назначения",
+    "toastInvalidCodeDesc": "Выберите код HotelBeds (например: PAR, BCN, ROM) с помощью функции автозаполнения.",
+    "toastInvalidDatesTitle": "Недопустимые даты",
+    "toastInvalidDatesDesc": "Дата отъезда должна быть не менее чем на 1 день позже даты заезда",
+    "toastDoneTitle": "Поиск завершен",
+    "toastErrorTitle": "Ошибка поиска",
+    "toastHotelsFound": "{{count}} найденный(е) отель(и)",
+    "toastFlightsFound": "{{count}} найденный(е) рейс(ы)",
+    "toastActivitiesFound": "{{count}} найденные действия",
+    "toastHotelsError": "Не удается найти отели. Проверьте код пункта назначения.",
+    "toastFlightsError": "Не удается найти рейсы. Проверьте коды IATA.",
+    "toastActivitiesError": "Не удается найти мероприятия. Проверьте код назначения."
+  },
+  "savedItineraries": {
+    "pageTitle": "Мои сохраненные маршруты",
+    "pageDescription": "Найдите все свои сохраненные и запланированные маршруты с помощью нашего ИИ. Управляйте своими планами путешествий, изменяйте их и делитесь ими.",
+    "subtitle": "Просмотрите все свои запланированные поездки и организуйте будущие приключения.",
+    "searchPlaceholder": "Поиск маршрута...",
+    "unauthorized": "Несанкционированный доступ",
+    "unauthorizedMessage": "Чтобы получить доступ к своим сохраненным маршрутам, вам необходимо войти в систему.",
+    "stats": {
+      "saved": "Сохраненные маршруты",
+      "favorites": "Избранное",
+      "travelDays": "Дни в пути"
+    },
+    "empty": {
+      "title": "Сохраненных маршрутов нет",
+      "noResults": "Маршрут не найден",
+      "searchMessage": "Попробуйте ввести другие ключевые слова.",
+      "createMessage": "Начните с составления своего первого маршрута путешествия!"
+    },
+    "actions": {
+      "view": "Смотреть",
+      "viewDetails": "Посмотреть подробности",
+      "export": "PDF",
+      "exportPDF": "Экспорт в PDF",
+      "share": "Поделиться",
+      "delete": "Удалить",
+      "favorite": "Избранное",
+      "create": "Создать маршрут"
+    },
+    "badges": {
+      "days": "дней"
+    },
+    "dialog": {
+      "deleteTitle": "Удалить маршрут",
+      "deleteDescription": "Вы уверены, что хотите удалить?",
+      "deleteWarning": "Это действие нельзя отменить.",
+      "cancel": "Отменить",
+      "confirm": "Удалить"
+    },
+    "toast": {
+      "pdfExported": "PDF экспортирован!",
+      "pdfExportedDesc": "Ваш маршрут успешно загружен.",
+      "pdfError": "Ошибка",
+      "pdfErrorDesc": "Не удается экспортировать PDF-файл",
+      "shareError": "Ошибка",
+      "shareErrorDesc": "Не удается поделиться маршрутом",
+      "deleted": "Маршрут удален",
+      "deleteError": "Ошибка при удалении"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "Мои находки",
+    "pageDescription": "Управляйте списком избранных мест и создавайте собственные маршруты.",
+    "subtitle": "Найдите свои любимые места и персональные маршруты",
+    "loginMessage": "Войдите в систему, чтобы просмотреть свои избранные и маршруты.",
+    "tabs": {
+      "favorites": "Избранное",
+      "itineraries": "Мои маршруты",
+      "community": "Сообщество"
+    },
+    "favorites": {
+      "empty": "Нет избранных",
+      "emptyMessage": "Для начала добавьте места в избранное прямо с карты",
+      "exploreMap": "Изучить карту"
+    },
+    "itineraries": {
+      "empty": "Маршрутов нет",
+      "emptyMessage": "Создайте свой первый маршрут, выбрав достопримечательности",
+      "createNew": "Создать маршрут",
+      "places": "места"
+    },
+    "community": {
+      "empty": "Нет общедоступных маршрутов",
+      "emptyMessage": "Сообщество пока не поделилось маршрутами",
+      "title": "Маршруты сообщества",
+      "description": "Посмотрите маршруты, которыми поделились другие пользователи",
+      "public": "Публичный",
+      "by": "Автор:",
+      "defaultUsername": "Путешественник Тасарини"
+    },
+    "stats": {
+      "distance": "Расстояние"
+    },
+    "difficulty": {
+      "easy": "Легко",
+      "medium": "Умеренный",
+      "hard": "Сложно"
+    },
+    "actions": {
+      "view": "Посмотреть на карте",
+      "share": "Поделиться",
+      "edit": "Изменить",
+      "delete": "Удалить",
+      "makePublic": "Обнародовать",
+      "makePrivate": "Сделать приватным"
+    },
+    "toast": {
+      "deleted": "Маршрут удален",
+      "deleteError": "Ошибка при удалении",
+      "madePublic": "обнародован",
+      "madePrivate": "сделано приватным",
+      "updateError": "Ошибка при обновлении",
+      "linkCopied": "Ссылка скопирована в буфер обмена!",
+      "copyError": "Не удается скопировать ссылку",
+      "loadError": "Ошибка при загрузке маршрутов",
+      "loadPublicError": "Ошибка при загрузке общедоступных маршрутов"
+    },
+    "confirmDelete": "Вы уверены, что хотите удалить этот маршрут?"
+  },
+  "verifyEmailRequired": {
+    "title": "Проверьте свою электронную почту",
+    "subtitle": "Последний шаг перед началом",
+    "sentTo": "На адрес: было отправлено письмо с подтверждением:",
+    "limitedAccess": {
+      "title": "Ограниченный доступ",
+      "description": "Вам необходимо подтвердить свою электронную почту, чтобы получить доступ ко всем функциям Tasarini."
+    },
+    "steps": {
+      "title": "Действия, которые необходимо выполнить:",
+      "step1": "Откройте свой почтовый ящик",
+      "step2": "Найдите электронное письмо от",
+      "step2Bold": "Тасарини",
+      "step3": "Нажмите на ссылку для подтверждения",
+      "step4": "Вернитесь сюда и обновите страницу"
+    },
+    "notReceived": {
+      "title": "Вы не получили письмо?",
+      "checkSpam": "Проверьте папку «Спам» или «Нежелательная почта»",
+      "checkEmail": "Убедитесь, что адрес электронной почты указан правильно",
+      "waitTime": "Подождите несколько минут (доставка письма может занять некоторое время)"
+    },
+    "buttons": {
+      "resend": "Отправить подтверждающее письмо",
+      "sending": "Отправка выполняется...",
+      "sent": "Письмо отправлено!",
+      "signOut": "Выйти из системы и войти под другой учетной записью"
+    },
+    "footer": {
+      "validity": "Ссылка для подтверждения действительна в течение",
+      "hours": "24 часа"
+    },
+    "toast": {
+      "success": "Подтверждающее письмо отправлено повторно!",
+      "error": "Ошибка при отправке электронного письма"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "Заблокированный аккаунт партнера",
+    "description": "Ваша заявка на партнерство была отклонена или ваш аккаунт был заблокирован. Если вы считаете, что это произошло по ошибке, вы можете связаться с нами через форму ниже.",
+    "reasons": {
+      "title": "Возможные причины:",
+      "incorrect": "Неверная или неполная информация",
+      "terms": "Нарушение условий использования",
+      "suspicious": "Обнаружена подозрительная активность",
+      "criteria": "Несоблюдение критериев партнерства"
+    },
+    "contact": {
+      "title": "Связаться с администрацией",
+      "subtitle": "Опишите свою ситуацию, и мы рассмотрим ваш запрос.",
+      "nameLabel": "Полное имя",
+      "namePlaceholder": "Ваше полное имя",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "votre@email.com",
+      "subjectLabel": "Тема",
+      "subjectPlaceholder": "Тема вашего запроса",
+      "subjectDefault": "Запрос на переоценку моего партнерского счета",
+      "messageLabel": "Сообщение",
+      "messagePlaceholder": "Опишите свою ситуацию и причины, по которым ваш аккаунт следует пересмотреть...",
+      "submitButton": "Отправить запрос",
+      "submitting": "Отправка в процессе...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "Время отклика:",
+      "responseTimeText": "Мы стараемся ответить в течение 48–72 часов.",
+      "urgentQuestion": "По срочным вопросам вы также можете связаться с нами по адресу:",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "Ваше сообщение отправлено. Мы ответим вам в ближайшее время.",
+      "error": "Произошла ошибка при отправке сообщения. Пожалуйста, попробуйте ещё раз."
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "Проверка выполняется...",
+      "success": "Адрес электронной почты подтвержден!",
+      "error": "Ошибка проверки"
+    },
+    "description": {
+      "loading": "Пожалуйста, подождите, пока мы проверяем ваш адрес электронной почты.",
+      "successPartner": "Ваша учетная запись партнера была успешно активирована.",
+      "successUser": "Ваша учетная запись успешно активирована.",
+      "error": "Нам не удалось подтвердить ваш адрес электронной почты."
+    },
+    "messages": {
+      "tokenMissing": "Отсутствует токен проверки.",
+      "success": "Ваш адрес электронной почты успешно подтвержден!",
+      "verificationError": "Недействительный или просроченный токен.",
+      "autoLoginInfo": "Мы пытаемся авторизовать вас автоматически. Если это не удалось, воспользуйтесь кнопкой ниже.",
+      "manualLoginInfo": "Войдите в систему, чтобы перейти к следующему этапу.",
+      "autoLoginFailed": "Автоматический вход не удался. Пожалуйста, нажмите кнопку выше, чтобы продолжить.",
+      "waiting": "Это займет всего несколько секунд..."
+    },
+    "partner": {
+      "nextStep": "Следующий шаг: заполните свой профиль партнера",
+      "continueButton": "Перейти к моему профилю партнера",
+      "continueButtonLoading": "Вход..."
+    },
+    "user": {
+      "continueButton": "Перейти в мой профиль",
+      "continueButtonLoading": "Вход..."
+    },
+    "buttons": {
+      "resend": "Отправить ссылку для подтверждения",
+      "backToLogin": "Вернуться к входу",
+      "requestNewLink": "Отправить подтверждающее письмо"
+    },
+    "error": {
+      "title": "Что делать?",
+      "checkLink": "Убедитесь, что ссылка указана полностью",
+      "expired": "Срок действия ссылки истекает через 24 часа",
+      "requestNew": "Запросите новую ссылку для подтверждения"
+    },
+    "toast": {
+      "success": "Адрес электронной почты успешно подтвержден!",
+      "error": "Ошибка проверки",
+      "verifying": "Адрес электронной почты подтвержден, выполняется вход в систему...",
+      "loginSuccess": "Вход выполнен, перенаправление...",
+      "loginError": "Не удалось войти в систему автоматически. Войдите в систему, чтобы продолжить.",
+      "resendSuccess": "Было отправлено новое письмо с подтверждением.",
+      "resendError": "Не удалось отправить ссылку. Войдите в систему, чтобы повторить попытку.",
+      "resendAuthRequired": "Пожалуйста, войдите в систему, чтобы повторно отправить ссылку для подтверждения.",
+      "completeError": "Не удалось завершить проверку."
+    }
+  },
+  "theme": {
+    "toggleLabel": "Сменить тему",
+    "light": "Ясно",
+    "dark": "Мрачный",
+    "system": "Система"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "markAllRead": "Пометить всё как прочитанное",
+    "markRead": "Пометить как прочитанное",
+    "delete": "Удалить",
+    "empty": "Уведомлений нет",
+    "timePrefix": "В",
+    "sent": "Отправлено",
+    "settings": {
+      "title": "Настройки уведомлений",
+      "description": "Настройте уведомления о мероприятиях и поездках",
+      "loading": "Загрузка настроек...",
+      "types": {
+        "title": "Типы уведомлений",
+        "activityReminders": "Напоминания о мероприятиях",
+        "activityRemindersDesc": "Получать напоминания о запланированных мероприятиях",
+        "tripStart": "Начало путешествия",
+        "tripStartDesc": "Уведомление в начале поездки",
+        "tripEnd": "Конец путешествия",
+        "tripEndDesc": "Уведомление по окончании поездки"
+      },
+      "timing": {
+        "title": "График повторных прививок",
+        "before": "Напоминание перед началом занятия",
+        "1h": "за час до",
+        "2h": "за 2 часа до",
+        "6h": "за 6 часов до",
+        "12h": "за 12 часов до",
+        "24h": "за 24 часа до",
+        "48h": "за 48 часов до"
+      },
+      "channels": {
+        "title": "Каналы уведомлений",
+        "inApp": "Уведомления в приложении",
+        "inAppDesc": "Отображать уведомления в приложении",
+        "email": "Уведомления по электронной почте",
+        "emailDesc": "Получать напоминания по электронной почте (скоро будет доступно)"
+      }
+    }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "PDF успешно экспортирован",
+      "pdfExportSuccessDesc": "Ваш маршрут был загружен в формате PDF.",
+      "pdfExportError": "Ошибка экспорта",
+      "pdfExportErrorDesc": "Не удалось экспортировать PDF-файл. Попробуйте ещё раз.",
+      "shareError": "Ошибка при совместном использовании",
+      "shareErrorDesc": "Не удалось поделиться. Попробуйте ещё раз.",
+      "linkCopied": "Ссылка скопирована",
+      "linkCopiedDesc": "Ссылка на ваш маршрут скопирована в буфер обмена.",
+      "copyError": "Ошибка",
+      "copyErrorDesc": "Не удается скопировать ссылку.",
+      "activityUpdated": "Операция успешно обновлена",
+      "dayUpdated": "День успешно обновлен",
+      "activityAdded": "Задание добавлено успешно",
+      "activityMoved": "Мероприятие перенесено на другой день",
+      "orderUpdated": "Обновленный план мероприятий",
+      "dayAdded": "Добавлен новый день",
+      "dayDeleted": "День удален",
+      "cannotDeleteLastDay": "Не удается удалить последний день",
+      "saved": "Маршрут успешно сохранен"
+    },
+    "poi": {
+      "loadError": "Ошибка при загрузке достопримечательностей",
+      "updateSuccess": "Объект интереса успешно обновлен",
+      "createSuccess": "Объект интереса успешно добавлен",
+      "createSuccessPartner": "Точка интереса успешно добавлена — помечена как партнерская точка",
+      "saveError": "Ошибка при сохранении",
+      "deleteSuccess": "Объект интереса успешно удален",
+      "deleteError": "Ошибка при удалении",
+      "toggleSuccess": "Объект интереса {status} успешно добавлен",
+      "toggleError": "Ошибка при изменении",
+      "activated": "включен",
+      "deactivated": "отключено"
+    },
+    "form": {
+      "validationError": "Пожалуйста, исправьте ошибки, прежде чем продолжить",
+      "submitError": "При отправке произошла ошибка",
+      "loadError": "Ошибка при загрузке данных"
+    },
+    "share": {
+      "loadError": "Ошибка при загрузке общих ресурсов",
+      "userNotFound": "По указанному адресу электронной почты пользователей не найдено",
+      "alreadyShared": "У этого пользователя уже есть доступ к этому маршруту",
+      "success": "Маршрут, отправленный {email} в режиме {mode}",
+      "editMode": "изменение",
+      "viewMode": "чтение",
+      "shareError": "Ошибка при совместном доступе",
+      "removeSuccess": "Сообщение удалено",
+      "removeError": "Ошибка при удалении",
+      "updateSuccess": "Обновленные разрешения",
+      "updateError": "Ошибка при обновлении"
+    },
+    "media": {
+      "uploadError": "Ошибка при загрузке: {error}",
+      "deleteSuccess": "Файл удален",
+      "deleteError": "Ошибка при удалении",
+      "uploadSuccess": "{count} {type} файлов успешно загружено",
+      "image": "изображение(я)",
+      "video": "видео"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "Ошибка при загрузке уведомлений",
+        "preferencesUpdated": "Обновлены настройки",
+        "updateError": "Ошибка при обновлении",
+        "allMarkedRead": "Все уведомления, помеченные как прочитанные",
+        "notificationDeleted": "Уведомление удалено",
+        "deleteError": "Ошибка при удалении"
+      },
+      "savedItineraries": {
+        "saved": "Маршрут успешно сохранен",
+        "saveError": "Ошибка при сохранении маршрута",
+        "loadError": "Ошибка при загрузке маршрутов",
+        "deleteConfirm": "Вы уверены, что хотите удалить этот маршрут?",
+        "deleted": "Маршрут успешно удален",
+        "deleteError": "Ошибка при удалении",
+        "updated": "Маршрут успешно обновлен",
+        "updateError": "Ошибка при обновлении"
+      },
+      "favorites": {
+        "loadError": "Ошибка при загрузке избранного",
+        "loginRequired": "Для добавления в избранное необходимо войти в систему",
+        "added": "Добавлено в избранное!",
+        "addError": "Ошибка при добавлении в избранное",
+        "removed": "Объект удален из избранного",
+        "removeError": "Ошибка при удалении избранного"
+      },
+      "poi": {
+        "draftSaved": "Черновик успешно сохранен!",
+        "submitted": "Точка интереса успешно добавлена!",
+        "draftUpdated": "Черновик успешно обновлен!",
+        "updated": "Точка интереса успешно обновлена!"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "Вам было отправлено письмо с подтверждением. Пожалуйста, подтвердите свой адрес, чтобы активировать аккаунт.",
+      "methodNotAvailable": "Этот способ подключения пока недоступен.",
+      "passwordResetSoon": "Скоро появится возможность сброса пароля."
+    },
+    "touristPoints": {
+      "loadError": "Ошибка при загрузке достопримечательностей"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "Отменить",
+      "confirm": "Подтвердить бронирование",
+      "confirming": "Бронирование в процессе...",
+      "error": "Ошибка",
+      "bookingConfirmedTitle": "Бронирование подтверждено",
+      "selectDate": "Выберите дату",
+      "arrivalDate": "Дата прибытия",
+      "departureDate": "Дата отправления",
+      "guests": "Количество человек",
+      "guestsCount": "{{count}} человек(а)",
+      "clientInfo": "Данные клиента",
+      "fullName": "Полное имя",
+      "email": "Электронная почта",
+      "phone": "Телефон",
+      "specialRequests": "Особые пожелания",
+      "summary": "Сводка бронирования",
+      "total": "Всего",
+      "more": "+{{count}} и др."
+    },
+    "accommodation": {
+      "title": "Забронировать жилье - {{name}}",
+      "selectRoom": "Выбрать номер",
+      "loadingRooms": "Загрузка номеров...",
+      "noRooms": "Номеров нет",
+      "upToGuests": "До {{count}} -х человек",
+      "perNightPrice": "{{price}}€ за ночь",
+      "roomLabel": "Комната",
+      "stayDuration": "Продолжительность пребывания",
+      "nights": "{{count}} ночь (ночи)",
+      "specialPlaceholder": "Любые особые пожелания...",
+      "errLoadRooms": "Ошибка при загрузке номеров",
+      "datesUnavailable": "Эти даты недоступны для данного номера",
+      "errAvailability": "Ошибка при проверке наличия",
+      "selectDatesErr": "Пожалуйста, выберите даты заезда и выезда",
+      "selectRoomErr": "Выберите номер",
+      "bookingConfirmed": "Бронирование подтверждено!",
+      "bookingError": "Ошибка при бронировании"
+    },
+    "activity": {
+      "title": "Забронировать {{name}}",
+      "errLoadData": "Не удалось загрузить данные об активности",
+      "errLoadSlots": "Не удается загрузить доступные временные интервалы",
+      "requirementsNotMet": "Условия не выполнены",
+      "selectSlotErr": "Пожалуйста, выберите время",
+      "bookingSuccessDesc": "Ваша бронировка успешно зарегистрирована",
+      "errCreate": "Не удалось создать бронирование",
+      "date": "Дата мероприятия",
+      "availableSlots": "Доступные временные интервалы",
+      "maxParticipants": "Максимум {{count}} участников",
+      "participants": "Количество участников",
+      "adults": "Взрослые",
+      "children": "Дети",
+      "seniors": "Пожилые люди",
+      "equipmentRental": "Оборудование в аренду (по желанию)",
+      "requirements": "Условия и требования",
+      "mandatory": "Обязательно",
+      "recommended": "Рекомендуется",
+      "equipment": "Оборудование",
+      "provided": "В комплекте",
+      "toBring": "Что взять с собой",
+      "specialPlaceholder": "Медицинская информация, аллергии, особые потребности...",
+      "totalToPay": "Общая сумма к оплате"
+    },
+    "restaurant": {
+      "unavailable": "Нет в наличии",
+      "noTable": "Для этого временного интервала нет доступных столов",
+      "errCheck": "Не удается проверить наличие",
+      "fillRequired": "Пожалуйста, заполните все обязательные поля",
+      "requestSentDesc": "Ваш запрос на бронирование отправлен в ресторан",
+      "errCreate": "Ошибка при создании бронирования",
+      "title": "Забронировать столик в {{name}}",
+      "date": "Дата бронирования",
+      "time": "Время бронирования",
+      "selectTime": "Выбрать время",
+      "checking": "Проверка доступности...",
+      "tablesAvailable": "✓ В этом временном интервале есть свободные столики",
+      "yourInfo": "Ваши данные",
+      "namePlaceholder": "Жан Дюпон",
+      "emailPlaceholder": "jean.dupont@email.com",
+      "phonePlaceholder": "06 12 34 56 78",
+      "preferences": "Настройки",
+      "tablePreferences": "Настройки таблицы",
+      "noPrefPlaceholder": "Особых предпочтений нет",
+      "noPref": "Нет предпочтений",
+      "terrace": "Терраса",
+      "indoor": "Интерьер",
+      "window": "У окна",
+      "quiet": "Тихий район",
+      "easyAccess": "Удобный доступ",
+      "specialPlaceholder": "День рождения, пищевая аллергия, детский стульчик...",
+      "summary": "Сводка вашего бронирования",
+      "dateLabel": "Дата",
+      "timeLabel": "Время",
+      "restaurantLabel": "Ресторан",
+      "disclaimer": "Подтверждая бронирование, вы даете согласие на то, чтобы ресторан связался с вами для подтверждения вашего запроса."
+    }
+  },
+  "widgets": {
+    "loadButton": "Показать"
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "Фотография {{city}}",
+    "destination": "пункт назначения",
+    "destinationCapitalized": "Пункт назначения",
+    "inspireYourTrip": "Вдохновитесь на путешествие",
+    "iconicView": "Знаменитый вид, который нельзя пропустить",
+    "viewLarge": "Смотреть в большом формате",
+    "playbackPaused": "Чтение с паузой",
+    "previousImage": "Предыдущее изображение",
+    "nextImage": "Следующее изображение",
+    "goToImage": "Перейти к изображению {{number}}",
+    "thumbnailAlt": "Миниатюра {{number}}",
+    "travelInspiration": "Вдохновение для путешествий",
+    "inspiringSnapshot": "Вдохновляющий снимок",
+    "generatingTitle": "Создание маршрута...",
+    "generatingDescription": "ИИ подготовит для вас индивидуальную программу. Разделы будут появляться постепенно.",
+    "loadingErrorTitle": "Проблема с загрузкой",
+    "loadingErrorDescription": "Маршрут не удалось загрузить. Возможно, это связано с временной неполадкой.",
+    "createNewItinerary": "Создать новый маршрут",
+    "pdfExportSuccessTitle": "PDF успешно экспортирован",
+    "pdfExportSuccessDescription": "Ваш маршрут был загружен в формате PDF.",
+    "pdfExportErrorTitle": "Ошибка экспорта",
+    "pdfExportErrorDescription": "Не удалось экспортировать PDF-файл. Попробуйте ещё раз.",
+    "shareErrorTitle": "Ошибка при совместном использовании",
+    "shareErrorDescription": "Не удалось поделиться. Попробуйте ещё раз.",
+    "linkCopiedTitle": "Ссылка скопирована",
+    "linkCopiedDescription": "Ссылка на ваш маршрут скопирована в буфер обмена.",
+    "errorTitle": "Ошибка",
+    "copyLinkError": "Не удается скопировать ссылку.",
+    "breakfast": "Завтрак",
+    "lunch": "Обед",
+    "dinner": "Ужин",
+    "atLocation": "в",
+    "soloTrip": "Путешествие в одиночку",
+    "coupleTrip": "Путешествие вдвоём",
+    "family": "Семья",
+    "familyWithChildren": "Семья с {{count}} -летним ребенком (детьми)",
+    "groupOfPeople": "Группа из {{count}} -х человек",
+    "preparingTitle": "Ваша программа готовится…",
+    "preparingDescription": "Наш ИИ разрабатывает индивидуальный маршрут для вас. Программа отображается постепенно — подождите еще несколько секунд.",
+    "personalizedItineraryTitle": "Ваш индивидуальный маршрут",
+    "generatedWithPreferences": "Маршрут, составленный с учетом ваших личных предпочтений",
+    "save": "Сохранить",
+    "newTrip": "Новое путешествие",
+    "exportPdf": "Экспорт в PDF",
+    "share": "Поделиться",
+    "copyLink": "Скопировать ссылку",
+    "loadingDestinationImages": "Загрузка фотографий мест назначения...",
+    "whyThisTripTitle": "Почему эта программа подходит именно вам",
+    "matchPercentage": "{{score}}Процент соответствия",
+    "tripOverview": "Краткое описание поездки",
+    "dates": "Даты",
+    "datesToDefine": "Даты будут определены позднее",
+    "daysCount": "{{count}} день(и)",
+    "group": "Группа",
+    "budget": "Бюджет",
+    "budgetPerDay": "{{amount}}€/день",
+    "estimatedTotal": "Ориентировочная общая сумма: {{amount}}€",
+    "destinations": "Направления",
+    "destinationLine": "{{city}}, {{country}} ({{duration}}j)",
+    "budgetBreakdownTitle": "Распределение бюджета",
+    "categoryAccommodation": "Проживание",
+    "categoryFood": "Еда",
+    "categoryActivities": "Деятельность",
+    "categoryTransport": "Транспорт",
+    "categoryShopping": "Покупки",
+    "categoryMiscellaneous": "Разное",
+    "detailedItinerary": "Подробный маршрут",
+    "dayLabel": "День {{number}}",
+    "dailyBudget": "Ежедневный бюджет",
+    "scheduledActivities": "Запланированные мероприятия",
+    "locationUnspecified": "Место не указано",
+    "difficultyEasy": "Легко",
+    "difficultyModerate": "Умеренный",
+    "difficultyHard": "Сложно",
+    "tipsWithCount": "Советы ({{count}})",
+    "bookThisActivity": "Забронировать эту экскурсию",
+    "recommendedMeals": "Рекомендуемые блюда",
+    "book": "Забронировать",
+    "transport": "Транспорт",
+    "estimatedWalkingDistance": "Примерное расстояние пешей прогулки",
+    "generatingDayByDay": "Составление маршрута день за днем...",
+    "generatingDayByDayDescription": "ИИ создаст для вас индивидуальную программу со всеми видами деятельности",
+    "daysWillAppear": "Дни вашего маршрута будут постепенно появляться выше с эффектом набора текста...",
+    "dayByDayProgram": "Индивидуальная программа на каждый день с учетом ваших предпочтений",
+    "generationImproving": "В настоящее время ведется работа по улучшению",
+    "generationImprovingDescription": "Подробный маршрут с расписанием мероприятий по минутам будет доступен в ближайшее время. Пока что вы можете ознакомиться с кратким описанием вашего путешествия выше.",
+    "additionalInformation": "Дополнительная информация",
+    "enrichedContentPlaceholder": "Эта информация будет отображаться, как только в маршрут будут включены дополнительные материалы.",
+    "personalizedRecommendations": "Персонализированные рекомендации",
+    "specialtiesToDiscover": "Блюда, которые стоит попробовать",
+    "giftIdeas": "Идеи для сувениров",
+    "packingList": "Список вещей для поездки",
+    "culturalTips": "Советы по выращиванию",
+    "bestPeriods": "Лучшие периоды",
+    "localEvents": "Местные события",
+    "transportTips": "Советы по транспортировке",
+    "safetyTips": "Советы по безопасности",
+    "budgetDistribution": "Распределение бюджета",
+    "similarDestinations": "Похожие направления",
+    "practicalInformation": "Практическая информация",
+    "visaAndDocuments": "Виза и документы",
+    "currency": "Валюта",
+    "languages": "Языки",
+    "climate": "Климат",
+    "emergencies": "Неотложная помощь",
+    "health": "Здоровье",
+    "localCustoms": "Местные обычаи",
+    "customize": "Настроить",
+    "loginToEdit": "Войдите, чтобы внести изменения"
+  },
+  "editor": {
+    "editActivity": "Изменить задание",
+    "deleteActivity": "Удалить задание",
+    "locationUnspecified": "Место не указано",
+    "toastActivityUpdated": "Обновленная информация",
+    "editActivityTitle": "Изменить задание",
+    "title": "Название",
+    "location": "Место",
+    "description": "Описание",
+    "startTime": "Время начала",
+    "endTime": "Время окончания",
+    "cost": "Стоимость (евро)",
+    "duration": "Продолжительность",
+    "category": "Категория",
+    "difficulty": "Сложность",
+    "difficultyEasy": "Легко",
+    "difficultyModerate": "Умеренный",
+    "difficultyHard": "Сложно",
+    "cancel": "Отменить",
+    "save": "Сохранить",
+    "dayN": "День {{n}}",
+    "moveDayUp": "Вставать утром",
+    "moveDayDown": "Спускаться вниз днём",
+    "editDay": "Изменить день",
+    "deleteDay": "Удалить день",
+    "toastDayUpdated": "Дата обновления",
+    "editDayN": "Изменить день {{n}}",
+    "destination": "Пункт назначения",
+    "theme": "Тема",
+    "toastActivityAdded": "Добавлено мероприятие",
+    "addActivity": "Добавить мероприятие",
+    "add": "Добавить",
+    "toastActivityMoved": "Мероприятие перенесено на другой день",
+    "toastActivitiesReordered": "Обновленный план мероприятий",
+    "toastDayAdded": "Добавлен день",
+    "toastCannotDeleteLastDay": "Не удается удалить последний день",
+    "toastDayDeleted": "День удален",
+    "toastActivityDeleted": "Деятельность удалена",
+    "toastItinerarySaved": "Сохраненный маршрут",
+    "subtitle": "Настройте свой график — перетаскивайте элементы, чтобы изменить их порядок, редактируйте или удаляйте их.",
+    "addDay": "Добавить день",
+    "close": "Закрыть",
+    "dropActivitiesHint": "Разместите здесь мероприятия или добавьте новое"
   }
 }

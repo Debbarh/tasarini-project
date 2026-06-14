@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   nginx:
     image: nginx:alpine
@@ -73,7 +71,7 @@ services:
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              python manage.py check_ai_providers &&
-             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 tasarini_backend.wsgi:application"
+             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 300 tasarini_backend.wsgi:application"
 
   frontend:
     build:
@@ -96,12 +94,32 @@ services:
       - LT_THREADS=4
       - LT_DISABLE_WEB_UI=false
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5000/languages || exit 1"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/languages')"]
       interval: 30s
       timeout: 10s
       retries: 3
     networks:
       - tasarini_network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: tasarini_ollama
+    restart: always
+    environment:
+      # Décharge le modèle de la RAM après 2 min d'inactivité (VPS sans GPU, RAM limitée)
+      - OLLAMA_KEEP_ALIVE=2m
+      - OLLAMA_MAX_LOADED_MODELS=1
+    volumes:
+      - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - tasarini_network
+    # Pas d'exposition de port : accessible uniquement en interne via http://ollama:11434
 
 volumes:
   postgres_data:
@@ -109,6 +127,8 @@ volumes:
   static_volume:
     driver: local
   media_volume:
+    driver: local
+  ollama_models:
     driver: local
 
 networks:

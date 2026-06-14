@@ -1788,6 +1788,33 @@ class TouristPointReviewViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):  # type: ignore[override]
         serializer.save(reviewer=self.request.user)
 
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
+    def featured(self, request):
+        """Avis publics mis en avant pour la page d'accueil (témoignages).
+        Renvoie les meilleurs avis réels (note >= 4, commentaire non vide).
+        Aucune donnée personnelle sensible (pas d'email)."""
+        qs = (
+            TouristPointReview.objects
+            .select_related('reviewer', 'tourist_point')
+            .filter(rating__gte=4)
+            .exclude(comment='')
+            .order_by('-rating', '-created_at')[:9]
+        )
+        data = []
+        for r in qs:
+            author = (getattr(r.reviewer, 'display_name', '') or '').strip()
+            if not author and r.reviewer and r.reviewer.email:
+                author = r.reviewer.email.split('@')[0]
+            data.append({
+                'id': str(r.id),
+                'rating': r.rating,
+                'comment': r.comment,
+                'author': author or 'Voyageur',
+                'touristPoint': r.tourist_point.name,
+                'date': r.created_at.isoformat(),
+            })
+        return Response(data)
+
     def get_object(self):  # type: ignore[override]
         obj = super().get_object()
         if obj.reviewer != self.request.user and not self.request.user.is_staff:

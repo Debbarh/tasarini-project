@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { getLocalizedLabel, getLocalizedDescription } from "@/utils/multilingualHelpers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Baby, Heart, UsersIcon, User, Accessibility, Briefcase } from "lucide-react";
+import { Users, Baby, Heart, UsersIcon, User, Accessibility, Briefcase, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { TripFormData, TravelGroup } from "@/types/trip";
 import { useTravelGroupTypes } from "@/hooks/useTravelGroupTypes";
 import { getFilterExplanation, getMaxDifficultyForGroup } from "@/services/poiTargetMatchingService";
@@ -32,7 +34,7 @@ const iconMap = {
 } as const;
 
 export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsStepProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { types, configurations, getConfigurationForType, getSubtypesForType, loading, error } = useTravelGroupTypes();
   const [travelGroup, setTravelGroup] = useState<TravelGroup>(
     data.travelGroup || { type: 'solo', size: 1 }
@@ -214,6 +216,9 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
             <Users className="h-4 w-4 text-primary" />
             {t('planTrip.travelDetailsStep.travelerType')}
           </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            {t('planTrip.travelDetailsStep.singleChoiceHint', 'Choisissez un seul type')}
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -228,8 +233,8 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                 >
                   <IconComponent className="h-5 w-5" />
                   <div className="text-center">
-                    <div className="font-medium">{type.label_fr}</div>
-                    <div className="text-xs text-muted-foreground">{type.description_fr}</div>
+                    <div className="font-medium">{getLocalizedLabel(type, i18n.language)}</div>
+                    <div className="text-xs text-muted-foreground">{getLocalizedDescription(type, i18n.language)}</div>
                   </div>
                 </Button>
               );
@@ -250,7 +255,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                 <SelectContent>
                   {selectedSubtypes.map((subtype) => (
                     <SelectItem key={subtype.code} value={subtype.code}>
-                      {subtype.label_fr}
+                      {getLocalizedLabel(subtype, i18n.language)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -338,9 +343,9 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
             <h4 className="font-medium">{t('planTrip.travelDetailsStep.summary')}</h4>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline">
-                {selectedType?.label_fr}
-                {travelGroup.subtype && selectedSubtypes.find(s => s.code === travelGroup.subtype) && 
-                  ` - ${selectedSubtypes.find(s => s.code === travelGroup.subtype)?.label_fr}`
+                {selectedType ? getLocalizedLabel(selectedType, i18n.language) : ''}
+                {travelGroup.subtype && selectedSubtypes.find(s => s.code === travelGroup.subtype) &&
+                  ` - ${getLocalizedLabel(selectedSubtypes.find(s => s.code === travelGroup.subtype), i18n.language)}`
                 }
               </Badge>
               {(selectedConfig?.requires_size_input || travelGroup.size > 1) && (
@@ -366,6 +371,18 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                       return difficultyLabels[getMaxDifficultyForGroup(travelGroup)];
                     })()}
                   </Badge>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button type="button" aria-label={t('planTrip.travelDetailsStep.maxLevelTooltip', "Niveau de difficulté d'accès/physique maximal des lieux recommandés pour ce groupe.")}>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        {t('planTrip.travelDetailsStep.maxLevelTooltip', "Niveau de difficulté d'accès/physique maximal des lieux recommandés pour ce groupe.")}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="text-xs text-muted-foreground space-y-1">
                   {getFilterExplanation(travelGroup).map((explanation, index) => (

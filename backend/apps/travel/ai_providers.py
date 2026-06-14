@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from typing import Any, Iterator, Generator
 
 import requests
@@ -24,6 +25,8 @@ def generate_itinerary_with_provider(provider: AIProviderConfig, trip_data: dict
         return _call_gemini(provider, prompt)
     if provider.provider == AIProviderConfig.Provider.PERPLEXITY:
         return _call_perplexity(provider, prompt)
+    if provider.provider == AIProviderConfig.Provider.OLLAMA:
+        return _call_ollama(provider, prompt)
     raise AIProviderException(f"Provider {provider.provider} non supporté.")
 
 
@@ -136,6 +139,30 @@ def _call_perplexity(provider: AIProviderConfig, prompt: str) -> dict | None:
     return _safe_json_loads(content)
 
 
+def _call_ollama(provider: AIProviderConfig, prompt: str) -> dict | None:
+    base = (getattr(settings, "OLLAMA_API_BASE", "") or "http://ollama:11434").rstrip("/")
+    url = f"{base}/api/chat"
+    payload = {
+        "model": provider.model_name or "qwen2.5:3b",
+        "messages": [
+            {"role": "system", "content": "Tu es un planificateur de voyage expert. Réponds uniquement en JSON valide."},
+            {"role": "user", "content": prompt},
+        ],
+        "stream": False,
+        "format": "json",  # force une sortie JSON
+        "options": {"temperature": float(provider.temperature)},
+    }
+    try:
+        response = requests.post(url, json=payload, timeout=300)
+    except requests.exceptions.RequestException as exc:
+        raise AIProviderException(f"Ollama injoignable ({base}): {exc}")
+    if response.status_code >= 400:
+        raise AIProviderException(f"Ollama error: {response.status_code} - {response.text}")
+    data = response.json()
+    content = data.get("message", {}).get("content")
+    return _safe_json_loads(content)
+
+
 def _safe_json_loads(content: str | None) -> dict | None:
     if not content:
         return None
@@ -170,6 +197,8 @@ def generate_itinerary_with_provider_streaming(provider: AIProviderConfig, trip_
         yield from _stream_gemini(provider, prompt)
     elif provider.provider == AIProviderConfig.Provider.PERPLEXITY:
         yield from _stream_perplexity(provider, prompt)
+    elif provider.provider == AIProviderConfig.Provider.OLLAMA:
+        yield from _stream_ollama(provider, prompt)
     else:
         raise AIProviderException(f"Provider {provider.provider} non supporté pour le streaming.")
 
@@ -331,19 +360,92 @@ def _stream_perplexity(provider: AIProviderConfig, prompt: str) -> Generator[str
         raise AIProviderException(f"Perplexity streaming error: {str(e)}")
 
 
+def _stream_ollama(provider: AIProviderConfig, prompt: str) -> Generator[str, None, None]:
+    """Stream tokens from a local Ollama server (NDJSON format)."""
+    base = (getattr(settings, "OLLAMA_API_BASE", "") or "http://ollama:11434").rstrip("/")
+    url = f"{base}/api/chat"
+    payload = {
+        "model": provider.model_name or "qwen2.5:3b",
+        "messages": [
+            {"role": "system", "content": "Tu es un planificateur de voyage expert. Réponds uniquement en JSON valide."},
+            {"role": "user", "content": prompt},
+        ],
+        "stream": True,
+        "format": "json",
+        "options": {"temperature": float(provider.temperature)},
+    }
+
+    try:
+        with requests.post(url, json=payload, timeout=300, stream=True) as response:
+            if response.status_code >= 400:
+                raise AIProviderException(f"Ollama error: {response.status_code} - {response.text}")
+
+            # Ollama renvoie du NDJSON : un objet JSON par ligne, pas du SSE "data:".
+            for line in response.iter_lines():
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line.decode("utf-8"))
+                except json.JSONDecodeError:
+                    logger.warning("Failed to parse Ollama streaming chunk: %s", line)
+                    continue
+
+                content = data.get("message", {}).get("content", "")
+                if content:
+                    yield content
+                if data.get("done"):
+                    break
+
+    except requests.exceptions.RequestException as e:
+        raise AIProviderException(f"Ollama streaming error: {str(e)}")
+
+
 # ============================================================================
 # PARTIAL / SECTION GENERATION HELPERS
 # ============================================================================
 
-def call_provider_with_prompt(provider: AIProviderConfig, prompt: str) -> dict | None:
-    """
-    Generic call to the provider with a custom prompt (non-streaming).
-    Returns parsed JSON or raises AIProviderException on failure.
-    """
+# Marqueurs d'erreurs transitoires (à réessayer) renvoyées par les providers
+_TRANSIENT_MARKERS = ('503', '429', '500', '502', '504', 'UNAVAILABLE',
+                      'high demand', 'overloaded', 'timed out', 'timeout',
+                      'Read timed out', 'rate limit')
+
+
+def _is_transient_error(message: str) -> bool:
+    return any(marker in message for marker in _TRANSIENT_MARKERS)
+
+
+def _dispatch_provider(provider: AIProviderConfig, prompt: str) -> dict | None:
     if provider.provider == AIProviderConfig.Provider.OPENAI:
         return _call_openai(provider, prompt)
     if provider.provider == AIProviderConfig.Provider.GEMINI:
         return _call_gemini(provider, prompt)
     if provider.provider == AIProviderConfig.Provider.PERPLEXITY:
         return _call_perplexity(provider, prompt)
+    if provider.provider == AIProviderConfig.Provider.OLLAMA:
+        return _call_ollama(provider, prompt)
     raise AIProviderException(f"Provider {provider.provider} non supporté.")
+
+
+def call_provider_with_prompt(provider: AIProviderConfig, prompt: str, retries: int = 3) -> dict | None:
+    """
+    Generic call to the provider with a custom prompt (non-streaming).
+    Réessaie automatiquement (backoff) sur les erreurs transitoires (503/429/5xx,
+    surcharge, timeout) — fréquentes sur les APIs IA (ex: Gemini 503 "high demand").
+    Returns parsed JSON or raises AIProviderException on failure.
+    """
+    last_error: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            return _dispatch_provider(provider, prompt)
+        except AIProviderException as exc:
+            last_error = exc
+            if attempt < retries and _is_transient_error(str(exc)):
+                wait = 2 * (attempt + 1)  # 2s, puis 4s
+                logger.warning("Erreur transitoire %s (tentative %d/%d), retry dans %ds: %s",
+                               provider.provider, attempt + 1, retries + 1, wait, str(exc)[:120])
+                time.sleep(wait)
+                continue
+            raise
+    if last_error:
+        raise last_error
+    return None

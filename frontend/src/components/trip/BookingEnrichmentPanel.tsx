@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -48,6 +50,8 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
   standalone = false
 }) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
 
   // Charger les fournisseurs au montage du composant
   React.useEffect(() => {
@@ -88,12 +92,12 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
     hotel: null
   });
 
-  // Formulaires de recherche
+  // Formulaires de recherche (préremplis depuis l'URL si présents : /booking?destination=PAR&checkIn=...&checkOut=...)
   const [hotelSearch, setHotelSearch] = useState({
-    destination: tripData?.destinations?.[0]?.city || '',
-    checkIn: tripData?.startDate ? new Date(tripData.startDate).toISOString().split('T')[0] : '',
-    checkOut: tripData?.endDate ? new Date(tripData.endDate).toISOString().split('T')[0] : '',
-    guests: tripData?.travelGroup?.size || 2
+    destination: tripData?.destinations?.[0]?.city || searchParams.get('destination') || '',
+    checkIn: tripData?.startDate ? new Date(tripData.startDate).toISOString().split('T')[0] : (searchParams.get('checkIn') || ''),
+    checkOut: tripData?.endDate ? new Date(tripData.endDate).toISOString().split('T')[0] : (searchParams.get('checkOut') || ''),
+    guests: tripData?.travelGroup?.size || (parseInt(searchParams.get('guests') || '') || 2)
   });
 
   const [flightSearch, setFlightSearch] = useState({
@@ -151,8 +155,8 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
 
     if (!destinationCode || !hotelSearch.checkIn || !hotelSearch.checkOut) {
       toast({
-        title: "Champs requis",
-        description: "Veuillez remplir tous les champs de recherche",
+        title: t('booking.toastRequiredTitle'),
+        description: t('booking.toastRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -161,8 +165,8 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
     // Destination must be a HotelBeds code (3 lettres)
     if (!/^[A-Z]{3}$/.test(destinationCode)) {
       toast({
-        title: "Code destination invalide",
-        description: "Sélectionnez un code HotelBeds (ex : PAR, BCN, ROM) via l'autocomplete.",
+        title: t('booking.toastInvalidCodeTitle'),
+        description: t('booking.toastInvalidCodeDesc'),
         variant: "destructive"
       });
       return;
@@ -171,8 +175,8 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
     // Validation: check-out doit être après check-in
     if (hotelSearch.checkOut <= hotelSearch.checkIn) {
       toast({
-        title: "Dates invalides",
-        description: "La date de départ doit être au moins 1 jour après la date d'arrivée",
+        title: t('booking.toastInvalidDatesTitle'),
+        description: t('booking.toastInvalidDatesDesc'),
         variant: "destructive"
       });
       return;
@@ -203,14 +207,14 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
       setSearchResults(prev => ({ ...prev, hotels: formattedHotels }));
 
       toast({
-        title: "Recherche terminée",
-        description: `${formattedHotels.length} hôtel(s) trouvé(s)`,
+        title: t('booking.toastDoneTitle'),
+        description: t('booking.toastHotelsFound', { count: formattedHotels.length }),
       });
     } catch (error: any) {
       console.error('❌ Erreur recherche hôtels:', error);
       toast({
-        title: "Erreur de recherche",
-        description: error?.message || "Impossible de rechercher des hôtels. Vérifiez le code destination.",
+        title: t('booking.toastErrorTitle'),
+        description: error?.message || t('booking.toastHotelsError'),
         variant: "destructive"
       });
       setSearchResults(prev => ({ ...prev, hotels: [] }));
@@ -222,8 +226,8 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
   const searchFlights = async () => {
     if (!flightSearch.origin || !flightSearch.destination || !flightSearch.departureDate) {
       toast({
-        title: "Champs requis",
-        description: "Veuillez remplir tous les champs de recherche",
+        title: t('booking.toastRequiredTitle'),
+        description: t('booking.toastRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -263,14 +267,14 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
       setSearchResults(prev => ({ ...prev, flights: formattedFlights }));
 
       toast({
-        title: "Recherche terminée",
-        description: `${formattedFlights.length} vol(s) trouvé(s)`,
+        title: t('booking.toastDoneTitle'),
+        description: t('booking.toastFlightsFound', { count: formattedFlights.length }),
       });
     } catch (error: any) {
       console.error('❌ Erreur recherche vols:', error);
       toast({
-        title: "Erreur de recherche",
-        description: error?.message || "Impossible de rechercher des vols. Vérifiez les codes IATA.",
+        title: t('booking.toastErrorTitle'),
+        description: error?.message || t('booking.toastFlightsError'),
         variant: "destructive"
       });
       setSearchResults(prev => ({ ...prev, flights: [] }));
@@ -282,8 +286,8 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
   const searchActivities = async () => {
     if (!activitySearch.destination || !activitySearch.date) {
       toast({
-        title: "Champs requis",
-        description: "Veuillez remplir tous les champs de recherche",
+        title: t('booking.toastRequiredTitle'),
+        description: t('booking.toastRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -320,14 +324,14 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
       setSearchResults(prev => ({ ...prev, activities: formattedActivities }));
 
       toast({
-        title: "Recherche terminée",
-        description: `${formattedActivities.length} activité(s) trouvée(s)`,
+        title: t('booking.toastDoneTitle'),
+        description: t('booking.toastActivitiesFound', { count: formattedActivities.length }),
       });
     } catch (error: any) {
       console.error('❌ Erreur recherche activités:', error);
       toast({
-        title: "Erreur de recherche",
-        description: error?.message || "Impossible de rechercher des activités. Vérifiez le code destination.",
+        title: t('booking.toastErrorTitle'),
+        description: error?.message || t('booking.toastActivitiesError'),
         variant: "destructive"
       });
       setSearchResults(prev => ({ ...prev, activities: [] }));
@@ -341,15 +345,15 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <ExternalLink className="h-5 w-5 text-primary" />
-          Centrale de réservation
+          {t('booking.title')}
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Recherchez et réservez vos hôtels, vols, transferts et activités
+          {t('booking.subtitle')}
         </p>
         <div className="flex items-center gap-2 mt-2 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
           <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            Plus de requêtes automatiques ! Vous contrôlez maintenant quand effectuer les recherches.
+            {t('booking.info')}
           </p>
         </div>
       </CardHeader>
@@ -358,23 +362,23 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="hotels" className="flex items-center gap-1">
               <Hotel className="h-4 w-4" />
-              <span className="hidden sm:inline">Hôtels</span>
+              <span className="hidden sm:inline">{t('booking.tabs.hotels')}</span>
             </TabsTrigger>
             <TabsTrigger value="flights" className="flex items-center gap-1">
               <Plane className="h-4 w-4" />
-              <span className="hidden sm:inline">Vols</span>
+              <span className="hidden sm:inline">{t('booking.tabs.flights')}</span>
             </TabsTrigger>
             <TabsTrigger value="transfers" className="flex items-center gap-1">
               <Car className="h-4 w-4" />
-              <span className="hidden sm:inline">Transferts</span>
+              <span className="hidden sm:inline">{t('booking.tabs.transfers')}</span>
             </TabsTrigger>
             <TabsTrigger value="restaurants" className="flex items-center gap-1">
               <UtensilsCrossed className="h-4 w-4" />
-              <span className="hidden sm:inline">Restaurants</span>
+              <span className="hidden sm:inline">{t('booking.tabs.restaurants')}</span>
             </TabsTrigger>
             <TabsTrigger value="activities" className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />
-              <span className="hidden sm:inline">Activités</span>
+              <span className="hidden sm:inline">{t('booking.tabs.activities')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -383,19 +387,19 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
             <div className="bg-muted/30 p-4 rounded-lg border">
               <h3 className="font-medium mb-3 flex items-center gap-2">
                 <Search className="h-4 w-4" />
-                Rechercher un hôtel
+                {t('booking.searchHotel')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="hotel-destination">Destination</Label>
+                  <Label htmlFor="hotel-destination">{t('booking.destination')}</Label>
                   <DestinationCodeAutocomplete
                     value={hotelSearch.destination}
                     onValueChange={(code) => setHotelSearch({ ...hotelSearch, destination: code.toUpperCase() })}
-                    placeholder="Sélectionnez une destination..."
+                    placeholder={t('booking.selectDestination')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="hotel-guests">Nombre de personnes</Label>
+                  <Label htmlFor="hotel-guests">{t('booking.guests')}</Label>
                   <Input
                     id="hotel-guests"
                     type="number"
@@ -405,7 +409,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="hotel-checkin">Date d'arrivée</Label>
+                  <Label htmlFor="hotel-checkin">{t('booking.checkIn')}</Label>
                   <Input
                     id="hotel-checkin"
                     type="date"
@@ -429,7 +433,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="hotel-checkout">Date de départ</Label>
+                  <Label htmlFor="hotel-checkout">{t('booking.checkOut')}</Label>
                   <Input
                     id="hotel-checkout"
                     type="date"
@@ -445,11 +449,11 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                 disabled={isSearching.hotels}
               >
                 {isSearching.hotels ? (
-                  <>Recherche en cours...</>
+                  <>{t('booking.searching')}</>
                 ) : (
                   <>
                     <Search className="h-4 w-4 mr-2" />
-                    Rechercher des hôtels
+                    {t('booking.searchHotelsBtn')}
                   </>
                 )}
               </Button>
@@ -459,10 +463,10 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
               {searchResults.hotels.length === 0 ? (
                 <div className="text-center py-8 space-y-2">
                   <p className="text-muted-foreground">
-                    Entrez vos critères de recherche ci-dessus
+                    {t('booking.emptyTitle')}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Les résultats s'afficheront ici après la recherche
+                    {t('booking.emptyDesc')}
                   </p>
                 </div>
               ) : (
@@ -532,13 +536,13 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                                     {/* Badge pour le nombre total d'équipements */}
                                     {hotel.facilities.length > 2 && (
                                       <Badge variant="secondary" className="text-xs">
-                                        +{hotel.facilities.length - 2} autres
+                                        {t('booking.moreAmenities', { count: hotel.facilities.length - 2 })}
                                       </Badge>
                                     )}
                                   </>
                                 ) : (
                                   <Badge variant="secondary" className="text-xs opacity-50">
-                                    Équipements non spécifiés
+                                    {t('booking.amenitiesUnspecified')}
                                   </Badge>
                                 )}
                               </div>
@@ -547,15 +551,15 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                             {/* Price and Actions */}
                             <div className="flex items-end justify-between gap-4 pt-3 border-t">
                               <div>
-                                <div className="text-xs text-muted-foreground mb-1">À partir de</div>
+                                <div className="text-xs text-muted-foreground mb-1">{t('booking.fromPrice')}</div>
                                 {hotel.price.amount > 0 ? (
                                   <div className="text-2xl font-bold text-primary">
                                     {formatHotelPrice(hotel.price.amount, hotel.price.currency)}
-                                    <span className="text-sm font-normal text-muted-foreground">/nuit</span>
+                                    <span className="text-sm font-normal text-muted-foreground">{t('booking.perNight')}</span>
                                   </div>
                                 ) : (
                                   <div className="text-sm text-muted-foreground">
-                                    Tarif non disponible
+                                    {t('booking.priceUnavailable')}
                                   </div>
                                 )}
                               </div>
@@ -570,7 +574,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                                   })}
                                 >
                                   <Eye className="h-4 w-4 mr-1" />
-                                  Détails
+                                  {t('booking.details')}
                                 </Button>
                                 <Button
                                   size="sm"
@@ -580,7 +584,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                                   })}
                                   disabled={hotel.price.amount <= 0}
                                 >
-                                  Réserver
+                                  {t('booking.book')}
                                 </Button>
                               </div>
                             </div>
@@ -599,27 +603,27 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
             <div className="bg-muted/30 p-4 rounded-lg border">
               <h3 className="font-medium mb-3 flex items-center gap-2">
                 <Search className="h-4 w-4" />
-                Rechercher un vol
+                {t('booking.searchFlight')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="flight-origin">Départ</Label>
+                  <Label htmlFor="flight-origin">{t('booking.origin')}</Label>
                   <AirportCodeAutocomplete
                     value={flightSearch.origin}
                     onValueChange={(code) => setFlightSearch({ ...flightSearch, origin: code })}
-                    placeholder="Sélectionnez un aéroport de départ..."
+                    placeholder={t('booking.selectOriginAirport')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="flight-destination">Destination</Label>
+                  <Label htmlFor="flight-destination">{t('booking.destination')}</Label>
                   <AirportCodeAutocomplete
                     value={flightSearch.destination}
                     onValueChange={(code) => setFlightSearch({ ...flightSearch, destination: code })}
-                    placeholder="Sélectionnez un aéroport d'arrivée..."
+                    placeholder={t('booking.selectDestAirport')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="flight-departure">Date départ</Label>
+                  <Label htmlFor="flight-departure">{t('booking.departDate')}</Label>
                   <Input
                     id="flight-departure"
                     type="date"
@@ -628,7 +632,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="flight-return">Date retour (optionnel)</Label>
+                  <Label htmlFor="flight-return">{t('booking.returnDate')}</Label>
                   <Input
                     id="flight-return"
                     type="date"
@@ -637,7 +641,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="flight-passengers">Nombre de passagers</Label>
+                  <Label htmlFor="flight-passengers">{t('booking.passengers')}</Label>
                   <Input
                     id="flight-passengers"
                     type="number"
@@ -653,11 +657,11 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                 disabled={isSearching.flights}
               >
                 {isSearching.flights ? (
-                  <>Recherche en cours...</>
+                  <>{t('booking.searching')}</>
                 ) : (
                   <>
                     <Search className="h-4 w-4 mr-2" />
-                    Rechercher des vols
+                    {t('booking.searchFlightsBtn')}
                   </>
                 )}
               </Button>
@@ -667,10 +671,10 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
               {searchResults.flights.length === 0 ? (
                 <div className="text-center py-8 space-y-2">
                   <p className="text-muted-foreground">
-                    Entrez vos critères de recherche ci-dessus
+                    {t('booking.emptyTitle')}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Les résultats s'afficheront ici après la recherche
+                    {t('booking.emptyDesc')}
                   </p>
                 </div>
               ) : (
@@ -686,7 +690,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                         </div>
                         {flight.stops > 0 && (
                           <Badge variant="secondary" className="text-xs">
-                            {flight.stops} escale{flight.stops > 1 ? 's' : ''}
+                            {t('booking.stops', { count: flight.stops })}
                           </Badge>
                         )}
                       </div>
@@ -703,7 +707,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                           start: flight.departureDate
                         })}
                       >
-                        Réserver
+                        {t('booking.book')}
                       </Button>
                     </div>
                   </div>
@@ -717,29 +721,29 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
             <div className="bg-muted/30 p-4 rounded-lg border mb-4">
               <h3 className="font-medium mb-3 flex items-center gap-2">
                 <Search className="h-4 w-4" />
-                Rechercher un transfert
+                {t('booking.searchTransfer')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="transfer-from">Départ</Label>
+                  <Label htmlFor="transfer-from">{t('booking.origin')}</Label>
                   <Input
                     id="transfer-from"
-                    placeholder="Aéroport, Hôtel..."
+                    placeholder={t('booking.transferFromPlaceholder')}
                     value={transferSearch.from}
                     onChange={(e) => setTransferSearch({ ...transferSearch, from: e.target.value })}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="transfer-to">Destination</Label>
+                  <Label htmlFor="transfer-to">{t('booking.destination')}</Label>
                   <Input
                     id="transfer-to"
-                    placeholder="Hôtel, Centre-ville..."
+                    placeholder={t('booking.transferToPlaceholder')}
                     value={transferSearch.to}
                     onChange={(e) => setTransferSearch({ ...transferSearch, to: e.target.value })}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="transfer-date">Date</Label>
+                  <Label htmlFor="transfer-date">{t('booking.date')}</Label>
                   <Input
                     id="transfer-date"
                     type="date"
@@ -748,7 +752,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="transfer-time">Heure</Label>
+                  <Label htmlFor="transfer-time">{t('booking.time')}</Label>
                   <Input
                     id="transfer-time"
                     type="time"
@@ -757,7 +761,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="transfer-passengers">Nombre de passagers</Label>
+                  <Label htmlFor="transfer-passengers">{t('booking.passengers')}</Label>
                   <Input
                     id="transfer-passengers"
                     type="number"
@@ -769,12 +773,12 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
               </div>
               <Button className="w-full mt-3" disabled>
                 <Search className="h-4 w-4 mr-2" />
-                Rechercher des transferts (bientôt disponible)
+                {t('booking.searchTransfersBtnSoon')}
               </Button>
             </div>
             <div className="text-center py-8">
               <p className="text-muted-foreground">
-                La recherche de transferts sera bientôt disponible
+                {t('booking.transfersSoon')}
               </p>
             </div>
           </TabsContent>
@@ -784,10 +788,10 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
             <div className="text-center py-8 space-y-2">
               <UtensilsCrossed className="h-12 w-12 mx-auto text-muted-foreground/50" />
               <p className="text-muted-foreground font-medium">
-                Les restaurants sont déjà inclus dans votre itinéraire
+                {t('booking.restaurantsIncludedTitle')}
               </p>
               <p className="text-sm text-muted-foreground">
-                Consultez la section "Itinéraire détaillé" ci-dessus pour voir les recommandations de restaurants
+                {t('booking.restaurantsIncludedDesc')}
               </p>
             </div>
           </TabsContent>
@@ -797,19 +801,19 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
             <div className="bg-muted/30 p-4 rounded-lg border">
               <h3 className="font-medium mb-3 flex items-center gap-2">
                 <Search className="h-4 w-4" />
-                Rechercher une activité
+                {t('booking.searchActivity')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="activity-destination">Destination</Label>
+                  <Label htmlFor="activity-destination">{t('booking.destination')}</Label>
                   <DestinationCodeAutocomplete
                     value={activitySearch.destination}
                     onValueChange={(code) => setActivitySearch({ ...activitySearch, destination: code })}
-                    placeholder="Sélectionnez une destination..."
+                    placeholder={t('booking.selectDestination')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="activity-date">Date</Label>
+                  <Label htmlFor="activity-date">{t('booking.date')}</Label>
                   <Input
                     id="activity-date"
                     type="date"
@@ -818,7 +822,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="activity-participants">Nombre de participants</Label>
+                  <Label htmlFor="activity-participants">{t('booking.participants')}</Label>
                   <Input
                     id="activity-participants"
                     type="number"
@@ -834,11 +838,11 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                 disabled={isSearching.activities}
               >
                 {isSearching.activities ? (
-                  <>Recherche en cours...</>
+                  <>{t('booking.searching')}</>
                 ) : (
                   <>
                     <Search className="h-4 w-4 mr-2" />
-                    Rechercher des activités
+                    {t('booking.searchActivitiesBtn')}
                   </>
                 )}
               </Button>
@@ -848,10 +852,10 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
               {searchResults.activities.length === 0 ? (
                 <div className="text-center py-8 space-y-2">
                   <p className="text-muted-foreground">
-                    Entrez vos critères de recherche ci-dessus
+                    {t('booking.emptyTitle')}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Les résultats s'afficheront ici après la recherche
+                    {t('booking.emptyDesc')}
                   </p>
                 </div>
               ) : (
@@ -885,7 +889,7 @@ export const BookingEnrichmentPanel: React.FC<BookingEnrichmentPanelProps> = ({
                           time: activity.time
                         })}
                       >
-                        Réserver
+                        {t('booking.book')}
                       </Button>
                     </div>
                   </div>

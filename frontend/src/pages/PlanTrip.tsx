@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/use-toast";
 import { TripFormData as NewTripFormData, DetailedItinerary } from "@/types/trip";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import AdvertisementModal from "@/components/advertisement/AdvertisementModal";
 import { TripEnrichmentService, EnrichmentOptions } from "@/services/tripEnrichmentService";
@@ -15,7 +14,6 @@ import { tripPlannerService } from "@/services/tripPlannerService";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import { apiClient } from "@/integrations/api/client";
 import { useStreamingItinerary } from "@/hooks/useStreamingItinerary";
-import { Zap } from "lucide-react";
 
 interface GenerationProgress {
   step: string;
@@ -24,7 +22,7 @@ interface GenerationProgress {
 }
 
 const PlanTrip = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { settings } = useSystemSettings();
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +32,6 @@ const PlanTrip = () => {
   const [enrichmentData, setEnrichmentData] = useState<EnrichmentOptions | null>(null);
   const [isEnriching, setIsEnriching] = useState(false);
   const [progress, setProgress] = useState<GenerationProgress>({ step: '', progress: 0, message: '' });
-  const [useStreaming, setUseStreaming] = useState(true); // Enable streaming by default
   const [streamingContent, setStreamingContent] = useState('');
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
@@ -49,6 +46,18 @@ const PlanTrip = () => {
       cancelStreaming();
     };
   }, [cancelStreaming]);
+
+  // Restaurer le programme mis de côté avant une connexion ("Se connecter pour
+  // modifier") afin qu'il ne disparaisse pas au retour sur la page.
+  useEffect(() => {
+    const pending = sessionStorage.getItem('tasarini_pending_itinerary');
+    if (pending) {
+      try {
+        setGeneratedItinerary(JSON.parse(pending));
+      } catch { /* JSON invalide : on ignore */ }
+      sessionStorage.removeItem('tasarini_pending_itinerary');
+    }
+  }, []);
 
   // Watch for streaming completion
   useEffect(() => {
@@ -124,73 +133,23 @@ const PlanTrip = () => {
   const handleTripComplete = async (tripData: NewTripFormData) => {
     if (isLoading || streamingState.isStreaming) return;
 
-    setIsLoading(true);
-    setShowAdvertisement(true);
-    setStreamingContent('');
-
     const sessionId = sessionStorage.getItem('travel_analytics_session');
-
-    // Use streaming mode if enabled
-    if (useStreaming) {
-      if (!sessionId) {
-        toast({
-          title: "Erreur",
-          description: "Session ID manquant pour le streaming",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        setShowAdvertisement(false);
-        return;
-      }
-
-      // Start streaming
-      startStreaming(tripData, sessionId);
+    if (!sessionId) {
+      toast({
+        title: "Erreur",
+        description: "Session ID manquant pour le streaming",
+        variant: "destructive",
+      });
       return;
     }
 
-    // Use normal (non-streaming) mode
-    if (sessionId) {
-      startProgressPolling(sessionId);
-    }
+    setIsLoading(true);
+    setShowAdvertisement(true);
+    setStreamingContent('');
+    setOriginalTripData(tripData);
 
-    const generateItinerary = async () => {
-      try {
-        const response = await tripPlannerService.planTrip(tripData, user?.id);
-
-        if (!response?.itinerary) {
-          throw new Error('Format de réponse invalide');
-        }
-
-        setGeneratedItinerary(response.itinerary);
-        setOriginalTripData(tripData);
-
-        let description = t('planTrip.personalizedTravel');
-        if (response.hasUserContext) {
-          description += " " + t('planTrip.withPreferences');
-        }
-        if (response.hasLocalContext) {
-          description += " " + t('planTrip.withLocalPlaces');
-        }
-
-        toast({
-          title: t('planTrip.itineraryGenerated'),
-          description,
-        });
-      } catch (error: any) {
-        console.error('❌ Erreur génération:', error);
-        toast({
-          title: t('planTrip.generationError'),
-          description: error?.message || t('planTrip.tryAgainLater'),
-          variant: "destructive",
-        });
-        setShowAdvertisement(false);
-      } finally {
-        setIsLoading(false);
-        stopProgressPolling();
-      }
-    };
-
-    generateItinerary();
+    // Génération TOUJOURS en streaming (effet machine à écrire, rendu progressif)
+    startStreaming(tripData, sessionId, i18n.language);
   };
 
   const startItineraryEnrichment = async (itinerary: DetailedItinerary, tripData: NewTripFormData) => {
@@ -287,21 +246,6 @@ const PlanTrip = () => {
       ) : (
         // Show TripWizard when no itinerary
         <div className="space-y-6">
-          {/* Streaming Mode Toggle */}
-          <div className="flex items-center justify-end space-x-3 p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
-            <Label htmlFor="streaming-mode" className="flex items-center gap-2 cursor-pointer">
-              <Zap className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">Mode Streaming en temps réel</span>
-              <span className="text-xs text-muted-foreground">(Génération token-by-token)</span>
-            </Label>
-            <Switch
-              id="streaming-mode"
-              checked={useStreaming}
-              onCheckedChange={setUseStreaming}
-              disabled={isLoading || streamingState.isStreaming}
-            />
-          </div>
-
           <TripWizard
             onComplete={handleTripComplete}
             isLoading={isLoading || streamingState.isStreaming}

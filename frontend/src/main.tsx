@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { StrictMode, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
@@ -9,29 +9,33 @@ import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
 import "./i18n/config.ts";
 
-// Pages
+// Pages — Index/Layout/NotFound en eager (coquille + landing), le reste en lazy
+// (code-splitting : chaque page lourde devient un chunk chargé à la demande).
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Profile from "./pages/Profile";
-import Admin from "./pages/Admin";
-import PartnerCenter from "./pages/PartnerCenter";
-import PlanTrip from "./pages/PlanTrip";
-import Recommendations from "./pages/Recommendations";
-import BeInspired from "./pages/BeInspired";
-import TravelStories from "./pages/TravelStories";
-import StoryDetails from "./pages/StoryDetails";
-import MyDiscoveries from "./pages/MyDiscoveries";
-import TouristPoints from "./pages/TouristPoints";
-import SavedItineraries from "./pages/SavedItineraries";
-import PartnerApplication from "./pages/PartnerApplication";
-import PartnerBlocked from "./pages/PartnerBlocked";
-import CompletePartnerProfilePage from "./pages/CompletePartnerProfilePage";
-import VerifyEmailRequired from "./pages/VerifyEmailRequired";
-import VerifyEmail from "./pages/VerifyEmail";
-import { Terms, Privacy } from "./pages/legal";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Layout from "./components/layout/Layout";
+
+const Auth = lazy(() => import("./pages/Auth"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Admin = lazy(() => import("./pages/Admin"));
+const PartnerCenter = lazy(() => import("./pages/PartnerCenter"));
+const PlanTrip = lazy(() => import("./pages/PlanTrip"));
+const Booking = lazy(() => import("./pages/Booking"));
+const Recommendations = lazy(() => import("./pages/Recommendations"));
+const BeInspired = lazy(() => import("./pages/BeInspired"));
+const TravelStories = lazy(() => import("./pages/TravelStories"));
+const StoryDetails = lazy(() => import("./pages/StoryDetails"));
+const MyDiscoveries = lazy(() => import("./pages/MyDiscoveries"));
+const TouristPoints = lazy(() => import("./pages/TouristPoints"));
+const SavedItineraries = lazy(() => import("./pages/SavedItineraries"));
+const PartnerApplication = lazy(() => import("./pages/PartnerApplication"));
+const PartnerBlocked = lazy(() => import("./pages/PartnerBlocked"));
+const CompletePartnerProfilePage = lazy(() => import("./pages/CompletePartnerProfilePage"));
+const VerifyEmailRequired = lazy(() => import("./pages/VerifyEmailRequired"));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
+const Terms = lazy(() => import("./pages/legal").then((m) => ({ default: m.Terms })));
+const Privacy = lazy(() => import("./pages/legal").then((m) => ({ default: m.Privacy })));
 
 const router = createBrowserRouter([
   {
@@ -69,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: "plan",
         element: <PlanTrip />,
+      },
+      {
+        path: "booking",
+        element: <Booking />,
       },
       {
         path: "recommendations",

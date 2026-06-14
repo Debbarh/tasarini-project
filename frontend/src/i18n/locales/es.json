@@ -8,7 +8,8 @@
     "administration": "Administración",
     "myProfile": "Mi Perfil",
     "logout": "Cerrar sesión",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "notifications": "Notificaciones"
   },
   "notFound": {
     "title": "404",
@@ -30,33 +31,44 @@
     "statsDestinations": "Destinos explorados",
     "statsAdventurers": "Aventureros",
     "statsDreams": "Sueños cumplidos",
-    "liveInspiration": "Live inspiration",
-    "adventureFound": "Adventure found!",
-    "howItWorksTitle": "How does it work?",
-    "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
-    "howStep1Title": "Get inspired",
-    "howStep1Desc": "Browse stories and travel ideas tailored to your desires.",
-    "howStep2Title": "Plan",
-    "howStep2Desc": "Use our assistant to create an itinerary and book hotels and transport.",
-    "howStep3Title": "Travel worry-free",
-    "howStep3Desc": "Receive confirmations, share your stories and enjoy the trip.",
-    "bookingCenter": "Booking Center",
-    "bookingCenterDesc": "Search and book your hotels, flights and activities in just a few clicks",
-    "transportServices": "Transport Services",
-    "transportServicesDesc": "Vehicle rental, transfers and urban transport",
-    "carRental": "Rental",
-    "transfers": "Transfers",
-    "busAndTrain": "Bus & Train",
-    "urbanTransport": "Urban",
-    "activitiesExperiences": "Activities & Experiences",
-    "activitiesDesc": "Discover the best activities and restaurants",
-    "toursVisits": "Tours & Visits",
-    "gastronomy": "Gastronomy",
-    "travelerServices": "Traveler Services",
-    "travelerServicesDesc": "Connectivity and assistance",
-    "booking": "Booking",
-    "esimCards": "eSIM Cards",
-    "compensation": "Compensation"
+    "liveInspiration": "Inspiración en directo",
+    "adventureFound": "¡Aventura encontrada!",
+    "howItWorksTitle": "¿Cómo funciona?",
+    "howItWorksSubtitle": "3 pasos simples para pasar de la idea al viaje confirmado.",
+    "howStep1Title": "Inspírate",
+    "howStep1Desc": "Explora historias e ideas de viaje adaptadas a tus deseos.",
+    "howStep2Title": "Planifica",
+    "howStep2Desc": "Usa nuestro asistente para crear un itinerario y reservar hoteles y transporte.",
+    "howStep3Title": "Viaja sin preocupaciones",
+    "howStep3Desc": "Recibe confirmaciones, comparte tus historias y disfruta del viaje.",
+    "bookingCenter": "Centro de Reservas",
+    "bookingCenterDesc": "Busca y reserva tus hoteles, vuelos y actividades en pocos clics",
+    "transportServices": "Servicios de transporte",
+    "transportServicesDesc": "Alquiler de vehículos, traslados y transporte urbano",
+    "carRental": "Alquiler",
+    "transfers": "Traslados",
+    "busAndTrain": "Bus y Tren",
+    "urbanTransport": "Transporte urbano",
+    "activitiesExperiences": "Actividades y Experiencias",
+    "activitiesDesc": "Descubre las mejores actividades y restaurantes",
+    "toursVisits": "Tours y Visitas",
+    "gastronomy": "Gastronomía",
+    "travelerServices": "Servicios para viajeros",
+    "travelerServicesDesc": "Conectividad y asistencia",
+    "booking": "Reservas",
+    "esimCards": "Tarjetas eSIM",
+    "compensation": "Compensación",
+    "testimonialsTitle": "Han viajado con nosotros",
+    "testimonialsSubtitle": "Las opiniones de nuestra comunidad de viajeros",
+    "captionHero": "Tu próxima aventura",
+    "captionBeach": "Escapada a la playa",
+    "captionMountain": "Aventuras en la montaña",
+    "captionCity": "Escapadas urbanas",
+    "captionCultural": "Inmersión cultural",
+    "goToImage": "Ir a la imagen {{index}}",
+    "searchDestination": "¿Adónde vas?",
+    "searchCta": "Buscar",
+    "openBookingCenter": "Abrir la central de reservas"
   },
   "planTrip": {
     "title": "Planifica tu escapada perfecta",
@@ -108,7 +120,11 @@
           "title": "Actividades",
           "description": "Experiencias e intereses"
         }
-      }
+      },
+      "autosaved": "Progreso guardado",
+      "estimatedTime": "~3 min",
+      "skipStep": "Saltar este paso",
+      "generateNow": "Generar ahora"
     },
     "destinationStep": {
       "selectCountry": "Seleccionar un país",
@@ -140,7 +156,9 @@
       "locationSaved": "Destino guardado con éxito.",
       "locationSaveError": "No se pudo guardar esta ubicación, verifique la información.",
       "invalidAddress": "Por favor, seleccione una dirección válida en el mapa.",
-      "fetchingTranslations": "Fetching multilingual translations..."
+      "fetchingTranslations": "Fetching multilingual translations...",
+      "geocodeFailed": "No se puede determinar la ciudad para este punto. Elige otra ubicación o introduce la ciudad manualmente.",
+      "chooseOnMapHint": "Abre un mapa interactivo para seleccionar con precisión tu destino y obtener sus coordenadas."
     },
     "travelDetailsStep": {
       "title": "Compañeros de viaje",
@@ -174,7 +192,9 @@
       "availablePlural": "disponibles",
       "remains": "queda",
       "remainsPlural": "quedan",
-      "error": "Error"
+      "error": "Error",
+      "singleChoiceHint": "Elige un solo tipo",
+      "maxLevelTooltip": "Nivel máximo de dificultad de acceso y exigencia física de los lugares recomendados para este grupo."
     },
     "budgetStep": {
       "title": "Presupuesto de viaje",
@@ -225,7 +245,8 @@
       "types": "Tipos",
       "services": "Servicios",
       "locations": "Ubicaciones",
-      "others": "otros"
+      "others": "otros",
+      "typeRequired": "Selecciona al menos un tipo de alojamiento para continuar."
     },
     "activitiesStep": {
       "title": "Actividades y experiencias",
@@ -625,13 +646,34 @@
           "veryStrong": "Muy fuerte"
         }
       }
+    },
+    "emailNotConfirmed": "Por favor, comprueba tu correo electrónico y haz clic en el enlace de confirmación para activar tu cuenta",
+    "invalidCredentials": "Correo electrónico o contraseña incorrectos",
+    "forgotPassword": {
+      "link": "¿Has olvidado tu contraseña?",
+      "title": "Restablecer la contraseña",
+      "description": "Introduce tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+      "sendButton": "Enviar el enlace",
+      "sending": "Enviando...",
+      "successTitle": "Correo electrónico enviado",
+      "successDescription": "Si tu dirección de correo electrónico está vinculada a una cuenta, recibirás un enlace para restablecer la contraseña.",
+      "emailSent": "Comprueba tu bandeja de entrada (y la carpeta de correo no deseado) para encontrar el enlace de restablecimiento.",
+      "emailSentMessage": "Si tu dirección de correo electrónico figura en nuestro sistema, recibirás un enlace para restablecer la contraseña."
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. Todos los derechos reservados.",
     "becomePartner": "Convertirse en socio",
     "madeWith": "Hecho con",
-    "by": "por"
+    "by": "por",
+    "tagline": "Inspiración, planificación y reserva de viajes, impulsadas por la IA.",
+    "discover": "Descubrir",
+    "company": "Empresa",
+    "legal": "Aviso legal",
+    "contact": "Contacto",
+    "terms": "Condiciones generales",
+    "privacy": "Política de privacidad",
+    "rights": "Todos los derechos reservados."
   },
   "common": {
     "loading": "Cargando...",
@@ -1215,7 +1257,13 @@
         "updateError": "Error al actualizar la notificación"
       },
       "export": "Exportar datos",
-      "loadingError": "Error al cargar el panel de control"
+      "loadingError": "Error al cargar el panel de control",
+      "analyticsTab": "Analítica",
+      "poisTab": "Mis puntos de interés",
+      "bookingsTab": "Reservas",
+      "financesTab": "Finanzas",
+      "subscriptionTab": "Suscripción",
+      "notificationsTab": "Notificaciones"
     }
   },
   "legal": {
@@ -1230,5 +1278,711 @@
       "description": "Learn how we protect your personal data",
       "footer": "GDPR Compliant - Your data is protected"
     }
+  },
+  "booking": {
+    "title": "Central de reservas",
+    "subtitle": "Busca y reserva tus hoteles, vuelos, traslados y actividades",
+    "info": "¡Se acabaron las búsquedas automáticas! Ahora tú decides cuándo realizar las búsquedas.",
+    "tabs": {
+      "hotels": "Hoteles",
+      "flights": "Vuelos",
+      "transfers": "Traspasos",
+      "restaurants": "Restaurantes",
+      "activities": "Actividades"
+    },
+    "searchHotel": "Buscar un hotel",
+    "searchFlight": "Buscar un vuelo",
+    "searchTransfer": "Buscar un traslado",
+    "searchActivity": "Buscar una actividad",
+    "destination": "Destino",
+    "selectDestination": "Selecciona un destino...",
+    "selectOriginAirport": "Selecciona un aeropuerto de salida...",
+    "selectDestAirport": "Selecciona un aeropuerto de llegada...",
+    "guests": "Número de personas",
+    "passengers": "Número de pasajeros",
+    "participants": "Número de participantes",
+    "checkIn": "Fecha de llegada",
+    "checkOut": "Fecha de salida",
+    "departDate": "Fecha de salida",
+    "returnDate": "Fecha de devolución (opcional)",
+    "origin": "Salida",
+    "date": "Fecha",
+    "time": "Hora",
+    "searching": "Búsqueda en curso...",
+    "searchHotelsBtn": "Buscar hoteles",
+    "searchFlightsBtn": "Buscar vuelos",
+    "searchActivitiesBtn": "Buscar actividades",
+    "searchTransfersBtnSoon": "Buscar traspasos (próximamente)",
+    "transfersSoon": "La búsqueda de traspasos estará disponible en breve",
+    "transferFromPlaceholder": "Aeropuerto, hotel...",
+    "transferToPlaceholder": "Hotel, centro de la ciudad...",
+    "emptyTitle": "Introduzca sus criterios de búsqueda arriba",
+    "emptyDesc": "Los resultados aparecerán aquí tras la búsqueda",
+    "moreAmenities": "+{{count}} y otros",
+    "amenitiesUnspecified": "Equipos no especificados",
+    "fromPrice": "A partir de",
+    "perNight": "/noche",
+    "priceUnavailable": "Precio no disponible",
+    "details": "Detalles",
+    "book": "Reservar",
+    "stops": "{{count}} escala(s)",
+    "restaurantsIncludedTitle": "Los restaurantes ya están incluidos en tu itinerario",
+    "restaurantsIncludedDesc": "Consulte la sección «Itinerario detallado» más arriba para ver las recomendaciones de restaurantes",
+    "toastRequiredTitle": "Campos obligatorios",
+    "toastRequiredDesc": "Rellene todos los campos de búsqueda",
+    "toastInvalidCodeTitle": "Código de destino no válido",
+    "toastInvalidCodeDesc": "Selecciona un código de HotelBeds (por ejemplo: PAR, BCN, ROM) mediante la función de autocompletar.",
+    "toastInvalidDatesTitle": "Fechas no válidas",
+    "toastInvalidDatesDesc": "La fecha de salida debe ser, como mínimo, un día después de la fecha de llegada",
+    "toastDoneTitle": "Búsqueda finalizada",
+    "toastErrorTitle": "Error en la búsqueda",
+    "toastHotelsFound": "{{count}} hotel(es) encontrado(s)",
+    "toastFlightsFound": "{{count}} vuelo(s) encontrado(s)",
+    "toastActivitiesFound": "{{count}} actividad(es) encontrada(s)",
+    "toastHotelsError": "No se pueden buscar hoteles. Comprueba el código de destino.",
+    "toastFlightsError": "No se pueden buscar vuelos. Comprueba los códigos IATA.",
+    "toastActivitiesError": "No se pueden buscar actividades. Comprueba el código de destino."
+  },
+  "savedItineraries": {
+    "pageTitle": "Mis rutas guardadas",
+    "pageDescription": "Encuentra todos tus itinerarios de viaje guardados y planificados con nuestra IA. Gestiona, modifica y comparte tus planes de viaje.",
+    "subtitle": "Consulta todos tus viajes planificados y organiza tus próximas aventuras.",
+    "searchPlaceholder": "Buscar una ruta...",
+    "unauthorized": "Acceso no autorizado",
+    "unauthorizedMessage": "Debes iniciar sesión para acceder a tus rutas guardadas.",
+    "stats": {
+      "saved": "Itinerarios guardados",
+      "favorites": "Favoritos",
+      "travelDays": "Días de viaje"
+    },
+    "empty": {
+      "title": "No hay rutas guardadas",
+      "noResults": "No se ha encontrado ninguna ruta",
+      "searchMessage": "Prueba con otras palabras clave de búsqueda.",
+      "createMessage": "¡Empieza por crear tu primer itinerario de viaje!"
+    },
+    "actions": {
+      "view": "Ver",
+      "viewDetails": "Ver detalles",
+      "export": "PDF",
+      "exportPDF": "Exportar a PDF",
+      "share": "Compartir",
+      "delete": "Eliminar",
+      "favorite": "Favorito",
+      "create": "Crear una ruta"
+    },
+    "badges": {
+      "days": "días"
+    },
+    "dialog": {
+      "deleteTitle": "Eliminar la ruta",
+      "deleteDescription": "¿Estás seguro de que quieres eliminar",
+      "deleteWarning": "Esta acción es irreversible.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
+    },
+    "toast": {
+      "pdfExported": "¡PDF exportado!",
+      "pdfExportedDesc": "Tu itinerario se ha descargado correctamente.",
+      "pdfError": "Error",
+      "pdfErrorDesc": "No se puede exportar el PDF",
+      "shareError": "Error",
+      "shareErrorDesc": "No se puede compartir la ruta",
+      "deleted": "Ruta eliminada",
+      "deleteError": "Error al eliminar"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "Mis descubrimientos",
+    "pageDescription": "Gestiona tus lugares favoritos y tus rutas de descubrimiento personalizadas.",
+    "subtitle": "Encuentra tus lugares favoritos y tus rutas personalizadas",
+    "loginMessage": "Inicia sesión para ver tus favoritos y tus itinerarios.",
+    "tabs": {
+      "favorites": "Favoritos",
+      "itineraries": "Mis itinerarios",
+      "community": "Comunidad"
+    },
+    "favorites": {
+      "empty": "Ningún favorito",
+      "emptyMessage": "Empieza añadiendo lugares a tus favoritos desde el mapa",
+      "exploreMap": "Explorar el mapa"
+    },
+    "itineraries": {
+      "empty": "No hay itinerarios",
+      "emptyMessage": "Crea tu primera ruta seleccionando puntos de interés",
+      "createNew": "Crear una ruta",
+      "places": "lugares"
+    },
+    "community": {
+      "empty": "No hay rutas públicas",
+      "emptyMessage": "La comunidad aún no ha compartido ninguna ruta",
+      "title": "Rutas de la comunidad",
+      "description": "Descubre las rutas que han compartido otros usuarios",
+      "public": "Público",
+      "by": "Por",
+      "defaultUsername": "Viajero Tasarini"
+    },
+    "stats": {
+      "distance": "Distancia"
+    },
+    "difficulty": {
+      "easy": "Fácil",
+      "medium": "Moderado",
+      "hard": "Difícil"
+    },
+    "actions": {
+      "view": "Ver en el mapa",
+      "share": "Compartir",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "makePublic": "Hacer público",
+      "makePrivate": "Hacerlo privado"
+    },
+    "toast": {
+      "deleted": "Ruta eliminada",
+      "deleteError": "Error al eliminar",
+      "madePublic": "hecho público",
+      "madePrivate": "convertido en privado",
+      "updateError": "Error durante la actualización",
+      "linkCopied": "¡Enlace copiado en el portapapeles!",
+      "copyError": "No se puede copiar el enlace",
+      "loadError": "Error al cargar las rutas",
+      "loadPublicError": "Error al cargar las rutas públicas"
+    },
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta ruta?"
+  },
+  "verifyEmailRequired": {
+    "title": "Comprueba tu correo electrónico",
+    "subtitle": "Un último paso antes de empezar",
+    "sentTo": "Se ha enviado un correo electrónico de verificación a:",
+    "limitedAccess": {
+      "title": "Acceso restringido",
+      "description": "Debes verificar tu correo electrónico para poder acceder a todas las funciones de Tasarini."
+    },
+    "steps": {
+      "title": "Pasos a seguir:",
+      "step1": "Abre tu correo electrónico",
+      "step2": "Busca el correo electrónico de",
+      "step2Bold": "Tasarini",
+      "step3": "Haz clic en el enlace de verificación",
+      "step4": "Vuelve aquí y actualiza la página"
+    },
+    "notReceived": {
+      "title": "¿No has recibido el correo electrónico?",
+      "checkSpam": "Comprueba tu carpeta de correo no deseado",
+      "checkEmail": "Comprueba que la dirección de correo electrónico sea correcta",
+      "waitTime": "Espera unos minutos (el correo electrónico puede tardar un poco en llegar)"
+    },
+    "buttons": {
+      "resend": "Reenviar el correo electrónico de verificación",
+      "sending": "Enviando...",
+      "sent": "¡Correo electrónico enviado!",
+      "signOut": "Cerrar sesión y utilizar otra cuenta"
+    },
+    "footer": {
+      "validity": "El enlace de verificación es válido durante",
+      "hours": "24 horas"
+    },
+    "toast": {
+      "success": "¡Se ha reenviado el correo electrónico de verificación!",
+      "error": "Error al reenviar el correo electrónico"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "Cuenta de socio bloqueada",
+    "description": "Tu solicitud para ser socio ha sido rechazada o tu cuenta ha sido suspendida. Si crees que se trata de un error, puedes ponerte en contacto con nosotros a través del siguiente formulario.",
+    "reasons": {
+      "title": "Posibles motivos:",
+      "incorrect": "Información incorrecta o incompleta",
+      "terms": "Incumplimiento de las condiciones de uso",
+      "suspicious": "Se ha detectado actividad sospechosa",
+      "criteria": "No se han cumplido los criterios de colaboración"
+    },
+    "contact": {
+      "title": "Contactar con la Administración",
+      "subtitle": "Explíquenos su situación y estudiaremos su solicitud.",
+      "nameLabel": "Nombre completo",
+      "namePlaceholder": "Tu nombre completo",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "votre@email.com",
+      "subjectLabel": "Tema",
+      "subjectPlaceholder": "Asunto de su solicitud",
+      "subjectDefault": "Solicitud de reevaluación de mi cuenta de socio",
+      "messageLabel": "Mensaje",
+      "messagePlaceholder": "Describa su situación y las razones por las que se debería reconsiderar su cuenta...",
+      "submitButton": "Enviar mi solicitud",
+      "submitting": "Enviando...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "Tiempo de respuesta:",
+      "responseTimeText": "Nos esforzamos por responder en un plazo de 48 a 72 horas.",
+      "urgentQuestion": "Si tiene alguna pregunta urgente, también puede ponerse en contacto con nosotros en:",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "Tu mensaje se ha enviado. Te responderemos lo antes posible.",
+      "error": "Se ha producido un error al enviar el mensaje. Inténtalo de nuevo."
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "Comprobación en curso...",
+      "success": "¡Correo electrónico verificado!",
+      "error": "Error de verificación"
+    },
+    "description": {
+      "loading": "Por favor, espere mientras verificamos su correo electrónico.",
+      "successPartner": "Tu cuenta de socio se ha activado correctamente.",
+      "successUser": "Tu cuenta se ha activado correctamente.",
+      "error": "No hemos podido verificar tu correo electrónico."
+    },
+    "messages": {
+      "tokenMissing": "Falta el token de verificación.",
+      "success": "¡Tu correo electrónico se ha verificado correctamente!",
+      "verificationError": "Token no válido o caducado.",
+      "autoLoginInfo": "Estamos intentando iniciar sesión automáticamente. Si no funciona, utiliza el botón de abajo.",
+      "manualLoginInfo": "Inicie sesión para continuar con el siguiente paso.",
+      "autoLoginFailed": "La conexión automática ha fallado. Utiliza el botón de arriba para continuar.",
+      "waiting": "Solo te llevará unos segundos..."
+    },
+    "partner": {
+      "nextStep": "Siguiente paso: Completa tu perfil de socio",
+      "continueButton": "Ir a mi perfil de socio",
+      "continueButtonLoading": "Iniciando sesión..."
+    },
+    "user": {
+      "continueButton": "Acceder a mi perfil",
+      "continueButtonLoading": "Iniciando sesión..."
+    },
+    "buttons": {
+      "resend": "Reenviar el enlace de verificación",
+      "backToLogin": "Volver a iniciar sesión",
+      "requestNewLink": "Reenviar un correo electrónico de verificación"
+    },
+    "error": {
+      "title": "¿Qué hacer?",
+      "checkLink": "Comprueba que el enlace esté completo",
+      "expired": "El enlace caduca al cabo de 24 horas",
+      "requestNew": "Solicita un nuevo enlace de verificación"
+    },
+    "toast": {
+      "success": "¡Correo electrónico verificado correctamente!",
+      "error": "Error de verificación",
+      "verifying": "Correo electrónico verificado, iniciando sesión...",
+      "loginSuccess": "Conexión establecida, redirigiendo...",
+      "loginError": "No se ha podido iniciar sesión automáticamente. Inicie sesión para continuar.",
+      "resendSuccess": "Se ha enviado un nuevo correo electrónico de verificación.",
+      "resendError": "No se puede reenviar el enlace. Inicia sesión para volver a intentarlo.",
+      "resendAuthRequired": "Inicia sesión para volver a enviar el enlace de verificación.",
+      "completeError": "No se ha podido completar la verificación."
+    }
+  },
+  "theme": {
+    "toggleLabel": "Cambiar el tema",
+    "light": "Claro",
+    "dark": "Sombrío",
+    "system": "Sistema"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "markAllRead": "Marcar todo como leído",
+    "markRead": "Marcar como leído",
+    "delete": "Eliminar",
+    "empty": "No hay notificaciones",
+    "timePrefix": "En",
+    "sent": "Enviado",
+    "settings": {
+      "title": "Preferencias de notificaciones",
+      "description": "Configura tus notificaciones para actividades y viajes",
+      "loading": "Cargando las preferencias...",
+      "types": {
+        "title": "Tipos de notificaciones",
+        "activityReminders": "Recordatorio de actividades",
+        "activityRemindersDesc": "Recibir recordatorios antes de tus actividades programadas",
+        "tripStart": "Inicio del viaje",
+        "tripStartDesc": "Notificación al inicio de su viaje",
+        "tripEnd": "Fin del viaje",
+        "tripEndDesc": "Notificación al finalizar tu viaje"
+      },
+      "timing": {
+        "title": "Calendario de las dosis de refuerzo",
+        "before": "Recordatorio antes de la actividad",
+        "1h": "1 hora antes",
+        "2h": "2 horas antes",
+        "6h": "6 horas antes",
+        "12h": "12 horas antes",
+        "24h": "24 horas antes",
+        "48h": "48 horas antes"
+      },
+      "channels": {
+        "title": "Canales de notificación",
+        "inApp": "Notificaciones en la aplicación",
+        "inAppDesc": "Mostrar notificaciones en la aplicación",
+        "email": "Notificaciones por correo electrónico",
+        "emailDesc": "Recibir correos electrónicos de recordatorio (próximamente disponible)"
+      }
+    }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "El PDF se ha exportado correctamente",
+      "pdfExportSuccessDesc": "Tu itinerario se ha descargado en formato PDF.",
+      "pdfExportError": "Error de exportación",
+      "pdfExportErrorDesc": "No se ha podido exportar el PDF. Inténtalo de nuevo.",
+      "shareError": "Error al compartir",
+      "shareErrorDesc": "No se ha podido compartir. Inténtalo de nuevo.",
+      "linkCopied": "Enlace copiado",
+      "linkCopiedDesc": "El enlace de tu itinerario se ha copiado en el portapapeles.",
+      "copyError": "Error",
+      "copyErrorDesc": "No se puede copiar el enlace.",
+      "activityUpdated": "Actividad actualizada correctamente",
+      "dayUpdated": "Día actualizado correctamente",
+      "activityAdded": "Actividad añadida correctamente",
+      "activityMoved": "Actividad trasladada a otro día",
+      "orderUpdated": "Orden de las actividades actualizado",
+      "dayAdded": "Se ha añadido un nuevo día",
+      "dayDeleted": "Día eliminado",
+      "cannotDeleteLastDay": "No se puede eliminar el último día",
+      "saved": "Itinerario guardado correctamente"
+    },
+    "poi": {
+      "loadError": "Error al cargar los puntos de interés",
+      "updateSuccess": "Punto de interés actualizado correctamente",
+      "createSuccess": "Punto de interés creado correctamente",
+      "createSuccessPartner": "Punto de interés creado correctamente - Marcado como punto asociado",
+      "saveError": "Error al guardar",
+      "deleteSuccess": "Punto de interés eliminado correctamente",
+      "deleteError": "Error al eliminar",
+      "toggleSuccess": "Punto de interés {status} completado con éxito",
+      "toggleError": "Error al modificar",
+      "activated": "activado",
+      "deactivated": "desactivado"
+    },
+    "form": {
+      "validationError": "Por favor, corrige los errores antes de continuar",
+      "submitError": "Se ha producido un error al enviar el formulario",
+      "loadError": "Error al cargar los datos"
+    },
+    "share": {
+      "loadError": "Error al cargar los recursos compartidos",
+      "userNotFound": "No se ha encontrado ningún usuario con esta dirección de correo electrónico",
+      "alreadyShared": "Este usuario ya tiene acceso a esta ruta",
+      "success": "Itinerario compartido con {email} en modo {mode}",
+      "editMode": "modificación",
+      "viewMode": "lectura",
+      "shareError": "Error al compartir",
+      "removeSuccess": "Publicación eliminada",
+      "removeError": "Error al eliminar",
+      "updateSuccess": "Permisos actualizados",
+      "updateError": "Error durante la actualización"
+    },
+    "media": {
+      "uploadError": "Error al subir el archivo: {error}",
+      "deleteSuccess": "Archivo eliminado",
+      "deleteError": "Error al eliminar",
+      "uploadSuccess": "{count} {type} subida(s) correctamente",
+      "image": "imagen(es)",
+      "video": "vídeo(s)"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "Error al cargar las notificaciones",
+        "preferencesUpdated": "Preferencias actualizadas",
+        "updateError": "Error durante la actualización",
+        "allMarkedRead": "Todas las notificaciones marcadas como leídas",
+        "notificationDeleted": "Notificación eliminada",
+        "deleteError": "Error al eliminar"
+      },
+      "savedItineraries": {
+        "saved": "Itinerario guardado correctamente",
+        "saveError": "Error al guardar la ruta",
+        "loadError": "Error al cargar las rutas",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar esta ruta?",
+        "deleted": "Ruta eliminada correctamente",
+        "deleteError": "Error al eliminar",
+        "updated": "Itinerario actualizado correctamente",
+        "updateError": "Error durante la actualización"
+      },
+      "favorites": {
+        "loadError": "Error al cargar los favoritos",
+        "loginRequired": "Debes iniciar sesión para añadir favoritos",
+        "added": "¡Punto de interés añadido a los favoritos!",
+        "addError": "Error al añadir a favoritos",
+        "removed": "Punto de interés eliminado de los favoritos",
+        "removeError": "Error al eliminar los favoritos"
+      },
+      "poi": {
+        "draftSaved": "¡Borrador guardado correctamente!",
+        "submitted": "¡Punto de interés enviado correctamente!",
+        "draftUpdated": "¡Borrador actualizado correctamente!",
+        "updated": "¡Punto de interés actualizado correctamente!"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "Se ha enviado un correo electrónico de verificación. Por favor, confirma tu dirección para activar tu cuenta.",
+      "methodNotAvailable": "Este método de conexión aún no está disponible.",
+      "passwordResetSoon": "La opción para restablecer la contraseña estará disponible en breve."
+    },
+    "touristPoints": {
+      "loadError": "Error al cargar los puntos de interés"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "Cancelar",
+      "confirm": "Confirmar la reserva",
+      "confirming": "Reserva en curso...",
+      "error": "Error",
+      "bookingConfirmedTitle": "Reserva confirmada",
+      "selectDate": "Selecciona una fecha",
+      "arrivalDate": "Fecha de llegada",
+      "departureDate": "Fecha de salida",
+      "guests": "Número de personas",
+      "guestsCount": "{{count}} persona(s)",
+      "clientInfo": "Datos del cliente",
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "specialRequests": "Solicitudes especiales",
+      "summary": "Resumen de la reserva",
+      "total": "Total",
+      "more": "+{{count}} y otros"
+    },
+    "accommodation": {
+      "title": "Reservar alojamiento - {{name}}",
+      "selectRoom": "Seleccionar una habitación",
+      "loadingRooms": "Cargando las habitaciones...",
+      "noRooms": "No hay habitaciones disponibles",
+      "upToGuests": "Hasta un {{count}} e",
+      "perNightPrice": "{{price}}€ por noche",
+      "roomLabel": "Habitación",
+      "stayDuration": "Duración de la estancia",
+      "nights": "{{count}} noche(s)",
+      "specialPlaceholder": "Cualquier solicitud especial...",
+      "errLoadRooms": "Error al cargar las habitaciones",
+      "datesUnavailable": "Esas fechas no están disponibles para esta habitación",
+      "errAvailability": "Error al comprobar la disponibilidad",
+      "selectDatesErr": "Seleccione las fechas de llegada y salida",
+      "selectRoomErr": "Seleccione una habitación",
+      "bookingConfirmed": "¡Reserva confirmada!",
+      "bookingError": "Error al realizar la reserva"
+    },
+    "activity": {
+      "title": "Reservar {{name}}",
+      "errLoadData": "No se pueden cargar los datos de la actividad",
+      "errLoadSlots": "No se pueden cargar los horarios disponibles",
+      "requirementsNotMet": "Condiciones no cumplidas",
+      "selectSlotErr": "Seleccione una franja horaria",
+      "bookingSuccessDesc": "Tu reserva se ha registrado correctamente",
+      "errCreate": "No se puede crear la reserva",
+      "date": "Fecha de la actividad",
+      "availableSlots": "Horarios disponibles",
+      "maxParticipants": "Máximo de participantes {{count}} ",
+      "participants": "Número de participantes",
+      "adults": "Adultos",
+      "children": "Niños",
+      "seniors": "Personas mayores",
+      "equipmentRental": "Equipos de alquiler (opcional)",
+      "requirements": "Condiciones y requisitos previos",
+      "mandatory": "Obligatorio",
+      "recommended": "Recomendado",
+      "equipment": "Instalaciones",
+      "provided": "Incluido",
+      "toBring": "Qué hay que llevar",
+      "specialPlaceholder": "Información médica, alergias, necesidades especiales...",
+      "totalToPay": "Total a pagar"
+    },
+    "restaurant": {
+      "unavailable": "No disponible",
+      "noTable": "No hay mesas disponibles para ese horario",
+      "errCheck": "No se puede comprobar la disponibilidad",
+      "fillRequired": "Rellene todos los campos obligatorios",
+      "requestSentDesc": "Tu solicitud de reserva se ha enviado al restaurante",
+      "errCreate": "Error al crear la reserva",
+      "title": "Reservar mesa en {{name}}",
+      "date": "Fecha de reserva",
+      "time": "Hora de la reserva",
+      "selectTime": "Seleccionar una hora",
+      "checking": "Comprobando la disponibilidad...",
+      "tablesAvailable": "✓ Mesas disponibles para este horario",
+      "yourInfo": "Sus datos",
+      "namePlaceholder": "Jean Dupont",
+      "emailPlaceholder": "jean.dupont@email.com",
+      "phonePlaceholder": "06 12 34 56 78",
+      "preferences": "Preferencias",
+      "tablePreferences": "Preferencias de la tabla",
+      "noPrefPlaceholder": "No tengo ninguna preferencia en particular",
+      "noPref": "Sin preferencia",
+      "terrace": "Terraza",
+      "indoor": "Interior",
+      "window": "Junto a una ventana",
+      "quiet": "Zona tranquila",
+      "easyAccess": "Fácil acceso",
+      "specialPlaceholder": "Cumpleaños, alergias alimentarias, trona para bebés...",
+      "summary": "Resumen de tu reserva",
+      "dateLabel": "Fecha",
+      "timeLabel": "Hora",
+      "restaurantLabel": "Restaurante",
+      "disclaimer": "Al confirmar su reserva, acepta que el restaurante se ponga en contacto con usted para confirmar su solicitud."
+    }
+  },
+  "widgets": {
+    "loadButton": "Mostrar"
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "Foto de {{city}}",
+    "destination": "destino",
+    "destinationCapitalized": "Destino",
+    "inspireYourTrip": "Inspírate para tu viaje",
+    "iconicView": "Una vista emblemática que no te puedes perder",
+    "viewLarge": "Ver a lo grande",
+    "playbackPaused": "Reproducción en pausa",
+    "previousImage": "Imagen anterior",
+    "nextImage": "Imagen siguiente",
+    "goToImage": "Ir a la imagen {{number}}",
+    "thumbnailAlt": "Miniatura {{number}}",
+    "travelInspiration": "Inspiración para viajar",
+    "inspiringSnapshot": "Una imagen inspiradora",
+    "generatingTitle": "Generando tu itinerario...",
+    "generatingDescription": "La IA elabora tu programa personalizado. Las secciones irán apareciendo poco a poco.",
+    "loadingErrorTitle": "Problema al cargar",
+    "loadingErrorDescription": "No se ha podido cargar correctamente la ruta. Puede que se deba a un problema temporal.",
+    "createNewItinerary": "Crear una nueva ruta",
+    "pdfExportSuccessTitle": "El PDF se ha exportado correctamente",
+    "pdfExportSuccessDescription": "Tu itinerario se ha descargado en formato PDF.",
+    "pdfExportErrorTitle": "Error de exportación",
+    "pdfExportErrorDescription": "No se ha podido exportar el PDF. Inténtalo de nuevo.",
+    "shareErrorTitle": "Error al compartir",
+    "shareErrorDescription": "No se ha podido compartir. Inténtalo de nuevo.",
+    "linkCopiedTitle": "Enlace copiado",
+    "linkCopiedDescription": "El enlace de tu itinerario se ha copiado en el portapapeles.",
+    "errorTitle": "Error",
+    "copyLinkError": "No se puede copiar el enlace.",
+    "breakfast": "Desayuno",
+    "lunch": "Almuerzo",
+    "dinner": "Cena",
+    "atLocation": "a",
+    "soloTrip": "Viaje en solitario",
+    "coupleTrip": "Viaje en pareja",
+    "family": "Familia",
+    "familyWithChildren": "Familia con {{count}} niño(s)",
+    "groupOfPeople": "Grupo de {{count}} s personas",
+    "preparingTitle": "Preparando tu programa...",
+    "preparingDescription": "Nuestra IA diseña tu itinerario a medida. El programa se va mostrando poco a poco; solo unos instantes más.",
+    "personalizedItineraryTitle": "Tu itinerario personalizado",
+    "generatedWithPreferences": "Viaje creado según tus preferencias personales",
+    "save": "Guardar",
+    "newTrip": "Nuevo viaje",
+    "exportPdf": "Exportar a PDF",
+    "share": "Compartir",
+    "copyLink": "Copiar el enlace",
+    "loadingDestinationImages": "Cargando imágenes de los destinos...",
+    "whyThisTripTitle": "¿Por qué este programa es ideal para ti?",
+    "matchPercentage": "{{score}}Porcentaje de adecuación",
+    "tripOverview": "Resumen del viaje",
+    "dates": "Fechas",
+    "datesToDefine": "Fechas por determinar",
+    "daysCount": "{{count}} día(s)",
+    "group": "Grupo",
+    "budget": "Presupuesto",
+    "budgetPerDay": "{{amount}}€ al día",
+    "estimatedTotal": "Total estimado: {{amount}}€",
+    "destinations": "Destinos",
+    "destinationLine": "{{city}}, {{country}} ({{duration}}j)",
+    "budgetBreakdownTitle": "Distribución del presupuesto",
+    "categoryAccommodation": "Alojamiento",
+    "categoryFood": "Comida",
+    "categoryActivities": "Actividades",
+    "categoryTransport": "Transporte",
+    "categoryShopping": "Compras",
+    "categoryMiscellaneous": "Varios",
+    "detailedItinerary": "Itinerario detallado",
+    "dayLabel": "Día {{number}}",
+    "dailyBudget": "Presupuesto diario",
+    "scheduledActivities": "Actividades programadas",
+    "locationUnspecified": "Lugar no especificado",
+    "difficultyEasy": "Fácil",
+    "difficultyModerate": "Moderado",
+    "difficultyHard": "Difícil",
+    "tipsWithCount": "Consejos ({{count}})",
+    "bookThisActivity": "Reservar esta actividad",
+    "recommendedMeals": "Comidas recomendadas",
+    "book": "Reservar",
+    "transport": "Transporte",
+    "estimatedWalkingDistance": "Distancia estimada a pie",
+    "generatingDayByDay": "Generación del itinerario día a día...",
+    "generatingDayByDayDescription": "La IA crea tu programa personalizado con todas las actividades",
+    "daysWillAppear": "Las etapas de tu itinerario aparecerán progresivamente arriba con el efecto de escritura...",
+    "dayByDayProgram": "Programa diario personalizado según tus preferencias",
+    "generationImproving": "Generación en proceso de mejora",
+    "generationImprovingDescription": "El itinerario detallado con actividades minuto a minuto estará disponible en breve. Por ahora, puedes ver el resumen de tu viaje más arriba.",
+    "additionalInformation": "Información adicional",
+    "enrichedContentPlaceholder": "Esta información aparecerá en cuanto la ruta incluya contenidos enriquecidos.",
+    "personalizedRecommendations": "Recomendaciones personalizadas",
+    "specialtiesToDiscover": "Especialidades que descubrir",
+    "giftIdeas": "Ideas para regalos",
+    "packingList": "Lista de viaje",
+    "culturalTips": "Consejos culturales",
+    "bestPeriods": "Las mejores épocas",
+    "localEvents": "Eventos locales",
+    "transportTips": "Consejos sobre transporte",
+    "safetyTips": "Consejos de seguridad",
+    "budgetDistribution": "Distribución presupuestaria",
+    "similarDestinations": "Destinos similares",
+    "practicalInformation": "Información práctica",
+    "visaAndDocuments": "Visados y documentos",
+    "currency": "Moneda",
+    "languages": "Idiomas",
+    "climate": "Clima",
+    "emergencies": "Urgencias",
+    "health": "Salud",
+    "localCustoms": "Costumbres locales",
+    "customize": "Personalizar",
+    "loginToEdit": "Inicia sesión para editar"
+  },
+  "editor": {
+    "editActivity": "Modificar la actividad",
+    "deleteActivity": "Eliminar la actividad",
+    "locationUnspecified": "Lugar no especificado",
+    "toastActivityUpdated": "Actividad actualizada",
+    "editActivityTitle": "Modificar la actividad",
+    "title": "Título",
+    "location": "Lugar",
+    "description": "Descripción",
+    "startTime": "Hora de inicio",
+    "endTime": "Hora de finalización",
+    "cost": "Coste (€)",
+    "duration": "Duración",
+    "category": "Categoría",
+    "difficulty": "Dificultad",
+    "difficultyEasy": "Fácil",
+    "difficultyModerate": "Moderado",
+    "difficultyHard": "Difícil",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "dayN": "Día {{n}}",
+    "moveDayUp": "Salir al día",
+    "moveDayDown": "Descender al atardecer",
+    "editDay": "Cambiar el día",
+    "deleteDay": "Eliminar el día",
+    "toastDayUpdated": "Fecha de actualización",
+    "editDayN": "Cambiar el día {{n}}",
+    "destination": "Destino",
+    "theme": "Tema",
+    "toastActivityAdded": "Actividad añadida",
+    "addActivity": "Añadir una actividad",
+    "add": "Añadir",
+    "toastActivityMoved": "Actividad trasladada a otro día",
+    "toastActivitiesReordered": "Orden de las actividades actualizado",
+    "toastDayAdded": "Día añadido",
+    "toastCannotDeleteLastDay": "No se puede eliminar el último día",
+    "toastDayDeleted": "Día eliminado",
+    "toastActivityDeleted": "Actividad eliminada",
+    "toastItinerarySaved": "Itinerario guardado",
+    "subtitle": "Personaliza tu programa: arrastra y suelta para reorganizar las actividades, edítalas o elimínalas.",
+    "addDay": "Añadir un día",
+    "close": "Cerrar",
+    "dropActivitiesHint": "Publica actividades aquí o añade una nueva"
   }
 }

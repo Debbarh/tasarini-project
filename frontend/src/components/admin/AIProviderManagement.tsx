@@ -32,6 +32,12 @@ const AVAILABLE_MODELS = {
     { value: 'sonar-pro', label: 'Sonar Pro (Plus puissant, meilleure qualité)' },
     { value: 'sonar-reasoning', label: 'Sonar Reasoning (Raisonnement complexe)' },
   ],
+  ollama: [
+    { value: 'qwen2.5:3b', label: 'Qwen2.5 3B (Recommandé - Local, bon en JSON)' },
+    { value: 'qwen2.5:7b', label: 'Qwen2.5 7B (Local, meilleure qualité - lent, RAM élevée)' },
+    { value: 'llama3.2:3b', label: 'Llama 3.2 3B (Local, léger)' },
+    { value: 'qwen2.5:1.5b', label: 'Qwen2.5 1.5B (Local, le plus rapide)' },
+  ],
 };
 
 const AIProviderManagement = () => {

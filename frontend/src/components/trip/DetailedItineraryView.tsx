@@ -1,5 +1,6 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTypingEffect } from "@/hooks/useTypingEffect";
 import { Button } from "@/components/ui/button";
@@ -9,16 +10,18 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save, ShoppingCart, ChevronDown, ChevronUp, Euro, Sparkles, ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
+import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save, ShoppingCart, ChevronDown, ChevronUp, Euro, Sparkles, ChevronLeft, ChevronRight, Maximize2, X, Pencil } from "lucide-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { DetailedItinerary, UnsplashImage } from "@/types/trip";
+import { getDateFnsLocale } from "@/utils/dateLocale";
+import { DetailedItinerary, UnsplashImage, ActivityImage } from "@/types/trip";
 import { exportItineraryToPDF, shareItinerary, copyItineraryLink } from "@/utils/itineraryExport";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedItineraries } from "@/hooks/useSavedItineraries";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import SaveItineraryDialog from "@/components/itinerary/SaveItineraryDialog";
+import { EditableItineraryView } from "@/components/itinerary/EditableItineraryView";
+import { useNavigate } from "react-router-dom";
 import { UnifiedBookingDialog } from "@/components/booking/UnifiedBookingDialog";
 import { BookingItem, BookingType } from "@/types/booking";
 import { BookingEnrichmentPanel } from "./BookingEnrichmentPanel";
@@ -45,11 +48,13 @@ interface DetailedItineraryViewProps {
   enrichmentData?: EnrichmentOptions | null;
   isEnriching?: boolean;
   isStreaming?: boolean;  // NEW: Enables typing effects during streaming
+  savedItineraryId?: string;  // si fourni : édition d'un itinéraire déjà sauvegardé (PATCH)
 }
 
 type GalleryImage = UnsplashImage & { city?: string };
 
 const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -129,17 +134,17 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                 >
                   <img
                     src={image.url || image.thumbnailUrl}
-                    alt={image.description || `Photo de ${image.city || 'destination'}`}
+                    alt={image.description || t('itinerary.galleryPhotoAlt', 'Photo de {{city}}', { city: image.city || t('itinerary.destination', 'destination') })}
                     className="h-full w-full object-cover"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white space-y-2">
                     <div className="text-xs uppercase tracking-wide text-white/80">
-                      {image.city ? image.city : 'Destination'} • Inspirez votre voyage
+                      {image.city ? image.city : t('itinerary.destinationCapitalized', 'Destination')} • {t('itinerary.inspireYourTrip', 'Inspirez votre voyage')}
                     </div>
                     <h3 className="text-2xl sm:text-3xl font-semibold leading-tight drop-shadow">
-                      {image.description || "Vue emblématique à ne pas manquer"}
+                      {image.description || t('itinerary.iconicView', 'Vue emblématique à ne pas manquer')}
                     </h3>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
                       <span>📷 {image.photographer}</span>
@@ -152,10 +157,10 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                     <div className="flex flex-wrap gap-2 pt-2">
                       <Button size="sm" variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-white/30" onClick={() => setLightboxIndex(currentIndex)}>
                         <Maximize2 className="h-4 w-4 mr-2" />
-                        Voir en grand
+                        {t('itinerary.viewLarge', 'Voir en grand')}
                       </Button>
                       {isPaused && (
-                        <span className="text-xs text-white/80 self-center">Lecture en pause</span>
+                        <span className="text-xs text-white/80 self-center">{t('itinerary.playbackPaused', 'Lecture en pause')}</span>
                       )}
                     </div>
                   </div>
@@ -166,14 +171,14 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
             {total > 1 && (
               <>
                 <button
-                  aria-label="Image précédente"
+                  aria-label={t('itinerary.previousImage', 'Image précédente')}
                   onClick={() => goTo(currentIndex - 1)}
                   className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 text-white p-2 hover:bg-black/60 transition"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
                 <button
-                  aria-label="Image suivante"
+                  aria-label={t('itinerary.nextImage', 'Image suivante')}
                   onClick={() => goTo(currentIndex + 1)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 text-white p-2 hover:bg-black/60 transition"
                 >
@@ -186,7 +191,7 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                       key={`${image.id}-dot-${index}`}
                       onClick={() => goTo(index)}
                       className={`h-2.5 rounded-full transition-all ${index === currentIndex ? 'w-7 bg-white' : 'w-2.5 bg-white/50 hover:bg-white/70'}`}
-                      aria-label={`Aller à l'image ${index + 1}`}
+                      aria-label={t('itinerary.goToImage', "Aller à l'image {{number}}", { number: index + 1 })}
                     />
                   ))}
                 </div>
@@ -204,13 +209,13 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                 >
                   <img
                     src={image.thumbnailUrl || image.url}
-                    alt={image.description || `Miniature ${index + 1}`}
+                    alt={image.description || t('itinerary.thumbnailAlt', 'Miniature {{number}}', { number: index + 1 })}
                     className="h-full w-full object-cover"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-1 left-2 right-2 text-[10px] text-white truncate">
-                    {image.city || 'Destination'}
+                    {image.city || t('itinerary.destinationCapitalized', 'Destination')}
                   </div>
                 </button>
               ))}
@@ -224,7 +229,7 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
           <DialogHeader className="px-6 pt-6 pb-2">
             <DialogTitle className="flex items-center justify-between text-lg">
               <span>
-                {activeImage.city || 'Destination'} — {activeImage.description || 'Inspiration de voyage'}
+                {activeImage.city || t('itinerary.destinationCapitalized', 'Destination')} — {activeImage.description || t('itinerary.travelInspiration', 'Inspiration de voyage')}
               </span>
               <Button size="icon" variant="ghost" onClick={() => setLightboxIndex(null)}>
                 <X className="h-4 w-4" />
@@ -241,7 +246,7 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
               {total > 1 && (
                 <>
                   <button
-                    aria-label="Image précédente"
+                    aria-label={t('itinerary.previousImage', 'Image précédente')}
                     onClick={() => setLightboxIndex((prev) => {
                       if (prev === null) return 0;
                       return (prev - 1 + total) % total;
@@ -251,7 +256,7 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                     <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
-                    aria-label="Image suivante"
+                    aria-label={t('itinerary.nextImage', 'Image suivante')}
                     onClick={() => setLightboxIndex((prev) => {
                       if (prev === null) return 0;
                       return (prev + 1) % total;
@@ -263,9 +268,9 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                 </>
               )}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 text-white space-y-1">
-                <p className="text-sm font-semibold">{lightboxIndex !== null ? images[lightboxIndex].city || 'Destination' : activeImage.city || 'Destination'}</p>
+                <p className="text-sm font-semibold">{lightboxIndex !== null ? images[lightboxIndex].city || t('itinerary.destinationCapitalized', 'Destination') : activeImage.city || t('itinerary.destinationCapitalized', 'Destination')}</p>
                 <p className="text-xs text-white/80">
-                  {lightboxIndex !== null ? images[lightboxIndex].description || 'Instantané inspirant' : activeImage.description || 'Instantané inspirant'}
+                  {lightboxIndex !== null ? images[lightboxIndex].description || t('itinerary.inspiringSnapshot', 'Instantané inspirant') : activeImage.description || t('itinerary.inspiringSnapshot', 'Instantané inspirant')}
                 </p>
                 <p className="text-xs text-white/70">📷 {lightboxIndex !== null ? images[lightboxIndex].photographer : activeImage.photographer}</p>
               </div>
@@ -321,11 +326,23 @@ const TypedText: React.FC<{ text: string; isStreaming: boolean; delay?: number; 
   );
 };
 
-export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, isEnriching = false, isStreaming = false }: DetailedItineraryViewProps) => {
+export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, enrichmentData, isEnriching = false, isStreaming = false, savedItineraryId }: DetailedItineraryViewProps) => {
+  const { t, i18n } = useTranslation();
+  const dfLocale = getDateFnsLocale(i18n.language);
+  // Copie locale éditable : reflète les personnalisations sans dépendre du parent.
+  const [localItinerary, setLocalItinerary] = useState(itineraryProp);
+  useEffect(() => { setLocalItinerary(itineraryProp); }, [itineraryProp]);
+  const itinerary = localItinerary;
+  // Édition / persistance
+  const [isEditing, setIsEditing] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(savedItineraryId ?? null);
   // State for lazy-loaded images
   const [destinationImages, setDestinationImages] = useState<Record<string, UnsplashImage[]>>(itinerary?.destinationImages || {});
   const [isLoadingImages, setIsLoadingImages] = useState(false);
   const imagesPollingRef = useRef<NodeJS.Timeout | null>(null);
+  // Images d'activités (Wikimedia), indexées par activity.id (ou "dayNumber:index")
+  const [activityImages, setActivityImages] = useState<Record<string, ActivityImage>>({});
+  const activityImagesPollingRef = useRef<NodeJS.Timeout | null>(null);
 
   // Safety check for itinerary structure
   // During streaming, itinerary can be null or partial - show loading state
@@ -338,9 +355,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
                 <Sparkles className="h-12 w-12 animate-pulse text-primary mx-auto" />
-                <h3 className="text-lg font-semibold">Génération de votre itinéraire...</h3>
+                <h3 className="text-lg font-semibold">{t('itinerary.generatingTitle', 'Génération de votre itinéraire...')}</h3>
                 <p className="text-muted-foreground">
-                  L'IA prépare votre programme personnalisé. Les sections apparaîtront progressivement.
+                  {t('itinerary.generatingDescription', "L'IA prépare votre programme personnalisé. Les sections apparaîtront progressivement.")}
                 </p>
               </div>
             </CardContent>
@@ -363,14 +380,14 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
               <div className="text-4xl">⚠️</div>
-              <h3 className="text-lg font-semibold">Problème de chargement</h3>
+              <h3 className="text-lg font-semibold">{t('itinerary.loadingErrorTitle', 'Problème de chargement')}</h3>
               <p className="text-muted-foreground">
-                L'itinéraire n'a pas pu être chargé correctement. Cela peut être dû à un problème temporaire.
+                {t('itinerary.loadingErrorDescription', "L'itinéraire n'a pas pu être chargé correctement. Cela peut être dû à un problème temporaire.")}
               </p>
               <div className="flex gap-2 justify-center pt-4">
                 <Button onClick={onStartOver} variant="default">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Créer un nouvel itinéraire
+                  {t('itinerary.createNewItinerary', 'Créer un nouvel itinéraire')}
                 </Button>
               </div>
             </div>
@@ -409,8 +426,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
   });
   const { toast } = useToast();
   const { user } = useAuth();
-  const { saveItinerary } = useSavedItineraries();
+  const { saveItinerary, updateItinerary } = useSavedItineraries();
   const { settings } = useSystemSettings();
+  const navigate = useNavigate();
 
   // Lazy load destination images
   useEffect(() => {
@@ -460,6 +478,39 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
     };
   }, [destinationImages]);
 
+  // Lazy load des images d'activités (Wikimedia)
+  useEffect(() => {
+    const sessionId = sessionStorage.getItem('travel_analytics_session');
+    if (Object.keys(activityImages).length > 0 || !sessionId) return;
+
+    const pollActivityImages = async () => {
+      try {
+        const response = await apiClient.get<{ images: Record<string, ActivityImage> }>(
+          `travel/activity-images/?sessionId=${sessionId}`
+        );
+        if (response.images && Object.keys(response.images).length > 0) {
+          setActivityImages(response.images);
+          if (activityImagesPollingRef.current) {
+            clearInterval(activityImagesPollingRef.current);
+            activityImagesPollingRef.current = null;
+          }
+        }
+      } catch (error) {
+        console.error('Error polling activity images:', error);
+      }
+    };
+
+    pollActivityImages();
+    activityImagesPollingRef.current = setInterval(pollActivityImages, 2500);
+
+    return () => {
+      if (activityImagesPollingRef.current) {
+        clearInterval(activityImagesPollingRef.current);
+        activityImagesPollingRef.current = null;
+      }
+    };
+  }, [activityImages]);
+
   const galleryImages = useMemo<GalleryImage[]>(() => {
     if (!destinationImages || Object.keys(destinationImages).length === 0) return [];
     return Object.entries(destinationImages).flatMap(([city, images]) =>
@@ -502,13 +553,13 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
     try {
       await exportItineraryToPDF(itinerary);
       toast({
-        title: "PDF exporté avec succès",
-        description: "Votre itinéraire a été téléchargé en PDF.",
+        title: t('itinerary.pdfExportSuccessTitle', 'PDF exporté avec succès'),
+        description: t('itinerary.pdfExportSuccessDescription', 'Votre itinéraire a été téléchargé en PDF.'),
       });
     } catch (error) {
       toast({
-        title: "Erreur d'export",
-        description: "Impossible d'exporter le PDF. Veuillez réessayer.",
+        title: t('itinerary.pdfExportErrorTitle', "Erreur d'export"),
+        description: t('itinerary.pdfExportErrorDescription', "Impossible d'exporter le PDF. Veuillez réessayer."),
         variant: "destructive",
       });
     }
@@ -519,8 +570,8 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
       await shareItinerary(itinerary, platform);
     } catch (error) {
       toast({
-        title: "Erreur de partage",
-        description: "Impossible de partager. Veuillez réessayer.",
+        title: t('itinerary.shareErrorTitle', 'Erreur de partage'),
+        description: t('itinerary.shareErrorDescription', 'Impossible de partager. Veuillez réessayer.'),
         variant: "destructive",
       });
     }
@@ -530,20 +581,57 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
     try {
       await copyItineraryLink();
       toast({
-        title: "Lien copié",
-        description: "Le lien de votre itinéraire a été copié dans le presse-papiers.",
+        title: t('itinerary.linkCopiedTitle', 'Lien copié'),
+        description: t('itinerary.linkCopiedDescription', 'Le lien de votre itinéraire a été copié dans le presse-papiers.'),
       });
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de copier le lien.",
+        title: t('itinerary.errorTitle', 'Erreur'),
+        description: t('itinerary.copyLinkError', 'Impossible de copier le lien.'),
         variant: "destructive",
       });
     }
   };
 
+  // Fusionne les images d'activités (récupérées en cache) dans l'itinéraire pour
+  // les PERSISTER avec la sauvegarde (sinon elles ne vivent que 600s dans le cache).
+  const withActivityImages = (it: DetailedItinerary): DetailedItinerary => {
+    if (!it?.days || Object.keys(activityImages).length === 0) return it;
+    return {
+      ...it,
+      days: it.days.map((d) => ({
+        ...d,
+        activities: (d.activities || []).map((a, ai) => {
+          const img = activityImages[a.id] || activityImages[`${d.dayNumber}:${ai}`];
+          return img ? { ...a, image: img } : a;
+        }),
+      })),
+    };
+  };
+
   const handleSaveItinerary = async (title: string, description?: string) => {
-    return await saveItinerary(title, itinerary, description);
+    const saved = await saveItinerary(title, withActivityImages(itinerary), description);
+    if (saved && typeof saved === 'object') setSavedId(saved.id);
+    return saved;
+  };
+
+  // Sauvegarde depuis l'éditeur : PATCH si déjà sauvegardé, sinon POST.
+  const handleEditSave = async (updated: { id: string; title: string; itinerary_data: DetailedItinerary }) => {
+    const dataWithImages = withActivityImages(updated.itinerary_data);
+    setLocalItinerary(dataWithImages); // reflète les modifs dans la vue lecture
+    if (savedId) {
+      await updateItinerary({
+        id: savedId,
+        title: updated.title || itinerary.title || 'Mon itinéraire',
+        itinerary_data: dataWithImages,
+        is_favorite: false,
+        created_at: '',
+        updated_at: '',
+      } as any);
+    } else {
+      const saved = await saveItinerary(updated.title || itinerary.title || 'Mon itinéraire', dataWithImages);
+      if (saved && typeof saved === 'object') setSavedId(saved.id);
+    }
   };
 
   const handleBookActivity = (activity: any, date: string, destination: string) => {
@@ -585,7 +673,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
     const bookingItem: BookingItem = {
       id: `meal-${mealType}-${Date.now()}`,
       name: meal.title,
-      description: `${mealType === 'breakfast' ? 'Petit-déjeuner' : mealType === 'lunch' ? 'Déjeuner' : 'Dîner'} à ${typeof meal.location === 'string' ? meal.location : meal.location?.name || destination}`,
+      description: `${mealType === 'breakfast' ? t('itinerary.breakfast', 'Petit-déjeuner') : mealType === 'lunch' ? t('itinerary.lunch', 'Déjeuner') : t('itinerary.dinner', 'Dîner')} ${t('itinerary.atLocation', 'à')} ${typeof meal.location === 'string' ? meal.location : meal.location?.name || destination}`,
       price: {
         amount: meal.cost || 0,
         currency: 'EUR'
@@ -631,13 +719,15 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
   const getTravelGroupDescription = () => {
     switch (trip.travelGroup.type) {
       case 'solo':
-        return 'Voyage solo';
+        return t('itinerary.soloTrip', 'Voyage solo');
       case 'couple':
-        return 'Voyage en couple';
+        return t('itinerary.coupleTrip', 'Voyage en couple');
       case 'family':
-        return `Famille${trip.travelGroup.children?.count ? ` avec ${trip.travelGroup.children.count} enfant${trip.travelGroup.children.count > 1 ? 's' : ''}` : ''}`;
+        return trip.travelGroup.children?.count
+          ? t('itinerary.familyWithChildren', 'Famille avec {{count}} enfant(s)', { count: trip.travelGroup.children.count })
+          : t('itinerary.family', 'Famille');
       case 'group':
-        return `Groupe de ${trip.travelGroup.size} personnes`;
+        return t('itinerary.groupOfPeople', 'Groupe de {{count}} personnes', { count: trip.travelGroup.size });
       default:
         return '';
     }
@@ -646,13 +736,28 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
 
   return (
     <div className="space-y-6">
+      {/* Message rassurant pendant la génération */}
+      {isStreaming && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="flex items-center gap-3 p-4">
+            <Sparkles className="h-5 w-5 text-primary animate-pulse shrink-0" />
+            <div>
+              <p className="font-medium">{t('itinerary.preparingTitle', 'Préparation de votre programme en cours…')}</p>
+              <p className="text-sm text-muted-foreground">
+                {t('itinerary.preparingDescription', "Notre IA conçoit votre itinéraire sur mesure. Le programme s'affiche au fur et à mesure — encore quelques instants.")}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Votre itinéraire personnalisé</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('itinerary.personalizedItineraryTitle', 'Votre itinéraire personnalisé')}</h1>
           <p className="text-muted-foreground">
             <TypedText
-              text="Voyage généré avec vos préférences personnelles"
+              text={t('itinerary.generatedWithPreferences', 'Voyage généré avec vos préférences personnelles')}
               isStreaming={isStreaming}
               delay={20}
               speed={2}
@@ -663,22 +768,43 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
           {user && (
             <Button onClick={() => setShowSaveDialog(true)}>
               <Save className="h-4 w-4 mr-2" />
-              Sauvegarder
+              {t('itinerary.save', 'Sauvegarder')}
             </Button>
+          )}
+          {!isStreaming && (
+            user ? (
+              <Button variant="outline" onClick={() => setIsEditing(true)}>
+                <Pencil className="h-4 w-4 mr-2" />
+                {t('itinerary.customize', 'Personnaliser')}
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  // Préserver le programme courant pour le restaurer après connexion
+                  // (sinon il disparaît en quittant la page).
+                  try { sessionStorage.setItem('tasarini_pending_itinerary', JSON.stringify(itinerary)); } catch { /* quota */ }
+                  navigate('/auth?redirectTo=/plan');
+                }}
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                {t('itinerary.loginToEdit', 'Se connecter pour modifier')}
+              </Button>
+            )
           )}
           <Button variant="outline" onClick={onStartOver}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Nouveau voyage
+            {t('itinerary.newTrip', 'Nouveau voyage')}
           </Button>
           <Button variant="outline" onClick={handleExportPDF}>
             <Download className="h-4 w-4 mr-2" />
-            Exporter PDF
+            {t('itinerary.exportPdf', 'Exporter PDF')}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <Share2 className="h-4 w-4 mr-2" />
-                Partager
+                {t('itinerary.share', 'Partager')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -696,7 +822,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleCopyLink}>
                 <Copy className="h-4 w-4 mr-2" />
-                Copier le lien
+                {t('itinerary.copyLink', 'Copier le lien')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -722,8 +848,44 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
           <CardContent className="p-6">
             <div className="text-center text-muted-foreground">
               <div className="mb-2">📸</div>
-              <p className="text-sm">Chargement des images des destinations...</p>
+              <p className="text-sm">{t('itinerary.loadingDestinationImages', 'Chargement des images des destinations...')}</p>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Score d'adaptation : pourquoi ce programme correspond au voyageur */}
+      {((itinerary as any).whyThisTrip || typeof (itinerary as any).matchScore === 'number') && (
+        <Card className="border-success/30 bg-success/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-success" />
+              {t('itinerary.whyThisTripTitle', 'Pourquoi ce programme vous correspond')}
+              {typeof (itinerary as any).matchScore === 'number' && (
+                <Badge className="ml-auto bg-success text-success-foreground">
+                  {t('itinerary.matchPercentage', "{{score}}% d'adéquation", { score: (itinerary as any).matchScore })}
+                </Badge>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {(itinerary as any).whyThisTrip && (
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <TypedText text={(itinerary as any).whyThisTrip} isStreaming={isStreaming} delay={20} speed={2} />
+              </p>
+            )}
+            {Array.isArray((itinerary as any).destinationScores) && (itinerary as any).destinationScores.length > 0 && (
+              <div className="grid gap-2 sm:grid-cols-2">
+                {(itinerary as any).destinationScores.map((d: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between gap-2 rounded-lg border bg-card p-2">
+                    <span className="text-sm font-medium truncate">{d.destination}</span>
+                    {typeof d.score === 'number' && (
+                      <Badge variant="outline" className="text-success border-success/40 shrink-0">{d.score}%</Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -733,7 +895,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-primary" />
-            Aperçu du voyage
+            {t('itinerary.tripOverview', 'Aperçu du voyage')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -741,26 +903,26 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                Dates
+                {t('itinerary.dates', 'Dates')}
               </div>
               <p className="font-medium">
                 {trip.startDate && trip.endDate ? (
                   <>
-                    {format(new Date(trip.startDate), "dd MMM", { locale: fr })} - {format(new Date(trip.endDate), "dd MMM yyyy", { locale: fr })}
+                    {format(new Date(trip.startDate), "dd MMM", { locale: dfLocale })} - {format(new Date(trip.endDate), "dd MMM yyyy", { locale: dfLocale })}
                   </>
                 ) : (
-                  'Dates à définir'
+                  t('itinerary.datesToDefine', 'Dates à définir')
                 )}
               </p>
               <p className="text-sm text-muted-foreground">
-                {calculateTotalDuration()} jour{calculateTotalDuration() > 1 ? 's' : ''}
+                {t('itinerary.daysCount', '{{count}} jour(s)', { count: calculateTotalDuration() })}
               </p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Users className="h-4 w-4" />
-                Groupe
+                {t('itinerary.group', 'Groupe')}
               </div>
               <p className="font-medium">
                 <TypedText text={getTravelGroupDescription()} isStreaming={isStreaming} delay={20} speed={2} />
@@ -770,24 +932,24 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Wallet className="h-4 w-4" />
-                Budget
+                {t('itinerary.budget', 'Budget')}
               </div>
-              <p className="font-medium">{trip.budget.level} - {trip.budget.dailyBudget}€/jour</p>
+              <p className="font-medium">{trip.budget.level} - {t('itinerary.budgetPerDay', '{{amount}}€/jour', { amount: trip.budget.dailyBudget })}</p>
               <p className="text-sm text-muted-foreground">
-                Total estimé: {totalCost}€
+                {t('itinerary.estimatedTotal', 'Total estimé: {{amount}}€', { amount: totalCost })}
               </p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
-                Destinations
+                {t('itinerary.destinations', 'Destinations')}
               </div>
               <div className="space-y-1">
                 {trip.destinations.map((dest, index) => (
                   <p key={index} className="text-sm font-medium">
                     <TypedText
-                      text={`${dest.city}, ${dest.country} (${dest.duration}j)`}
+                      text={t('itinerary.destinationLine', '{{city}}, {{country}} ({{duration}}j)', { city: dest.city, country: dest.country, duration: dest.duration })}
                       isStreaming={isStreaming}
                       delay={20 + index * 10}
                       speed={2}
@@ -806,7 +968,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Euro className="h-5 w-5 text-primary" />
-              Répartition du budget
+              {t('itinerary.budgetBreakdownTitle', 'Répartition du budget')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -817,12 +979,12 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     {formatBudget(amount as number)}
                   </div>
                   <div className="text-xs text-muted-foreground capitalize">
-                    {category === 'accommodation' ? 'Hébergement' :
-                     category === 'food' ? 'Nourriture' :
-                     category === 'activities' ? 'Activités' :
-                     category === 'transport' ? 'Transport' :
-                     category === 'shopping' ? 'Shopping' :
-                     category === 'miscellaneous' ? 'Divers' : category}
+                    {category === 'accommodation' ? t('itinerary.categoryAccommodation', 'Hébergement') :
+                     category === 'food' ? t('itinerary.categoryFood', 'Nourriture') :
+                     category === 'activities' ? t('itinerary.categoryActivities', 'Activités') :
+                     category === 'transport' ? t('itinerary.categoryTransport', 'Transport') :
+                     category === 'shopping' ? t('itinerary.categoryShopping', 'Shopping') :
+                     category === 'miscellaneous' ? t('itinerary.categoryMiscellaneous', 'Divers') : category}
                   </div>
                 </div>
               ))}
@@ -835,9 +997,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
       {itinerary.days && itinerary.days.length > 0 ? (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Itinéraire détaillé</h2>
+            <h2 className="text-2xl font-bold">{t('itinerary.detailedItinerary', 'Itinéraire détaillé')}</h2>
             <Badge variant="secondary">
-              {itinerary.days.length} jour{itinerary.days.length > 1 ? 's' : ''}
+              {t('itinerary.daysCount', '{{count}} jour(s)', { count: itinerary.days.length })}
               {isStreaming && <Sparkles className="h-3 w-3 ml-1 inline animate-pulse" />}
             </Badge>
           </div>
@@ -850,7 +1012,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
-                        Jour {index + 1} - {format(new Date(day.date), "EEEE dd MMMM", { locale: fr })}
+                        {t('itinerary.dayLabel', 'Jour {{number}}', { number: index + 1 })} - {format(new Date(day.date), "EEEE dd MMMM", { locale: dfLocale })}
                       </CardTitle>
                       <div className="flex items-center gap-4 mt-2">
                         <Badge variant="outline">{day.destination}</Badge>
@@ -860,7 +1022,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Budget journalier</p>
+                      <p className="text-sm text-muted-foreground">{t('itinerary.dailyBudget', 'Budget journalier')}</p>
                       <p className="font-bold text-lg">{day.totalCost}€</p>
                     </div>
                   </div>
@@ -872,7 +1034,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     <div className="space-y-4">
                       <h4 className="font-semibold flex items-center gap-2">
                         <Clock className="h-4 w-4" />
-                        Activités programmées
+                        {t('itinerary.scheduledActivities', 'Activités programmées')}
                       </h4>
                       <div className="space-y-3">
                         {day.activities.map((activity, actIndex) => (
@@ -882,6 +1044,25 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                                 {activity.time}
                               </Badge>
                             </div>
+                            {(() => {
+                              const actImg = activityImages[activity.id] || activityImages[`${day.dayNumber}:${actIndex}`] || activity.image;
+                              return actImg?.thumbnailUrl ? (
+                                <a
+                                  href={actImg.descriptionUrl || actImg.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-shrink-0 hidden sm:block"
+                                  title={actImg.attribution || activity.title}
+                                >
+                                  <img
+                                    src={actImg.thumbnailUrl}
+                                    alt={activity.title}
+                                    loading="lazy"
+                                    className="w-24 h-20 object-cover rounded-md border"
+                                  />
+                                </a>
+                              ) : null;
+                            })()}
                             <div className="flex-1 space-y-2">
                               <div className="flex items-start justify-between">
                                 <ActivityTitle title={activity.title} isStreaming={isStreaming} />
@@ -898,7 +1079,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <MapPin className="h-3 w-3" />
-                                  {typeof activity.location === 'string' ? activity.location : activity.location?.name || 'Lieu non spécifié'}
+                                  {typeof activity.location === 'string' ? activity.location : activity.location?.name || t('itinerary.locationUnspecified', 'Lieu non spécifié')}
                                 </span>
                                 <span className="flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
@@ -908,14 +1089,14 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                                   variant={activity.difficulty === 'easy' ? 'secondary' : activity.difficulty === 'moderate' ? 'default' : 'destructive'}
                                   className="text-xs"
                                 >
-                                  {activity.difficulty === 'easy' ? 'Facile' : activity.difficulty === 'moderate' ? 'Modéré' : 'Difficile'}
+                                  {activity.difficulty === 'easy' ? t('itinerary.difficultyEasy', 'Facile') : activity.difficulty === 'moderate' ? t('itinerary.difficultyModerate', 'Modéré') : t('itinerary.difficultyHard', 'Difficile')}
                                 </Badge>
                               </div>
                               {activity.tips && activity.tips.length > 0 && (
                                 <div className="mt-2">
                                   <details className="group">
                                     <summary className="cursor-pointer text-xs text-primary hover:text-primary/80">
-                                      💡 Conseils ({activity.tips.length})
+                                      💡 {t('itinerary.tipsWithCount', 'Conseils ({{count}})', { count: activity.tips.length })}
                                     </summary>
                                     <ul className="mt-1 text-xs text-muted-foreground space-y-1 pl-4">
                                       {(typeof activity.tips === 'string' ? [activity.tips] : activity.tips || []).map((tip, tipIndex) => (
@@ -933,7 +1114,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                                 size="sm"
                               >
                                 <ShoppingCart className="w-4 h-4 mr-2" />
-                                Réserver cette activité
+                                {t('itinerary.bookThisActivity', 'Réserver cette activité')}
                               </Button>
                             </div>
                           </div>
@@ -950,18 +1131,18 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                   {(day.meals?.breakfast || day.meals?.lunch || day.meals?.dinner) && (
                     <div className="space-y-4">
                       <h4 className="font-semibold flex items-center gap-2">
-                        🍽️ Repas recommandés
+                        🍽️ {t('itinerary.recommendedMeals', 'Repas recommandés')}
                       </h4>
                       <div className="grid gap-3 md:grid-cols-3">
                         {day.meals?.breakfast && (
                           <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 space-y-2">
-                            <h5 className="font-medium text-sm mb-1">🌅 Petit-déjeuner</h5>
+                            <h5 className="font-medium text-sm mb-1">🌅 {t('itinerary.breakfast', 'Petit-déjeuner')}</h5>
                             <p className="text-sm">
                               <TypedText text={day.meals.breakfast.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
                             </p>
                             <p className="text-xs text-muted-foreground">
                               <TypedText
-                                text={`${typeof day.meals.breakfast.location === 'string' ? day.meals.breakfast.location : day.meals.breakfast.location?.name || 'Lieu non spécifié'} • ${day.meals.breakfast.cost}€`}
+                                text={`${typeof day.meals.breakfast.location === 'string' ? day.meals.breakfast.location : day.meals.breakfast.location?.name || t('itinerary.locationUnspecified', 'Lieu non spécifié')} • ${day.meals.breakfast.cost}€`}
                                 isStreaming={isStreaming}
                                 delay={50}
                                 speed={2}
@@ -973,19 +1154,19 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                               size="sm"
                             >
                               <Utensils className="w-3 h-3 mr-1" />
-                              Réserver
+                              {t('itinerary.book', 'Réserver')}
                             </Button>
                           </div>
                         )}
                         {day.meals?.lunch && (
                           <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 space-y-2">
-                            <h5 className="font-medium text-sm mb-1">☀️ Déjeuner</h5>
+                            <h5 className="font-medium text-sm mb-1">☀️ {t('itinerary.lunch', 'Déjeuner')}</h5>
                             <p className="text-sm">
                               <TypedText text={day.meals.lunch.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
                             </p>
                             <p className="text-xs text-muted-foreground">
                               <TypedText
-                                text={`${typeof day.meals.lunch.location === 'string' ? day.meals.lunch.location : day.meals.lunch.location?.name || 'Lieu non spécifié'} • ${day.meals.lunch.cost}€`}
+                                text={`${typeof day.meals.lunch.location === 'string' ? day.meals.lunch.location : day.meals.lunch.location?.name || t('itinerary.locationUnspecified', 'Lieu non spécifié')} • ${day.meals.lunch.cost}€`}
                                 isStreaming={isStreaming}
                                 delay={50}
                                 speed={2}
@@ -997,19 +1178,19 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                               size="sm"
                             >
                               <Utensils className="w-3 h-3 mr-1" />
-                              Réserver
+                              {t('itinerary.book', 'Réserver')}
                             </Button>
                           </div>
                         )}
                         {day.meals?.dinner && (
                           <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 space-y-2">
-                            <h5 className="font-medium text-sm mb-1">🌙 Dîner</h5>
+                            <h5 className="font-medium text-sm mb-1">🌙 {t('itinerary.dinner', 'Dîner')}</h5>
                             <p className="text-sm">
                               <TypedText text={day.meals.dinner.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
                             </p>
                             <p className="text-xs text-muted-foreground">
                               <TypedText
-                                text={`${typeof day.meals.dinner.location === 'string' ? day.meals.dinner.location : day.meals.dinner.location?.name || 'Lieu non spécifié'} • ${day.meals.dinner.cost}€`}
+                                text={`${typeof day.meals.dinner.location === 'string' ? day.meals.dinner.location : day.meals.dinner.location?.name || t('itinerary.locationUnspecified', 'Lieu non spécifié')} • ${day.meals.dinner.cost}€`}
                                 isStreaming={isStreaming}
                                 delay={50}
                                 speed={2}
@@ -1021,7 +1202,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                               size="sm"
                             >
                               <Utensils className="w-3 h-3 mr-1" />
-                              Réserver
+                              {t('itinerary.book', 'Réserver')}
                             </Button>
                           </div>
                         )}
@@ -1035,7 +1216,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                       <Separator className="my-6" />
                       <div className="space-y-4">
                         <h4 className="font-semibold flex items-center gap-2">
-                          🚗 Transport
+                          🚗 {t('itinerary.transport', 'Transport')}
                         </h4>
                         <div className="space-y-2">
                           <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
@@ -1053,7 +1234,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     <>
                       <Separator className="my-6" />
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Distance de marche estimée</span>
+                        <span className="text-muted-foreground">{t('itinerary.estimatedWalkingDistance', 'Distance de marche estimée')}</span>
                         <Badge variant="outline">{day.walkingDistance} km</Badge>
                       </div>
                     </>
@@ -1068,10 +1249,10 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 animate-pulse text-primary" />
-              Génération de l'itinéraire jour par jour...
+              {t('itinerary.generatingDayByDay', "Génération de l'itinéraire jour par jour...")}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              L'IA crée votre programme personnalisé avec toutes les activités
+              {t('itinerary.generatingDayByDayDescription', "L'IA crée votre programme personnalisé avec toutes les activités")}
             </p>
           </CardHeader>
           <CardContent>
@@ -1081,7 +1262,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                   <Calendar className="h-8 w-8 text-primary" />
                 </div>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Les journées de votre itinéraire apparaîtront progressivement ci-dessus avec l'effet typing...
+                  {t('itinerary.daysWillAppear', "Les journées de votre itinéraire apparaîtront progressivement ci-dessus avec l'effet typing...")}
                 </p>
               </div>
             </div>
@@ -1090,9 +1271,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Itinéraire détaillé</CardTitle>
+            <CardTitle>{t('itinerary.detailedItinerary', 'Itinéraire détaillé')}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Programme jour par jour personnalisé selon vos préférences
+              {t('itinerary.dayByDayProgram', 'Programme jour par jour personnalisé selon vos préférences')}
             </p>
           </CardHeader>
           <CardContent>
@@ -1101,10 +1282,9 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Star className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Génération en cours d'amélioration</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('itinerary.generationImproving', "Génération en cours d'amélioration")}</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  L'itinéraire détaillé avec activités minute par minute sera bientôt disponible.
-                  Pour l'instant, vous pouvez voir le résumé de votre voyage ci-dessus.
+                  {t('itinerary.generationImprovingDescription', "L'itinéraire détaillé avec activités minute par minute sera bientôt disponible. Pour l'instant, vous pouvez voir le résumé de votre voyage ci-dessus.")}
                 </p>
               </div>
             </div>
@@ -1114,7 +1294,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
 
       {/* Enriched Sections */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Informations complémentaires</h2>
+        <h2 className="text-2xl font-bold">{t('itinerary.additionalInformation', 'Informations complémentaires')}</h2>
         {hasEnrichedSections ? (
           <>
             <WhyVisitSection whyVisit={itinerary.whyVisit} title={itinerary.title} />
@@ -1132,7 +1312,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
           </>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Ces informations s'afficheront dès que l'itinéraire inclura des contenus enrichis.
+            {t('itinerary.enrichedContentPlaceholder', "Ces informations s'afficheront dès que l'itinéraire inclura des contenus enrichis.")}
           </p>
         )}
       </div>
@@ -1140,7 +1320,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
       {/* Recommendations */}
       {(recommendations?.mustTryDishes || recommendations?.giftIdeas || recommendations?.packingList || recommendations?.culturalTips) && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Recommandations personnalisées</h2>
+          <h2 className="text-2xl font-bold">{t('itinerary.personalizedRecommendations', 'Recommandations personnalisées')}</h2>
           
           <div className="grid gap-6 md:grid-cols-2">
             {/* Culinary Recommendations */}
@@ -1148,7 +1328,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🍽️ Spécialités à découvrir
+                    🍽️ {t('itinerary.specialtiesToDiscover', 'Spécialités à découvrir')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1176,7 +1356,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🎁 Idées souvenirs
+                    🎁 {t('itinerary.giftIdeas', 'Idées souvenirs')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1204,7 +1384,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🎒 Liste de voyage
+                    🎒 {t('itinerary.packingList', 'Liste de voyage')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1225,7 +1405,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🏛️ Conseils culturels
+                    🏛️ {t('itinerary.culturalTips', 'Conseils culturels')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1254,7 +1434,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Sun className="h-5 w-5" />
-                    Meilleures périodes
+                    {t('itinerary.bestPeriods', 'Meilleures périodes')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1275,7 +1455,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🎪 Événements locaux
+                    🎪 {t('itinerary.localEvents', 'Événements locaux')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1303,7 +1483,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🚗 Conseils transport
+                    🚗 {t('itinerary.transportTips', 'Conseils transport')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1325,7 +1505,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Shield className="h-5 w-5" />
-                    Conseils sécurité
+                    {t('itinerary.safetyTips', 'Conseils sécurité')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1354,7 +1534,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Wallet className="h-5 w-5" />
-                    Répartition budget
+                    {t('itinerary.budgetDistribution', 'Répartition budget')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1376,7 +1556,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  🌍 Destinations similaires
+                  🌍 {t('itinerary.similarDestinations', 'Destinations similaires')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1396,7 +1576,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
       {/* Practical Info */}
       {practicalInfo?.destinations && Object.keys(practicalInfo.destinations).length > 0 && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Informations pratiques</h2>
+          <h2 className="text-2xl font-bold">{t('itinerary.practicalInformation', 'Informations pratiques')}</h2>
           
           <div className="grid gap-6">
             {Object.entries(practicalInfo.destinations).map(([destination, info]) => (
@@ -1411,7 +1591,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     {info.visa && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          📄 Visa & Documents
+                          📄 {t('itinerary.visaAndDocuments', 'Visa & Documents')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.visa}</p>
                       </div>
@@ -1420,7 +1600,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     {info.currency && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          💰 Monnaie
+                          💰 {t('itinerary.currency', 'Monnaie')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.currency}</p>
                       </div>
@@ -1429,7 +1609,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     {info.language && info.language.length > 0 && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🗣️ Langues
+                          🗣️ {t('itinerary.languages', 'Langues')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.language.join(', ')}</p>
                       </div>
@@ -1438,7 +1618,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     {info.climate && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🌤️ Climat
+                          🌤️ {t('itinerary.climate', 'Climat')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.climate}</p>
                       </div>
@@ -1447,7 +1627,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     {info.emergency && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🚨 Urgences
+                          🚨 {t('itinerary.emergencies', 'Urgences')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.emergency}</p>
                       </div>
@@ -1456,7 +1636,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                     {info.health && info.health.length > 0 && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🏥 Santé
+                          🏥 {t('itinerary.health', 'Santé')}
                         </h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
                           {info.health.map((healthItem, index) => (
@@ -1475,7 +1655,7 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
                       <Separator className="my-4" />
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🎭 Coutumes locales
+                          🎭 {t('itinerary.localCustoms', 'Coutumes locales')}
                         </h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
                           {info.customs.map((custom, index) => (
@@ -1518,6 +1698,23 @@ export const DetailedItineraryView = ({ itinerary, onStartOver, enrichmentData, 
         bookingType={bookingDialog.type}
         defaultDates={bookingDialog.dates}
       />
+
+      {/* Éditeur de programme (overlay plein écran) */}
+      {isEditing && (
+        <EditableItineraryView
+          itinerary={{
+            id: savedId ?? '',
+            title: itinerary.title || t('itinerary.personalizedItineraryTitle', 'Votre itinéraire personnalisé'),
+            description: itinerary.description || '',
+            itinerary_data: itinerary,
+            is_favorite: false,
+            created_at: '',
+            updated_at: '',
+          } as any}
+          onSave={handleEditSave}
+          onClose={() => setIsEditing(false)}
+        />
+      )}
     </div>
   );
 };

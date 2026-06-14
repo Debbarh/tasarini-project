@@ -1,10 +1,73 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Widget } from "@/services/widgetService";
 import { useWidgets } from "@/hooks/useWidgets";
 import { useUserRegion } from "@/hooks/useUserRegion";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, PlayCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getWidgetComponent, isRegisteredWidget } from "./widgetRegistry";
+
+/**
+ * Un widget est "lourd" s'il charge un iframe / script externe ou un composant
+ * enregistré (Travelpayouts, Expedia, etc.). Ces widgets sont affichés sous forme
+ * de carte compacte et ne chargent leur contenu qu'au clic ("chargement à la
+ * demande") — évite la perte de place et le poids au chargement de la page.
+ */
+const isHeavyWidget = (w: Widget): boolean =>
+  (!!w.widget_code && isRegisteredWidget(w.widget_code)) ||
+  !!w.script_url ||
+  /<iframe|<script/i.test(w.content?.html || "");
+
+/**
+ * Carte « cliquer pour charger » : image + titre + bouton. Monte le vrai widget
+ * (iframe/script) uniquement après le clic.
+ */
+const LazyWidget = ({ widget }: { widget: Widget }) => {
+  const { t } = useTranslation();
+  const [loaded, setLoaded] = useState(false);
+
+  if (!isHeavyWidget(widget) || loaded) {
+    return <SingleWidgetRenderer widget={widget} />;
+  }
+
+  const image =
+    widget.content?.image_url ||
+    widget.content?.thumbnail ||
+    widget.configuration?.image_url;
+  const desc = widget.description || widget.content?.description;
+
+  return (
+    <div className="widget-wrapper" data-widget-id={widget.id}>
+      <button
+        type="button"
+        onClick={() => setLoaded(true)}
+        aria-label={`${t("widgets.loadButton")} — ${widget.widget_name}`}
+        className="group w-full text-left rounded-xl border bg-card hover:shadow-md hover:border-primary/40 transition overflow-hidden flex flex-col sm:flex-row"
+      >
+        {image ? (
+          <img
+            src={image}
+            alt={widget.widget_name}
+            loading="lazy"
+            className="w-full sm:w-48 h-32 object-cover flex-shrink-0"
+          />
+        ) : (
+          <div className="w-full sm:w-48 h-32 flex-shrink-0 bg-gradient-to-br from-primary/10 to-primary-glow/10 flex items-center justify-center">
+            <PlayCircle className="h-10 w-10 text-primary/60" />
+          </div>
+        )}
+        <div className="p-4 flex-1 flex flex-col justify-center gap-1">
+          <h3 className="font-semibold">{widget.widget_name}</h3>
+          {desc && <p className="text-sm text-muted-foreground line-clamp-2">{desc}</p>}
+          <span className="mt-2 inline-flex items-center gap-1 text-sm text-primary font-medium">
+            <PlayCircle className="h-4 w-4" />
+            {t("widgets.loadButton")}
+          </span>
+        </div>
+      </button>
+    </div>
+  );
+};
 
 interface WidgetRendererProps {
   placement: string;
@@ -309,7 +372,7 @@ export const WidgetRenderer = ({ placement, serviceType, className = "" }: Widge
   return (
     <div className={`widgets-container space-y-4 ${className}`} data-placement={placement} data-region={region}>
       {filteredWidgets.map((widget) => (
-        <SingleWidgetRenderer key={widget.id} widget={widget} />
+        <LazyWidget key={widget.id} widget={widget} />
       ))}
     </div>
   );

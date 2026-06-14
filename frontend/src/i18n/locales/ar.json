@@ -8,7 +8,8 @@
     "administration": "الإدارة",
     "myProfile": "ملفي الشخصي",
     "logout": "تسجيل الخروج",
-    "login": "تسجيل الدخول"
+    "login": "تسجيل الدخول",
+    "notifications": "الإشعارات"
   },
   "notFound": {
     "title": "404",
@@ -30,33 +31,44 @@
     "statsDestinations": "الوجهات المستكشفة",
     "statsAdventurers": "المغامرون",
     "statsDreams": "الأحلام المحققة",
-    "liveInspiration": "Live inspiration",
-    "adventureFound": "Adventure found!",
-    "howItWorksTitle": "How does it work?",
-    "howItWorksSubtitle": "3 simple steps to go from idea to confirmed trip.",
-    "howStep1Title": "Get inspired",
-    "howStep1Desc": "Browse stories and travel ideas tailored to your desires.",
-    "howStep2Title": "Plan",
-    "howStep2Desc": "Use our assistant to create an itinerary and book hotels and transport.",
-    "howStep3Title": "Travel worry-free",
-    "howStep3Desc": "Receive confirmations, share your stories and enjoy the trip.",
-    "bookingCenter": "Booking Center",
-    "bookingCenterDesc": "Search and book your hotels, flights and activities in just a few clicks",
-    "transportServices": "Transport Services",
-    "transportServicesDesc": "Vehicle rental, transfers and urban transport",
-    "carRental": "Rental",
-    "transfers": "Transfers",
-    "busAndTrain": "Bus & Train",
-    "urbanTransport": "Urban",
-    "activitiesExperiences": "Activities & Experiences",
-    "activitiesDesc": "Discover the best activities and restaurants",
-    "toursVisits": "Tours & Visits",
-    "gastronomy": "Gastronomy",
-    "travelerServices": "Traveler Services",
-    "travelerServicesDesc": "Connectivity and assistance",
-    "booking": "Booking",
-    "esimCards": "eSIM Cards",
-    "compensation": "Compensation"
+    "liveInspiration": "إلهام مباشر",
+    "adventureFound": "تم العثور على المغامرة!",
+    "howItWorksTitle": "كيف يعمل؟",
+    "howItWorksSubtitle": "3 خطوات بسيطة للانتقال من الفكرة إلى الرحلة المؤكدة.",
+    "howStep1Title": "احصل على الإلهام",
+    "howStep1Desc": "استعرض القصص وأفكار السفر المصممة وفقًا لرغباتك.",
+    "howStep2Title": "خطط",
+    "howStep2Desc": "استخدم مساعدنا لإنشاء مسار وحجز الفنادق ووسائل النقل.",
+    "howStep3Title": "سافر بلا قلق",
+    "howStep3Desc": "تلقى التأكيدات، شارك قصصك واستمتع بالرحلة.",
+    "bookingCenter": "مركز الحجز",
+    "bookingCenterDesc": "ابحث واحجز فنادقك ورحلاتك وأنشطتك بنقرات قليلة",
+    "transportServices": "خدمات النقل",
+    "transportServicesDesc": "تأجير المركبات، النقل والانتقالات الحضرية",
+    "carRental": "تأجير سيارات",
+    "transfers": "نقل",
+    "busAndTrain": "الحافلة والقطار",
+    "urbanTransport": "النقل الحضري",
+    "activitiesExperiences": "الأنشطة والتجارب",
+    "activitiesDesc": "اكتشف أفضل الأنشطة والمطاعم",
+    "toursVisits": "الجولات والزيارات",
+    "gastronomy": "فن الطهي",
+    "travelerServices": "خدمات المسافرين",
+    "travelerServicesDesc": "الاتصال والدعم",
+    "booking": "حجز",
+    "esimCards": "شرائح eSIM",
+    "compensation": "تعويض",
+    "testimonialsTitle": "لقد سافروا معنا",
+    "testimonialsSubtitle": "آراء مجتمع المسافرين لدينا",
+    "captionHero": "مغامرتك القادمة",
+    "captionBeach": "عطلة على شاطئ البحر",
+    "captionMountain": "مغامرات في الجبال",
+    "captionCity": "رحلات قصيرة إلى المدن",
+    "captionCultural": "الانغماس الثقافي",
+    "goToImage": "الانتقال إلى الصورة {{index}}",
+    "searchDestination": "إلى أين أنت ذاهب؟",
+    "searchCta": "بحث",
+    "openBookingCenter": "فتح مركز الحجز"
   },
   "planTrip": {
     "title": "خطط لعطلتك المثالية",
@@ -108,7 +120,11 @@
           "title": "الأنشطة",
           "description": "التجارب والاهتمامات"
         }
-      }
+      },
+      "autosaved": "تم حفظ التقدم",
+      "estimatedTime": "حوالي 3 دقائق",
+      "skipStep": "تخطي هذه الخطوة",
+      "generateNow": "إنشاء الآن"
     },
     "destinationStep": {
       "selectCountry": "اختر بلداً",
@@ -140,7 +156,9 @@
       "locationSaved": "تم حفظ الوجهة بنجاح.",
       "locationSaveError": "تعذر حفظ هذا الموقع، يرجى التحقق من المعلومات.",
       "invalidAddress": "يرجى تحديد عنوان صالح على الخريطة.",
-      "fetchingTranslations": "Fetching multilingual translations..."
+      "fetchingTranslations": "Fetching multilingual translations...",
+      "geocodeFailed": "يتعذر تحديد المدينة لهذا الموقع. يرجى اختيار موقع آخر أو إدخال اسم المدينة يدويًّا.",
+      "chooseOnMapHint": "افتح خريطة تفاعلية لتحديد موقع وجهتك بدقة والحصول على إحداثياتها."
     },
     "travelDetailsStep": {
       "title": "رفقاء السفر",
@@ -174,7 +192,9 @@
       "availablePlural": "متاحة",
       "remains": "يتبقى",
       "remainsPlural": "تتبقى",
-      "error": "خطأ"
+      "error": "خطأ",
+      "singleChoiceHint": "اختر نوعًا واحدًا",
+      "maxLevelTooltip": "أقصى مستوى صعوبة في الوصول/اللياقة البدنية للمواقع الموصى بها لهذه الفئة."
     },
     "budgetStep": {
       "title": "ميزانية السفر",
@@ -225,7 +245,8 @@
       "types": "الأنواع",
       "services": "الخدمات",
       "locations": "المواقع",
-      "others": "آخرون"
+      "others": "آخرون",
+      "typeRequired": "يرجى تحديد نوع واحد على الأقل من أماكن الإقامة للمتابعة."
     },
     "activitiesStep": {
       "title": "الأنشطة والتجارب",
@@ -625,13 +646,34 @@
           "veryStrong": "قوية جدًا"
         }
       }
+    },
+    "emailNotConfirmed": "يرجى التحقق من بريدك الإلكتروني والنقر على رابط التأكيد لتفعيل حسابك",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "forgotPassword": {
+      "link": "هل نسيت كلمة المرور؟",
+      "title": "إعادة تعيين كلمة المرور",
+      "description": "أدخل عنوان بريدك الإلكتروني وسنرسل إليك رابطًا لإعادة تعيين كلمة مرورك.",
+      "sendButton": "إرسال الرابط",
+      "sending": "جاري الإرسال...",
+      "successTitle": "تم إرسال البريد الإلكتروني",
+      "successDescription": "إذا كان عنوان بريدك الإلكتروني مرتبطًا بحساب، فستتلقى رابطًا لإعادة تعيين كلمة المرور.",
+      "emailSent": "يرجى التحقق من بريدك الإلكتروني (ومجلد الرسائل غير المرغوب فيها) للحصول على رابط إعادة تعيين كلمة المرور.",
+      "emailSentMessage": "إذا كان عنوان بريدك الإلكتروني مسجلاً في نظامنا، فستتلقى رابطًا لإعادة تعيين كلمة المرور."
     }
   },
   "footer": {
     "copyright": "© 2024 TASARINI. جميع الحقوق محفوظة.",
     "becomePartner": "كن شريكاً",
     "madeWith": "صُنع بـ",
-    "by": "بواسطة"
+    "by": "بواسطة",
+    "tagline": "الإلهام والتخطيط وحجز الرحلات، مدعومًا بالذكاء الاصطناعي.",
+    "discover": "اكتشف",
+    "company": "الشركة",
+    "legal": "قانوني",
+    "contact": "الاتصال",
+    "terms": "الشروط والأحكام",
+    "privacy": "سياسة الخصوصية",
+    "rights": "جميع الحقوق محفوظة."
   },
   "common": {
     "loading": "جاري التحميل...",
@@ -1215,7 +1257,13 @@
         "updateError": "خطأ في تحديث الإشعار"
       },
       "export": "تصدير البيانات",
-      "loadingError": "خطأ في تحميل لوحة التحكم"
+      "loadingError": "خطأ في تحميل لوحة التحكم",
+      "analyticsTab": "التحليلات",
+      "poisTab": "نقاط الاهتمام الخاصة بي",
+      "bookingsTab": "الحجوزات",
+      "financesTab": "المالية",
+      "subscriptionTab": "الاشتراك",
+      "notificationsTab": "الإشعارات"
     }
   },
   "legal": {
@@ -1230,5 +1278,711 @@
       "description": "Learn how we protect your personal data",
       "footer": "GDPR Compliant - Your data is protected"
     }
+  },
+  "booking": {
+    "title": "مركز الحجز",
+    "subtitle": "ابحث عن الفنادق والرحلات الجوية ووسائل النقل والأنشطة واحجزها",
+    "info": "لا مزيد من عمليات البحث التلقائية! يمكنك الآن التحكم في توقيت إجراء عمليات البحث.",
+    "tabs": {
+      "hotels": "الفنادق",
+      "flights": "الرحلات الجوية",
+      "transfers": "التحويلات",
+      "restaurants": "المطاعم",
+      "activities": "الأنشطة"
+    },
+    "searchHotel": "البحث عن فندق",
+    "searchFlight": "البحث عن رحلة",
+    "searchTransfer": "البحث عن عملية تحويل",
+    "searchActivity": "البحث عن نشاط",
+    "destination": "الوجهة",
+    "selectDestination": "اختر وجهة...",
+    "selectOriginAirport": "اختر مطار المغادرة...",
+    "selectDestAirport": "اختر مطار الوصول...",
+    "guests": "عدد الأشخاص",
+    "passengers": "عدد الركاب",
+    "participants": "عدد المشاركين",
+    "checkIn": "تاريخ الوصول",
+    "checkOut": "تاريخ المغادرة",
+    "departDate": "تاريخ المغادرة",
+    "returnDate": "تاريخ الإرجاع (اختياري)",
+    "origin": "الانطلاق",
+    "date": "التاريخ",
+    "time": "الساعة",
+    "searching": "جاري البحث...",
+    "searchHotelsBtn": "البحث عن فنادق",
+    "searchFlightsBtn": "البحث عن رحلات طيران",
+    "searchActivitiesBtn": "البحث عن الأنشطة",
+    "searchTransfersBtnSoon": "البحث عن عمليات التحويل (قريبًا)",
+    "transfersSoon": "ستتوفر قريبًا ميزة البحث عن عمليات النقل",
+    "transferFromPlaceholder": "المطار، الفندق...",
+    "transferToPlaceholder": "فندق، وسط المدينة...",
+    "emptyTitle": "أدخل معايير البحث أعلاه",
+    "emptyDesc": "ستظهر النتائج هنا بعد إجراء البحث",
+    "moreAmenities": "+{{count}} وغيرها",
+    "amenitiesUnspecified": "المعدات غير المحددة",
+    "fromPrice": "ابتداءً من",
+    "perNight": "/ليلة",
+    "priceUnavailable": "السعر غير متاح",
+    "details": "التفاصيل",
+    "book": "الحجز",
+    "stops": "{{count}} توقف (توقفات)",
+    "restaurantsIncludedTitle": "المطاعم مدرجة بالفعل في خط سير رحلتك",
+    "restaurantsIncludedDesc": "يرجى الرجوع إلى قسم \"مسار الرحلة التفصيلي\" أعلاه للاطلاع على توصيات المطاعم",
+    "toastRequiredTitle": "الحقول الإلزامية",
+    "toastRequiredDesc": "يرجى ملء جميع حقول البحث",
+    "toastInvalidCodeTitle": "رمز الوجهة غير صالح",
+    "toastInvalidCodeDesc": "اختر رمز HotelBeds (مثل: PAR، BCN، ROM) من خلال ميزة الإكمال التلقائي.",
+    "toastInvalidDatesTitle": "تواريخ غير صالحة",
+    "toastInvalidDatesDesc": "يجب أن يكون تاريخ المغادرة بعد تاريخ الوصول بيوم واحد على الأقل",
+    "toastDoneTitle": "انتهت عملية البحث",
+    "toastErrorTitle": "خطأ في البحث",
+    "toastHotelsFound": "{{count}} تم العثور على فندق (فنادق)",
+    "toastFlightsFound": "{{count}} تم العثور على رحلة (رحلات)",
+    "toastActivitiesFound": "{{count}} تم العثور على نشاط (أنشطة)",
+    "toastHotelsError": "يتعذر البحث عن الفنادق. يرجى التحقق من رمز الوجهة.",
+    "toastFlightsError": "يتعذر البحث عن الرحلات الجوية. يرجى التحقق من رموز IATA.",
+    "toastActivitiesError": "يتعذر البحث عن الأنشطة. يرجى التحقق من رمز الوجهة."
+  },
+  "savedItineraries": {
+    "pageTitle": "مساراتي المحفوظة",
+    "pageDescription": "اطلع على جميع مسارات رحلاتك المحفوظة والمخطط لها باستخدام الذكاء الاصطناعي الخاص بنا. قم بإدارة برامج رحلاتك وتعديلها ومشاركتها.",
+    "subtitle": "اطلع على جميع رحلاتك المخطط لها ونظم مغامراتك المستقبلية.",
+    "searchPlaceholder": "البحث عن مسار...",
+    "unauthorized": "دخول غير مصرح به",
+    "unauthorizedMessage": "يجب أن تكون مسجلاً للدخول إلى مساراتك المحفوظة.",
+    "stats": {
+      "saved": "المسارات المحفوظة",
+      "favorites": "المفضلة",
+      "travelDays": "أيام السفر"
+    },
+    "empty": {
+      "title": "لا توجد مسارات محفوظة",
+      "noResults": "لم يتم العثور على أي مسار",
+      "searchMessage": "جرب استخدام كلمات بحث أخرى.",
+      "createMessage": "ابدأ بوضع خط سير رحلتك الأولى!"
+    },
+    "actions": {
+      "view": "انظر",
+      "viewDetails": "عرض التفاصيل",
+      "export": "PDF",
+      "exportPDF": "تصدير ملف PDF",
+      "share": "مشاركة",
+      "delete": "حذف",
+      "favorite": "المفضل",
+      "create": "إنشاء مسار"
+    },
+    "badges": {
+      "days": "أيام"
+    },
+    "dialog": {
+      "deleteTitle": "حذف المسار",
+      "deleteDescription": "هل أنت متأكد من رغبتك في الحذف؟",
+      "deleteWarning": "هذه العملية لا رجعة فيها.",
+      "cancel": "إلغاء",
+      "confirm": "حذف"
+    },
+    "toast": {
+      "pdfExported": "تم تصدير ملف PDF!",
+      "pdfExportedDesc": "تم تنزيل مسار رحلتك بنجاح.",
+      "pdfError": "خطأ",
+      "pdfErrorDesc": "يتعذر تصدير ملف PDF",
+      "shareError": "خطأ",
+      "shareErrorDesc": "يتعذر مشاركة المسار",
+      "deleted": "تم حذف المسار",
+      "deleteError": "حدث خطأ أثناء الحذف"
+    }
+  },
+  "myDiscoveries": {
+    "pageTitle": "اكتشافاتي",
+    "pageDescription": "قم بإدارة أماكنك المفضلة ومساراتك الاستكشافية المخصصة.",
+    "subtitle": "اعثر على أماكنك المفضلة ومساراتك المخصصة",
+    "loginMessage": "سجّل الدخول للاطلاع على قائمة المفضلة ومساراتك.",
+    "tabs": {
+      "favorites": "المفضلة",
+      "itineraries": "مساراتي",
+      "community": "المجتمع"
+    },
+    "favorites": {
+      "empty": "لا توجد مفضلة",
+      "emptyMessage": "ابدأ بإضافة المواقع إلى قائمة المفضلة من الخريطة",
+      "exploreMap": "استكشاف الخريطة"
+    },
+    "itineraries": {
+      "empty": "لا توجد مسارات",
+      "emptyMessage": "أنشئ مسارك الأول عن طريق اختيار نقاط الاهتمام",
+      "createNew": "إنشاء مسار",
+      "places": "الأماكن"
+    },
+    "community": {
+      "empty": "لا توجد مسارات عامة",
+      "emptyMessage": "لم تشارك المجموعة أي مسارات حتى الآن",
+      "title": "مسارات المجتمع",
+      "description": "اكتشف المسارات التي شاركها مستخدمون آخرون",
+      "public": "الجمهور",
+      "by": "بقلم",
+      "defaultUsername": "المسافر تاساريني"
+    },
+    "stats": {
+      "distance": "المسافة"
+    },
+    "difficulty": {
+      "easy": "سهل",
+      "medium": "معتدل",
+      "hard": "صعب"
+    },
+    "actions": {
+      "view": "انظر على الخريطة",
+      "share": "مشاركة",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "makePublic": "نشر",
+      "makePrivate": "تعيين الوضع الخاص"
+    },
+    "toast": {
+      "deleted": "تم حذف المسار",
+      "deleteError": "حدث خطأ أثناء الحذف",
+      "madePublic": "نُشر",
+      "madePrivate": "تم تعيينه كخاص",
+      "updateError": "حدث خطأ أثناء التحديث",
+      "linkCopied": "تم نسخ الرابط إلى الحافظة!",
+      "copyError": "يتعذر نسخ الرابط",
+      "loadError": "حدث خطأ أثناء تحميل المسارات",
+      "loadPublicError": "حدث خطأ أثناء تحميل المسارات العامة"
+    },
+    "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذا المسار؟"
+  },
+  "verifyEmailRequired": {
+    "title": "تحقق من بريدك الإلكتروني",
+    "subtitle": "خطوة أخيرة قبل البدء",
+    "sentTo": "تم إرسال رسالة بريد إلكتروني للتحقق إلى:",
+    "limitedAccess": {
+      "title": "الوصول محدود",
+      "description": "يجب عليك التحقق من بريدك الإلكتروني للوصول إلى جميع ميزات Tasarini."
+    },
+    "steps": {
+      "title": "الخطوات التي يجب اتباعها:",
+      "step1": "افتح بريدك الإلكتروني",
+      "step2": "ابحث عن البريد الإلكتروني الخاص بـ",
+      "step2Bold": "تاساريني",
+      "step3": "انقر على رابط التحقق",
+      "step4": "يرجى العودة إلى هنا وتحديث الصفحة"
+    },
+    "notReceived": {
+      "title": "ألم تستلم البريد الإلكتروني؟",
+      "checkSpam": "تحقق من مجلد الرسائل غير المرغوب فيها/البريد العشوائي",
+      "checkEmail": "تأكد من صحة عنوان البريد الإلكتروني",
+      "waitTime": "انتظر بضع دقائق (قد يستغرق وصول البريد الإلكتروني بعض الوقت)"
+    },
+    "buttons": {
+      "resend": "إعادة إرسال رسالة البريد الإلكتروني للتحقق",
+      "sending": "جاري الإرسال...",
+      "sent": "تم إرسال البريد الإلكتروني!",
+      "signOut": "تسجيل الخروج واستخدام حساب آخر"
+    },
+    "footer": {
+      "validity": "رابط التحقق صالح لمدة",
+      "hours": "24 ساعة"
+    },
+    "toast": {
+      "success": "تم إعادة إرسال رسالة البريد الإلكتروني للتحقق!",
+      "error": "حدث خطأ أثناء إعادة إرسال البريد الإلكتروني"
+    }
+  },
+  "partnerBlocked": {
+    "pageTitle": "حساب الشريك محجوب",
+    "description": "تم رفض طلبك للانضمام كشريك أو تم تعليق حسابك. إذا كنت تعتقد أن هذا خطأ، فيمكنك الاتصال بنا عبر النموذج أدناه.",
+    "reasons": {
+      "title": "الأسباب المحتملة:",
+      "incorrect": "معلومات غير صحيحة أو غير كاملة",
+      "terms": "عدم الالتزام بشروط الاستخدام",
+      "suspicious": "تم الكشف عن نشاط مشبوه",
+      "criteria": "عدم الالتزام بمعايير الشراكة"
+    },
+    "contact": {
+      "title": "الاتصال بالإدارة",
+      "subtitle": "اشرح لنا موقفك وسنقوم بدراسة طلبك.",
+      "nameLabel": "الاسم الكامل",
+      "namePlaceholder": "اسمك الكامل",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "votre@email.com",
+      "subjectLabel": "الموضوع",
+      "subjectPlaceholder": "موضوع طلبك",
+      "subjectDefault": "طلب إعادة تقييم حساب الشريك الخاص بي",
+      "messageLabel": "رسالة",
+      "messagePlaceholder": "يرجى وصف حالتك والأسباب التي تدعو إلى إعادة النظر في حسابك...",
+      "submitButton": "إرسال طلبي",
+      "submitting": "جاري الإرسال...",
+      "required": "*"
+    },
+    "info": {
+      "responseTime": "وقت الاستجابة:",
+      "responseTimeText": "نسعى جاهدين للرد في غضون 48 إلى 72 ساعة.",
+      "urgentQuestion": "للأسئلة العاجلة، يمكنكم أيضًا الاتصال بنا على:",
+      "supportEmail": "support@voyageai.com"
+    },
+    "toast": {
+      "success": "تم إرسال رسالتك. سنرد عليك في أقرب وقت ممكن.",
+      "error": "حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "verifyEmail": {
+    "title": {
+      "loading": "جاري التحقق...",
+      "success": "تم التحقق من البريد الإلكتروني!",
+      "error": "خطأ في التحقق"
+    },
+    "description": {
+      "loading": "يرجى الانتظار حتى ننتهي من التحقق من بريدك الإلكتروني.",
+      "successPartner": "تم تفعيل حساب الشريك الخاص بك بنجاح.",
+      "successUser": "تم تفعيل حسابك بنجاح.",
+      "error": "لم نتمكن من التحقق من بريدك الإلكتروني."
+    },
+    "messages": {
+      "tokenMissing": "رمز التحقق مفقود.",
+      "success": "تم التحقق من بريدك الإلكتروني بنجاح!",
+      "verificationError": "الرمز غير صالح أو منتهي الصلاحية.",
+      "autoLoginInfo": "نحاول تسجيل دخولك تلقائيًّا. إذا فشل ذلك، فاستخدم الزر أدناه.",
+      "manualLoginInfo": "يرجى تسجيل الدخول لتفعيل جلستك ومتابعة الخطوة التالية.",
+      "autoLoginFailed": "فشل الاتصال التلقائي. يرجى استخدام الزر أعلاه للمتابعة.",
+      "waiting": "لن يستغرق الأمر سوى بضع ثوانٍ..."
+    },
+    "partner": {
+      "nextStep": "الخطوة التالية: أكمل ملفك الشخصي كشريك",
+      "continueButton": "المتابعة إلى ملف تعريفي كشريك",
+      "continueButtonLoading": "تسجيل الدخول..."
+    },
+    "user": {
+      "continueButton": "الوصول إلى ملف التعريف الخاص بي",
+      "continueButtonLoading": "تسجيل الدخول..."
+    },
+    "buttons": {
+      "resend": "إعادة إرسال رابط التحقق",
+      "backToLogin": "العودة إلى تسجيل الدخول",
+      "requestNewLink": "إعادة إرسال رسالة البريد الإلكتروني للتحقق"
+    },
+    "error": {
+      "title": "ماذا نفعل؟",
+      "checkLink": "تأكد من أن الرابط كامل",
+      "expired": "ينتهي صلاحية الرابط بعد 24 ساعة",
+      "requestNew": "اطلب رابط تحقق جديد"
+    },
+    "toast": {
+      "success": "تم التحقق من البريد الإلكتروني بنجاح!",
+      "error": "خطأ في التحقق",
+      "verifying": "تم التحقق من البريد الإلكتروني، يجري تسجيل الدخول...",
+      "loginSuccess": "تمت عملية تسجيل الدخول بنجاح، إعادة التوجيه...",
+      "loginError": "يتعذر تسجيل الدخول تلقائيًا. يرجى تسجيل الدخول للمتابعة.",
+      "resendSuccess": "تم إرسال رسالة بريد إلكتروني جديدة للتحقق.",
+      "resendError": "يتعذر إعادة إرسال الرابط. يرجى تسجيل الدخول لمحاولة إعادة الإرسال.",
+      "resendAuthRequired": "يرجى تسجيل الدخول لإعادة إرسال رابط التحقق.",
+      "completeError": "تعذر إتمام عملية التحقق."
+    }
+  },
+  "theme": {
+    "toggleLabel": "تغيير السمة",
+    "light": "واضح",
+    "dark": "قاتم",
+    "system": "النظام"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "markAllRead": "وضع علامة \"مقروء\" على كل شيء",
+    "markRead": "وضع علامة \"تمت قراءته\"",
+    "delete": "حذف",
+    "empty": "لا توجد إخطارات",
+    "timePrefix": "في",
+    "sent": "تم الإرسال",
+    "settings": {
+      "title": "تفضيلات الإشعارات",
+      "description": "اضبط إعدادات الإشعارات الخاصة بالأنشطة والرحلات",
+      "loading": "جاري تحميل الإعدادات...",
+      "types": {
+        "title": "أنواع الإشعارات",
+        "activityReminders": "تذكير بالأنشطة",
+        "activityRemindersDesc": "تلقي تذكيرات قبل الأنشطة المجدولة",
+        "tripStart": "بداية الرحلة",
+        "tripStartDesc": "إخطار عند بدء رحلتك",
+        "tripEnd": "نهاية الرحلة",
+        "tripEndDesc": "إخطار عند انتهاء رحلتك"
+      },
+      "timing": {
+        "title": "توقيت الجرعات التذكيرية",
+        "before": "تذكير قبل بدء النشاط",
+        "1h": "قبل ساعة",
+        "2h": "قبل ساعتين",
+        "6h": "قبل 6 ساعات",
+        "12h": "قبل 12 ساعة",
+        "24h": "قبل 24 ساعة",
+        "48h": "قبل 48 ساعة"
+      },
+      "channels": {
+        "title": "قنوات الإشعارات",
+        "inApp": "الإشعارات داخل التطبيق",
+        "inAppDesc": "عرض الإشعارات في التطبيق",
+        "email": "الإشعارات عبر البريد الإلكتروني",
+        "emailDesc": "تلقي رسائل تذكير عبر البريد الإلكتروني (ستتوفر قريبًا)"
+      }
+    }
+  },
+  "toast": {
+    "itinerary": {
+      "pdfExportSuccess": "تم تصدير ملف PDF بنجاح",
+      "pdfExportSuccessDesc": "تم تنزيل مسار رحلتك بصيغة PDF.",
+      "pdfExportError": "خطأ في التصدير",
+      "pdfExportErrorDesc": "يتعذر تصدير ملف PDF. يرجى المحاولة مرة أخرى.",
+      "shareError": "خطأ في المشاركة",
+      "shareErrorDesc": "يتعذر المشاركة. يرجى المحاولة مرة أخرى.",
+      "linkCopied": "تم نسخ الرابط",
+      "linkCopiedDesc": "تم نسخ رابط مسار رحلتك إلى الحافظة.",
+      "copyError": "خطأ",
+      "copyErrorDesc": "يتعذر نسخ الرابط.",
+      "activityUpdated": "تم تحديث النشاط بنجاح",
+      "dayUpdated": "تم تحديث اليوم بنجاح",
+      "activityAdded": "تمت إضافة النشاط بنجاح",
+      "activityMoved": "تم تأجيل النشاط إلى يوم آخر",
+      "orderUpdated": "ترتيب الأنشطة المحدث",
+      "dayAdded": "تمت إضافة يوم جديد",
+      "dayDeleted": "تم حذف اليوم",
+      "cannotDeleteLastDay": "يتعذر حذف اليوم الأخير",
+      "saved": "تم حفظ مسار الرحلة بنجاح"
+    },
+    "poi": {
+      "loadError": "حدث خطأ أثناء تحميل نقاط الاهتمام",
+      "updateSuccess": "تم تحديث نقطة الاهتمام بنجاح",
+      "createSuccess": "تم إنشاء نقطة الاهتمام بنجاح",
+      "createSuccessPartner": "تم إنشاء نقطة الاهتمام بنجاح - تم وضع علامة عليها كنقطة شريكة",
+      "saveError": "حدث خطأ أثناء الحفظ",
+      "deleteSuccess": "تم حذف نقطة الاهتمام بنجاح",
+      "deleteError": "حدث خطأ أثناء الحذف",
+      "toggleSuccess": "تم تحديد نقطة الاهتمام {status} بنجاح",
+      "toggleError": "حدث خطأ أثناء التعديل",
+      "activated": "مفعَّل",
+      "deactivated": "معطل"
+    },
+    "form": {
+      "validationError": "يرجى تصحيح الأخطاء قبل المتابعة",
+      "submitError": "حدث خطأ أثناء الإرسال",
+      "loadError": "حدث خطأ أثناء تحميل البيانات"
+    },
+    "share": {
+      "loadError": "حدث خطأ أثناء تحميل الملفات المشتركة",
+      "userNotFound": "لم يتم العثور على أي مستخدم بهذا البريد الإلكتروني",
+      "alreadyShared": "هذا المستخدم لديه حق الوصول إلى هذا المسار بالفعل",
+      "success": "تم مشاركة مسار الرحلة مع {email} في الوضع {mode}",
+      "editMode": "تعديل",
+      "viewMode": "القراءة",
+      "shareError": "حدث خطأ أثناء المشاركة",
+      "removeSuccess": "تم حذف المشاركة",
+      "removeError": "حدث خطأ أثناء الحذف",
+      "updateSuccess": "تحديث الأذونات",
+      "updateError": "حدث خطأ أثناء التحديث"
+    },
+    "media": {
+      "uploadError": "حدث خطأ أثناء التحميل: {error}",
+      "deleteSuccess": "تم حذف الملف",
+      "deleteError": "حدث خطأ أثناء الحذف",
+      "uploadSuccess": "{count} {type} تم تحميلها بنجاح",
+      "image": "صورة (صور)",
+      "video": "فيديو (فيديوهات)"
+    },
+    "hooks": {
+      "notifications": {
+        "loadError": "حدث خطأ أثناء تحميل الإشعارات",
+        "preferencesUpdated": "تم تحديث الإعدادات",
+        "updateError": "حدث خطأ أثناء التحديث",
+        "allMarkedRead": "جميع الإشعارات التي تم وضع علامة \"تمت قراءتها\" عليها",
+        "notificationDeleted": "تم حذف الإشعار",
+        "deleteError": "حدث خطأ أثناء الحذف"
+      },
+      "savedItineraries": {
+        "saved": "تم حفظ مسار الرحلة بنجاح",
+        "saveError": "حدث خطأ أثناء حفظ المسار",
+        "loadError": "حدث خطأ أثناء تحميل المسارات",
+        "deleteConfirm": "هل أنت متأكد من رغبتك في حذف هذا المسار؟",
+        "deleted": "تم حذف المسار بنجاح",
+        "deleteError": "حدث خطأ أثناء الحذف",
+        "updated": "تم تحديث مسار الرحلة بنجاح",
+        "updateError": "حدث خطأ أثناء التحديث"
+      },
+      "favorites": {
+        "loadError": "حدث خطأ أثناء تحميل المفضلة",
+        "loginRequired": "يجب أن تكون مسجلاً للدخول لإضافة عناصر إلى قائمة المفضلة",
+        "added": "تمت إضافة نقطة الاهتمام إلى المفضلة!",
+        "addError": "حدث خطأ أثناء الإضافة إلى المفضلة",
+        "removed": "تم حذف نقطة الاهتمام من المفضلة",
+        "removeError": "حدث خطأ أثناء حذف المفضلة"
+      },
+      "poi": {
+        "draftSaved": "تم حفظ المسودة بنجاح!",
+        "submitted": "تم إرسال نقطة الاهتمام بنجاح!",
+        "draftUpdated": "تم تحديث المسودة بنجاح!",
+        "updated": "تم تحديث نقطة الاهتمام بنجاح!"
+      }
+    },
+    "auth": {
+      "verificationEmailSent": "تم إرسال رسالة بريد إلكتروني للتحقق. يرجى تأكيد عنوان بريدك الإلكتروني لتفعيل حسابك.",
+      "methodNotAvailable": "هذه الطريقة في الاتصال غير متاحة بعد.",
+      "passwordResetSoon": "ستتوفر ميزة إعادة تعيين كلمة المرور قريبًا."
+    },
+    "touristPoints": {
+      "loadError": "حدث خطأ أثناء تحميل نقاط الاهتمام"
+    }
+  },
+  "bookingDialog": {
+    "common": {
+      "cancel": "إلغاء",
+      "confirm": "تأكيد الحجز",
+      "confirming": "الحجز قيد التنفيذ...",
+      "error": "خطأ",
+      "bookingConfirmedTitle": "تم تأكيد الحجز",
+      "selectDate": "اختر تاريخًا",
+      "arrivalDate": "تاريخ الوصول",
+      "departureDate": "تاريخ المغادرة",
+      "guests": "عدد الأشخاص",
+      "guestsCount": "{{count}} شخص (أشخاص)",
+      "clientInfo": "معلومات العميل",
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "specialRequests": "الطلبات الخاصة",
+      "summary": "ملخص الحجز",
+      "total": "المجموع",
+      "more": "+{{count}} وغيرها"
+    },
+    "accommodation": {
+      "title": "حجز مكان للإقامة - {{name}}",
+      "selectRoom": "اختر غرفة",
+      "loadingRooms": "جاري تحميل الغرف...",
+      "noRooms": "لا توجد غرف متاحة",
+      "upToGuests": "ما يصل إلى {{count}} شخص",
+      "perNightPrice": "{{price}}يورو في الليلة",
+      "roomLabel": "غرفة",
+      "stayDuration": "مدة الإقامة",
+      "nights": "{{count}} ليلة (ليالي)",
+      "specialPlaceholder": "أي طلب خاص...",
+      "errLoadRooms": "حدث خطأ أثناء تحميل الغرف",
+      "datesUnavailable": "هذه التواريخ غير متوفرة لهذه الغرفة",
+      "errAvailability": "حدث خطأ أثناء التحقق من التوفر",
+      "selectDatesErr": "يرجى تحديد تواريخ الوصول والمغادرة",
+      "selectRoomErr": "يرجى اختيار غرفة",
+      "bookingConfirmed": "تم تأكيد الحجز!",
+      "bookingError": "حدث خطأ أثناء الحجز"
+    },
+    "activity": {
+      "title": "الحجز {{name}}",
+      "errLoadData": "تعذر تحميل بيانات النشاط",
+      "errLoadSlots": "يتعذر تحميل المواعيد المتاحة",
+      "requirementsNotMet": "الشروط غير مستوفاة",
+      "selectSlotErr": "يرجى اختيار فترة زمنية",
+      "bookingSuccessDesc": "تم تسجيل حجزك بنجاح",
+      "errCreate": "يتعذر إنشاء الحجز",
+      "date": "تاريخ النشاط",
+      "availableSlots": "المواعيد المتاحة",
+      "maxParticipants": "الحد الأقصى لعدد المشاركين في {{count}} ",
+      "participants": "عدد المشاركين",
+      "adults": "الكبار",
+      "children": "الأطفال",
+      "seniors": "كبار السن",
+      "equipmentRental": "المعدات المتاحة للتأجير (اختياري)",
+      "requirements": "الشروط والمتطلبات",
+      "mandatory": "إلزامي",
+      "recommended": "موصى به",
+      "equipment": "المرافق",
+      "provided": "متوفر",
+      "toBring": "يرجى إحضار",
+      "specialPlaceholder": "المعلومات الطبية، الحساسية، الاحتياجات الخاصة...",
+      "totalToPay": "المبلغ الإجمالي المستحق الدفع"
+    },
+    "restaurant": {
+      "unavailable": "غير متوفر",
+      "noTable": "لا توجد طاولات متاحة لهذا الموعد",
+      "errCheck": "يتعذر التحقق من التوفر",
+      "fillRequired": "يرجى ملء جميع الحقول الإلزامية",
+      "requestSentDesc": "تم إرسال طلب الحجز الخاص بك إلى المطعم",
+      "errCreate": "حدث خطأ أثناء إنشاء الحجز",
+      "title": "حجز طاولة في {{name}}",
+      "date": "تاريخ الحجز",
+      "time": "وقت الحجز",
+      "selectTime": "اختر وقتًا",
+      "checking": "التحقق من التوفر...",
+      "tablesAvailable": "✓ طاولات متاحة في هذا الوقت",
+      "yourInfo": "بياناتك",
+      "namePlaceholder": "جان دوبون",
+      "emailPlaceholder": "jean.dupont@email.com",
+      "phonePlaceholder": "06 12 34 56 78",
+      "preferences": "التفضيلات",
+      "tablePreferences": "تفضيلات الجدول",
+      "noPrefPlaceholder": "لا توجد تفضيلات معينة",
+      "noPref": "لا تفضيلات",
+      "terrace": "الشرفة",
+      "indoor": "الداخل",
+      "window": "بجوار نافذة",
+      "quiet": "منطقة هادئة",
+      "easyAccess": "سهولة الوصول",
+      "specialPlaceholder": "أعياد الميلاد، الحساسية الغذائية، كرسي الطعام للأطفال...",
+      "summary": "ملخص حجزك",
+      "dateLabel": "التاريخ",
+      "timeLabel": "الساعة",
+      "restaurantLabel": "مطعم",
+      "disclaimer": "بتأكيد حجزك، فإنك توافق على أن يتصل بك المطعم لتأكيد طلبك."
+    }
+  },
+  "widgets": {
+    "loadButton": "عرض"
+  },
+  "itinerary": {
+    "galleryPhotoAlt": "صورة لـ {{city}}",
+    "destination": "الوجهة",
+    "destinationCapitalized": "الوجهة",
+    "inspireYourTrip": "استلهموا رحلتكم",
+    "iconicView": "منظر مميز لا ينبغي تفويته",
+    "viewLarge": "التفكير على نطاق واسع",
+    "playbackPaused": "التوقف المؤقت عن القراءة",
+    "previousImage": "الصورة السابقة",
+    "nextImage": "الصورة التالية",
+    "goToImage": "الانتقال إلى الصورة {{number}}",
+    "thumbnailAlt": "صورة مصغرة {{number}}",
+    "travelInspiration": "إلهام للسفر",
+    "inspiringSnapshot": "لقطة ملهمة",
+    "generatingTitle": "جاري إنشاء مسار رحلتك...",
+    "generatingDescription": "تقوم الذكاء الاصطناعي بإعداد برنامجك المخصص. وستظهر الأقسام تدريجيًا.",
+    "loadingErrorTitle": "مشكلة في التحميل",
+    "loadingErrorDescription": "لم يتم تحميل المسار بشكل صحيح. قد يكون ذلك بسبب مشكلة مؤقتة.",
+    "createNewItinerary": "إنشاء مسار جديد",
+    "pdfExportSuccessTitle": "تم تصدير ملف PDF بنجاح",
+    "pdfExportSuccessDescription": "تم تنزيل مسار رحلتك بصيغة PDF.",
+    "pdfExportErrorTitle": "خطأ في التصدير",
+    "pdfExportErrorDescription": "يتعذر تصدير ملف PDF. يرجى المحاولة مرة أخرى.",
+    "shareErrorTitle": "خطأ في المشاركة",
+    "shareErrorDescription": "يتعذر المشاركة. يرجى المحاولة مرة أخرى.",
+    "linkCopiedTitle": "تم نسخ الرابط",
+    "linkCopiedDescription": "تم نسخ رابط مسار رحلتك إلى الحافظة.",
+    "errorTitle": "خطأ",
+    "copyLinkError": "يتعذر نسخ الرابط.",
+    "breakfast": "الإفطار",
+    "lunch": "الغداء",
+    "dinner": "العشاء",
+    "atLocation": "إلى",
+    "soloTrip": "رحلة منفردة",
+    "coupleTrip": "رحلة للزوجين",
+    "family": "الأسرة",
+    "familyWithChildren": "عائلة مع {{count}} طفل (أطفال)",
+    "groupOfPeople": "مجموعة مكونة من {{count}} أشخاص",
+    "preparingTitle": "يجري حالياً إعداد برنامجك…",
+    "preparingDescription": "تقوم الذكاء الاصطناعي لدينا بتصميم مسار رحلتك حسب رغباتك. سيتم عرض البرنامج تدريجيًا — انتظر لحظات قليلة.",
+    "personalizedItineraryTitle": "مسار رحلتك المخصص",
+    "generatedWithPreferences": "رحلة تم إعدادها وفقًا لتفضيلاتك الشخصية",
+    "save": "حفظ",
+    "newTrip": "رحلة جديدة",
+    "exportPdf": "تصدير ملف PDF",
+    "share": "مشاركة",
+    "copyLink": "نسخ الرابط",
+    "loadingDestinationImages": "جاري تحميل صور الوجهات...",
+    "whyThisTripTitle": "لماذا يناسبك هذا البرنامج",
+    "matchPercentage": "{{score}}نسبة الملاءمة",
+    "tripOverview": "نظرة عامة على الرحلة",
+    "dates": "التواريخ",
+    "datesToDefine": "التواريخ لم تُحدد بعد",
+    "daysCount": "{{count}} يوم (أيام)",
+    "group": "المجموعة",
+    "budget": "الميزانية",
+    "budgetPerDay": "{{amount}}يورو في اليوم",
+    "estimatedTotal": "المجموع التقديري: {{amount}}يورو",
+    "destinations": "الوجهات",
+    "destinationLine": "{{city}}، {{country}} ({{duration}}j)",
+    "budgetBreakdownTitle": "توزيع الميزانية",
+    "categoryAccommodation": "الإقامة",
+    "categoryFood": "الطعام",
+    "categoryActivities": "الأنشطة",
+    "categoryTransport": "النقل",
+    "categoryShopping": "التسوق",
+    "categoryMiscellaneous": "مختلف",
+    "detailedItinerary": "مسار الرحلة بالتفصيل",
+    "dayLabel": "اليوم {{number}}",
+    "dailyBudget": "الميزانية اليومية",
+    "scheduledActivities": "الأنشطة المقررة",
+    "locationUnspecified": "المكان غير محدد",
+    "difficultyEasy": "سهل",
+    "difficultyModerate": "معتدل",
+    "difficultyHard": "صعب",
+    "tipsWithCount": "نصائح ({{count}})",
+    "bookThisActivity": "حجز هذه النشاط",
+    "recommendedMeals": "الوجبات الموصى بها",
+    "book": "الحجز",
+    "transport": "النقل",
+    "estimatedWalkingDistance": "المسافة التقديرية للمشي",
+    "generatingDayByDay": "إنشاء مسار الرحلة يومًا بيوم...",
+    "generatingDayByDayDescription": "تقوم الذكاء الاصطناعي بإنشاء برنامجك المخصص الذي يتضمن جميع الأنشطة",
+    "daysWillAppear": "ستظهر أيام خط سير رحلتك تدريجيًا أعلاه مع تأثير الكتابة...",
+    "dayByDayProgram": "برنامج يومي مخصص وفقًا لتفضيلاتك",
+    "generationImproving": "قيد التحسين",
+    "generationImprovingDescription": "سيتوفر قريبًا برنامج الرحلة التفصيلي مع الأنشطة لحظة بلحظة. في الوقت الحالي، يمكنكم الاطلاع على ملخص رحلتكم أعلاه.",
+    "additionalInformation": "معلومات إضافية",
+    "enrichedContentPlaceholder": "ستظهر هذه المعلومات بمجرد أن يتضمن المسار محتويات إضافية.",
+    "personalizedRecommendations": "توصيات مخصصة",
+    "specialtiesToDiscover": "أطباق مميزة تستحق الاكتشاف",
+    "giftIdeas": "أفكار للهدايا التذكارية",
+    "packingList": "قائمة السفر",
+    "culturalTips": "نصائح ثقافية",
+    "bestPeriods": "أفضل الأوقات",
+    "localEvents": "الفعاليات المحلية",
+    "transportTips": "نصائح بشأن النقل",
+    "safetyTips": "نصائح تتعلق بالسلامة",
+    "budgetDistribution": "توزيع الميزانية",
+    "similarDestinations": "وجهات مشابهة",
+    "practicalInformation": "معلومات عملية",
+    "visaAndDocuments": "التأشيرة والوثائق",
+    "currency": "العملة",
+    "languages": "اللغات",
+    "climate": "المناخ",
+    "emergencies": "حالات الطوارئ",
+    "health": "الصحة",
+    "localCustoms": "العادات المحلية",
+    "customize": "تخصيص",
+    "loginToEdit": "تسجيل الدخول لتعديل"
+  },
+  "editor": {
+    "editActivity": "تعديل النشاط",
+    "deleteActivity": "حذف النشاط",
+    "locationUnspecified": "المكان غير محدد",
+    "toastActivityUpdated": "تم تحديث النشاط",
+    "editActivityTitle": "تعديل النشاط",
+    "title": "العنوان",
+    "location": "المكان",
+    "description": "الوصف",
+    "startTime": "وقت البدء",
+    "endTime": "وقت الانتهاء",
+    "cost": "التكلفة (يورو)",
+    "duration": "المدة",
+    "category": "الفئة",
+    "difficulty": "الصعوبة",
+    "difficultyEasy": "سهل",
+    "difficultyModerate": "معتدل",
+    "difficultyHard": "صعب",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "dayN": "اليوم {{n}}",
+    "moveDayUp": "الشروق",
+    "moveDayDown": "غروب الشمس",
+    "editDay": "تغيير اليوم",
+    "deleteDay": "حذف اليوم",
+    "toastDayUpdated": "تاريخ التحديث",
+    "editDayN": "تغيير اليوم {{n}}",
+    "destination": "الوجهة",
+    "theme": "الموضوع",
+    "toastActivityAdded": "تمت إضافة النشاط",
+    "addActivity": "إضافة نشاط",
+    "add": "إضافة",
+    "toastActivityMoved": "تم تأجيل النشاط إلى يوم آخر",
+    "toastActivitiesReordered": "ترتيب الأنشطة المحدث",
+    "toastDayAdded": "يوم إضافي",
+    "toastCannotDeleteLastDay": "يتعذر حذف اليوم الأخير",
+    "toastDayDeleted": "تم حذف اليوم",
+    "toastActivityDeleted": "تم حذف النشاط",
+    "toastItinerarySaved": "مسار مسجل",
+    "subtitle": "خصص برنامجك — استخدم السحب والإفلات لإعادة ترتيب الأنشطة، أو قم بتعديلها أو حذفها.",
+    "addDay": "إضافة يوم",
+    "close": "إغلاق",
+    "dropActivitiesHint": "انشر الأنشطة هنا أو أضف نشاطًا جديدًا"
   }
 }

@@ -23,6 +23,7 @@ const LABEL_FIELDS = ['label_fr', 'label_en', 'label_es', 'label_de', 'label_it'
 type MultilingualEntry = Record<(typeof LABEL_FIELDS)[number], string | undefined> & { code: string };
 
 const matchEntryByValue = <T extends MultilingualEntry>(value: string, entries: T[]) => {
+  if (!Array.isArray(entries)) return undefined;
   return entries.find((entry) => {
     if (entry.code === value) return true;
     return LABEL_FIELDS.some((field) => entry[field] && entry[field]?.toLowerCase() === value.toLowerCase());
@@ -30,7 +31,8 @@ const matchEntryByValue = <T extends MultilingualEntry>(value: string, entries: 
 };
 
 const normalizeArrayValues = <T extends MultilingualEntry>(values: string[], entries: T[]) => {
-  if (!values || values.length === 0) return [];
+  if (!Array.isArray(values) || values.length === 0) return [];
+  if (!Array.isArray(entries)) return [];
   const normalized: string[] = [];
   values.forEach((value) => {
     const match = matchEntryByValue(value, entries);
@@ -61,14 +63,32 @@ const getLabelFromCode = <T extends MultilingualEntry>(code: string, entries: T[
 export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepProps) => {
   const { t, i18n } = useTranslation();
   const { categories, intensityLevels, interests, avoidances, loading } = useActivitySettings();
-  const [preferences, setPreferences] = useState<ActivityPreferences>(
-    data.activityPreferences || {
+  const [preferences, setPreferences] = useState<ActivityPreferences>(() => {
+    const defaultPreferences = {
       categories: [],
       intensity: 'moderate',
       interests: [],
       avoidances: []
+    };
+
+    if (!data.activityPreferences) {
+      return defaultPreferences;
     }
-  );
+
+    // Ensure all array fields are actually arrays to prevent "x.map is not a function" errors
+    return {
+      categories: Array.isArray(data.activityPreferences.categories)
+        ? data.activityPreferences.categories
+        : [],
+      intensity: data.activityPreferences.intensity || 'moderate',
+      interests: Array.isArray(data.activityPreferences.interests)
+        ? data.activityPreferences.interests
+        : [],
+      avoidances: Array.isArray(data.activityPreferences.avoidances)
+        ? data.activityPreferences.avoidances
+        : []
+    };
+  });
   const [specialRequests, setSpecialRequests] = useState(data.specialRequests || "");
 
   useEffect(() => {
@@ -115,10 +135,12 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
     field: T,
     item: string
   ) => {
-    const current = preferences[field] as string[];
-    const updated = current.includes(item)
-      ? current.filter(i => i !== item)
-      : [...current, item];
+    const current = preferences[field];
+    // Ensure current is an array before operating on it
+    const currentArray = Array.isArray(current) ? current : [];
+    const updated = currentArray.includes(item)
+      ? currentArray.filter(i => i !== item)
+      : [...currentArray, item];
     updatePreferences({ [field]: updated } as Partial<ActivityPreferences>);
   };
 
@@ -145,7 +167,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            {categories.map((category) => {
+            {Array.isArray(categories) && categories.map((category) => {
               const IconComponent = category.icon_name ? (LucideIcons as any)[category.icon_name] : null;
               return (
                 <Button
@@ -181,7 +203,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-            {intensityLevels.map((level) => (
+            {Array.isArray(intensityLevels) && intensityLevels.map((level) => (
               <Button
                 key={level.code}
                 variant={preferences.intensity === level.code ? "default" : "outline"}
@@ -210,7 +232,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {interests.map((interest) => (
+            {Array.isArray(interests) && interests.map((interest) => (
               <div key={interest.code} className="flex items-center space-x-2">
                 <Checkbox
                   id={`interest-${interest.code}`}
@@ -236,7 +258,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {avoidances.map((avoidance) => (
+            {Array.isArray(avoidances) && avoidances.map((avoidance) => (
               <div key={avoidance.code} className="flex items-center space-x-2">
                 <Checkbox
                   id={`avoidance-${avoidance.code}`}
@@ -276,7 +298,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
           <div className="space-y-2">
             <h4 className="font-medium">{t('planTrip.activitiesStep.summary')}</h4>
             <div className="space-y-2">
-              {preferences.categories.length > 0 && (
+              {Array.isArray(preferences.categories) && preferences.categories.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   <span className="text-sm font-medium">{t('planTrip.activitiesStep.summaryCategories')}</span>
                   {preferences.categories.map(categoryCode => {
@@ -297,7 +319,7 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
                 </Badge>
               </div>
 
-              {preferences.interests.length > 0 && (
+              {Array.isArray(preferences.interests) && preferences.interests.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   <span className="text-sm font-medium">{t('planTrip.activitiesStep.summaryInterests')}</span>
                   {preferences.interests.slice(0, 5).map(interestCode => {

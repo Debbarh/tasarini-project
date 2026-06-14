@@ -86,6 +86,17 @@ export interface DailyActivity {
   tips?: string;
   bookingAdvice?: string;
   alternatives?: string[];
+  image?: ActivityImage;  // image Wikimedia (optionnelle)
+}
+
+export interface ActivityImage {
+  url: string;
+  thumbnailUrl: string;
+  descriptionUrl?: string;
+  license?: string;
+  artist?: string;
+  attribution?: string;
+  source?: string;
 }
 
 export interface DayItinerary {

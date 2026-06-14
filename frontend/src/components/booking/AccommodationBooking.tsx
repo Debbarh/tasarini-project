@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, Users, Clock, Euro } from "lucide-react";
 import { format, differenceInDays, addDays } from "date-fns";
-import { fr } from "date-fns/locale";
+import { getDateFnsLocale } from "@/utils/dateLocale";
 import { toast } from "sonner";
 import { accommodationService, AccommodationRoom } from "@/services/accommodationService";
 
@@ -33,12 +34,14 @@ interface BookingData {
   room_id: string;
 }
 
-export const AccommodationBooking = ({ 
-  isOpen, 
-  onClose, 
-  touristPointId, 
-  touristPointName 
+export const AccommodationBooking = ({
+  isOpen,
+  onClose,
+  touristPointId,
+  touristPointName
 }: AccommodationBookingProps) => {
+  const { t, i18n } = useTranslation();
+  const dfLocale = getDateFnsLocale(i18n.language);
   const [rooms, setRooms] = useState<AccommodationRoom[]>([]);
   const [loading, setLoading] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData>({
@@ -73,7 +76,7 @@ export const AccommodationBooking = ({
       setRooms(roomsData.filter(room => room.is_available));
     } catch (error) {
       console.error('Erreur lors du chargement des chambres:', error);
-      toast.error('Erreur lors du chargement des chambres');
+      toast.error(t('bookingDialog.accommodation.errLoadRooms'));
     } finally {
       setLoading(false);
     }
@@ -110,15 +113,15 @@ export const AccommodationBooking = ({
         format(bookingData.check_in_date, 'yyyy-MM-dd'),
         format(bookingData.check_out_date, 'yyyy-MM-dd')
       );
-      
+
       if (!isAvailable) {
-        toast.error('Ces dates ne sont pas disponibles pour cette chambre');
+        toast.error(t('bookingDialog.accommodation.datesUnavailable'));
       }
-      
+
       return isAvailable;
     } catch (error) {
       console.error('Erreur lors de la vérification de disponibilité:', error);
-      toast.error('Erreur lors de la vérification de disponibilité');
+      toast.error(t('bookingDialog.accommodation.errAvailability'));
       return false;
     } finally {
       setIsCheckingAvailability(false);
@@ -127,14 +130,14 @@ export const AccommodationBooking = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!bookingData.check_in_date || !bookingData.check_out_date) {
-      toast.error('Veuillez sélectionner les dates d\'arrivée et de départ');
+      toast.error(t('bookingDialog.accommodation.selectDatesErr'));
       return;
     }
 
     if (!bookingData.room_id) {
-      toast.error('Veuillez sélectionner une chambre');
+      toast.error(t('bookingDialog.accommodation.selectRoomErr'));
       return;
     }
 
@@ -146,7 +149,7 @@ export const AccommodationBooking = ({
     setLoading(true);
     try {
       const totalNights = differenceInDays(bookingData.check_out_date, bookingData.check_in_date);
-      
+
       await accommodationService.createBooking(touristPointId, {
         room_id: bookingData.room_id,
         customer_name: bookingData.customer_name,
@@ -161,12 +164,12 @@ export const AccommodationBooking = ({
         special_requests: bookingData.special_requests
       });
 
-      toast.success('Réservation confirmée !');
+      toast.success(t('bookingDialog.accommodation.bookingConfirmed'));
       onClose();
       resetForm();
     } catch (error) {
       console.error('Erreur lors de la réservation:', error);
-      toast.error('Erreur lors de la réservation');
+      toast.error(t('bookingDialog.accommodation.bookingError'));
     } finally {
       setLoading(false);
     }
@@ -195,22 +198,22 @@ export const AccommodationBooking = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Réserver un hébergement - {touristPointName}</DialogTitle>
+          <DialogTitle>{t('bookingDialog.accommodation.title', { name: touristPointName })}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Room Selection */}
           <div className="space-y-4">
-            <Label className="text-lg font-semibold">Sélectionner une chambre</Label>
+            <Label className="text-lg font-semibold">{t('bookingDialog.accommodation.selectRoom')}</Label>
             <div className="grid md:grid-cols-2 gap-4">
               {loading ? (
-                <div>Chargement des chambres...</div>
+                <div>{t('bookingDialog.accommodation.loadingRooms')}</div>
               ) : rooms.length === 0 ? (
-                <div>Aucune chambre disponible</div>
+                <div>{t('bookingDialog.accommodation.noRooms')}</div>
               ) : (
                 rooms.map((room) => (
-                  <Card 
-                    key={room.id} 
+                  <Card
+                    key={room.id}
                     className={`cursor-pointer transition-all ${
                       bookingData.room_id === room.id ? 'ring-2 ring-primary' : ''
                     }`}
@@ -224,11 +227,11 @@ export const AccommodationBooking = ({
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <Users className="h-4 w-4" />
-                          <span>Jusqu'à {room.capacity} personnes</span>
+                          <span>{t('bookingDialog.accommodation.upToGuests', { count: room.capacity })}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Euro className="h-4 w-4" />
-                          <span>{room.base_price_per_night}€ par nuit</span>
+                          <span>{t('bookingDialog.accommodation.perNightPrice', { price: room.base_price_per_night })}</span>
                         </div>
                         {room.amenities.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
@@ -255,7 +258,7 @@ export const AccommodationBooking = ({
           {/* Dates Selection */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Date d'arrivée *</Label>
+              <Label>{t('bookingDialog.common.arrivalDate')} *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -264,9 +267,9 @@ export const AccommodationBooking = ({
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {bookingData.check_in_date ? (
-                      format(bookingData.check_in_date, "dd MMMM yyyy", { locale: fr })
+                      format(bookingData.check_in_date, "dd MMMM yyyy", { locale: dfLocale })
                     ) : (
-                      <span>Sélectionner une date</span>
+                      <span>{t('bookingDialog.common.selectDate')}</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -275,8 +278,8 @@ export const AccommodationBooking = ({
                     mode="single"
                     selected={bookingData.check_in_date}
                     onSelect={(date) => {
-                      setBookingData(prev => ({ 
-                        ...prev, 
+                      setBookingData(prev => ({
+                        ...prev,
                         check_in_date: date,
                         check_out_date: date ? addDays(date, 1) : undefined
                       }));
@@ -289,7 +292,7 @@ export const AccommodationBooking = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Date de départ *</Label>
+              <Label>{t('bookingDialog.common.departureDate')} *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -298,9 +301,9 @@ export const AccommodationBooking = ({
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {bookingData.check_out_date ? (
-                      format(bookingData.check_out_date, "dd MMMM yyyy", { locale: fr })
+                      format(bookingData.check_out_date, "dd MMMM yyyy", { locale: dfLocale })
                     ) : (
-                      <span>Sélectionner une date</span>
+                      <span>{t('bookingDialog.common.selectDate')}</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -309,8 +312,8 @@ export const AccommodationBooking = ({
                     mode="single"
                     selected={bookingData.check_out_date}
                     onSelect={(date) => setBookingData(prev => ({ ...prev, check_out_date: date }))}
-                    disabled={(date) => 
-                      date < new Date() || 
+                    disabled={(date) =>
+                      date < new Date() ||
                       (bookingData.check_in_date && date <= bookingData.check_in_date)
                     }
                     initialFocus
@@ -323,9 +326,9 @@ export const AccommodationBooking = ({
           {/* Guest Information */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="guests">Nombre de personnes *</Label>
-              <Select 
-                value={bookingData.number_of_guests.toString()} 
+              <Label htmlFor="guests">{t('bookingDialog.common.guests')} *</Label>
+              <Select
+                value={bookingData.number_of_guests.toString()}
                 onValueChange={(value) => setBookingData(prev => ({ ...prev, number_of_guests: parseInt(value) }))}
               >
                 <SelectTrigger>
@@ -334,7 +337,7 @@ export const AccommodationBooking = ({
                 <SelectContent>
                   {[1,2,3,4,5,6,7,8].map(num => (
                     <SelectItem key={num} value={num.toString()}>
-                      {num} {num === 1 ? 'personne' : 'personnes'}
+                      {t('bookingDialog.common.guestsCount', { count: num })}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -344,10 +347,10 @@ export const AccommodationBooking = ({
 
           {/* Customer Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Informations du client</h3>
+            <h3 className="text-lg font-semibold">{t('bookingDialog.common.clientInfo')}</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nom complet *</Label>
+                <Label htmlFor="name">{t('bookingDialog.common.fullName')} *</Label>
                 <Input
                   id="name"
                   value={bookingData.customer_name}
@@ -356,7 +359,7 @@ export const AccommodationBooking = ({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">{t('bookingDialog.common.email')} *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -367,7 +370,7 @@ export const AccommodationBooking = ({
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone</Label>
+              <Label htmlFor="phone">{t('bookingDialog.common.phone')}</Label>
               <Input
                 id="phone"
                 value={bookingData.customer_phone}
@@ -378,12 +381,12 @@ export const AccommodationBooking = ({
 
           {/* Special Requests */}
           <div className="space-y-2">
-            <Label htmlFor="requests">Demandes spéciales</Label>
+            <Label htmlFor="requests">{t('bookingDialog.common.specialRequests')}</Label>
             <Textarea
               id="requests"
               value={bookingData.special_requests}
               onChange={(e) => setBookingData(prev => ({ ...prev, special_requests: e.target.value }))}
-              placeholder="Toute demande particulière..."
+              placeholder={t('bookingDialog.accommodation.specialPlaceholder')}
               rows={3}
             />
           </div>
@@ -392,23 +395,23 @@ export const AccommodationBooking = ({
           {selectedRoom && totalNights > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Résumé de la réservation</CardTitle>
+                <CardTitle>{t('bookingDialog.common.summary')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
-                  <span>Chambre:</span>
+                  <span>{t('bookingDialog.accommodation.roomLabel')}:</span>
                   <span>{selectedRoom.room_name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Durée du séjour:</span>
-                  <span>{totalNights} {totalNights === 1 ? 'nuit' : 'nuits'}</span>
+                  <span>{t('bookingDialog.accommodation.stayDuration')}:</span>
+                  <span>{t('bookingDialog.accommodation.nights', { count: totalNights })}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Nombre de personnes:</span>
+                  <span>{t('bookingDialog.common.guests')}:</span>
                   <span>{bookingData.number_of_guests}</span>
                 </div>
                 <div className="flex justify-between font-semibold text-lg border-t pt-2">
-                  <span>Total:</span>
+                  <span>{t('bookingDialog.common.total')}:</span>
                   <span>{totalPrice}€</span>
                 </div>
               </CardContent>
@@ -418,13 +421,13 @@ export const AccommodationBooking = ({
           {/* Submit Button */}
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={onClose}>
-              Annuler
+              {t('bookingDialog.common.cancel')}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={loading || isCheckingAvailability || !bookingData.room_id || !bookingData.check_in_date || !bookingData.check_out_date}
             >
-              {loading ? 'Réservation en cours...' : 'Confirmer la réservation'}
+              {loading ? t('bookingDialog.common.confirming') : t('bookingDialog.common.confirm')}
             </Button>
           </div>
         </form>

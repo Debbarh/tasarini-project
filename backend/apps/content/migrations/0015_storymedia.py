@@ -14,6 +14,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Delete the old StoryMedia model first
+        migrations.DeleteModel(
+            name='StoryMedia',
+        ),
+
+        # Then create the new advanced StoryMedia model
         migrations.CreateModel(
             name='StoryMedia',
             fields=[

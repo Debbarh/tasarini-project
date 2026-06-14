@@ -50,7 +50,7 @@ export const useStreamingItinerary = (): UseStreamingItineraryReturn => {
     }));
   }, []);
 
-  const startStreaming = useCallback(async (tripData: any, sessionId: string) => {
+  const startStreaming = useCallback(async (tripData: any, sessionId: string, language?: string) => {
     // Cancel any existing stream
     cancelStreaming();
 
@@ -95,6 +95,7 @@ export const useStreamingItinerary = (): UseStreamingItineraryReturn => {
         body: JSON.stringify({
           tripData,
           sessionId,
+          language,
         }),
         signal: abortControllerRef.current.signal,
       });

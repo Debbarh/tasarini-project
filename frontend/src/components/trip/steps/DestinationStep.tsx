@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Plus, Trash2, MapPin, Clock, Calendar as CalendarIcon } from "lucide-react";
 import { Destination, TripFormData } from "@/types/trip";
 import LocationPicker from "@/components/LocationPicker";
+import LocationAutocomplete, { OsmPick } from "@/components/trip/LocationAutocomplete";
 import { apiClient } from "@/integrations/api/client";
 import { format, differenceInDays, addDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -75,6 +76,8 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
   const [countries, setCountries] = useState<Country[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [showLocationPicker, setShowLocationPicker] = useState(false);
+  // Code ISO2 du pays choisi par destination → biaise la recherche de ville OSM.
+  const [countryCodes, setCountryCodes] = useState<Record<number, string>>({});
 
   useEffect(() => {
     fetchCountries();
@@ -195,6 +198,46 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
     setDestinations(updated);
   };
 
+  // find-or-create en base (best-effort, silencieux) quand pays + ville sont connus.
+  const resolveInDb = async (countryName: string, cityName: string, lat?: number, lon?: number) => {
+    if (!countryName || !cityName) return;
+    try {
+      await locationService.resolveLocation({
+        country_name: countryName,
+        city_name: cityName,
+        latitude: typeof lat === 'number' ? Number(lat.toFixed(6)) : undefined,
+        longitude: typeof lon === 'number' ? Number(lon.toFixed(6)) : undefined,
+      });
+      // Rafraîchir les listes locales (pour proposer ensuite l'entrée "en base")
+      fetchCountries();
+      fetchCities();
+    } catch (e) {
+      // silencieux : la génération fonctionne avec les noms même sans entrée en base
+    }
+  };
+
+  const handleCountryPick = (index: number, pick: OsmPick) => {
+    const updated = [...destinations];
+    // Changer de pays réinitialise la ville
+    updated[index] = { ...updated[index], country: pick.name, city: "" };
+    setDestinations(updated);
+    if (pick.countryCode) setCountryCodes(prev => ({ ...prev, [index]: pick.countryCode! }));
+  };
+
+  const handleCityPick = (index: number, pick: OsmPick) => {
+    const updated = [...destinations];
+    const country = updated[index].country || pick.countryName || "";
+    updated[index] = {
+      ...updated[index],
+      city: pick.name,
+      country,
+      latitude: pick.lat ?? updated[index].latitude,
+      longitude: pick.lon ?? updated[index].longitude,
+    };
+    setDestinations(updated);
+    resolveInDb(country, pick.name, pick.lat, pick.lon);
+  };
+
   const getAvailableCities = (countryName: string) => {
     const country = countries.find(c => c.name === countryName);
     if (!country) return [];
@@ -218,6 +261,20 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
       : [];
     const fallbackCountry = providedCountry || addressParts[addressParts.length - 1] || '';
     const fallbackCity = providedCity || addressParts[addressParts.length - 2] || '';
+
+    // Garde anti-données corrompues : ne jamais créer de pays/ville à partir de
+    // coordonnées GPS brutes ou d'une chaîne "Position sélectionnée: ...".
+    const looksLikeCoord = (s: string) =>
+      /^-?\d+(\.\d+)?$/.test((s || '').trim()) || /^position\b/i.test((s || '').trim());
+    if (looksLikeCoord(fallbackCountry) || looksLikeCoord(fallbackCity)) {
+      toast.error(
+        t(
+          'planTrip.destinationStep.geocodeFailed',
+          "Impossible de déterminer la ville pour ce point. Choisissez une autre position ou saisissez la ville manuellement."
+        )
+      );
+      return;
+    }
 
     const safeLatitude = normalizeCoordinate(latitude);
     const safeLongitude = normalizeCoordinate(longitude);
@@ -362,40 +419,31 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor={`country-select-${index}`}>{t('planTrip.destinationStep.country')}</Label>
-                  <Select 
-                    value={destination.country} 
-                    onValueChange={(value) => updateDestination(index, 'country', value)}
-                  >
-                    <SelectTrigger id={`country-select-${index}`}>
-                      <SelectValue placeholder={t('planTrip.destinationStep.selectCountry')} />
-                    </SelectTrigger>
-                          <SelectContent>
-                            {countries.filter(country => country.id && country.name).map((country) => (
-                              <SelectItem key={country.id} value={country.name}>
-                                {getLocalizedName(country, i18n.language)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                  </Select>
+                  <LocationAutocomplete
+                    id={`country-select-${index}`}
+                    kind="country"
+                    value={destination.country}
+                    language={i18n.language}
+                    placeholder={t('planTrip.destinationStep.selectCountry')}
+                    dbOptions={countries.filter(c => c.id && c.name).map(c => ({ id: c.id, name: c.name }))}
+                    onTextChange={(text) => updateDestination(index, 'country', text)}
+                    onSelect={(pick) => handleCountryPick(index, pick)}
+                  />
                 </div>
                 <div>
                   <Label htmlFor={`city-select-${index}`}>{t('planTrip.destinationStep.city')}</Label>
-                  <Select 
-                    value={destination.city} 
-                    onValueChange={(value) => updateDestination(index, 'city', value)}
+                  <LocationAutocomplete
+                    id={`city-select-${index}`}
+                    kind="city"
+                    value={destination.city}
                     disabled={!destination.country}
-                  >
-                    <SelectTrigger id={`city-select-${index}`}>
-                      <SelectValue placeholder={t('planTrip.destinationStep.selectCity')} />
-                    </SelectTrigger>
-                          <SelectContent>
-                            {getAvailableCities(destination.country).filter(city => city.id && city.name).map((city) => (
-                              <SelectItem key={city.id} value={city.name}>
-                                {getLocalizedName(city, i18n.language)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                  </Select>
+                    countryCode={countryCodes[index]}
+                    language={i18n.language}
+                    placeholder={t('planTrip.destinationStep.selectCity')}
+                    dbOptions={getAvailableCities(destination.country).filter(c => c.id && c.name).map(c => ({ id: c.id, name: c.name }))}
+                    onTextChange={(text) => updateDestination(index, 'city', text)}
+                    onSelect={(pick) => handleCityPick(index, pick)}
+                  />
                 </div>
                 <div>
                   <Label htmlFor={`duration-${index}`}>{t('planTrip.destinationStep.duration')}</Label>
@@ -530,6 +578,11 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
           <span className="ml-2 text-xs text-muted-foreground">({t('planTrip.destinationStep.addFirstDestination')})</span>
         )}
       </Button>
+      {destinations.length > 0 && (
+        <p className="text-xs text-muted-foreground text-center -mt-2">
+          {t('planTrip.destinationStep.chooseOnMapHint', 'Ouvre une carte interactive pour placer précisément votre destination et récupérer ses coordonnées.')}
+        </p>
+      )}
 
       <Dialog open={showLocationPicker} onOpenChange={setShowLocationPicker}>
         <DialogContent

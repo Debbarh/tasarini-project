@@ -85,9 +85,15 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
   }, []);
 
   useEffect(() => {
-    const isValid = destinations.length > 0 && destinations.every(
-      dest => dest.country && dest.city && dest.duration > 0
-    );
+    const isValid = destinations.length > 0 && destinations.every(dest => {
+      if (!dest.country || !dest.city) return false;
+      // En mode "dates exactes", on exige début + fin cohérents.
+      if (dest.dateMode === 'dates') {
+        if (!dest.startDate || !dest.endDate) return false;
+        return dest.endDate >= dest.startDate;
+      }
+      return dest.duration > 0;
+    });
     onValidate(isValid);
     if (isValid) {
       onUpdate({ destinations });
@@ -144,9 +150,9 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
     const updated = [...destinations];
     updated[index] = { ...updated[index], [field]: value };
 
-    // Si on change le pays, on met à jour les coordonnées et on reset la ville
+    // Si on change le pays, on reset la ville
     if (field === 'country') {
-      const selectedCountry = countries.find(c => c.name === value);
+      const selectedCountry = findCountryByName(value);
       if (selectedCountry) {
         updated[index].city = "";
       }
@@ -155,9 +161,9 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
     // Si on change la ville, on met à jour les coordonnées
     if (field === 'city') {
       const selectedCity = cities.find(c => {
-        if (c.name !== value) return false;
+        if (!matchesAnyName(c, value)) return false;
         const cityCountry = countries.find(country => country.id === c.country);
-        return cityCountry?.name === updated[index].country;
+        return cityCountry ? matchesAnyName(cityCountry, updated[index].country) : false;
       });
       if (selectedCity) {
         updated[index].latitude = selectedCity.latitude;
@@ -199,14 +205,33 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
   };
 
   // find-or-create en base (best-effort, silencieux) quand pays + ville sont connus.
+  // Persiste le lieu dans TOUTES les langues de la plateforme de façon transparente.
   const resolveInDb = async (countryName: string, cityName: string, lat?: number, lon?: number) => {
     if (!countryName || !cityName) return;
     try {
+      let country_translations: Record<string, string> | undefined;
+      let city_translations: Record<string, string> | undefined;
+      if (typeof lat === 'number' && typeof lon === 'number') {
+        try {
+          const { getMultilingualLocationNamesQuick } = await import('@/services/multilingualGeocodingService');
+          const ml = await getMultilingualLocationNamesQuick(lat, lon, cityName, countryName);
+          country_translations = Object.fromEntries(
+            Object.entries(ml.country).filter(([k, v]) => k.startsWith('name_') && !!v)
+          ) as Record<string, string>;
+          city_translations = Object.fromEntries(
+            Object.entries(ml.city).filter(([k, v]) => k.startsWith('name_') && !!v)
+          ) as Record<string, string>;
+        } catch {
+          // tant pis pour les traductions : on persiste au moins le nom par défaut
+        }
+      }
       await locationService.resolveLocation({
         country_name: countryName,
         city_name: cityName,
         latitude: typeof lat === 'number' ? Number(lat.toFixed(6)) : undefined,
         longitude: typeof lon === 'number' ? Number(lon.toFixed(6)) : undefined,
+        country_translations,
+        city_translations,
       });
       // Rafraîchir les listes locales (pour proposer ensuite l'entrée "en base")
       fetchCountries();
@@ -238,8 +263,19 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
     resolveInDb(country, pick.name, pick.lat, pick.lon);
   };
 
+  // Correspondance par le nom par défaut OU n'importe quelle traduction, pour
+  // qu'un nom affiché dans la langue de l'internaute retrouve la bonne entrée.
+  const NAME_KEYS = ['name', 'name_fr', 'name_en', 'name_es', 'name_de', 'name_it', 'name_pt', 'name_ru', 'name_ja', 'name_zh', 'name_hi', 'name_ar'] as const;
+  const matchesAnyName = (entry: any, value: string) => {
+    const v = (value || '').trim().toLowerCase();
+    if (!v) return false;
+    return NAME_KEYS.some(k => ((entry?.[k] as string | undefined) || '').toLowerCase() === v);
+  };
+  const findCountryByName = (countryName: string) =>
+    countries.find(c => matchesAnyName(c, countryName));
+
   const getAvailableCities = (countryName: string) => {
-    const country = countries.find(c => c.name === countryName);
+    const country = findCountryByName(countryName);
     if (!country) return [];
     return cities.filter(c => c.country === country.id);
   };
@@ -388,13 +424,7 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">{t('planTrip.destinationStep.title')}</h3>
-        <p className="text-muted-foreground">
-          {t('planTrip.destinationStep.selectDescription')}
-        </p>
-      </div>
-
+      {/* En-tête retiré : le wizard affiche déjà "Destinations / Where do you want to go?" (anti-doublon) */}
       <div className="space-y-4">
         {destinations.map((destination, index) => (
           <Card key={index} className="border-primary/20">
@@ -425,7 +455,7 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
                     value={destination.country}
                     language={i18n.language}
                     placeholder={t('planTrip.destinationStep.selectCountry')}
-                    dbOptions={countries.filter(c => c.id && c.name).map(c => ({ id: c.id, name: c.name }))}
+                    dbOptions={countries.filter(c => c.id && c.name).map(c => ({ id: c.id, name: getLocalizedName(c, i18n.language) || c.name }))}
                     onTextChange={(text) => updateDestination(index, 'country', text)}
                     onSelect={(pick) => handleCountryPick(index, pick)}
                   />
@@ -436,11 +466,10 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
                     id={`city-select-${index}`}
                     kind="city"
                     value={destination.city}
-                    disabled={!destination.country}
                     countryCode={countryCodes[index]}
                     language={i18n.language}
                     placeholder={t('planTrip.destinationStep.selectCity')}
-                    dbOptions={getAvailableCities(destination.country).filter(c => c.id && c.name).map(c => ({ id: c.id, name: c.name }))}
+                    dbOptions={getAvailableCities(destination.country).filter(c => c.id && c.name).map(c => ({ id: c.id, name: getLocalizedName(c, i18n.language) || c.name }))}
                     onTextChange={(text) => updateDestination(index, 'city', text)}
                     onSelect={(pick) => handleCityPick(index, pick)}
                   />
@@ -498,6 +527,11 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
                                 mode="single"
                                 selected={destination.startDate}
                                 onSelect={(date) => updateDestination(index, 'startDate', date)}
+                                disabled={(date) => {
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  return date < today;
+                                }}
                                 initialFocus
                                 className="p-3 pointer-events-auto"
                               />
@@ -536,12 +570,22 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
                         </div>
                       </div>
                       
-                      {destination.startDate && destination.endDate && (
-                        <div className="text-center">
-                          <Badge variant="secondary" className="text-primary">
-                            {destination.duration} {destination.duration > 1 ? t('planTrip.destinationStep.days') : t('planTrip.destinationStep.day')}
-                          </Badge>
-                        </div>
+                      {destination.startDate && destination.endDate ? (
+                        destination.endDate < destination.startDate ? (
+                          <p className="text-center text-xs text-destructive">
+                            {t('planTrip.destinationStep.endBeforeStart', 'La date de fin doit suivre la date de début.')}
+                          </p>
+                        ) : (
+                          <div className="text-center">
+                            <Badge variant="secondary" className="text-primary">
+                              {destination.duration} {destination.duration > 1 ? t('planTrip.destinationStep.days') : t('planTrip.destinationStep.day')}
+                            </Badge>
+                          </div>
+                        )
+                      ) : (
+                        <p className="text-center text-xs text-destructive">
+                          {t('planTrip.destinationStep.datesRequired', 'Renseignez la date de début et de fin.')}
+                        </p>
                       )}
                     </TabsContent>
                   </Tabs>

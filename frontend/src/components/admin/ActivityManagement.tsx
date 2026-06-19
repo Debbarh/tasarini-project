@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import { useActivitySettings } from "@/hooks/useActivitySettings";
 import { activityAdminService, ActivityCategory, ActivityIntensityLevel, ActivityInterest, ActivityAvoidance } from "@/services/activityAdminService";
 import { getLocalizedLabel } from "@/utils/multilingualHelpers";
+import IconPicker from "@/components/admin/IconPicker";
+import { TaxonomyIcon } from "@/lib/taxonomyIcon";
 
 const LANGUAGE_CODES = ['fr', 'en', 'es', 'de', 'it', 'pt', 'ru', 'ja', 'zh', 'hi', 'ar'] as const;
 type LanguageCode = typeof LANGUAGE_CODES[number];
@@ -61,6 +63,7 @@ type IntensityFormState = {
   id?: string;
   code: string;
   icon_emoji: string;
+  icon_name: string;
   level_value: number;
   display_order: number;
   is_active: boolean;
@@ -93,6 +96,7 @@ const createDefaultIntensityForm = (): IntensityFormState => ({
   ...createTranslationState(),
   code: "",
   icon_emoji: "",
+  icon_name: "",
   level_value: 1,
   display_order: 0,
   is_active: true,
@@ -122,7 +126,7 @@ const mapCategoryToForm = (item?: ActivityCategory | null): CategoryFormState =>
 const mapIntensityToForm = (item?: ActivityIntensityLevel | null): IntensityFormState => {
   const base = createDefaultIntensityForm();
   if (!item) return base;
-  const next = { ...base, id: item.id, code: item.code, icon_emoji: item.icon_emoji || "", level_value: item.level_value || 1, display_order: item.display_order || 0, is_active: item.is_active ?? true };
+  const next = { ...base, id: item.id, code: item.code, icon_emoji: item.icon_emoji || "", icon_name: item.icon_name || "", level_value: item.level_value || 1, display_order: item.display_order || 0, is_active: item.is_active ?? true };
   LANGUAGE_CODES.forEach((code) => {
     const labelKey = `label_${code}` as LabelField;
     const descKey = `description_${code}` as DescriptionField;
@@ -336,7 +340,12 @@ export const ActivityManagement = () => {
                               <span className="text-xs text-muted-foreground">{category.label_fr}</span>
                             </div>
                           </TableCell>
-                          <TableCell>{category.icon_emoji || category.icon_name || '—'}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <TaxonomyIcon iconName={category.icon_name} code={category.code} className="h-5 w-5" />
+                              {category.icon_emoji && <span className="text-lg">{category.icon_emoji}</span>}
+                            </div>
+                          </TableCell>
                           <TableCell>{category.color_class || '—'}</TableCell>
                           <TableCell>{category.display_order}</TableCell>
                           <TableCell>{renderStatusCell('category', category)}</TableCell>
@@ -373,7 +382,7 @@ export const ActivityManagement = () => {
                       <TableRow>
                         <TableHead>Code</TableHead>
                         <TableHead>Libellé</TableHead>
-                        <TableHead>Emoji</TableHead>
+                        <TableHead>Icône / Emoji</TableHead>
                         <TableHead>Valeur</TableHead>
                         <TableHead>Ordre</TableHead>
                         <TableHead>Statut</TableHead>
@@ -385,7 +394,12 @@ export const ActivityManagement = () => {
                         <TableRow key={level.id}>
                           <TableCell>{level.code}</TableCell>
                           <TableCell>{getLocalizedLabel(level, i18n.language)}</TableCell>
-                          <TableCell>{level.icon_emoji || '—'}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <TaxonomyIcon iconName={level.icon_name} code={level.code} className="h-5 w-5" />
+                              {level.icon_emoji && <span className="text-lg">{level.icon_emoji}</span>}
+                            </div>
+                          </TableCell>
                           <TableCell>{level.level_value}</TableCell>
                           <TableCell>{level.display_order}</TableCell>
                           <TableCell>{renderStatusCell('intensity', level)}</TableCell>
@@ -527,8 +541,11 @@ export const ActivityManagement = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputField label="Code" value={categoryForm.code} onChange={(value) => setCategoryForm({ ...categoryForm, code: value })} required />
-                <InputField label="Emoji" value={categoryForm.icon_emoji} onChange={(value) => setCategoryForm({ ...categoryForm, icon_emoji: value })} />
-                <InputField label="Icône Lucide" value={categoryForm.icon_name} onChange={(value) => setCategoryForm({ ...categoryForm, icon_name: value })} />
+                <InputField label="Emoji (legacy)" value={categoryForm.icon_emoji} onChange={(value) => setCategoryForm({ ...categoryForm, icon_emoji: value })} />
+                <div className="space-y-1">
+                  <Label>Icône SVG</Label>
+                  <IconPicker value={categoryForm.icon_name} onChange={(name) => setCategoryForm({ ...categoryForm, icon_name: name })} />
+                </div>
                 <InputField label="Classe couleur" value={categoryForm.color_class} onChange={(value) => setCategoryForm({ ...categoryForm, color_class: value })} />
                 <InputField label="Ordre d'affichage" type="number" value={categoryForm.display_order} onChange={(value) => setCategoryForm({ ...categoryForm, display_order: Number(value) || 0 })} />
                 <SwitchField label="Actif" checked={categoryForm.is_active} onChange={(checked) => setCategoryForm({ ...categoryForm, is_active: checked })} />
@@ -557,7 +574,11 @@ export const ActivityManagement = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputField label="Code" value={intensityForm.code} onChange={(value) => setIntensityForm({ ...intensityForm, code: value })} required />
-                <InputField label="Emoji" value={intensityForm.icon_emoji} onChange={(value) => setIntensityForm({ ...intensityForm, icon_emoji: value })} />
+                <InputField label="Emoji (legacy)" value={intensityForm.icon_emoji} onChange={(value) => setIntensityForm({ ...intensityForm, icon_emoji: value })} />
+                <div className="space-y-1">
+                  <Label>Icône SVG</Label>
+                  <IconPicker value={intensityForm.icon_name} onChange={(name) => setIntensityForm({ ...intensityForm, icon_name: name })} />
+                </div>
                 <InputField label="Valeur" type="number" value={intensityForm.level_value} onChange={(value) => setIntensityForm({ ...intensityForm, level_value: Number(value) || 1 })} />
                 <InputField label="Ordre d'affichage" type="number" value={intensityForm.display_order} onChange={(value) => setIntensityForm({ ...intensityForm, display_order: Number(value) || 0 })} />
                 <SwitchField label="Actif" checked={intensityForm.is_active} onChange={(checked) => setIntensityForm({ ...intensityForm, is_active: checked })} />

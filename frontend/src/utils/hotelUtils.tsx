@@ -2,6 +2,7 @@
  * Utilitaires pour gérer les données HotelBeds
  */
 
+import { Star } from 'lucide-react';
 import { HotelBedsHotel } from '@/services/hotelBedsService';
 import { HotelSearchCard, BookingItem } from '@/types/booking';
 
@@ -53,37 +54,37 @@ export function mapFacilities(facilities: any[]): FacilityCategory[] {
 
   const categories: Record<string, FacilityCategory> = {
     connectivity: {
-      icon: '📶',
+      icon: 'Wifi',
       label: 'Connectivité',
       facilities: []
     },
     comfort: {
-      icon: '🛏️',
+      icon: 'BedDouble',
       label: 'Confort',
       facilities: []
     },
     dining: {
-      icon: '🍽️',
+      icon: 'UtensilsCrossed',
       label: 'Restauration',
       facilities: []
     },
     leisure: {
-      icon: '🏊',
+      icon: 'Waves',
       label: 'Loisirs',
       facilities: []
     },
     services: {
-      icon: '🔧',
+      icon: 'Wrench',
       label: 'Services',
       facilities: []
     },
     parking: {
-      icon: '🅿️',
+      icon: 'SquareParking',
       label: 'Parking',
       facilities: []
     },
     accessibility: {
-      icon: '♿',
+      icon: 'Accessibility',
       label: 'Accessibilité',
       facilities: []
     }
@@ -166,8 +167,15 @@ export function getStarRating(categoryCode?: string): number {
 /**
  * Génère un tableau d'étoiles pour l'affichage
  */
-export function renderStars(rating: number): string {
-  return '⭐'.repeat(Math.min(rating, 5));
+export function renderStars(rating: number) {
+  const count = Math.min(Math.max(rating, 0), 5);
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      {Array.from({ length: count }).map((_, i) => (
+        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+      ))}
+    </span>
+  );
 }
 
 /**

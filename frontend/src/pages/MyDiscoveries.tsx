@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -126,6 +127,11 @@ const MyDiscoveries = () => {
       default: return 'bg-green-500';
     }
   };
+
+  // Module désactivé en admin (Be Inspired off) → page masquée, on renvoie à l'accueil
+  if (!settings.beInspiredEnabled) {
+    return <Navigate to="/" replace />;
+  }
 
   if (!user) {
     return (

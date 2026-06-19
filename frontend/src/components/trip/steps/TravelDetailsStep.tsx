@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Baby, Heart, UsersIcon, User, Accessibility, Briefcase, Info } from "lucide-react";
+import { Users, Baby, Heart, UsersIcon, User, Accessibility, Briefcase, Info, Check, DollarSign, AlertTriangle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { TripFormData, TravelGroup } from "@/types/trip";
 import { useTravelGroupTypes } from "@/hooks/useTravelGroupTypes";
@@ -32,6 +32,15 @@ const iconMap = {
   'briefcase': Briefcase,
   'baby': Baby,
 } as const;
+
+// Travel Companions : profils les plus fréquents en premier (départage à
+// display_order égal, pour accélérer la saisie). L'ordre admin (display_order)
+// reste prioritaire s'il est renseigné.
+const COMPANION_FREQUENCY = ['couple', 'family', 'solo', 'friends', 'withBaby', 'seniors', 'business', 'accessible'];
+const companionRank = (code: string) => {
+  const i = COMPANION_FREQUENCY.indexOf(code);
+  return i === -1 ? 999 : i;
+};
 
 export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsStepProps) => {
   const { t, i18n } = useTranslation();
@@ -203,12 +212,6 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">{t('planTrip.travelDetailsStep.title')}</h3>
-        <p className="text-muted-foreground">
-          {t('planTrip.travelDetailsStep.description')}
-        </p>
-      </div>
 
       <Card>
         <CardHeader>
@@ -222,19 +225,21 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {types.map((type) => {
+            {[...types]
+              .sort((a, b) => (a.display_order - b.display_order) || (companionRank(a.code) - companionRank(b.code)))
+              .map((type) => {
               const IconComponent = iconMap[type.icon as keyof typeof iconMap] || Users;
               return (
                 <Button
                   key={type.code}
                   variant={travelGroup.type === type.code ? "default" : "outline"}
-                  className="h-auto flex-col gap-2 p-4"
+                  className="h-auto flex-col gap-2 p-4 whitespace-normal text-center"
                   onClick={() => handleTypeChange(type.code)}
                 >
                   <IconComponent className="h-5 w-5" />
                   <div className="text-center">
                     <div className="font-medium">{getLocalizedLabel(type, i18n.language)}</div>
-                    <div className="text-xs text-muted-foreground">{getLocalizedDescription(type, i18n.language)}</div>
+                    <div className={`text-xs ${travelGroup.type === type.code ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>{getLocalizedDescription(type, i18n.language)}</div>
                   </div>
                 </Button>
               );
@@ -393,7 +398,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                 {compatiblePOIsCount > 0 && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-green-600">✓</span>
+                      <Check className="inline h-4 w-4 text-green-600" />
                       <span className="text-green-700 font-medium">
                         {compatiblePOIsCount} {compatiblePOIsCount > 1 ? t('planTrip.travelDetailsStep.compatiblePOIsFoundPlural') : t('planTrip.travelDetailsStep.compatiblePOIsFound')}
                       </span>
@@ -403,7 +408,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                     </p>
                     {data.budget && affordablePOIsCount !== totalPOIsCount && (
                       <p className="text-green-600 text-sm">
-                        💰 {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} {t('planTrip.travelDetailsStep.inYourBudget')}
+                        <DollarSign className="inline h-4 w-4 text-primary" /> {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} {t('planTrip.travelDetailsStep.inYourBudget')}
                       </p>
                     )}
                   </div>
@@ -412,7 +417,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                 {compatiblePOIsCount === 0 && totalPOIsCount > 0 && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-amber-600">⚠</span>
+                      <AlertTriangle className="inline h-4 w-4 text-amber-600" />
                       <span className="text-amber-700 font-medium">
                         {t('planTrip.travelDetailsStep.noPOIFound')}
                       </span>
@@ -422,7 +427,7 @@ export const TravelDetailsStep = ({ data, onUpdate, onValidate }: TravelDetailsS
                     </p>
                     {data.budget && affordablePOIsCount > 0 && (
                       <p className="text-amber-600 text-sm">
-                        💰 {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} {affordablePOIsCount > 1 ? t('planTrip.travelDetailsStep.remainsPlural') : t('planTrip.travelDetailsStep.remains')} {t('planTrip.travelDetailsStep.inYourBudget')}
+                        <DollarSign className="inline h-4 w-4 text-primary" /> {affordablePOIsCount} POI{affordablePOIsCount > 1 ? 's' : ''} {affordablePOIsCount > 1 ? t('planTrip.travelDetailsStep.remainsPlural') : t('planTrip.travelDetailsStep.remains')} {t('planTrip.travelDetailsStep.inYourBudget')}
                       </p>
                     )}
                   </div>

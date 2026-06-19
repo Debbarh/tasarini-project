@@ -26,6 +26,7 @@ export interface AccommodationTaxonomyEntry {
   description_hi?: string;
   description_ar?: string;
   icon_emoji?: string;
+  icon_name?: string;
   is_active: boolean;
   display_order: number;
   category?: string;

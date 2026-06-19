@@ -4,6 +4,25 @@ import { apiClient } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import 'leaflet/dist/leaflet.css';
 
+// Marqueur moderne : pin en dégradé indigo→violet avec pictogramme (point central)
+// et ombre douce — remplace l'ancien « carré plat » sans icône.
+const createPinIcon = (L: any) =>
+  L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="filter: drop-shadow(0 4px 6px rgba(79,70,229,.45));">
+      <svg width="38" height="38" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="tsm-pin" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/>
+        </linearGradient></defs>
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="url(#tsm-pin)" stroke="#ffffff" stroke-width="1.6"/>
+        <circle cx="12" cy="9" r="2.7" fill="#ffffff"/>
+      </svg>
+    </div>`,
+    iconSize: [38, 38],
+    iconAnchor: [19, 36],
+    popupAnchor: [0, -34],
+  });
+
 interface SimpleInteractiveMapProps {
   latitude: number;
   longitude: number;
@@ -114,7 +133,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
         countryId,
         countryCreated,
         cityCreated,
-        message: `${countryCreated ? '✨ Pays créé' : '✅ Pays existant'} • ${cityCreated ? '✨ Ville créée' : '✅ Ville existante'}`
+        message: `${countryCreated ? 'Pays créé' : 'Pays existant'} • ${cityCreated ? 'Ville créée' : 'Ville existante'}`
       };
 
     } catch (error) {
@@ -141,20 +160,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
         });
 
         // Créer une icône personnalisée avec la couleur primaire bleue
-        const customIcon = L.divIcon({
-          className: 'custom-marker',
-          html: `<div style="
-            background-color: hsl(221.2 83.2% 53.3%); 
-            width: 25px; 
-            height: 25px; 
-            border-radius: 50% 50% 50% 0; 
-            transform: rotate(-45deg); 
-            border: 3px solid #ffffff;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-          "></div>`,
-          iconSize: [25, 25],
-          iconAnchor: [12, 24]
-        });
+        const customIcon = createPinIcon(L);
 
         // Nettoyer le conteneur avant de créer la carte
         if (mapRef.current) {
@@ -165,8 +171,11 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
         const mapInstance = L.map(mapRef.current!).setView([latitude, longitude], 13);
         
         // Ajouter la couche de tuiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        // Fond de carte moderne et épuré (CartoDB Voyager) — couleurs douces et lisibles.
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 20,
         }).addTo(mapInstance);
 
         // Créer le marqueur initial avec l'icône personnalisée
@@ -300,20 +309,7 @@ const SimpleInteractiveMap: React.FC<SimpleInteractiveMapProps> = ({
         const preciseLatLng = L.latLng(Number(latitude.toFixed(8)), Number(longitude.toFixed(8)));
         
         // Créer l'icône personnalisée pour le nouveau marqueur avec la couleur primaire
-        const customIcon = L.divIcon({
-          className: 'custom-marker',
-          html: `<div style="
-            background-color: hsl(221.2 83.2% 53.3%); 
-            width: 25px; 
-            height: 25px; 
-            border-radius: 50% 50% 50% 0; 
-            transform: rotate(-45deg); 
-            border: 3px solid #ffffff;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-          "></div>`,
-          iconSize: [25, 25],
-          iconAnchor: [12, 24]
-        });
+        const customIcon = createPinIcon(L);
         
         const newMarker = L.marker(preciseLatLng, { icon: customIcon }).addTo(map);
         markerRef.current = newMarker;

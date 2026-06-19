@@ -175,4 +175,11 @@ export const adminService = {
       payload ?? {},
     );
   },
+
+  activateUser(userId: number, active = true) {
+    return apiClient.post<{ detail: string; is_active: boolean; email_verified: boolean }>(
+      `users/${userId}/activate_account/`,
+      { active },
+    );
+  },
 };

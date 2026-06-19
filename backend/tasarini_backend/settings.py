@@ -220,10 +220,35 @@ PERPLEXITY_API_BASE = env('PERPLEXITY_API_BASE', default='https://api.perplexity
 # Ollama local LLM server (pas de clé API : modèle hébergé localement)
 OLLAMA_API_BASE = env('OLLAMA_API_BASE', default='http://ollama:11434')
 
+# Traduction dynamique unifiée : un seul moteur = translategemma:4b (Ollama). Plus de DeepL.
+TRANSLATION_OLLAMA_MODEL = env('TRANSLATION_OLLAMA_MODEL', default='translategemma:4b')
+TRANSLATION_TIMEOUT = env.int('TRANSLATION_TIMEOUT', default=90)
+
+# --- OAuth social (Google & Facebook) ---
+# Base d'URL du backend pour les redirect_uri OAuth (doit matcher EXACTEMENT la console).
+OAUTH_CALLBACK_BASE_URL = env('OAUTH_CALLBACK_BASE_URL', default='https://tasarini.com/api/v1')
+GOOGLE_OAUTH_CLIENT_ID = env('GOOGLE_OAUTH_CLIENT_ID', default='')
+GOOGLE_OAUTH_CLIENT_SECRET = env('GOOGLE_OAUTH_CLIENT_SECRET', default='')
+FACEBOOK_OAUTH_CLIENT_ID = env('FACEBOOK_OAUTH_CLIENT_ID', default='')
+FACEBOOK_OAUTH_CLIENT_SECRET = env('FACEBOOK_OAUTH_CLIENT_SECRET', default='')
+
 # Unsplash API keys for destination images
 UNSPLASH_ACCESS_KEY = env('UNSPLASH_ACCESS_KEY', default='')
 UNSPLASH_SECRET_KEY = env('UNSPLASH_SECRET_KEY', default='')
 UNSPLASH_API_BASE = env('UNSPLASH_API_BASE', default='https://api.unsplash.com')
+
+# External POI providers for "Be Inspired" (live-fetched + cached, merged with platform POIs)
+GEOAPIFY_API_KEY = env('GEOAPIFY_API_KEY', default='')
+FOURSQUARE_API_KEY = env('FOURSQUARE_API_KEY', default='')
+LOCATIONIQ_API_KEY = env('LOCATIONIQ_API_KEY', default='')
+OPENTRIPMAP_API_KEY = env('OPENTRIPMAP_API_KEY', default='')
+LOCATIONIQ_API_BASE = env('LOCATIONIQ_API_BASE', default='https://us1.locationiq.com/v1')
+# Stay22 (carte hôtels/POI home via embed; clé API pour usage data futur)
+STAY22_API_KEY = env('STAY22_API_KEY', default='')
+# Overpass (OSM) and Wikidata SPARQL need no key; endpoints overridable for failover.
+OVERPASS_API_URL = env('OVERPASS_API_URL', default='https://overpass-api.de/api/interpreter')
+WIKIDATA_SPARQL_URL = env('WIKIDATA_SPARQL_URL', default='https://query.wikidata.org/sparql')
+EXTERNAL_POI_USER_AGENT = env('EXTERNAL_POI_USER_AGENT', default='Tasarini/1.0 (https://tasarini.com; contact: no-reply@tasarini.com)')
 
 # Travel APIs for real-time booking data
 # Amadeus API for flights and travel data

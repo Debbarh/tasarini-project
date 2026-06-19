@@ -6,6 +6,7 @@ import { StoryCard } from "./StoryCard";
 import { MapPin, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { POI } from "@/services/poiService";
+import { useTranslation } from "react-i18next";
 
 interface MapTabProps {
   currentUserId?: string | number;
@@ -15,6 +16,7 @@ interface MapTabProps {
 }
 
 export const MapTab = ({ currentUserId, onLike, onComment, onBookmark }: MapTabProps) => {
+  const { t } = useTranslation();
   const [mapStories, setMapStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [mapCenter, setMapCenter] = useState({ lat: 48.8566, lon: 2.3522 });
@@ -60,7 +62,7 @@ export const MapTab = ({ currentUserId, onLike, onComment, onBookmark }: MapTabP
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Globe className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Carte interactive</h2>
+          <h2 className="text-xl font-semibold">{t('travelStories.mapTab.heading', 'Carte interactive')}</h2>
         </div>
         
         <Button
@@ -69,7 +71,7 @@ export const MapTab = ({ currentUserId, onLike, onComment, onBookmark }: MapTabP
           onClick={() => setShowList(!showList)}
         >
           <MapPin className="h-4 w-4 mr-1" />
-          {showList ? 'Masquer la liste' : 'Voir la liste'}
+          {showList ? t('travelStories.mapTab.hideList', 'Masquer la liste') : t('travelStories.mapTab.showList', 'Voir la liste')}
         </Button>
       </div>
 
@@ -87,14 +89,14 @@ export const MapTab = ({ currentUserId, onLike, onComment, onBookmark }: MapTabP
         {showList && (
           <div className="space-y-4 max-h-[600px] overflow-y-auto">
             <h3 className="font-semibold text-lg">
-              Histoires géolocalisées ({mapStories.length})
+              {t('travelStories.mapTab.geoStories', 'Histoires géolocalisées ({{count}})', { count: mapStories.length })}
             </h3>
             
             {loading ? (
-              <div className="text-center py-8 text-muted-foreground">Chargement...</div>
+              <div className="text-center py-8 text-muted-foreground">{t('travelStories.mapTab.loading', 'Chargement...')}</div>
             ) : mapStories.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                Aucune histoire géolocalisée trouvée
+                {t('travelStories.mapTab.empty', 'Aucune histoire géolocalisée trouvée')}
               </div>
             ) : (
               mapStories.map((story) => (

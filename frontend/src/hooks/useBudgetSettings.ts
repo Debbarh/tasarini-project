@@ -9,6 +9,7 @@ export interface BudgetLevel {
   description_fr?: string;
   description_en?: string;
   icon_emoji?: string;
+  icon_name?: string;
   min_daily_amount?: number;
   max_daily_amount?: number;
   default_daily_amount: number;

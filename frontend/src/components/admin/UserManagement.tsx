@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Loader2, Search, User, Shield, UserCog, Trash2, Edit, X } from 'lucide-react';
+import { Loader2, Search, User, Shield, UserCog, Trash2, Edit, X, UserCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +41,8 @@ interface ManagedUser {
   roles: RoleAssignment[];
   primaryRole: string;
   profileId?: number;
+  isActive: boolean;
+  emailVerified: boolean;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -69,6 +71,8 @@ const mapUser = (user: ApiUser): ManagedUser => ({
   roles: (user.role_assignments_detail || []).map((assignment) => ({ id: assignment.id, role: assignment.role })),
   primaryRole: user.role,
   profileId: user.profile?.id,
+  isActive: user.is_active ?? true,
+  emailVerified: user.email_verified ?? false,
 });
 
 const getDisplayName = (user: ManagedUser) => {
@@ -174,6 +178,22 @@ const UserManagement = () => {
       toast({ title: 'Erreur', description: error?.message || "Impossible de mettre à jour l'utilisateur", variant: 'destructive' });
     } finally {
       setEditLoading(false);
+    }
+  };
+
+  const setAccountActive = async (user: ManagedUser, active: boolean) => {
+    try {
+      await adminService.activateUser(user.id, active);
+      toast({
+        title: active ? 'Compte activé' : 'Compte désactivé',
+        description: active
+          ? `${user.email} peut désormais se connecter (email marqué vérifié).`
+          : `${user.email} ne peut plus se connecter.`,
+      });
+      fetchUsers();
+    } catch (error: any) {
+      console.error('Error activating user:', error);
+      toast({ title: 'Erreur', description: error?.message || "Impossible de modifier le statut du compte", variant: 'destructive' });
     }
   };
 
@@ -294,6 +314,7 @@ const UserManagement = () => {
                   <TableHead>Utilisateur</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Rôles</TableHead>
+                  <TableHead>Statut</TableHead>
                   <TableHead>Créé le</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -316,6 +337,22 @@ const UserManagement = () => {
                               {ROLE_LABELS[assignment.role] || assignment.role}
                             </Badge>
                           ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        {user.isActive ? (
+                          <Badge variant="outline" className="w-fit gap-1 border-green-500 text-green-700 dark:text-green-400">
+                            <CheckCircle2 className="w-3 h-3" /> Actif
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="w-fit gap-1 border-amber-500 text-amber-700 dark:text-amber-400">
+                            <AlertCircle className="w-3 h-3" /> Inactif
+                          </Badge>
+                        )}
+                        {!user.emailVerified && (
+                          <span className="text-xs text-muted-foreground">Email non vérifié</span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}</TableCell>
@@ -423,6 +460,35 @@ const UserManagement = () => {
                           </div>
                         </DialogContent>
                       </Dialog>
+                      {user.isActive ? (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <X className="w-4 h-4 mr-1" />
+                              Désactiver
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Désactiver {getDisplayName(user)} ?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                L'utilisateur ne pourra plus se connecter tant que le compte reste désactivé.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Annuler</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => setAccountActive(user, false)}>
+                                Confirmer
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      ) : (
+                        <Button variant="default" size="sm" onClick={() => setAccountActive(user, true)}>
+                          <UserCheck className="w-4 h-4 mr-1" />
+                          Activer
+                        </Button>
+                      )}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="destructive" size="sm">

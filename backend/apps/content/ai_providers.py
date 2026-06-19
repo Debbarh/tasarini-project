@@ -43,6 +43,8 @@ def generate_story_with_provider(provider: StoryAIProviderConfig, prompt_data: d
         return _call_gemini(provider, prompt)
     elif provider.provider == StoryAIProviderConfig.Provider.PERPLEXITY:
         return _call_perplexity(provider, prompt)
+    elif provider.provider == StoryAIProviderConfig.Provider.OLLAMA:
+        return _call_ollama(provider, prompt)
     else:
         raise AIProviderException(f"Provider {provider.provider} non supporté.")
 
@@ -223,6 +225,63 @@ def _call_perplexity(provider: StoryAIProviderConfig, prompt: str) -> dict | Non
         AIMetrics.log_generation_attempt('perplexity', model, False, response_time_ms, str(e))
         logger.error(f"Perplexity API error: {e}")
         raise AIProviderException(f"Erreur Perplexity: {str(e)}")
+
+
+def _call_ollama(provider: StoryAIProviderConfig, prompt: str) -> dict | None:
+    """Call a local Ollama server to generate a story (offline/local fallback)."""
+    from .analytics import AIMetrics
+
+    base = (getattr(settings, "OLLAMA_API_BASE", "") or "http://ollama:11434").rstrip("/")
+    model = provider.model_name or "qwen2.5:3b"
+    url = f"{base}/api/chat"
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": "Tu es un écrivain de voyage créatif. Réponds uniquement en JSON valide."},
+            {"role": "user", "content": prompt},
+        ],
+        "stream": False,
+        "format": "json",
+        "options": {"temperature": float(provider.temperature)},
+    }
+
+    start_time = time.time()
+    try:
+        response = requests.post(url, json=payload, timeout=300)
+        response.raise_for_status()
+        data = response.json()
+        content = data.get("message", {}).get("content")
+        result = _safe_json_loads(content)
+        AIMetrics.log_generation_attempt('ollama', model, True, (time.time() - start_time) * 1000)
+        return result
+    except requests.RequestException as e:
+        AIMetrics.log_generation_attempt('ollama', model, False, (time.time() - start_time) * 1000, str(e))
+        logger.error(f"Ollama API error: {e}")
+        raise AIProviderException(f"Erreur Ollama: {str(e)}")
+
+
+# Marqueurs d'erreurs transitoires à réessayer (mêmes que Plan Your Trip)
+_TRANSIENT_MARKERS = ('503', '429', '500', '502', '504', 'UNAVAILABLE',
+                      'high demand', 'overloaded', 'timed out', 'timeout',
+                      'Read timed out', 'rate limit')
+
+
+def generate_story_with_retry(provider: StoryAIProviderConfig, prompt_data: dict, retries: int = 2) -> dict | None:
+    """Comme generate_story_with_provider, mais réessaie sur erreurs transitoires
+    (503/429/5xx/timeout) avec un court backoff — aligné sur la logique de Plan Your Trip."""
+    last_error: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            return generate_story_with_provider(provider, prompt_data)
+        except AIProviderException as exc:
+            last_error = exc
+            if attempt < retries and any(m in str(exc) for m in _TRANSIENT_MARKERS):
+                time.sleep(2 * (attempt + 1))
+                continue
+            raise
+    if last_error:
+        raise last_error
+    return None
 
 
 def _safe_json_loads(content: str | None) -> dict | None:

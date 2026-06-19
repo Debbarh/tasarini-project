@@ -13,9 +13,12 @@ import { apiClient } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { uploadMediaFile, removeMediaFile } from '@/services/mediaStorageService';
 import { createTouristPoint } from '@/services/poiService';
-import { MapPin, Phone, Mail, Globe, X, Plus, Upload, Image as ImageIcon, Save, Send, Utensils, Hotel } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, X, Plus, Upload, Image as ImageIcon, Save, Send, Utensils, Hotel, Baby, Users, AlertTriangle, Accessibility, ParkingSquare, Bath, Headphones, Hand, UtensilsCrossed } from 'lucide-react';
 import LocationPicker from '@/components/LocationPicker';
 import { getPOITargetAudience } from '@/services/poiTargetMatchingService';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
+import { getLocalizedLabel } from '@/utils/multilingualHelpers';
+import { useTranslation } from 'react-i18next';
 import { useBudgetSettings } from '@/hooks/useBudgetSettings';
 import { useCulinarySettings } from '@/hooks/useCulinarySettings';
 import { useAccommodationSettings } from '@/hooks/useAccommodationSettings';
@@ -64,6 +67,7 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
   onSuccess
 }) => {
   const { user } = useAuth();
+  const { i18n } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -635,8 +639,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                       {budgetLevels.map((level) => (
                         <SelectItem key={level.id} value={level.id}>
                           <div className="flex items-center gap-2">
-                            {level.icon_emoji && <span>{level.icon_emoji}</span>}
-                            <span>{level.label_fr}</span>
+                            <TaxonomyIcon iconName={level.icon_name} code={level.code} className="h-4 w-4 mr-2" fallback="Tag" />
+                            <span>{getLocalizedLabel(level, i18n.language) || level.label_fr}</span>
                             <span className="text-xs text-muted-foreground">
                               ({level.default_daily_amount}€/jour)
                             </span>
@@ -827,7 +831,7 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                         : 'bg-background border-border hover:bg-muted'
                     }`}
                   >
-                    {category.icon_emoji} {category.label_fr}
+                    <span className="inline-flex items-center"><TaxonomyIcon iconName={category.icon_name} code={category.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(category, i18n.language) || category.label_fr}</span>
                   </button>
                 ))}
               </div>
@@ -902,17 +906,17 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                     {difficultyLevels.map((level) => (
                       <SelectItem key={level.id} value={level.id}>
                         <div className="flex items-center gap-2">
-                          {level.icon_emoji && <span>{level.icon_emoji}</span>}
-                          <span>{level.label_fr}</span>
-                          {level.is_child_friendly && <span className="text-green-600">👶</span>}
-                          {level.is_senior_friendly && <span className="text-blue-600">👴</span>}
+                          <TaxonomyIcon iconName={level.icon_name} code={level.code} className="h-4 w-4 mr-2" fallback="Tag" />
+                          <span>{getLocalizedLabel(level, i18n.language) || level.label_fr}</span>
+                          {level.is_child_friendly && <Baby className="w-4 h-4 text-green-600" />}
+                          {level.is_senior_friendly && <Users className="w-4 h-4 text-blue-600" />}
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  👶 = Adapté aux enfants | 👴 = Adapté aux seniors
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Baby className="w-4 h-4" /> = Adapté aux enfants | <Users className="w-4 h-4" /> = Adapté aux seniors
                 </p>
               </div>
 
@@ -949,9 +953,11 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                           variant={audience.suitable ? "default" : "secondary"}
                           className={audience.suitable ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
                         >
-                          {audience.icon} {audience.label}
+                          <TaxonomyIcon iconName={audience.icon} className="w-3 h-3 mr-1 inline" />
+                          {audience.label}
                           {!audience.suitable && audience.reason && (
-                            <span className="text-xs ml-1" title={audience.reason}>⚠️</span>
+                            <AlertTriangle className="w-3 h-3 ml-1" aria-label={audience.reason} />
+
                           )}
                         </Badge>
                       ));
@@ -977,8 +983,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                     onChange={(e) => handleInputChange('is_wheelchair_accessible', e.target.checked)}
                     className="rounded border-border"
                   />
-                  <Label htmlFor="wheelchair_accessible" className="text-sm">
-                    ♿ Accessible en fauteuil roulant
+                  <Label htmlFor="wheelchair_accessible" className="text-sm flex items-center gap-1">
+                    <Accessibility className="w-4 h-4" /> Accessible en fauteuil roulant
                   </Label>
                 </div>
 
@@ -990,8 +996,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                     onChange={(e) => handleInputChange('has_accessible_parking', e.target.checked)}
                     className="rounded border-border"
                   />
-                  <Label htmlFor="accessible_parking" className="text-sm">
-                    🅿️ Parking accessible
+                  <Label htmlFor="accessible_parking" className="text-sm flex items-center gap-1">
+                    <ParkingSquare className="w-4 h-4" /> Parking accessible
                   </Label>
                 </div>
 
@@ -1003,8 +1009,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                     onChange={(e) => handleInputChange('has_accessible_restrooms', e.target.checked)}
                     className="rounded border-border"
                   />
-                  <Label htmlFor="accessible_restrooms" className="text-sm">
-                    🚻 Toilettes accessibles
+                  <Label htmlFor="accessible_restrooms" className="text-sm flex items-center gap-1">
+                    <Bath className="w-4 h-4" /> Toilettes accessibles
                   </Label>
                 </div>
 
@@ -1016,8 +1022,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                     onChange={(e) => handleInputChange('has_audio_guide', e.target.checked)}
                     className="rounded border-border"
                   />
-                  <Label htmlFor="audio_guide" className="text-sm">
-                    🎧 Guide audio disponible
+                  <Label htmlFor="audio_guide" className="text-sm flex items-center gap-1">
+                    <Headphones className="w-4 h-4" /> Guide audio disponible
                   </Label>
                 </div>
 
@@ -1029,8 +1035,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                     onChange={(e) => handleInputChange('has_sign_language_support', e.target.checked)}
                     className="rounded border-border"
                   />
-                  <Label htmlFor="sign_language" className="text-sm">
-                    🤟 Support langue des signes
+                  <Label htmlFor="sign_language" className="text-sm flex items-center gap-1">
+                    <Hand className="w-4 h-4" /> Support langue des signes
                   </Label>
                 </div>
               </div>
@@ -1049,8 +1055,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                   checked={formData.is_restaurant}
                   onCheckedChange={(checked) => handleInputChange('is_restaurant', checked)}
                 />
-                <Label htmlFor="is_restaurant" className="text-sm font-medium">
-                  🍽️ Proposez-vous des services de restauration ?
+                <Label htmlFor="is_restaurant" className="text-sm font-medium flex items-center gap-1">
+                  <UtensilsCrossed className="w-4 h-4" /> Proposez-vous des services de restauration ?
                 </Label>
               </div>
 
@@ -1094,8 +1100,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {restriction.icon_emoji} {restriction.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={restriction.icon_name} code={restriction.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(restriction, i18n.language) || restriction.label_fr}
                           </span>
                         </label>
                       ))}
@@ -1118,8 +1124,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {category.icon_emoji} {category.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={category.icon_name} code={category.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(category, i18n.language) || category.label_fr}
                           </span>
                         </label>
                       ))}
@@ -1165,8 +1171,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                   checked={formData.is_accommodation}
                   onCheckedChange={(checked) => handleInputChange('is_accommodation', checked)}
                 />
-                <Label htmlFor="is_accommodation" className="text-sm font-medium">
-                  🏨 Proposez-vous des services d'hébergement ?
+                <Label htmlFor="is_accommodation" className="text-sm font-medium flex items-center gap-1">
+                  <Hotel className="w-4 h-4" /> Proposez-vous des services d'hébergement ?
                 </Label>
               </div>
 
@@ -1188,8 +1194,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {type.icon_emoji} {type.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={type.icon_name} code={type.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(type, i18n.language) || type.label_fr}
                           </span>
                         </label>
                       ))}
@@ -1212,8 +1218,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {amenity.icon_emoji} {amenity.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={amenity.icon_name} code={amenity.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(amenity, i18n.language) || amenity.label_fr}
                           </span>
                         </label>
                       ))}
@@ -1236,8 +1242,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {location.icon_emoji} {location.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={location.icon_name} code={location.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(location, i18n.language) || location.label_fr}
                           </span>
                         </label>
                       ))}
@@ -1260,8 +1266,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {access.icon_emoji} {access.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={access.icon_name} code={access.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(access, i18n.language) || access.label_fr}
                           </span>
                         </label>
                       ))}
@@ -1284,8 +1290,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {security.icon_emoji} {security.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={security.icon_name} code={security.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(security, i18n.language) || security.label_fr}
                           </span>
                         </label>
                       ))}
@@ -1308,8 +1314,8 @@ const POICreationForm: React.FC<POICreationFormProps> = ({
                               }
                             }}
                           />
-                          <span className="text-sm">
-                            {ambiance.icon_emoji} {ambiance.label_fr}
+                          <span className="text-sm inline-flex items-center">
+                            <TaxonomyIcon iconName={ambiance.icon_name} code={ambiance.code} className="h-4 w-4 mr-2" fallback="Tag" />{getLocalizedLabel(ambiance, i18n.language) || ambiance.label_fr}
                           </span>
                         </label>
                       ))}

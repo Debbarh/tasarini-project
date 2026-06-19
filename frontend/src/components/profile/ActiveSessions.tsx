@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Monitor, Smartphone, Tablet, MapPin, Clock, LogOut, AlertCircle } from 'lucide-react';
+import { Monitor, Smartphone, Tablet, MapPin, Clock, LogOut, AlertCircle, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
 import { apiClient } from '@/integrations/api/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -231,9 +231,9 @@ export const ActiveSessions = () => {
         <Separator />
 
         <div className="pt-2">
-          <p className="text-sm text-muted-foreground">
-            💡 <strong>Conseil de sécurité :</strong> Si vous voyez une session que vous ne reconnaissez pas,
-            déconnectez-la immédiatement et changez votre mot de passe.
+          <p className="text-sm text-muted-foreground flex items-start gap-1">
+            <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" /> <span><strong>Conseil de sécurité :</strong> Si vous voyez une session que vous ne reconnaissez pas,
+            déconnectez-la immédiatement et changez votre mot de passe.</span>
           </p>
         </div>
       </CardContent>

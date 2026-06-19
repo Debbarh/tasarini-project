@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Building2 } from "lucide-react";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 const Footer = () => {
   const { t } = useTranslation();
+  const { settings } = useSystemSettings();
   const year = new Date().getFullYear();
 
   return (
@@ -35,16 +37,20 @@ const Footer = () => {
                   {t('home.planTrip', 'Planifier un voyage')}
                 </Link>
               </li>
-              <li>
-                <Link to="/inspire" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('navigation.exploreWorld', 'Explorer le monde')}
-                </Link>
-              </li>
-              <li>
-                <Link to="/travel-stories" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('navigation.travelStories', 'Récits de voyage')}
-                </Link>
-              </li>
+              {settings.beInspiredEnabled && (
+                <li>
+                  <Link to="/inspire" className="text-muted-foreground hover:text-primary transition-colors">
+                    {t('navigation.exploreWorld', 'Explorer le monde')}
+                  </Link>
+                </li>
+              )}
+              {settings.travelStoriesEnabled && (
+                <li>
+                  <Link to="/travel-stories" className="text-muted-foreground hover:text-primary transition-colors">
+                    {t('navigation.travelStories', 'Récits de voyage')}
+                  </Link>
+                </li>
+              )}
             </ul>
           </nav>
 

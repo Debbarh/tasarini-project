@@ -47,6 +47,8 @@ export interface ApiUser {
   roles: string[];
   preferred_language: string;
   onboarding_completed: boolean;
+  is_active?: boolean;
+  email_verified?: boolean;
   profile?: ApiUserProfile;
   role_assignments_detail?: Array<{
     id: number;

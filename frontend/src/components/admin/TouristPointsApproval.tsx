@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { MapPin, Eye, Search, Filter, CheckCircle, XCircle, Clock, User, Building2, Calendar, AlertCircle, Shield } from 'lucide-react';
+import { MapPin, Eye, Search, Filter, CheckCircle, XCircle, Clock, User, Building2, Calendar, AlertCircle, Shield, MessageCircle } from 'lucide-react';
 import { POIValidationDialog } from './POIValidationDialog';
 import { POIConversationPanel } from './POIConversationPanel';
 import { adminPoiService, AdminPoi, POIStatus } from '@/services/adminPoiService';
@@ -29,7 +29,8 @@ const TouristPointsApproval: React.FC = () => {
   const fetchTouristPoints = async () => {
     try {
 
-      const fetched = await adminPoiService.list({ ordering: '-created_at' });
+      // page_size élevé : DRF paginerait sinon à 20 (1ère page seulement).
+      const fetched = await adminPoiService.list({ ordering: '-created_at', page_size: 5000 });
       // Handle both array and paginated response formats
       const pointsArray = Array.isArray(fetched)
         ? fetched
@@ -296,7 +297,7 @@ const TouristPointsApproval: React.FC = () => {
                               size="sm"
                               onClick={() => setShowConversation(showConversation === point.id ? null : point.id)}
                             >
-                              💬 {showConversation === point.id ? 'Masquer' : 'Conversation'}
+                              <MessageCircle className="w-4 h-4 mr-1" /> {showConversation === point.id ? 'Masquer' : 'Conversation'}
                             </Button>
                           )}
                         </div>

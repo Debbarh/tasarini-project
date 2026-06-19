@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Shield, Activity, AlertTriangle, Clock, User, Eye, EyeOff } from 'lucide-react';
+import { Shield, Activity, AlertTriangle, Clock, User, Eye, EyeOff, Check, X } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -428,22 +428,22 @@ export const AdminSecurityDashboard = () => {
                       </TableCell>
                       <TableCell>
                         <Badge variant={permission.permissions.can_create ? 'default' : 'secondary'}>
-                          {permission.permissions.can_create ? '✓' : '✗'}
+                          {permission.permissions.can_create ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={permission.permissions.can_read ? 'default' : 'secondary'}>
-                          {permission.permissions.can_read ? '✓' : '✗'}
+                          {permission.permissions.can_read ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={permission.permissions.can_update ? 'default' : 'secondary'}>
-                          {permission.permissions.can_update ? '✓' : '✗'}
+                          {permission.permissions.can_update ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={permission.permissions.can_delete ? 'default' : 'secondary'}>
-                          {permission.permissions.can_delete ? '✓' : '✗'}
+                          {permission.permissions.can_delete ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
                         </Badge>
                       </TableCell>
                     </TableRow>

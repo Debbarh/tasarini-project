@@ -26,6 +26,7 @@ export interface DietaryRestriction {
   description_hi?: string;
   description_ar?: string;
   icon_emoji?: string;
+  icon_name?: string;
   is_active: boolean;
   display_order: number;
   created_at?: string;
@@ -122,6 +123,7 @@ export interface RestaurantCategory {
   description_hi?: string;
   description_ar?: string;
   icon_emoji?: string;
+  icon_name?: string;
   price_range_min?: number | null;
   price_range_max?: number | null;
   is_active: boolean;

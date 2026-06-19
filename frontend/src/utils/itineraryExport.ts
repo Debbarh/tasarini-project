@@ -62,6 +62,27 @@ const loadDestinationImages = async (destinationImages: { [cityName: string]: an
   return loadedImages;
 };
 
+// Pré-charge en base64 les images d'activités persistées (activity.image), indexées
+// par "dayIndex:activityIndex" pour un rendu synchrone dans le PDF.
+const loadActivityImages = async (itinerary: DetailedItinerary): Promise<Record<string, string>> => {
+  const out: Record<string, string> = {};
+  const days = itinerary?.days || [];
+  for (let di = 0; di < days.length; di++) {
+    const acts = (days[di] as any)?.activities || [];
+    for (let ai = 0; ai < acts.length; ai++) {
+      const img = acts[ai]?.image;
+      const src = img?.thumbnailUrl || img?.url;
+      if (!src) continue;
+      try {
+        out[`${di}:${ai}`] = await loadImageAsBase64(src);
+      } catch (error) {
+        console.warn('Could not load activity image:', error);
+      }
+    }
+  }
+  return out;
+};
+
 const loadFontBase64 = async (path: string): Promise<string> => {
   const response = await fetch(path);
   const buffer = await response.arrayBuffer();
@@ -102,6 +123,9 @@ export const exportItineraryToPDF = async (itinerary: DetailedItinerary): Promis
   // Load destination images
   const destinationImages = await loadDestinationImages(itinerary.destinationImages);
   const heroImage = Object.values(destinationImages)[0]?.[0] || null;
+
+  // Load activity images (persisted on each activity.image), indexées "dayIndex:actIndex"
+  const activityImagesB64 = await loadActivityImages(itinerary);
 
   const pdf = new jsPDF('p', 'mm', 'a4');
   await registerJost(pdf);
@@ -411,6 +435,11 @@ export const exportItineraryToPDF = async (itinerary: DetailedItinerary): Promis
         day.activities.forEach((activity, actIndex) => {
           addNewPageIfNeeded(25);
 
+          const rowTop = yPos;
+          const actThumb = activityImagesB64[`${dayIndex}:${actIndex}`];
+          // Largeur de texte réduite si une vignette est affichée à droite
+          const actTextWidth = actThumb ? contentWidth - 20 - 28 : contentWidth - 20;
+
           // Timeline dot
           pdf.setFillColor(...COLORS.primaryLight);
           pdf.circle(margin + 3, yPos + 2, 2, 'F');
@@ -432,7 +461,7 @@ export const exportItineraryToPDF = async (itinerary: DetailedItinerary): Promis
           pdf.setTextColor(...COLORS.textLight);
 
           if (activity.description) {
-            const descLines = pdf.splitTextToSize(activity.description, contentWidth - 20);
+            const descLines = pdf.splitTextToSize(activity.description, actTextWidth);
             pdf.text(descLines.slice(0, 2), margin + 10, yPos + 10);
             yPos += 10 + (Math.min(descLines.length, 2) * 4);
           } else {
@@ -450,6 +479,13 @@ export const exportItineraryToPDF = async (itinerary: DetailedItinerary): Promis
             pdf.setTextColor(...COLORS.textLight);
             pdf.text(details.join(' | '), margin + 10, yPos);
             yPos += 6;
+          }
+
+          // Vignette de l'activité (image persistée) alignée à droite de la ligne
+          if (actThumb) {
+            const tW = 24, tH = 18;
+            drawFramedImage(actThumb, margin + contentWidth - tW, rowTop, tW, tH, 4, 1.5);
+            if (yPos < rowTop + tH + 2) yPos = rowTop + tH + 2;
           }
 
           yPos += 8;

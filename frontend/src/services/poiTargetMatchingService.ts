@@ -62,7 +62,7 @@ export const getPOITargetAudience = (poi: POI): TargetAudience[] => {
   audiences.push({
     segment: 'children',
     label: 'Enfants',
-    icon: '👶',
+    icon: 'Baby',
     suitable: childrenSuitable,
     reason: !childrenSuitable ? 'Niveau de difficulté trop élevé pour les enfants' : undefined
   });
@@ -72,7 +72,7 @@ export const getPOITargetAudience = (poi: POI): TargetAudience[] => {
   audiences.push({
     segment: 'seniors',
     label: 'Seniors',
-    icon: '👴',
+    icon: 'PersonStanding',
     suitable: seniorsSuitable,
     reason: !seniorsSuitable ? 'Niveau de difficulté élevé, non recommandé pour les seniors' : undefined
   });
@@ -81,7 +81,7 @@ export const getPOITargetAudience = (poi: POI): TargetAudience[] => {
   audiences.push({
     segment: 'accessibility',
     label: 'Mobilité réduite',
-    icon: '♿',
+    icon: 'Accessibility',
     suitable: isWheelchairAccessible,
     reason: !isWheelchairAccessible ? 'Lieu non accessible aux fauteuils roulants' : undefined
   });
@@ -91,7 +91,7 @@ export const getPOITargetAudience = (poi: POI): TargetAudience[] => {
   audiences.push({
     segment: 'families',
     label: 'Familles',
-    icon: '👨‍👩‍👧‍👦',
+    icon: 'Users',
     suitable: familySuitable,
     reason: !familySuitable ? 'Activité non adaptée aux familles avec enfants' : undefined
   });

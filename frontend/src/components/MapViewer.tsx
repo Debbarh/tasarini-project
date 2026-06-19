@@ -40,7 +40,7 @@ const MapViewer: React.FC<MapViewerProps> = ({
           lng: position.coords.longitude
         });
         setShowUserLocation(true);
-        toast.success('Votre position ajoutée à la carte ! 📍');
+        toast.success('Votre position ajoutée à la carte !');
       },
       (error) => {
         toast.error('Impossible de récupérer votre position');

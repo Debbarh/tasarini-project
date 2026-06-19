@@ -32,17 +32,22 @@ export default function VerifyEmailRequired() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-      <div className="max-w-md w-full bg-white shadow-2xl rounded-2xl overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-50 to-white p-4">
+      <div className="max-w-md w-full bg-white shadow-2xl rounded-2xl overflow-hidden border border-sky-100">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-center">
+        <div className="bg-gradient-to-r from-sky-500 to-sky-600 p-8 text-center">
+          <img
+            src="/brand/070b3052-89a5-4274-add2-2a60a3411cf2.png"
+            alt="Tasarini"
+            className="h-8 w-auto mx-auto mb-5 brightness-0 invert"
+          />
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-4 backdrop-blur-sm">
             <Mail className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">
             {t('verifyEmailRequired.title')}
           </h1>
-          <p className="text-blue-100 text-sm">
+          <p className="text-sky-100 text-sm">
             {t('verifyEmailRequired.subtitle')}
           </p>
         </div>
@@ -79,25 +84,25 @@ export default function VerifyEmailRequired() {
             </h3>
             <ol className="space-y-3 text-sm text-gray-600 ml-7">
               <li className="flex items-start">
-                <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-sky-100 text-sky-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
                   1
                 </span>
                 <span>{t('verifyEmailRequired.steps.step1')}</span>
               </li>
               <li className="flex items-start">
-                <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-sky-100 text-sky-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
                   2
                 </span>
                 <span>{t('verifyEmailRequired.steps.step2')} <strong>{t('verifyEmailRequired.steps.step2Bold')}</strong></span>
               </li>
               <li className="flex items-start">
-                <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-sky-100 text-sky-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
                   3
                 </span>
                 <span>{t('verifyEmailRequired.steps.step3')}</span>
               </li>
               <li className="flex items-start">
-                <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-sky-100 text-sky-600 rounded-full text-xs font-semibold mr-3 flex-shrink-0">
                   4
                 </span>
                 <span>{t('verifyEmailRequired.steps.step4')}</span>
@@ -105,11 +110,11 @@ export default function VerifyEmailRequired() {
             </ol>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-blue-800 mb-3">
+          <div className="bg-sky-50 border border-sky-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-sky-800 mb-3">
               <strong>{t('verifyEmailRequired.notReceived.title')}</strong>
             </p>
-            <ul className="text-sm text-blue-700 space-y-1 mb-3 list-disc list-inside">
+            <ul className="text-sm text-sky-700 space-y-1 mb-3 list-disc list-inside">
               <li>{t('verifyEmailRequired.notReceived.checkSpam')}</li>
               <li>{t('verifyEmailRequired.notReceived.checkEmail')}</li>
               <li>{t('verifyEmailRequired.notReceived.waitTime')}</li>
@@ -122,7 +127,7 @@ export default function VerifyEmailRequired() {
                   ? 'bg-green-500 text-white'
                   : sending
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'
+                  : 'bg-sky-600 text-white hover:bg-sky-700 active:scale-95'
               }`}
             >
               {sent ? (

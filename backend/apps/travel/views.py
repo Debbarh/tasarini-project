@@ -650,6 +650,11 @@ class StreamingTripPlannerView(APIView):
                 )
                 progress_data = json.dumps({'progress': 15, 'message': "Planification des jours..."})
                 yield f"event: progress\ndata: {progress_data}\n\n"
+                # Devient True si le provider principal tombe et qu'on bascule sur
+                # Ollama : dans ce cas TOUTES les sections suivantes (adéquation,
+                # enrichies, budget) passent aussi par Ollama (parité du programme),
+                # sans réessayer Gemini en vain (lent).
+                used_ollama_fallback = False
                 try:
                     days_resp = call_provider_with_prompt(active_provider, prompt_days) or {}
                 except AIProviderException as e_days:
@@ -658,9 +663,68 @@ class StreamingTripPlannerView(APIView):
                     # mais garantit que le programme se génère quand même.
                     if ollama_provider and ollama_provider.id != active_provider.id:
                         logger.warning(f"Jours via {active_provider.provider} échoués, repli Ollama: {e_days}")
-                        progress_data = json.dumps({'progress': 15, 'message': "Modèle principal indisponible, bascule sur le modèle local..."})
+                        used_ollama_fallback = True
+                        progress_data = json.dumps({'progress': 15, 'message': "Modèle principal indisponible, génération jour par jour (local)..."})
                         yield f"event: progress\ndata: {progress_data}\n\n"
-                        days_resp = call_provider_with_prompt(ollama_provider, prompt_days) or {}
+
+                        # Repli Ollama JOUR PAR JOUR (CPU lent → petits prompts, rendu
+                        # progressif). On accumule une liste anti-répétition pour que
+                        # chaque jour propose des activités différentes.
+                        day_plan = []
+                        _n = 1
+                        for _d in destinations:
+                            _city = _d.get('city') or _d.get('country') or ''
+                            for _ in range(max(1, int(_d.get('duration') or 1))):
+                                day_plan.append((_n, _city))
+                                _n += 1
+                        if not day_plan:
+                            day_plan = [(1, '')]
+                        total_days = len(day_plan)
+                        _all_days = []
+                        _used = []
+                        for (_day_num, _dest) in day_plan:
+                            _avoid = " | ".join(_used[-40:])
+                            prompt_one_day = (
+                                lang_instruction + intensity_instruction +
+                                f"Génère UNIQUEMENT le jour {_day_num} sur {total_days} d'un voyage à {_dest}. " +
+                                (f"NE RÉPÈTE PAS ces activités/lieux déjà prévus les autres jours : {_avoid}. " if _avoid else "") +
+                                "Propose des activités et des lieux DIFFÉRENTS et variés. " +
+                                'Réponds STRICTEMENT en JSON pour CE SEUL jour : '
+                                '{"dayNumber": number, "date": string, "destination": string, "theme": string, '
+                                '"activities": [{"id": string, "time": string, "title": string, "description": string, "duration": string, "type": string, "cost": number, "location": string, "tips": string, "difficulty": string}], '
+                                '"meals": {"breakfast": string, "lunch": string, "dinner": string}, "transportation": string, "totalCost": number, "walkingDistance": number}. '
+                                "Sans texte avant/après. "
+                                f"Données voyageur: {json.dumps(trip_data, ensure_ascii=False)}" + lang_reminder
+                            )
+                            # Heartbeat AVANT l'appel (lent sur CPU) : garde la
+                            # connexion SSE active côté nginx pendant la génération.
+                            yield f"event: progress\ndata: {json.dumps({'progress': 15 + int(((_day_num - 1) / total_days) * 20), 'message': f'Jour {_day_num}/{total_days} (local)...'}, ensure_ascii=False)}\n\n"
+                            try:
+                                # retries=1 : un jour lent ne doit pas multiplier le
+                                # temps (3×300s) et faire dépasser le timeout global.
+                                _resp = call_provider_with_prompt(ollama_provider, prompt_one_day, retries=1) or {}
+                            except AIProviderException:
+                                _resp = {}
+                            _day = _resp.get('day') if isinstance(_resp, dict) and isinstance(_resp.get('day'), dict) else _resp
+                            if isinstance(_day, dict) and (_day.get('activities') or _day.get('theme')):
+                                _day.setdefault('dayNumber', _day_num)
+                                if not _day.get('destination'):
+                                    _day['destination'] = _dest
+                                _all_days.append(_day)
+                                for _a in (_day.get('activities') or []):
+                                    _title = _a.get('title') if isinstance(_a, dict) else None
+                                    if _title:
+                                        _used.append(_title)
+                                # Émission progressive : l'utilisateur voit chaque jour dès qu'il est prêt
+                                _pct = 15 + int((_day_num / total_days) * 20)
+                                yield f"event: section\ndata: {json.dumps({'key': 'days', 'value': _all_days, 'progress': _pct}, ensure_ascii=False)}\n\n"
+
+                        _cities = [(_d.get('city') or _d.get('country') or '') for _d in destinations]
+                        days_resp = {
+                            'days': _all_days,
+                            'title': trip_data.get('title') or ", ".join([c for c in _cities if c]) or "Votre voyage",
+                            'totalCost': sum((d.get('totalCost') or 0) for d in _all_days),
+                        }
                     else:
                         raise
                 itinerary: dict = {
@@ -692,6 +756,15 @@ class StreamingTripPlannerView(APIView):
 
                 trip_json = json.dumps(trip_data, ensure_ascii=False)
 
+                # Provider pour TOUTES les sections texte restantes (adéquation,
+                # enrichies, budget). Si Gemini est tombé, on enchaîne sur Ollama
+                # pour que le programme local soit COMPLET (pas seulement les jours).
+                text_provider = ollama_provider if (used_ollama_fallback and ollama_provider) else active_provider
+                enriched_provider = text_provider
+                # Sur Ollama (CPU lent) on limite les réessais pour borner le temps
+                # total de la requête (sinon risque de dépasser le timeout serveur).
+                _text_retries = 1 if used_ollama_fallback else 3
+
                 # Score d'adaptation : à quel point ce programme correspond aux
                 # préférences saisies dans le stepper + paragraphe explicatif.
                 prompt_match = (
@@ -705,10 +778,14 @@ class StreamingTripPlannerView(APIView):
                     f"Données voyageur: {trip_json}"
                     + lang_reminder
                 )
-                progress_data = json.dumps({'progress': 48, 'message': "Analyse d'adéquation à vos préférences..."})
-                yield f"event: progress\ndata: {progress_data}\n\n"
+                # En repli local (Ollama, CPU lent), on saute le score + les sections
+                # enrichies + le budget IA : ils multiplieraient les appels lents et
+                # figeraient l'écran. On garde l'essentiel (les jours, déjà émis).
+                if not used_ollama_fallback:
+                    progress_data = json.dumps({'progress': 48, 'message': "Analyse d'adéquation à vos préférences..."})
+                    yield f"event: progress\ndata: {progress_data}\n\n"
                 try:
-                    match_resp = call_provider_with_prompt(active_provider, prompt_match) or {}
+                    match_resp = {} if used_ollama_fallback else (call_provider_with_prompt(text_provider, prompt_match, retries=_text_retries) or {})
                 except AIProviderException:
                     match_resp = {}
                 if match_resp:
@@ -731,7 +808,7 @@ class StreamingTripPlannerView(APIView):
                     (78, "Culture, événements & alentours...",
                      '{"culturalTips": [string], "localEvents": [{"name": string, "date": string, "description": string, "location": string}], "similarDestinations": [{"name": string, "country": string, "why": string}], "sustainabilityTips": [string]}'),
                 ]
-                for prog, msg, schema in enriched_groups:
+                for prog, msg, schema in ([] if used_ollama_fallback else enriched_groups):
                     progress_data = json.dumps({'progress': prog, 'message': msg})
                     yield f"event: progress\ndata: {progress_data}\n\n"
                     prompt_part = (
@@ -743,7 +820,7 @@ class StreamingTripPlannerView(APIView):
                         + lang_reminder
                     )
                     try:
-                        part_resp = call_provider_with_prompt(enriched_provider, prompt_part) or {}
+                        part_resp = call_provider_with_prompt(enriched_provider, prompt_part, retries=_text_retries) or {}
                     except AIProviderException as part_err:
                         logger.warning(f"Section enrichie échouée ({msg}) via {enriched_provider.provider}: {part_err}")
                         part_resp = {}
@@ -752,8 +829,8 @@ class StreamingTripPlannerView(APIView):
                         section_data = json.dumps({'key': 'enriched', 'value': part_resp, 'progress': prog})
                         yield f"event: section\ndata: {section_data}\n\n"
 
-                # Prompt 3: budget (optionnel si déjà fourni)
-                if not itinerary.get("budgetBreakdown"):
+                # Prompt 3: budget (optionnel si déjà fourni ; sauté en repli local)
+                if (not used_ollama_fallback) and not itinerary.get("budgetBreakdown"):
                     prompt_budget = (
                         "Génère un JSON avec uniquement les clés : "
                         '{"totalCost": number, "budgetBreakdown": {"accommodation": number, "food": number, "activities": number, "transport": number, "shopping": number, "miscellaneous": number}}. '
@@ -763,7 +840,7 @@ class StreamingTripPlannerView(APIView):
                     progress_data = json.dumps({'progress': 80, 'message': "Budget détaillé..."})
                     yield f"event: progress\ndata: {progress_data}\n\n"
                     try:
-                        budget_resp = call_provider_with_prompt(enriched_provider, prompt_budget) or {}
+                        budget_resp = call_provider_with_prompt(enriched_provider, prompt_budget, retries=_text_retries) or {}
                     except AIProviderException:
                         budget_resp = {}
                     if budget_resp:
@@ -852,9 +929,16 @@ class TravelAIAssistantView(APIView):
     def post(self, request):
         prompt = request.data.get('prompt', '').strip()
         user_context = request.data.get('userContext')
+        lang = (request.data.get('lang') or 'fr')[:5]
         if not prompt:
             return Response({'detail': 'prompt requis'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # 1) Vraie IA contextualisée (provider actif = Gemini) si dispo.
+        ai = self._ai_answer(prompt, user_context, lang)
+        if ai:
+            return Response({'response': ai, 'hasUserContext': bool(user_context)})
+
+        # 2) Repli déterministe (templates) si l'IA échoue/indispo.
         response = self._build_response(prompt, user_context)
         return Response(
             {
@@ -862,6 +946,40 @@ class TravelAIAssistantView(APIView):
                 'hasUserContext': bool(user_context),
             }
         )
+
+    def _ai_answer(self, prompt: str, user_context: str | None, lang: str = 'fr') -> str | None:
+        """Réponse via le provider IA actif, en s'appuyant sur la zone/les lieux affichés."""
+        try:
+            provider = AIProviderConfig.objects.filter(is_enabled=True).order_by('display_name').first()
+            if not provider:
+                return None
+            lang_name = {
+                'fr': 'français', 'en': 'English', 'es': 'español', 'de': 'Deutsch',
+                'it': 'italiano', 'pt': 'português', 'ru': 'русский', 'ja': '日本語',
+                'zh': '中文', 'ar': 'العربية', 'hi': 'हिन्दी',
+            }.get(lang, 'français')
+            system = (
+                f"Tu es l'assistant de voyage Tasarini. Réponds en {lang_name}, de façon concise, "
+                "chaleureuse et ACTIONNABLE. Appuie-toi STRICTEMENT sur la zone affichée et les lieux "
+                "listés ci-dessous quand c'est pertinent (cite leurs noms). Si on te demande un itinéraire "
+                "ou une demi-journée/journée, propose un enchaînement réaliste de 3 à 6 lieux PARMI ceux "
+                "listés, dans un ordre logique, avec une courte raison pour chacun. N'invente pas de lieux "
+                "absents de la liste si une liste est fournie."
+            )
+            ctx = f"\n\n--- Contexte de la zone affichée ---\n{user_context}\n--- fin du contexte ---" if user_context else ""
+            full = (
+                f"{system}{ctx}\n\nQuestion de l'utilisateur : {prompt}\n\n"
+                'Réponds en JSON STRICT, uniquement : {"answer": "ta réponse ici"} '
+                "(les sauts de ligne \\n sont autorisés dans la valeur)."
+            )
+            resp = call_provider_with_prompt(provider, full, retries=2)
+            if isinstance(resp, dict):
+                ans = resp.get('answer') or resp.get('response') or resp.get('text')
+                if ans and str(ans).strip():
+                    return str(ans).strip()
+            return None
+        except Exception:  # noqa: BLE001 - on retombe sur les templates
+            return None
 
     def _build_response(self, prompt: str, user_context: str | None) -> str:
         lowered = prompt.lower()
@@ -894,13 +1012,6 @@ class SmartRecommendationsView(APIView):
             return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'recommendations': recommendations, 'userProfile': profile})
-
-
-class AIProviderConfigViewSet(viewsets.ModelViewSet):
-    queryset = AIProviderConfig.objects.all().order_by('display_name')
-    serializer_class = AIProviderConfigSerializer
-    permission_classes = [permissions.IsAdminUser]
-    http_method_names = ['get', 'patch', 'head', 'options']
 
     def _build_recommendations(self, user, user_lat, user_lon, radius_km):
         qs = (
@@ -949,6 +1060,10 @@ class AIProviderConfigViewSet(viewsets.ModelViewSet):
                         'price_range': poi.price_range or '',
                         'latitude': float(poi.latitude),
                         'longitude': float(poi.longitude),
+                        'is_partner_point': bool(
+                            getattr(getattr(poi, 'owner', None), 'partner_profile', None)
+                            and poi.owner.partner_profile.status == 'approved'
+                        ),
                     },
                 }
             )
@@ -987,6 +1102,13 @@ class AIProviderConfigViewSet(viewsets.ModelViewSet):
         a = math.sin(d_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(d_lambda / 2) ** 2
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         return R * c
+
+
+class AIProviderConfigViewSet(viewsets.ModelViewSet):
+    queryset = AIProviderConfig.objects.all().order_by('display_name')
+    serializer_class = AIProviderConfigSerializer
+    permission_classes = [permissions.IsAdminUser]
+    http_method_names = ['get', 'patch', 'head', 'options']
 
 
 class AmadeusProxyView(APIView):

@@ -3,10 +3,13 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Loader2, CheckCircle2, XCircle, Building2, User } from 'lucide-react';
-import { authTokenStorage } from '@/integrations/api/client';
+import { Input } from '@/components/ui/input';
+import { Loader2, CheckCircle2, XCircle, Building2, User, Mail } from 'lucide-react';
+import { authTokenStorage, API_ROOT_URL } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+
+const BRAND_LOGO = '/brand/070b3052-89a5-4274-add2-2a60a3411cf2.png';
 
 const getPartnerTarget = (partnerFlag: boolean) => (partnerFlag ? '/complete-partner-profile' : '/profile');
 
@@ -22,7 +25,10 @@ export default function VerifyEmail() {
   const [autoLoginState, setAutoLoginState] = useState<'idle' | 'running' | 'failed'>('idle');
   const [verifyData, setVerifyData] = useState<{ auto_login_available?: boolean; partner_profile_status?: string } | null>(null);
   const [currentToken, setCurrentToken] = useState<string | null>(null);
+  const [resendEmail, setResendEmail] = useState('');
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const SESSION_TOKEN_KEY = 'partner_verify_token';
+
   useEffect(() => {
     const tokenFromParams = searchParams.get('token');
     const storedToken = sessionStorage.getItem(SESSION_TOKEN_KEY);
@@ -39,13 +45,11 @@ export default function VerifyEmail() {
       return;
     }
 
-    // Vérifier si c'est un partenaire depuis l'état de navigation
     const locationState = location.state as any;
     if (locationState?.isPartner) {
       setIsPartner(true);
     }
 
-    // Vérifier l'email avec le token
     verifyEmail(token);
   }, [searchParams, location.state]);
 
@@ -60,20 +64,17 @@ export default function VerifyEmail() {
 
   const verifyEmail = async (token: string) => {
     try {
-      // Note: L'endpoint est /api/auth/verify-email/ (pas /api/v1/auth/...)
-      // On utilise fetch directement car apiClient ajoute /v1/ automatiquement
-      const response = await fetch('http://localhost:8000/api/auth/verify-email/', {
+      // Endpoint hors /v1 : /api/auth/verify-email/ (API_ROOT_URL = base /api/).
+      const response = await fetch(new URL('auth/verify-email/', API_ROOT_URL).toString(), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || 'Erreur de vérification');
+        throw new Error(data.detail || t('verifyEmail.messages.verificationError'));
       }
 
       setStatus('success');
@@ -88,11 +89,9 @@ export default function VerifyEmail() {
         toast.info(t('verifyEmail.messages.manualLoginInfo'));
         redirectToAuth(partnerRole);
       }
-
     } catch (error: any) {
       console.error('Erreur lors de la vérification:', error);
       setStatus('error');
-
       const errorMessage = error?.message || t('verifyEmail.messages.verificationError');
       setMessage(errorMessage);
       toast.error(errorMessage);
@@ -107,11 +106,9 @@ export default function VerifyEmail() {
     setAutoLoginState('running');
     toast.info(t('verifyEmail.toast.verifying'));
     try {
-      const response = await fetch('http://localhost:8000/api/auth/verify-email/complete/', {
+      const response = await fetch(new URL('auth/verify-email/complete/', API_ROOT_URL).toString(), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: tokenValue }),
       });
       const data = await response.json();
@@ -134,10 +131,6 @@ export default function VerifyEmail() {
       attemptAutoLogin(undefined, isPartner);
       return;
     }
-    if (verifyData?.auto_login_available) {
-      attemptAutoLogin();
-      return;
-    }
     if (user) {
       navigate(isPartner ? '/complete-partner-profile' : '/profile');
     } else {
@@ -145,44 +138,44 @@ export default function VerifyEmail() {
     }
   };
 
-  const handleResendEmail = async () => {
+  // Renvoi du lien de vérification — fonctionne SANS être connecté, via l'email saisi.
+  const handleResend = async () => {
+    const email = resendEmail.trim();
+    if (!email) {
+      toast.error(t('verifyEmail.resend.emailRequired', 'Veuillez saisir votre adresse email.'));
+      return;
+    }
+    setResendState('sending');
     try {
-      const accessToken = authTokenStorage.getAccessToken();
-      if (!accessToken) {
-        toast.error(t('verifyEmail.toast.resendAuthRequired'));
-        navigate(`/auth?redirectTo=${encodeURIComponent('/verify-email-required')}`);
-        return;
-      }
-      const response = await fetch('http://localhost:8000/api/auth/resend-verification/', {
+      const response = await fetch(new URL('auth/resend-verification/', API_ROOT_URL).toString(), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(t('verifyEmail.toast.resendError'));
+        throw new Error(data.detail || t('verifyEmail.toast.resendError'));
       }
-      toast.success(t('verifyEmail.toast.resendSuccess'));
+      setResendState('sent');
+      toast.success(
+        t('verifyEmail.resend.sent', 'Si un compte non vérifié existe pour cet email, un nouveau lien vient d’être envoyé.'),
+      );
     } catch (error: any) {
+      setResendState('idle');
       toast.error(error?.message || t('verifyEmail.toast.resendError'));
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-50 to-white dark:from-gray-900 dark:to-gray-950 p-4">
+      <Card className="w-full max-w-md border-sky-100 dark:border-gray-800 shadow-xl">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-            {status === 'loading' && (
-              <Loader2 className="w-8 h-8 text-white animate-spin" />
-            )}
-            {status === 'success' && (
-              <CheckCircle2 className="w-8 h-8 text-white" />
-            )}
-            {status === 'error' && (
-              <XCircle className="w-8 h-8 text-white" />
-            )}
+          <img src={BRAND_LOGO} alt="Tasarini" className="h-9 w-auto mx-auto mb-6" />
+
+          <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-lg shadow-sky-500/30">
+            {status === 'loading' && <Loader2 className="w-8 h-8 text-white animate-spin" />}
+            {status === 'success' && <CheckCircle2 className="w-8 h-8 text-white" />}
+            {status === 'error' && <XCircle className="w-8 h-8 text-white" />}
           </div>
 
           <CardTitle className="text-2xl">
@@ -200,24 +193,24 @@ export default function VerifyEmail() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Message détaillé */}
-          <div className={`p-4 rounded-lg ${
-            status === 'success'
-              ? 'bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100'
-              : status === 'error'
-              ? 'bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100'
-              : 'bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-          }`}>
+          <div
+            className={`p-4 rounded-lg ${
+              status === 'success'
+                ? 'bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100'
+                : status === 'error'
+                ? 'bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100'
+                : 'bg-sky-50 dark:bg-sky-900/20 text-sky-900 dark:text-sky-100'
+            }`}
+          >
             <p className="text-sm text-center">{message}</p>
           </div>
 
-          {/* Actions selon le statut */}
           {status === 'success' && (
             <div className="space-y-3">
               {isPartner && (
-                <div className="flex items-center justify-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <Building2 className="w-5 h-5 text-blue-600" />
-                  <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
+                <div className="flex items-center justify-center gap-2 p-3 bg-sky-50 dark:bg-sky-900/20 rounded-lg">
+                  <Building2 className="w-5 h-5 text-sky-600" />
+                  <p className="text-sm text-sky-800 dark:text-sky-200 font-medium">
                     {t('verifyEmail.partner.nextStep')}
                   </p>
                 </div>
@@ -227,7 +220,7 @@ export default function VerifyEmail() {
                   ? t('verifyEmail.messages.autoLoginInfo')
                   : t('verifyEmail.messages.manualLoginInfo')}
               </p>
-                            <Button onClick={handleContinue} className="w-full" disabled={autoLoginState === 'running'}>
+              <Button onClick={handleContinue} className="w-full" disabled={autoLoginState === 'running'}>
                 {isPartner ? (
                   <>
                     <Building2 className="w-4 h-4 mr-2" />
@@ -240,24 +233,14 @@ export default function VerifyEmail() {
                   </>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={handleResendEmail}
-                disabled={autoLoginState === 'running'}
-              >
-                {t('verifyEmail.buttons.resend')}
-              </Button>
               {autoLoginState === 'failed' && (
-                <p className="text-xs text-center text-red-500">
-                  {t('verifyEmail.messages.autoLoginFailed')}
-                </p>
+                <p className="text-xs text-center text-red-500">{t('verifyEmail.messages.autoLoginFailed')}</p>
               )}
             </div>
           )}
 
           {status === 'error' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="text-sm text-muted-foreground space-y-2">
                 <p className="font-semibold">{t('verifyEmail.error.title')}</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
@@ -267,29 +250,45 @@ export default function VerifyEmail() {
                 </ul>
               </div>
 
-              <div className="flex flex-col gap-2">
+              {/* Renvoi d'un nouveau lien — sans connexion, via l'email */}
+              <div className="rounded-lg border border-sky-100 dark:border-gray-800 bg-sky-50/60 dark:bg-sky-900/10 p-4 space-y-3">
+                <p className="text-sm font-medium text-foreground">
+                  {t('verifyEmail.resend.title', 'Recevoir un nouveau lien de vérification')}
+                </p>
+                <Input
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder={t('verifyEmail.resend.placeholder', 'Votre adresse email')}
+                  value={resendEmail}
+                  onChange={(event) => setResendEmail(event.target.value)}
+                  disabled={resendState === 'sending'}
+                />
                 <Button
-                  onClick={() => navigate('/auth')}
+                  onClick={handleResend}
                   className="w-full"
+                  disabled={resendState === 'sending' || resendState === 'sent'}
                 >
-                  {t('verifyEmail.buttons.backToLogin')}
-                </Button>
-                <Button
-                  onClick={() => navigate('/verify-email-required')}
-                  variant="outline"
-                  className="w-full"
-                >
-                  {t('verifyEmail.buttons.requestNewLink')}
+                  {resendState === 'sending' && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  {resendState === 'sent' && <CheckCircle2 className="w-4 h-4 mr-2" />}
+                  {resendState === 'idle' && <Mail className="w-4 h-4 mr-2" />}
+                  {resendState === 'sent'
+                    ? t('verifyEmail.resend.done', 'Lien envoyé')
+                    : resendState === 'sending'
+                    ? t('verifyEmail.resend.sending', 'Envoi…')
+                    : t('verifyEmail.resend.button', 'Renvoyer le lien')}
                 </Button>
               </div>
+
+              <Button onClick={() => navigate('/auth')} variant="outline" className="w-full">
+                {t('verifyEmail.buttons.backToLogin')}
+              </Button>
             </div>
           )}
 
           {status === 'loading' && (
             <div className="text-center">
-              <p className="text-xs text-muted-foreground">
-                {t('verifyEmail.messages.waiting')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t('verifyEmail.messages.waiting')}</p>
             </div>
           )}
         </CardContent>

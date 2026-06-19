@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Eye, MapPin, Calendar, ExternalLink, Bookmark, Verified, Award, Star, Sparkles } from "lucide-react";
+import { Heart, MessageCircle, Eye, MapPin, Calendar, ExternalLink, Bookmark, Verified, Award, Star, Sparkles, Bot, Briefcase } from "lucide-react";
 import { MediaCarousel } from "@/components/media/MediaCarousel";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { storyService, Story } from "@/services/storyService";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface EnhancedStoryCardProps {
   story: Story;
@@ -22,6 +23,7 @@ export const EnhancedStoryCard = ({ story, currentUserId, onLike, onComment, onB
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const storyType = (story.story_type as 'user' | 'ai_generated' | 'partner_sponsored') || 'user';
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -41,7 +43,7 @@ export const EnhancedStoryCard = ({ story, currentUserId, onLike, onComment, onB
 
   const handleLikeClick = async () => {
     if (!currentUserId) {
-      toast.error('Connectez-vous pour aimer cette story');
+      toast.error(t('travelStories.card.loginToLike', 'Connectez-vous pour liker les stories'));
       return;
     }
     try {
@@ -49,13 +51,13 @@ export const EnhancedStoryCard = ({ story, currentUserId, onLike, onComment, onB
       setIsLiked(result.liked);
       onLike(story.id, result.liked);
     } catch (error) {
-      toast.error('Impossible de modifier le like');
+      toast.error(t('travelStories.card.likeError', 'Impossible de modifier le like'));
     }
   };
 
   const handleBookmarkClick = async () => {
     if (!onBookmark || !currentUserId) {
-      toast.error('Connectez-vous pour enregistrer des stories');
+      toast.error(t('travelStories.card.loginToBookmark', 'Connectez-vous pour enregistrer des stories'));
       return;
     }
     try {
@@ -63,7 +65,7 @@ export const EnhancedStoryCard = ({ story, currentUserId, onLike, onComment, onB
       setIsBookmarked(result.bookmarked);
       onBookmark(story.id, result.bookmarked);
     } catch (error) {
-      toast.error('Impossible de mettre à jour le signet');
+      toast.error(t('travelStories.card.bookmarkError', 'Impossible de mettre à jour le signet'));
     }
   };
 
@@ -84,21 +86,21 @@ export const EnhancedStoryCard = ({ story, currentUserId, onLike, onComment, onB
   const getStoryTypeIcon = () => {
     switch (storyType) {
       case 'ai_generated':
-        return '🤖';
+        return Bot;
       case 'partner_sponsored':
-        return '💼';
+        return Briefcase;
       default:
-        return '';
+        return null;
     }
   };
 
   const getLinkedTypeLabel = (type: string) => {
     switch (type) {
-      case 'tourist_point': return 'Point d\'intérêt';
-      case 'itinerary': return 'Itinéraire';
-      case 'activity': return 'Activité';
-      case 'accommodation': return 'Hébergement';
-      case 'restaurant': return 'Restaurant';
+      case 'tourist_point': return t('travelStories.card.linkTypes.touristPoint', 'Point d\'intérêt');
+      case 'itinerary': return t('travelStories.card.linkTypes.itinerary', 'Itinéraire');
+      case 'activity': return t('travelStories.card.linkTypes.activity', 'Activité');
+      case 'accommodation': return t('travelStories.card.linkTypes.accommodation', 'Hébergement');
+      case 'restaurant': return t('travelStories.card.linkTypes.restaurant', 'Restaurant');
       default: return type;
     }
   };
@@ -121,14 +123,15 @@ export const EnhancedStoryCard = ({ story, currentUserId, onLike, onComment, onB
                     <Verified className="h-4 w-4 text-primary" />
                   )}
                 </div>
-                {getStoryTypeIcon() && (
-                  <span className="text-xs">{getStoryTypeIcon()}</span>
-                )}
+                {(() => {
+                  const StoryTypeIcon = getStoryTypeIcon();
+                  return StoryTypeIcon ? <StoryTypeIcon className="w-3 h-3" /> : null;
+                })()}
               </div>
               {story.is_featured && (
                 <Badge variant="secondary" className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs">
                   <Star className="h-3 w-3 mr-1" />
-                  Vedette
+                  {t('travelStories.card.featured', 'Vedette')}
                 </Badge>
               )}
             </div>

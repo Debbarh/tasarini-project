@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { 
   BarChart3, TrendingUp, MapPin, DollarSign, Eye, Calendar,
-  Star, Users, CheckCircle, Clock, XCircle 
+  Star, Users, CheckCircle, Clock, XCircle, AlertTriangle, Lightbulb, Rocket
 } from 'lucide-react';
 import { usePartnerManagement, PartnerAnalytics } from '@/hooks/usePartnerManagement';
 
@@ -335,29 +335,29 @@ const PartnerAnalyticsDialog: React.FC<PartnerAnalyticsDialogProps> = ({ partner
                 <div className="space-y-2">
                   {analytics.performanceScore < 60 && (
                     <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-sm text-red-800">
-                        ⚠️ Performance faible: Encouragez le partenaire à améliorer la qualité de ses POIs
+                      <p className="text-sm text-red-800 flex items-center gap-1">
+                        <AlertTriangle className="w-4 h-4 shrink-0" /> Performance faible: Encouragez le partenaire à améliorer la qualité de ses POIs
                       </p>
                     </div>
                   )}
                   {analytics.pendingPOIs > 5 && (
                     <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p className="text-sm text-yellow-800">
-                        ⏳ {analytics.pendingPOIs} POIs en attente de validation
+                      <p className="text-sm text-yellow-800 flex items-center gap-1">
+                        <Clock className="w-4 h-4 shrink-0" /> {analytics.pendingPOIs} POIs en attente de validation
                       </p>
                     </div>
                   )}
                   {analytics.totalBookings === 0 && analytics.approvedPOIs > 0 && (
                     <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-sm text-blue-800">
-                        💡 Aucune réservation: Proposer une formation sur l'optimisation des annonces
+                      <p className="text-sm text-blue-800 flex items-center gap-1">
+                        <Lightbulb className="w-4 h-4 shrink-0" /> Aucune réservation: Proposer une formation sur l'optimisation des annonces
                       </p>
                     </div>
                   )}
                   {partner.subscription_type === 'basic' && analytics.totalPOIs > 10 && (
                     <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <p className="text-sm text-green-800">
-                        🚀 Candidat idéal pour un upgrade Premium ou Enterprise
+                      <p className="text-sm text-green-800 flex items-center gap-1">
+                        <Rocket className="w-4 h-4 shrink-0" /> Candidat idéal pour un upgrade Premium ou Enterprise
                       </p>
                     </div>
                   )}

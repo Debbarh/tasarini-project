@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CommentsDialog } from "@/components/stories/CommentsDialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { BookOpen, Plus, Heart, Eye, MapPin, Users, TrendingUp, Clock, Globe, Sparkles } from "lucide-react";
+import { BookOpen, Plus, Heart, Eye, MapPin, Users, TrendingUp, Clock, Globe, Sparkles, PenLine, Plane, Star } from "lucide-react";
 import { toast } from "sonner";
 import { CreateSocialStoryDialog } from "@/components/stories/CreateSocialStoryDialog";
 import { StoryCard } from "@/components/stories/StoryCard";
@@ -168,7 +168,7 @@ const TravelStories = () => {
         <div className="flex-1">
           <h1 className="mb-4 text-3xl font-bold flex items-center gap-3">
             <Globe className="w-8 h-8 text-primary" />
-            <span>📖 {t('travelStories.title')}</span>
+            <span className="flex items-center gap-2"><BookOpen className="w-7 h-7 text-primary" />{t('travelStories.title')}</span>
           </h1>
           <p className="text-muted-foreground mb-4">
             {t('travelStories.subtitle')}
@@ -209,13 +209,13 @@ const TravelStories = () => {
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="lg" className="w-full lg:w-auto">
-                  <Plus className="w-5 h-5 mr-2" />
-                  ✍️ {t('travelStories.buttons.shareMyJourney')}
+                  <PenLine className="w-5 h-5 mr-2" />
+                  {t('travelStories.buttons.shareMyJourney')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>✍️ {t('travelStories.dialog.title')}</DialogTitle>
+                  <DialogTitle className="flex items-center gap-2"><PenLine className="w-5 h-5" />{t('travelStories.dialog.title')}</DialogTitle>
                   <DialogDescription>
                     {t('travelStories.dialog.description')}
                   </DialogDescription>
@@ -282,8 +282,8 @@ const TravelStories = () => {
         ) : stories.length === 0 ? (
           <div className="col-span-full text-center py-8 sm:py-12">
             <BookOpen className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-muted-foreground mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">
-              {showMyStories ? `✈️ ${t('travelStories.empty.myStoriesTitle')}` : `🌟 ${t('travelStories.empty.noStoriesTitle')}`}
+            <h3 className="text-base sm:text-lg font-semibold mb-2 flex items-center justify-center gap-2">
+              {showMyStories ? <><Plane className="w-5 h-5" />{t('travelStories.empty.myStoriesTitle')}</> : <><Star className="w-5 h-5" />{t('travelStories.empty.noStoriesTitle')}</>}
             </h3>
             <p className="text-sm sm:text-base text-muted-foreground mb-4 max-w-md mx-auto">
               {showMyStories 
@@ -293,9 +293,9 @@ const TravelStories = () => {
             </p>
             {user && (
               <Button onClick={() => setIsCreateDialogOpen(true)} size="sm" className="sm:size-default">
-                <Plus className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">✍️ {t('travelStories.buttons.shareFirstEpic')}</span>
-                <span className="sm:hidden">✍️ {t('travelStories.buttons.start')}</span>
+                <PenLine className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">{t('travelStories.buttons.shareFirstEpic')}</span>
+                <span className="sm:hidden">{t('travelStories.buttons.start')}</span>
               </Button>
             )}
           </div>

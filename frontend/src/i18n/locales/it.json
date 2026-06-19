@@ -9,7 +9,8 @@
     "myProfile": "Il Mio Profilo",
     "logout": "Disconnetti",
     "login": "Accedi",
-    "notifications": "Notifiche"
+    "notifications": "Notifiche",
+    "savedItineraries": "I miei itinerari"
   },
   "notFound": {
     "title": "404",
@@ -68,7 +69,10 @@
     "goToImage": "Vai all'immagine {{index}}",
     "searchDestination": "Dove state andando?",
     "searchCta": "Cerca",
-    "openBookingCenter": "Apri la centrale di prenotazione"
+    "openBookingCenter": "Apri la centrale di prenotazione",
+    "flightComparatorTitle": "Confronta i voli",
+    "flightComparatorDesc": "Trova i prezzi migliori tra centinaia di compagnie e agenzie.",
+    "hotelsMapTitle": "Trova il tuo alloggio"
   },
   "planTrip": {
     "title": "Pianifica la tua fuga perfetta",
@@ -80,8 +84,8 @@
     "pageDescription": "Crea il tuo itinerario dei sogni in pochi clic. La nostra IA progetta avventure su misura che trasformano i tuoi desideri in ricordi magici.",
     "itineraryGenerated": "Itinerario generato con successo!",
     "personalizedTravel": "Il tuo viaggio personalizzato creato dall'IA è pronto.",
-    "withPreferences": "✨ Basato sulle tue preferenze!",
-    "withLocalPlaces": "📍 Con luoghi locali autentici!",
+    "withPreferences": "Basato sulle tue preferenze!",
+    "withLocalPlaces": "Con luoghi locali autentici!",
     "generationError": "Errore nella generazione dell'itinerario",
     "tryAgainLater": "Riprova più tardi o contatta il supporto se il problema persiste.",
     "enrichmentComplete": "Arricchimento del viaggio completato!",
@@ -127,8 +131,6 @@
       "generateNow": "Genera ora"
     },
     "destinationStep": {
-      "selectCountry": "Seleziona un paese",
-      "selectCity": "Seleziona una città",
       "numberOfDays": "Numero di giorni",
       "exactDates": "Date esatte",
       "start": "Inizio",
@@ -158,7 +160,9 @@
       "invalidAddress": "Si prega di selezionare un indirizzo valido sulla mappa.",
       "fetchingTranslations": "Fetching multilingual translations...",
       "geocodeFailed": "Impossibile determinare la città per questo punto. Scegli un'altra posizione oppure inserisci manualmente il nome della città.",
-      "chooseOnMapHint": "Apri una mappa interattiva per individuare con precisione la tua destinazione e ottenere le sue coordinate."
+      "chooseOnMapHint": "Apri una mappa interattiva per individuare con precisione la tua destinazione e ottenere le sue coordinate.",
+      "selectCountry": "Digita o seleziona un paese",
+      "selectCity": "Digita o seleziona una città"
     },
     "travelDetailsStep": {
       "title": "Compagni di viaggio",
@@ -229,7 +233,9 @@
       "conservative": "Conservatore",
       "moderate": "Moderato",
       "adventurous": "Avventuroso",
-      "consumesAlcohol": "Consuma alcol"
+      "consumesAlcohol": "Consuma alcol",
+      "refineMore": "Affina le mie preferenze (ristoranti, diete)",
+      "refineLess": "Nascondi le impostazioni avanzate"
     },
     "accommodationStep": {
       "title": "Preferenze di alloggio",
@@ -246,7 +252,9 @@
       "services": "Servizi",
       "locations": "Posizioni",
       "others": "altri",
-      "typeRequired": "Seleziona almeno un tipo di alloggio per continuare."
+      "typeRequired": "Seleziona almeno un tipo di alloggio per continuare.",
+      "refineMore": "Affina le mie preferenze (servizi, accessibilità, sicurezza, atmosfera)",
+      "refineLess": "Nascondi le impostazioni avanzate"
     },
     "activitiesStep": {
       "title": "Attività ed esperienze",
@@ -265,25 +273,27 @@
       "summaryIntensity": "Intensità:",
       "summaryInterests": "Interessi:",
       "moderate": "Moderato",
-      "others": "altri"
+      "others": "altri",
+      "refineMore": "Aggiungi interessi e richieste particolari",
+      "refineLess": "Nascondi le opzioni aggiuntive"
     }
   },
   "beInspired": {
     "pageTitle": "Lasciati Ispirare | Viaggio IA",
     "pageDescription": "Esplora un mondo di meraviglie nascoste intorno a te. Scopri gemme segrete, sapori autentici ed esperienze magiche che ti aspettano.",
-    "title": "✨ Lasciati ispirare",
+    "title": "Lasciati ispirare",
     "subtitle": "Scopri tesori nascosti in un raggio di {{radius}}km. Ogni luogo racconta una storia, ogni esperienza crea un ricordo indimenticabile.",
-    "searchHotels": "🏨 Hotel",
-    "searchHotelsShort": "🏨",
-    "aiGuide": "🤖 Guida IA",
-    "aiGuideShort": "🤖 Guida",
-    "shareDiscovery": "🌟 Condividi un tesoro",
-    "shareDiscoveryShort": "🌟 Condividi",
-    "dialogTitle": "🌟 Condividi la tua scoperta",
+    "searchHotels": "Hotel",
+    "searchHotelsShort": "",
+    "aiGuide": "Guida IA",
+    "aiGuideShort": "Guida",
+    "shareDiscovery": "Condividi un tesoro",
+    "shareDiscoveryShort": "Condividi",
+    "dialogTitle": "Condividi la tua scoperta",
     "dialogDescription": "Rivela un luogo magico che ami alla comunità di esploratori",
     "exploreMap": "Esplora la mappa",
     "findInspiration": "Trova ispirazione",
-    "radiusLabel": "🎯 Raggio di esplorazione",
+    "radiusLabel": "Raggio di esplorazione",
     "radius10": "10 km",
     "radius20": "20 km",
     "radius30": "30 km",
@@ -318,7 +328,12 @@
       "error": "Impossibile caricare le raccomandazioni intelligenti",
       "noNewRecommendations": "Nessuna nuova raccomandazione trovata. Esplora di più per migliorare i tuoi suggerimenti!",
       "successGenerated": "{{count}} raccomandazioni personalizzate generate!",
-      "loadingError": "Errore nel caricamento delle raccomandazioni"
+      "loadingError": "Errore nel caricamento delle raccomandazioni",
+      "previewBadge": "Panoramica",
+      "previewIntro": "Un assaggio dei luoghi di questa zona. Accedi per ricevere consigli personalizzati in base ai tuoi gusti.",
+      "previewEmpty": "Sposta la mappa per visualizzare i suggerimenti sui luoghi in questa zona.",
+      "loginCta": "Accedi per ricevere consigli personalizzati",
+      "loginPerk": "Itinerari personalizzati, preferiti e suggerimenti in base alle tue preferenze."
     },
     "filters": {
       "title": "Filtri",
@@ -331,7 +346,7 @@
       "categoryActivities": "Attività e Tempo Libero",
       "categoryTourist": "Punti di Interesse",
       "categoryOther": "Altri",
-      "minRating": "Valutazione minima ({{rating}}⭐)",
+      "minRating": "Valutazione minima ({{rating}})",
       "allRatings": "Tutte",
       "priceRange": "Fascia di prezzo",
       "allPrices": "Tutti i prezzi",
@@ -340,6 +355,235 @@
       "priceHigh": "€€€ - Alto",
       "accessibility": "Accessibile ai disabili",
       "reset": "Ripristina"
+    },
+    "map": {
+      "searchCenter": "Centro di ricerca",
+      "yourPosition": "La vostra posizione",
+      "mapLoadError": "Impossibile caricare la mappa",
+      "resultsFound": "{{count}} punti di interesse trovati",
+      "loadError": "Errore durante il caricamento dei punti di interesse",
+      "viewDetails": "Vedi dettagli",
+      "loginToSave": "Accedi per salvare questo luogo.",
+      "alreadyInItinerary": "Questo punto di interesse è già presente nel tuo itinerario",
+      "addedToItinerary": "{{name}} Aggiunto al tuo itinerario!",
+      "itineraryCreated": "Il tuo itinerario è stato creato!",
+      "positionUpdated": "Posizione aggiornata",
+      "geoDenied": "Il browser ha negato l'accesso alla posizione. Attiva la geolocalizzazione per centrare la mappa.",
+      "geoUnavailable": "Il servizio di localizzazione non è disponibile. Controlla le impostazioni di rete o riprova più tardi.",
+      "geoError": "Impossibile determinare la tua posizione. Controlla le impostazioni del browser.",
+      "geoNotSupported": "Geolocalizzazione non supportata",
+      "myPosition": "La mia posizione",
+      "createItinerary": "Crea itinerario ({{count}})",
+      "retry": "Riprovare",
+      "loading": "Caricamento dei punti di interesse...",
+      "clickHint": "Clicca su una località per visualizzarne la scheda",
+      "reviews": "Recensioni",
+      "reviewsCount": "{{count}} parere",
+      "website": "Sito web",
+      "directions": "Itinerario",
+      "addToItinerary": "Aggiungi al mio itinerario",
+      "geoPanel": {
+        "title": "Consenti la geolocalizzazione",
+        "b1": "Verifica che il tuo browser consenta la localizzazione su questo sito.",
+        "b2": "Se è bloccato, clicca sull'icona del lucchetto o sull'icona di localizzazione per attivarlo.",
+        "b3": "È anche possibile inserire manualmente una località nei filtri."
+      },
+      "category": {
+        "restaurant": "Ristorante",
+        "accommodation": "Alloggio",
+        "activity": "Attività",
+        "tourist": "Località turistica"
+      },
+      "open": "Aperto",
+      "closed": "Chiuso",
+      "openUntil": "Aperto · chiuso alle {{time}}",
+      "opensAt": "Chiuso · apre alle {{time}}",
+      "share": "Condividi",
+      "linkCopied": "Link copiato negli appunti",
+      "shareError": "Impossibile condividere questo posto",
+      "loadFailedTitle": "Impossibile caricare",
+      "loadFailedDesc": "Il servizio impiega un po' di tempo a rispondere. Riprovi tra un attimo.",
+      "suggestImprovement": "Suggerisci",
+      "claimPlace": "Rivendicare",
+      "searchPoiPlaceholder": "Cerca un luogo…",
+      "searchPoiEmpty": "Nessun luogo trovato in questa zona.",
+      "type": {
+        "museum": "Museo",
+        "art": "Galleria d'arte",
+        "castle": "Castello",
+        "mosque": "Moschea",
+        "religious": "Luogo religioso",
+        "temple": "Tempio",
+        "monument": "Monumento",
+        "culture": "Luogo culturale",
+        "zoo": "Zoo / Acquario",
+        "park": "Parco / Giardino",
+        "viewpoint": "Punto panoramico",
+        "nature": "Sito naturale",
+        "square": "Piazza / Luogo simbolo",
+        "historic": "Sito storico"
+      },
+      "priceLabel": "Tariffa"
+    },
+    "morePlacesOn": "Altri luoghi: attivato",
+    "morePlacesOff": "Altri luoghi: disattivato",
+    "morePlacesHint": "Includere luoghi provenienti da fonti esterne",
+    "list": {
+      "empty": "Non ci sono luoghi in questa zona. Sposta la mappa o amplia il raggio di ricerca.",
+      "countInView": "{{count}} luoghi nella vista"
+    },
+    "chips": {
+      "all": "Tutto",
+      "gastronomy": "Gastronomia",
+      "activities": "Attività",
+      "culture": "Cultura e luoghi d'interesse",
+      "lodging": "Alloggi",
+      "hotels": "Alberghi",
+      "flights": "Voli"
+    },
+    "sort": {
+      "label": "Ordina per",
+      "distance": "Vicinanza",
+      "rating": "Nota",
+      "popularity": "Popolarità"
+    },
+    "aiSuggestions": {
+      "must": "Quali sono le attrazioni da non perdere in questa zona?",
+      "itinerary": "Preparami un itinerario di un giorno che includa questi luoghi",
+      "halfday": "Proponimi una mezza giornata culturale in questa zona",
+      "food": "Quali ristoranti locali mi consigli qui?"
+    },
+    "citySearchLabel": "Cerca una città",
+    "citySearchPlaceholder": "Ad es. Fès, Marrakech, Parigi…",
+    "cityCentered": "Mappa con centro su {{city}}",
+    "radius75": "75 km",
+    "radius100": "100 km",
+    "claim": {
+      "title": "Rivendicare questo luogo",
+      "desc": "Richiedete l'accesso a « {{name}} ». Una volta approvata la richiesta, diventerete partner e potrete modificarlo.",
+      "motivationLabel": "Il vostro legame con questo luogo *",
+      "motivationPlaceholder": "Es. Sono il proprietario/gestore di questo locale…",
+      "motivationRequired": "Si prega di spiegare il proprio legame con questo luogo.",
+      "proofLabel": "Link di supporto (facoltativo)",
+      "submit": "Invia la richiesta",
+      "success": "Richiesta inviata! Un amministratore la approverà.",
+      "error": "Impossibile inviare la richiesta."
+    },
+    "suggest": {
+      "title": "Suggerire un miglioramento",
+      "desc": "Proponete delle correzioni per « {{name}} ». Saranno verificate dal nostro team prima della pubblicazione.",
+      "description": "Descrizione",
+      "address": "Indirizzo",
+      "phone": "Telefono",
+      "hours": "Orari",
+      "website": "Sito web",
+      "comment": "Commento (facoltativo)",
+      "submit": "Invia il suggerimento",
+      "success": "Grazie! Il suo suggerimento verrà preso in considerazione.",
+      "error": "Impossibile inviare il suggerimento.",
+      "noChange": "Modifica almeno un campo.",
+      "sectionInfo": "Informazioni",
+      "sectionPhotos": "Foto (da 1 a 3)",
+      "photosHint": "Aggiungi fino a 3 foto del luogo.",
+      "sectionType": "Tipo e tariffa",
+      "isActivity": "Attività / da fare",
+      "isRestaurant": "Ristorante",
+      "isAccommodation": "Alloggio",
+      "budget": "Budget",
+      "difficulty": "Difficoltà",
+      "choose": "Scegli",
+      "sectionAccessibility": "Accessibilità",
+      "wheelchair": "Accesso per sedia a rotelle",
+      "parking": "Parcheggio accessibile",
+      "restrooms": "Servizi igienici accessibili",
+      "audioGuide": "Audioguida",
+      "signLanguage": "Lingua dei segni",
+      "accessibilityDetails": "Dettagli sull'accessibilità",
+      "sectionCulinary": "Ristorazione",
+      "cuisineTypes": "Tipi di cucina",
+      "dietary": "Opzioni alimentari",
+      "restaurantCategories": "Categorie di ristorante",
+      "adventureLevel": "Livello di avventura culinaria",
+      "sectionAccommodation": "Alloggio",
+      "accTypes": "Tipi",
+      "accAmenities": "Servizi",
+      "accLocations": "Posizione",
+      "accSecurity": "Sicurezza",
+      "accAmbiance": "Atmosfera",
+      "sectionActivity": "Attività",
+      "activityCategories": "Categorie",
+      "activityInterests": "Interessi",
+      "activityAvoidances": "Da evitare",
+      "intensity": "Intensità",
+      "sectionRecommendation": "Livello di raccomandazione",
+      "clear": "Cancella",
+      "field": {
+        "description": "Descrizione",
+        "address": "Indirizzo",
+        "contact_phone": "Telefono",
+        "website_url": "Sito web",
+        "opening_hours": "Orari",
+        "media_images": "Foto",
+        "is_restaurant": "Ristorante",
+        "is_accommodation": "Alloggio",
+        "is_activity": "Attività",
+        "budget_level_id": "Budget",
+        "difficulty_level_id": "Difficoltà",
+        "is_wheelchair_accessible": "Accesso per sedia a rotelle",
+        "has_accessible_parking": "Parcheggio accessibile",
+        "has_accessible_restrooms": "Servizi igienici accessibili",
+        "has_audio_guide": "Audioguida",
+        "has_sign_language_support": "Lingua dei segni",
+        "cuisine_types": "Tipi di cucina",
+        "dietary_restrictions_supported": "Opzioni alimentari",
+        "restaurant_categories": "Categorie di ristorante",
+        "culinary_adventure_level_id": "Avventura culinaria",
+        "accommodation_types": "Tipi di alloggio",
+        "accommodation_amenities": "Servizi",
+        "accommodation_locations": "Posizione",
+        "accommodation_accessibility": "Accessibilità",
+        "accommodation_security": "Sicurezza",
+        "accommodation_ambiance": "Atmosfera",
+        "activity_categories": "Categorie di attività",
+        "activity_interests": "Interessi",
+        "activity_avoidances": "Da evitare",
+        "activity_intensity_level_id": "Intensità",
+        "recommendation_level": "Livello di raccomandazione",
+        "tags": "Tag",
+        "amenities": "Servizi",
+        "name": "Nome"
+      },
+      "name": "Nome"
+    },
+    "becomePartner": "Diventa partner",
+    "becomePartnerShort": "Partner",
+    "searchPoiPlaceholder": "Cerca un luogo…",
+    "addPlace": {
+      "button": "Aggiungi un luogo",
+      "title": "Aggiungi un luogo",
+      "desc": "Come vuoi aggiungere questo luogo?",
+      "directTitle": "Inserisci il luogo",
+      "directDesc": "Aggiungi il luogo e le sue informazioni. Pubblicato dopo la convalida del nostro team.",
+      "partnerTitle": "Gestisci come partner",
+      "partnerDesc": "Diventa partner per gestire prenotazioni e tariffe della tua struttura."
+    },
+    "report": {
+      "button": "Segnala",
+      "title": "Segnala questo luogo",
+      "desc": "Segnala un problema con «{{name}}». Il luogo sarà sospeso finché un amministratore non lo verifica.",
+      "reason": "Motivo",
+      "description": "Dettagli (facoltativo)",
+      "submit": "Invia segnalazione",
+      "success": "Grazie, questo luogo è stato segnalato ed è in attesa di verifica.",
+      "error": "Impossibile inviare la segnalazione.",
+      "reasons": {
+        "spam": "Spam / pubblicità",
+        "offensive": "Contenuto offensivo",
+        "wrong_location": "Posizione errata",
+        "closed": "Chiuso / inesistente",
+        "duplicate": "Duplicato",
+        "other": "Altro"
+      }
     }
   },
   "travelStories": {
@@ -422,7 +666,12 @@
         "selectLabel": "Seleziona un itinerario",
         "selectPlaceholder": "Scegli un itinerario...",
         "generating": "Generazione in corso...",
-        "generate": "Genera storia"
+        "generate": "Genera storia",
+        "selectFirst": "Seleziona prima un itinerario per scegliere le attività.",
+        "noActivities": "Questo itinerario non prevede attività specifiche.",
+        "chooseActivities": "Scegli una o più attività da associare alla tua storia",
+        "dayShort": "J{{day}}",
+        "linkButton": "Collegare e scrivere la mia storia"
       },
       "aiInstant": {
         "title": "Generazione istantanea tramite IA",
@@ -478,7 +727,97 @@
         "loginRequired": "Devi essere loggato per creare una storia",
         "fieldsRequired": "Il titolo e il contenuto sono obbligatori",
         "createError": "Errore durante la creazione"
-      }
+      },
+      "itineraryNotFound": "Percorso non trovato",
+      "defaultTitle": "Il mio viaggio: {{title}}"
+    },
+    "card": {
+      "loginToLike": "Accedi per mettere \"Mi piace\" alle storie",
+      "likeError": "Non è possibile modificare il \"Mi piace\"",
+      "loginToBookmark": "Accedi per salvare le storie",
+      "bookmarkError": "Impossibile aggiornare il segnalibro",
+      "authorFallback": "Creato da un viaggiatore",
+      "linkTypes": {
+        "touristPoint": "Punto di interesse",
+        "itinerary": "Itinerario",
+        "activity": "Attività",
+        "accommodation": "Alloggio",
+        "restaurant": "Ristorante"
+      },
+      "private": "Privato",
+      "featured": "Motoscafo",
+      "viewDetails": "Vedi i dettagli"
+    },
+    "comments": {
+      "loadError": "Impossibile caricare i commenti",
+      "added": "Commento aggiunto!",
+      "addError": "Impossibile aggiungere il commento",
+      "title": "Commenti - {{title}}",
+      "loading": "Caricamento dei commenti in corso...",
+      "emptyTitle": "Nessun commento per il momento.",
+      "emptySubtitle": "Sii il primo a lasciare una recensione!",
+      "placeholder": "Condividi la tua opinione su questa storia...",
+      "charCount": "{{count}}/500 caratteri",
+      "sending": "Invio...",
+      "submit": "Commenta",
+      "loginToComment": "Accedi per commentare questa storia"
+    },
+    "trending": {
+      "heading": "Tendenze",
+      "timeframe24h": "24 ore",
+      "timeframe7j": "7 giorni",
+      "timeframe30j": "30 giorni",
+      "loading": "Caricamento delle tendenze...",
+      "empty": "Non sono state trovate tendenze per questo periodo"
+    },
+    "aiRecommendations": {
+      "loadError": "Al momento non è possibile caricare i suggerimenti.",
+      "loginCta": "Accedi per visualizzare i tuoi suggerimenti personalizzati",
+      "heading": "Raccomandazioni sull'IA",
+      "personalizedBadge": "Personalizzato",
+      "loading": "Analisi delle tue preferenze...",
+      "empty": "Metti \"Mi piace\" ad alcune storie per ricevere consigli personalizzati!",
+      "recommendedBadge": "Consigliato"
+    },
+    "mapTab": {
+      "heading": "Mappa interattiva",
+      "hideList": "Nascondi l'elenco",
+      "showList": "Vedi l'elenco",
+      "geoStories": "Storie geolocalizzate ({{count}})",
+      "loading": "Caricamento in corso...",
+      "empty": "Non sono state trovate storie geolocalizzate"
+    },
+    "createStory": {
+      "titleLabel": "Titolo della tua storia *",
+      "titlePlaceholder": "Un titolo accattivante per la tua esperienza...",
+      "contentLabel": "La tua storia *",
+      "contentPlaceholder": "Raccontateci la vostra esperienza, le vostre emozioni, le vostre scoperte...",
+      "locationLabel": "Luogo",
+      "locationPlaceholder": "Parigi, Francia",
+      "tripDateLabel": "Data del viaggio",
+      "chooseDate": "Scegli una data",
+      "tagsLabel": "Tag",
+      "addTagPlaceholder": "Aggiungi un tag...",
+      "linkLabel": "Collegare a elementi dell'applicazione",
+      "linkTouristPoint": "Punto di interesse",
+      "linkItinerary": "Itinerario",
+      "linkActivity": "Attività",
+      "searchPlaceholder": "Cerca...",
+      "linkedItems": "Elementi correlati:",
+      "publicLabel": "Storia pubblica",
+      "privateLabel": "Storia privata",
+      "cancel": "Annulla",
+      "creating": "Creazione...",
+      "create": "Crea la storia",
+      "loginRequired": "Devi aver effettuato l'accesso per creare una storia",
+      "fieldsRequired": "Il titolo e il contenuto sono obbligatori",
+      "createError": "Errore durante la creazione: {{msg}}"
+    },
+    "details": {
+      "authorFallback": "Creato da un viaggiatore",
+      "byAuthor": "di {{name}}",
+      "notFound": "Storia non trovata.",
+      "aiBadge": "IA"
     }
   },
   "partnerApplication": {
@@ -685,7 +1024,10 @@
     "create": "Crea",
     "search": "Cerca",
     "close": "Close",
-    "back": "Back"
+    "back": "Back",
+    "yes": "Sì",
+    "no": "No",
+    "clear": "Cancella"
   },
   "touristPoints": {
     "pageTitle": "Punti di Interesse",
@@ -1288,7 +1630,15 @@
       "flights": "Voli",
       "transfers": "Trasferimenti",
       "restaurants": "Ristoranti",
-      "activities": "Attività"
+      "activities": "Attività",
+      "tours": "Attività e visite",
+      "flightsHotels": "Voli e hotel",
+      "carRental": "Noleggio auto",
+      "publicTransport": "Autobus e treno",
+      "urban": "Trasporto urbano",
+      "esim": "Scheda eSIM",
+      "dining": "Piatti tipici",
+      "compensation": "Risarcimento per furto"
     },
     "searchHotel": "Cerca un hotel",
     "searchFlight": "Cerca un volo",
@@ -1341,7 +1691,8 @@
     "toastActivitiesFound": "{{count}} attività trovata/e",
     "toastHotelsError": "Impossibile cercare gli hotel. Controlla il codice della destinazione.",
     "toastFlightsError": "Impossibile cercare voli. Verifica i codici IATA.",
-    "toastActivitiesError": "Impossibile cercare attività. Controlla il codice di destinazione."
+    "toastActivitiesError": "Impossibile cercare attività. Controlla il codice di destinazione.",
+    "dialogTitle": "Prenota i tuoi servizi"
   },
   "savedItineraries": {
     "pageTitle": "I miei itinerari salvati",
@@ -1581,7 +1932,7 @@
   "theme": {
     "toggleLabel": "Cambia tema",
     "light": "Chiaro",
-    "dark": "Cupo",
+    "dark": "Scuro",
     "system": "Sistema"
   },
   "notifications": {
@@ -1939,7 +2290,63 @@
     "health": "Salute",
     "localCustoms": "Usanze locali",
     "customize": "Personalizza",
-    "loginToEdit": "Accedi per modificare"
+    "loginToEdit": "Accedi per modificare",
+    "enriched": {
+      "whyTitle": "Perché « {{name}} »?",
+      "thisDestination": "questa destinazione",
+      "bestTime": "Il periodo migliore per visitarla",
+      "overallRec": "Raccomandazione generale",
+      "byDestination": "Per destinazione:",
+      "bySeason": "Per stagione:",
+      "spring": "Primavera",
+      "summer": "Estate",
+      "autumn": "Autunno",
+      "winter": "Inverno",
+      "avoidPeriods": "Periodi da evitare:",
+      "visaTitle": "Visti e formalità di ingresso",
+      "requirements": "Requisiti:",
+      "processingTime": "Tempi di elaborazione",
+      "cost": "Costo approssimativo",
+      "exemptions": "Paesi esenti da visto:",
+      "entryRequirements": "Requisiti di ammissione:",
+      "healthTitle": "Salute e sicurezza",
+      "vaccinations": "Vaccinazioni:",
+      "healthTips": "Consigli per la salute:",
+      "insurance": "Assicurazione di viaggio",
+      "emergencyNumbers": "Numeri di emergenza:",
+      "safetyTips": "Consigli di sicurezza:",
+      "waterQuality": "Acqua potabile",
+      "foodSafety": "Alimentazione",
+      "emPolice": "Polizia",
+      "emMedical": "Medicina",
+      "emFire": "Vigili del fuoco",
+      "emEmbassy": "Ambasciata",
+      "emGeneral": "Pronto soccorso",
+      "dishesTitle": "Piatti da non perdere",
+      "giftsTitle": "Idee regalo e souvenir",
+      "similarTitle": "Destinazioni simili da scoprire",
+      "transportTitle": "Trasporti e spostamenti",
+      "gettingThere": "Come arrivare:",
+      "localTransport": "Trasporti locali:",
+      "metro": "Metropolitana",
+      "bus": "Autobus",
+      "taxi": "Taxi e NCC",
+      "bike": "Biciclette",
+      "walking": "A piedi",
+      "transportCards": "Abbonamenti",
+      "practicalTips": "Consigli pratici:",
+      "mustSee": "Da non perdere",
+      "mustSeeAt": "Da non perdere a {{name}}",
+      "culturalTitle": "Consigli culturali e tradizioni",
+      "eventsTitle": "Eventi e festival locali",
+      "sustainabilityTitle": "Viaggio eco-responsabile"
+    },
+    "flexibleDates": "Date flessibili",
+    "tips": "Consigli",
+    "bookServices": "Prenota",
+    "skipAd": "Vai avanti",
+    "enableSound": "Attiva l'audio",
+    "muteSound": "Disattivare l'audio"
   },
   "editor": {
     "editActivity": "Modifica l'attività",
@@ -1984,5 +2391,44 @@
     "addDay": "Aggiungi un giorno",
     "close": "Chiudi",
     "dropActivitiesHint": "Pubblica qui le attività o aggiungine una nuova"
+  },
+  "aiAssistant": {
+    "title": "Assistente di viaggio basato sull'intelligenza artificiale",
+    "subtitle": "Fate le vostre domande, vi darò consigli personalizzati su questa zona.",
+    "greeting": "Buongiorno!",
+    "intro": "Sono il vostro assistente di viaggio. Come posso aiutarvi?",
+    "suggestedLabel": "Domande suggerite:",
+    "placeholder": "Fai la tua domanda sul viaggio…",
+    "thinking": "Ci sto pensando…",
+    "personalized": "Risposta basata sui luoghi visualizzati.",
+    "errorComm": "Errore durante la comunicazione con l'assistente IA",
+    "errorReply": "Mi dispiace, sto riscontrando alcuni problemi tecnici. Si prega di riprovare.",
+    "personalizedHint": "Suggerimenti basati sull'area visualizzata e sulle tue preferenze"
+  },
+  "hotels": {
+    "stay22Title": "Alberghi e alloggi",
+    "stay22Desc": "Confronta e prenota un alloggio nei dintorni di questa zona.",
+    "stay22DescDest": "Alloggi nei dintorni di {{dest}}"
+  },
+  "flights": {
+    "title": "Voli",
+    "desc": "Confronta e prenota i tuoi voli."
+  },
+  "admin": {
+    "poiModeration": {
+      "loadError": "Errore durante il caricamento.",
+      "actionError": "Azione impossibile.",
+      "approved": "Approvato",
+      "rejected": "Respinto",
+      "noClaims": "Nessuna richiesta in sospeso.",
+      "noSuggestions": "Nessun suggerimento in sospeso."
+    },
+    "poiClaims": {
+      "title": "Rivendicazioni relative ai POI",
+      "proof": "Giustificativo"
+    },
+    "poiSuggestions": {
+      "title": "Suggerimenti per l'arricchimento"
+    }
   }
 }

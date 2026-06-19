@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Search, Navigation, Locate, Zap } from 'lucide-react';
+import { MapPin, Search, Navigation, Locate, Zap, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import SimpleInteractiveMap from './SimpleInteractiveMap';
 import { reverseGeocode } from '@/services/reverseGeocodingService';
@@ -170,7 +170,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         const result = await reverseGeocode(lat, lng);
         if (result.success) {
           onLocationSelect(lat, lng, result.address, result.city, result.country);
-          toast.success('Adresse récupérée ! 📍', { duration: 2000 });
+          toast.success('Adresse récupérée !', { duration: 2000 });
         } else {
           // Si le géocodage échoue, laisser l'adresse vide pour permettre la saisie manuelle
           onLocationSelect(lat, lng, '', undefined, undefined);
@@ -207,14 +207,14 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             toast.loading('Récupération de l\'adresse...', { id: 'reverse-geocoding' });
             const result = await reverseGeocode(lat, lng);
             onLocationSelect(lat, lng, result.address, result.city, result.country);
-            toast.success('Position et adresse récupérées ! 📍', { id: 'reverse-geocoding' });
+            toast.success('Position et adresse récupérées !', { id: 'reverse-geocoding' });
           } catch (error) {
             console.error('Erreur de géocodage inverse:', error);
             onLocationSelect(lat, lng, `Position: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-            toast.success('Position récupérée ! 📍', { id: 'reverse-geocoding' });
+            toast.success('Position récupérée !', { id: 'reverse-geocoding' });
           }
         } else if (hasAutoLocated) {
-          toast.success('Position trouvée ! 📍');
+          toast.success('Position trouvée !');
         }
         setIsLocating(false);
       },
@@ -264,7 +264,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             className="gap-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
           >
             <Locate className={`w-4 h-4 ${isLocating ? 'animate-pulse' : ''} ${userLocation ? 'text-green-500' : 'text-primary'}`} />
-            {isLocating ? 'Localisation...' : userLocation ? 'Relocalisé ✓' : 'Me localiser'}
+            {isLocating ? 'Localisation...' : userLocation ? <span className="flex items-center gap-1">Relocalisé <Check className="w-4 h-4" /></span> : 'Me localiser'}
           </Button>
         </div>
         {/* Barre de recherche stylisée */}

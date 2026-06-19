@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, AlertCircle, Clock, Target } from 'lucide-react';
+import { CheckCircle, AlertCircle, Clock, Target, Lightbulb, ClipboardList, Rocket, Search } from 'lucide-react';
 import { usePOIFormProgress } from '@/hooks/usePOIFormProgress';
 import { UnifiedPOIFormData, POIFormContext } from '@/types/poi-form';
 
@@ -115,26 +115,26 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
         {/* Messages contextuels selon le niveau */}
         <div className="pt-3 border-t">
           {context.validationLevel === 'basic' && (
-            <div className="text-xs text-muted-foreground p-2 bg-blue-50 rounded">
-              💡 <strong>Mode simplifié :</strong> Seules les informations essentielles sont requises.
+            <div className="text-xs text-muted-foreground p-2 bg-blue-50 rounded flex items-center gap-1">
+              <Lightbulb className="w-3 h-3 shrink-0" /> <span><strong>Mode simplifié :</strong> Seules les informations essentielles sont requises.</span>
             </div>
           )}
           
           {context.validationLevel === 'standard' && (
-            <div className="text-xs text-muted-foreground p-2 bg-amber-50 rounded">
-              📋 <strong>Mode standard :</strong> Ajoutez des catégories pour une meilleure visibilité.
+            <div className="text-xs text-muted-foreground p-2 bg-amber-50 rounded flex items-center gap-1">
+              <ClipboardList className="w-3 h-3 shrink-0" /> <span><strong>Mode standard :</strong> Ajoutez des catégories pour une meilleure visibilité.</span>
             </div>
           )}
           
           {context.validationLevel === 'advanced' && (
-            <div className="text-xs text-muted-foreground p-2 bg-purple-50 rounded">
-              🚀 <strong>Mode avancé :</strong> Plus de détails = meilleure expérience utilisateur.
+            <div className="text-xs text-muted-foreground p-2 bg-purple-50 rounded flex items-center gap-1">
+              <Rocket className="w-3 h-3 shrink-0" /> <span><strong>Mode avancé :</strong> Plus de détails = meilleure expérience utilisateur.</span>
             </div>
           )}
           
           {context.validationLevel === 'strict' && (
-            <div className="text-xs text-muted-foreground p-2 bg-red-50 rounded">
-              🔍 <strong>Validation stricte :</strong> Tous les champs requis doivent être complétés.
+            <div className="text-xs text-muted-foreground p-2 bg-red-50 rounded flex items-center gap-1">
+              <Search className="w-3 h-3 shrink-0" /> <span><strong>Validation stricte :</strong> Tous les champs requis doivent être complétés.</span>
             </div>
           )}
         </div>

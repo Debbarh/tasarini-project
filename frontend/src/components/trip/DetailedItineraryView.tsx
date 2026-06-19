@@ -10,7 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save, ShoppingCart, ChevronDown, ChevronUp, Euro, Sparkles, ChevronLeft, ChevronRight, Maximize2, X, Pencil } from "lucide-react";
+import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save, ShoppingCart, ChevronDown, ChevronUp, Euro, Sparkles, ChevronLeft, ChevronRight, Maximize2, X, Pencil, Lightbulb, AlertTriangle, Landmark, Siren, Camera, Sunrise, Moon, Car, PartyPopper, Globe, FileText, Languages, Cloud, HeartPulse, Drama } from "lucide-react";
 import { format } from "date-fns";
 import { getDateFnsLocale } from "@/utils/dateLocale";
 import { DetailedItinerary, UnsplashImage, ActivityImage } from "@/types/trip";
@@ -23,6 +23,7 @@ import SaveItineraryDialog from "@/components/itinerary/SaveItineraryDialog";
 import { EditableItineraryView } from "@/components/itinerary/EditableItineraryView";
 import { useNavigate } from "react-router-dom";
 import { UnifiedBookingDialog } from "@/components/booking/UnifiedBookingDialog";
+import WidgetBookingDialog, { WidgetTab } from "@/components/trip/WidgetBookingDialog";
 import { BookingItem, BookingType } from "@/types/booking";
 import { BookingEnrichmentPanel } from "./BookingEnrichmentPanel";
 import { EnrichmentOptions } from "@/services/tripEnrichmentService";
@@ -147,7 +148,7 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                       {image.description || t('itinerary.iconicView', 'Vue emblématique à ne pas manquer')}
                     </h3>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
-                      <span>📷 {image.photographer}</span>
+                      <span className="flex items-center gap-1"><Camera className="w-4 h-4" /> {image.photographer}</span>
                       {image.photographerUsername && (
                         <span className="rounded-full bg-white/15 px-3 py-1 text-xs">
                           @{image.photographerUsername}
@@ -272,7 +273,7 @@ const DestinationGallery = ({ images }: { images: GalleryImage[] }) => {
                 <p className="text-xs text-white/80">
                   {lightboxIndex !== null ? images[lightboxIndex].description || t('itinerary.inspiringSnapshot', 'Instantané inspirant') : activeImage.description || t('itinerary.inspiringSnapshot', 'Instantané inspirant')}
                 </p>
-                <p className="text-xs text-white/70">📷 {lightboxIndex !== null ? images[lightboxIndex].photographer : activeImage.photographer}</p>
+                <p className="text-xs text-white/70 flex items-center gap-1"><Camera className="w-4 h-4" /> {lightboxIndex !== null ? images[lightboxIndex].photographer : activeImage.photographer}</p>
               </div>
             </div>
           </div>
@@ -340,8 +341,18 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
   const [destinationImages, setDestinationImages] = useState<Record<string, UnsplashImage[]>>(itinerary?.destinationImages || {});
   const [isLoadingImages, setIsLoadingImages] = useState(false);
   const imagesPollingRef = useRef<NodeJS.Timeout | null>(null);
-  // Images d'activités (Wikimedia), indexées par activity.id (ou "dayNumber:index")
-  const [activityImages, setActivityImages] = useState<Record<string, ActivityImage>>({});
+  // Images d'activités (Wikimedia), indexées par activity.id (ou "dayNumber:index").
+  // Hydratées depuis l'itinéraire persisté (activity.image) pour qu'un programme
+  // rouvert/sauvegardé affiche ses images sans dépendre du cache de session.
+  const [activityImages, setActivityImages] = useState<Record<string, ActivityImage>>(() => {
+    const seed: Record<string, ActivityImage> = {};
+    (itinerary?.days || []).forEach((d: any, di: number) => {
+      (d?.activities || []).forEach((a: any, ai: number) => {
+        if (a?.image) seed[a.id || `${d.dayNumber ?? di + 1}:${ai}`] = a.image;
+      });
+    });
+    return seed;
+  });
   const activityImagesPollingRef = useRef<NodeJS.Timeout | null>(null);
 
   // Safety check for itinerary structure
@@ -379,7 +390,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
         <Card className="max-w-2xl mx-auto">
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
-              <div className="text-4xl">⚠️</div>
+              <AlertTriangle className="h-12 w-12 text-destructive mx-auto" />
               <h3 className="text-lg font-semibold">{t('itinerary.loadingErrorTitle', 'Problème de chargement')}</h3>
               <p className="text-muted-foreground">
                 {t('itinerary.loadingErrorDescription', "L'itinéraire n'a pas pu être chargé correctement. Cela peut être dû à un problème temporaire.")}
@@ -398,6 +409,10 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
   }
 
   const { trip, totalCost, practicalInfo, recommendations } = itinerary;
+  // L'utilisateur a-t-il saisi des dates EXPLICITES ? (mode 'dates' dans le stepper)
+  // Sinon → numérotation générique "Jour N" au lieu de dates calendaires.
+  const hasUserDates = Array.isArray((trip as any)?.destinations)
+    && (trip as any).destinations.some((d: any) => d?.dateMode === 'dates' && d?.startDate);
   const hasEnrichedSections = Boolean(
     itinerary.whyVisit ||
     itinerary.bestTimeToVisit ||
@@ -413,6 +428,8 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
     itinerary.sustainabilityTips
   );
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [bookingWidget, setBookingWidget] = useState<{ open: boolean; tab: WidgetTab }>({ open: false, tab: 'tours' });
+  const openBooking = (tab: WidgetTab = 'tours') => setBookingWidget({ open: true, tab });
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1]));
   const [bookingDialog, setBookingDialog] = useState<{
     isOpen: boolean;
@@ -609,15 +626,24 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
     };
   };
 
+  // Fusionne activités + galerie de destination (Unsplash) dans l'itinéraire pour
+  // tout PERSISTER (sauvegarde + réutilisation dans le PDF même après expiration
+  // du cache de session). À utiliser pour toute sauvegarde.
+  const withAllImages = (it: DetailedItinerary): DetailedItinerary => {
+    const merged = withActivityImages(it);
+    const hasDestImgs = destinationImages && Object.keys(destinationImages).length > 0;
+    return hasDestImgs ? { ...merged, destinationImages } : merged;
+  };
+
   const handleSaveItinerary = async (title: string, description?: string) => {
-    const saved = await saveItinerary(title, withActivityImages(itinerary), description);
+    const saved = await saveItinerary(title, withAllImages(itinerary), description);
     if (saved && typeof saved === 'object') setSavedId(saved.id);
     return saved;
   };
 
   // Sauvegarde depuis l'éditeur : PATCH si déjà sauvegardé, sinon POST.
   const handleEditSave = async (updated: { id: string; title: string; itinerary_data: DetailedItinerary }) => {
-    const dataWithImages = withActivityImages(updated.itinerary_data);
+    const dataWithImages = withAllImages(updated.itinerary_data);
     setLocalItinerary(dataWithImages); // reflète les modifs dans la vue lecture
     if (savedId) {
       await updateItinerary({
@@ -765,8 +791,14 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
           </p>
         </div>
         <div className="flex gap-2">
+          {!isStreaming && (
+            <Button onClick={() => openBooking('tours')}>
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              {t('itinerary.bookServices', 'Réserver')}
+            </Button>
+          )}
           {user && (
-            <Button onClick={() => setShowSaveDialog(true)}>
+            <Button variant="outline" onClick={() => setShowSaveDialog(true)}>
               <Save className="h-4 w-4 mr-2" />
               {t('itinerary.save', 'Sauvegarder')}
             </Button>
@@ -847,7 +879,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
         <Card className="overflow-hidden shadow-lg border border-border/60">
           <CardContent className="p-6">
             <div className="text-center text-muted-foreground">
-              <div className="mb-2">📸</div>
+              <div className="mb-2 flex justify-center"><Camera className="w-5 h-5" /></div>
               <p className="text-sm">{t('itinerary.loadingDestinationImages', 'Chargement des images des destinations...')}</p>
             </div>
           </CardContent>
@@ -906,12 +938,12 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                 {t('itinerary.dates', 'Dates')}
               </div>
               <p className="font-medium">
-                {trip.startDate && trip.endDate ? (
+                {hasUserDates && trip.startDate && trip.endDate ? (
                   <>
                     {format(new Date(trip.startDate), "dd MMM", { locale: dfLocale })} - {format(new Date(trip.endDate), "dd MMM yyyy", { locale: dfLocale })}
                   </>
                 ) : (
-                  t('itinerary.datesToDefine', 'Dates à définir')
+                  t('itinerary.flexibleDates', 'Dates flexibles')
                 )}
               </p>
               <p className="text-sm text-muted-foreground">
@@ -1012,7 +1044,8 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
-                        {t('itinerary.dayLabel', 'Jour {{number}}', { number: index + 1 })} - {format(new Date(day.date), "EEEE dd MMMM", { locale: dfLocale })}
+                        {t('itinerary.dayLabel', 'Jour {{number}}', { number: index + 1 })}
+                        {hasUserDates && day.date ? ` - ${format(new Date(day.date), "EEEE dd MMMM", { locale: dfLocale })}` : ''}
                       </CardTitle>
                       <div className="flex items-center gap-4 mt-2">
                         <Badge variant="outline">{day.destination}</Badge>
@@ -1095,8 +1128,9 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                               {activity.tips && activity.tips.length > 0 && (
                                 <div className="mt-2">
                                   <details className="group">
-                                    <summary className="cursor-pointer text-xs text-primary hover:text-primary/80">
-                                      💡 {t('itinerary.tipsWithCount', 'Conseils ({{count}})', { count: activity.tips.length })}
+                                    <summary className="cursor-pointer text-xs text-primary hover:text-primary/80 flex items-center gap-1">
+                                      <Lightbulb className="h-3.5 w-3.5" />
+                                      {t('itinerary.tips', 'Conseils')}
                                     </summary>
                                     <ul className="mt-1 text-xs text-muted-foreground space-y-1 pl-4">
                                       {(typeof activity.tips === 'string' ? [activity.tips] : activity.tips || []).map((tip, tipIndex) => (
@@ -1107,9 +1141,9 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                                 </div>
                               )}
 
-                              {/* Booking Button */}
+                              {/* Booking Button → popup widgets d'affiliation (onglet activités) */}
                               <Button
-                                onClick={() => handleBookActivity(activity, day.date, day.destination)}
+                                onClick={() => openBooking('tours')}
                                 className="w-full sm:w-auto mt-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md"
                                 size="sm"
                               >
@@ -1131,12 +1165,12 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                   {(day.meals?.breakfast || day.meals?.lunch || day.meals?.dinner) && (
                     <div className="space-y-4">
                       <h4 className="font-semibold flex items-center gap-2">
-                        🍽️ {t('itinerary.recommendedMeals', 'Repas recommandés')}
+                        <Utensils className="h-4 w-4" /> {t('itinerary.recommendedMeals', 'Repas recommandés')}
                       </h4>
                       <div className="grid gap-3 md:grid-cols-3">
                         {day.meals?.breakfast && (
                           <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 space-y-2">
-                            <h5 className="font-medium text-sm mb-1">🌅 {t('itinerary.breakfast', 'Petit-déjeuner')}</h5>
+                            <h5 className="font-medium text-sm mb-1 flex items-center gap-1.5"><Sunrise className="h-3.5 w-3.5" /> {t('itinerary.breakfast', 'Petit-déjeuner')}</h5>
                             <p className="text-sm">
                               <TypedText text={day.meals.breakfast.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
                             </p>
@@ -1149,7 +1183,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                               />
                             </p>
                             <Button
-                              onClick={() => handleBookMeal(day.meals.breakfast, 'breakfast', day.date, day.destination)}
+                              onClick={() => openBooking('dining')}
                               className="w-full mt-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-sm"
                               size="sm"
                             >
@@ -1160,7 +1194,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                         )}
                         {day.meals?.lunch && (
                           <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 space-y-2">
-                            <h5 className="font-medium text-sm mb-1">☀️ {t('itinerary.lunch', 'Déjeuner')}</h5>
+                            <h5 className="font-medium text-sm mb-1 flex items-center gap-1.5"><Sun className="h-3.5 w-3.5" /> {t('itinerary.lunch', 'Déjeuner')}</h5>
                             <p className="text-sm">
                               <TypedText text={day.meals.lunch.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
                             </p>
@@ -1173,7 +1207,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                               />
                             </p>
                             <Button
-                              onClick={() => handleBookMeal(day.meals.lunch, 'lunch', day.date, day.destination)}
+                              onClick={() => openBooking('dining')}
                               className="w-full mt-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-sm"
                               size="sm"
                             >
@@ -1184,7 +1218,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                         )}
                         {day.meals?.dinner && (
                           <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 space-y-2">
-                            <h5 className="font-medium text-sm mb-1">🌙 {t('itinerary.dinner', 'Dîner')}</h5>
+                            <h5 className="font-medium text-sm mb-1 flex items-center gap-1.5"><Moon className="h-3.5 w-3.5" /> {t('itinerary.dinner', 'Dîner')}</h5>
                             <p className="text-sm">
                               <TypedText text={day.meals.dinner.title || ''} isStreaming={isStreaming} delay={40} speed={2} />
                             </p>
@@ -1197,7 +1231,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                               />
                             </p>
                             <Button
-                              onClick={() => handleBookMeal(day.meals.dinner, 'dinner', day.date, day.destination)}
+                              onClick={() => openBooking('dining')}
                               className="w-full mt-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-sm"
                               size="sm"
                             >
@@ -1216,7 +1250,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                       <Separator className="my-6" />
                       <div className="space-y-4">
                         <h4 className="font-semibold flex items-center gap-2">
-                          🚗 {t('itinerary.transport', 'Transport')}
+                          <Car className="w-4 h-4" /> {t('itinerary.transport', 'Transport')}
                         </h4>
                         <div className="space-y-2">
                           <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
@@ -1328,7 +1362,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🍽️ {t('itinerary.specialtiesToDiscover', 'Spécialités à découvrir')}
+                    <Utensils className="h-4 w-4" /> {t('itinerary.specialtiesToDiscover', 'Spécialités à découvrir')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1356,7 +1390,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🎁 {t('itinerary.giftIdeas', 'Idées souvenirs')}
+                    <Gift className="w-5 h-5" /> {t('itinerary.giftIdeas', 'Idées souvenirs')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1384,7 +1418,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🎒 {t('itinerary.packingList', 'Liste de voyage')}
+                    <Backpack className="w-5 h-5" /> {t('itinerary.packingList', 'Liste de voyage')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1405,7 +1439,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🏛️ {t('itinerary.culturalTips', 'Conseils culturels')}
+                    <Landmark className="h-4 w-4" /> {t('itinerary.culturalTips', 'Conseils culturels')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1455,7 +1489,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🎪 {t('itinerary.localEvents', 'Événements locaux')}
+                    <PartyPopper className="w-5 h-5" /> {t('itinerary.localEvents', 'Événements locaux')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1483,7 +1517,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    🚗 {t('itinerary.transportTips', 'Conseils transport')}
+                    <Car className="w-5 h-5" /> {t('itinerary.transportTips', 'Conseils transport')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1556,7 +1590,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  🌍 {t('itinerary.similarDestinations', 'Destinations similaires')}
+                  <Globe className="w-5 h-5" /> {t('itinerary.similarDestinations', 'Destinations similaires')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1583,7 +1617,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
               <Card key={destination}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    ℹ️ {destination}
+                    <Info className="w-4 h-4" /> {destination}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1591,7 +1625,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                     {info.visa && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          📄 {t('itinerary.visaAndDocuments', 'Visa & Documents')}
+                          <FileText className="w-4 h-4" /> {t('itinerary.visaAndDocuments', 'Visa & Documents')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.visa}</p>
                       </div>
@@ -1600,7 +1634,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                     {info.currency && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          💰 {t('itinerary.currency', 'Monnaie')}
+                          <Wallet className="w-4 h-4" /> {t('itinerary.currency', 'Monnaie')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.currency}</p>
                       </div>
@@ -1609,7 +1643,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                     {info.language && info.language.length > 0 && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🗣️ {t('itinerary.languages', 'Langues')}
+                          <Languages className="w-4 h-4" /> {t('itinerary.languages', 'Langues')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.language.join(', ')}</p>
                       </div>
@@ -1618,7 +1652,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                     {info.climate && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🌤️ {t('itinerary.climate', 'Climat')}
+                          <Cloud className="w-4 h-4" /> {t('itinerary.climate', 'Climat')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.climate}</p>
                       </div>
@@ -1627,7 +1661,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                     {info.emergency && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🚨 {t('itinerary.emergencies', 'Urgences')}
+                          <Siren className="h-4 w-4" /> {t('itinerary.emergencies', 'Urgences')}
                         </h4>
                         <p className="text-sm text-muted-foreground">{info.emergency}</p>
                       </div>
@@ -1636,7 +1670,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                     {info.health && info.health.length > 0 && (
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🏥 {t('itinerary.health', 'Santé')}
+                          <HeartPulse className="w-4 h-4" /> {t('itinerary.health', 'Santé')}
                         </h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
                           {info.health.map((healthItem, index) => (
@@ -1655,7 +1689,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                       <Separator className="my-4" />
                       <div className="space-y-2">
                         <h4 className="font-medium flex items-center gap-2">
-                          🎭 {t('itinerary.localCustoms', 'Coutumes locales')}
+                          <Drama className="w-4 h-4" /> {t('itinerary.localCustoms', 'Coutumes locales')}
                         </h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
                           {info.customs.map((custom, index) => (
@@ -1690,13 +1724,20 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
         onSave={handleSaveItinerary}
       />
 
-      {/* Dialog de réservation */}
+      {/* Dialog de réservation (centrale interne, si activée) */}
       <UnifiedBookingDialog
         isOpen={bookingDialog.isOpen}
         onClose={() => setBookingDialog(prev => ({ ...prev, isOpen: false }))}
         item={bookingDialog.item}
         bookingType={bookingDialog.type}
         defaultDates={bookingDialog.dates}
+      />
+
+      {/* Popup widgets de réservation (affiliation) — compact, iframe à la demande */}
+      <WidgetBookingDialog
+        open={bookingWidget.open}
+        onOpenChange={(o) => setBookingWidget(prev => ({ ...prev, open: o }))}
+        defaultTab={bookingWidget.tab}
       />
 
       {/* Éditeur de programme (overlay plein écran) */}

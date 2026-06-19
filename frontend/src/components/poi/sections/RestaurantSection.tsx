@@ -6,6 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { UnifiedPOIFormData } from '@/types/poi-form';
 import { useCulinarySettings } from '@/hooks/useCulinarySettings';
+import { useTranslation } from 'react-i18next';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
+import { getLocalizedLabel } from '@/utils/multilingualHelpers';
 
 interface RestaurantSectionProps {
   formData: UnifiedPOIFormData;
@@ -25,6 +28,7 @@ export const RestaurantSection: React.FC<RestaurantSectionProps> = ({
     adventureLevels,
     loading
   } = useCulinarySettings();
+  const { i18n } = useTranslation();
 
   const handleCuisineTypeToggle = (cuisineType: string) => {
     const updated = formData.cuisine_types.includes(cuisineType)
@@ -111,7 +115,7 @@ export const RestaurantSection: React.FC<RestaurantSectionProps> = ({
                     className="cursor-pointer"
                     onClick={() => handleDietaryRestrictionToggle(restriction.code)}
                   >
-                    {restriction.icon_emoji} {restriction.label_fr}
+                    <TaxonomyIcon iconName={restriction.icon_name} code={restriction.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(restriction, i18n.language) || restriction.label_fr}
                     {formData.dietary_restrictions_supported.includes(restriction.code) && (
                       <X className="ml-1 h-3 w-3" />
                     )}
@@ -134,7 +138,7 @@ export const RestaurantSection: React.FC<RestaurantSectionProps> = ({
                     }`}
                   >
                     <div className="text-sm font-medium flex items-center gap-2">
-                      {category.icon_emoji} {category.label_fr}
+                      <TaxonomyIcon iconName={category.icon_name} code={category.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(category, i18n.language) || category.label_fr}
                     </div>
                     {category.price_range_min && category.price_range_max && (
                       <div className="text-xs text-muted-foreground">

@@ -9,6 +9,9 @@ import { Plus, X } from 'lucide-react';
 import { UnifiedPOIFormData } from '@/types/poi-form';
 import { useBudgetSettings } from '@/hooks/useBudgetSettings';
 import { TagsAutocomplete } from './TagsAutocomplete';
+import { useTranslation } from 'react-i18next';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
+import { getLocalizedLabel } from '@/utils/multilingualHelpers';
 
 interface CategorizationSectionProps {
   formData: UnifiedPOIFormData;
@@ -44,6 +47,7 @@ export const CategorizationSection: React.FC<CategorizationSectionProps> = ({
   errors
 }) => {
   const { budgetLevels, loading } = useBudgetSettings();
+  const { i18n } = useTranslation();
   const [newCategory, setNewCategory] = useState('');
 
   const handleAddTag = (tag: string) => {
@@ -176,7 +180,7 @@ export const CategorizationSection: React.FC<CategorizationSectionProps> = ({
                   }`}
                 >
                   <div className="text-sm font-medium flex items-center gap-2">
-                    {level.icon_emoji} {level.label_fr}
+                    <TaxonomyIcon iconName={level.icon_name} code={level.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(level, i18n.language) || level.label_fr}
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {level.default_daily_amount}€/jour

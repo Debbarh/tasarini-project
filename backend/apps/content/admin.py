@@ -24,4 +24,4 @@ class StoryCommentAdmin(admin.ModelAdmin):
 
 @admin.register(StoryMedia)
 class StoryMediaAdmin(admin.ModelAdmin):
-    list_display = ('story', 'caption')
+    list_display = ('story', 'media_type', 'original_filename', 'processing_status', 'created_at')

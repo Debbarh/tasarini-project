@@ -33,6 +33,7 @@ import {
   calculateNights,
   formatDate
 } from '@/utils/hotelUtils';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
 
 interface HotelDetailsDialogProps {
   isOpen: boolean;
@@ -252,7 +253,7 @@ export const HotelDetailsDialog: React.FC<HotelDetailsDialogProps> = ({
                         {facilities.map((category, idx) => (
                           <div key={idx}>
                             <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                              <span className="text-2xl">{category.icon}</span>
+                              <TaxonomyIcon iconName={category.icon} className="w-6 h-6 text-primary" />
                               {category.label}
                             </h3>
                             <ul className="space-y-2">

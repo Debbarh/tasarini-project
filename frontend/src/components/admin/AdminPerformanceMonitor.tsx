@@ -149,7 +149,7 @@ export const AdminPerformanceMonitor: React.FC = () => {
 
         {/* Optimizations Summary */}
         <div className="bg-muted/50 p-4 rounded-lg">
-          <h4 className="font-medium mb-2">✅ Optimisations Actives</h4>
+          <h4 className="font-medium mb-2 flex items-center"><CheckCircle className="w-4 h-4 mr-1" /> Optimisations Actives</h4>
           <ul className="text-sm space-y-1 text-muted-foreground">
             <li>• Cache intelligent React Query (5-10 min)</li>
             <li>• Lazy loading des composants admin</li>

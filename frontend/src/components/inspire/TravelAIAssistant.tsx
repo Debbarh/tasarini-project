@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Bot, Send, Loader2, Sparkles } from 'lucide-react';
+import { Bot, Send, Loader2, Sparkles, Hand } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { travelAssistantService } from '@/services/travelAssistantService';
 
@@ -17,13 +18,16 @@ interface AIMessage {
 interface TravelAIAssistantProps {
   children: React.ReactNode;
   initialContext?: string;
+  suggestions?: string[];
 }
 
 export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
   children,
-  initialContext
+  initialContext,
+  suggestions
 }) => {
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<AIMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
@@ -43,7 +47,7 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
     setLoading(true);
 
     try {
-      const data = await travelAssistantService.ask(userMessage.content, user?.id, initialContext);
+      const data = await travelAssistantService.ask(userMessage.content, user?.id, initialContext, i18n.language);
 
       const aiMessage: AIMessage = {
         role: 'assistant',
@@ -54,16 +58,16 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
       setMessages(prev => [...prev, aiMessage]);
 
       if (data.hasUserContext) {
-        toast.success('Réponse personnalisée basée sur vos préférences !');
+        toast.success(t('aiAssistant.personalized', 'Réponse basée sur les lieux affichés.'));
       }
 
     } catch (error: any) {
       console.error('Erreur IA:', error);
-      toast.error('Erreur lors de la communication avec l\'assistant IA');
-      
+      toast.error(t('aiAssistant.errorComm', "Erreur lors de la communication avec l'assistant IA"));
+
       const errorMessage: AIMessage = {
         role: 'assistant',
-        content: 'Désolé, je rencontre des difficultés techniques. Veuillez réessayer.',
+        content: t('aiAssistant.errorReply', 'Désolé, je rencontre des difficultés techniques. Veuillez réessayer.'),
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -79,12 +83,13 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
     }
   };
 
-  const suggestedQuestions = [
-    "Quels sont les meilleurs spots cachés à Paris ?",
-    "Créé-moi un itinéraire d'une journée pour découvrir Montmartre",
-    "Quels restaurants locaux me recommandes-tu ?",
-    "Comment optimiser mon budget pour visiter cette ville ?",
-    "Quelles activités conviennent le mieux aux familles ?"
+  // Suggestions contextuelles (fournies par le parent selon la zone affichée) sinon génériques.
+  const suggestedQuestions = (suggestions && suggestions.length > 0) ? suggestions : [
+    "Quels sont les incontournables dans cette zone ?",
+    "Compose-moi un itinéraire d'une journée avec ces lieux",
+    "Quels restaurants locaux me recommandes-tu ici ?",
+    "Propose-moi une demi-journée culturelle dans ce rayon",
+    "Quelles activités conviennent le mieux aux familles ici ?"
   ];
 
   return (
@@ -96,11 +101,11 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-primary" />
-            Assistant IA de Voyage
+            {t('aiAssistant.title', 'Assistant de voyage IA')}
             <Sparkles className="w-4 h-4 text-yellow-500" />
           </DialogTitle>
           <DialogDescription>
-            Posez-moi des questions sur vos voyages, je vous donnerai des conseils personnalisés !
+            {t('aiAssistant.subtitle', 'Posez vos questions, je vous donne des conseils personnalisés sur cette zone.')}
           </DialogDescription>
         </DialogHeader>
 
@@ -110,14 +115,14 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
             {messages.length === 0 ? (
               <div className="text-center py-8">
                 <Bot className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="font-semibold mb-2">Bonjour ! 👋</h3>
+                <h3 className="font-semibold mb-2 flex items-center justify-center gap-1">{t('aiAssistant.greeting', 'Bonjour !')} <Hand className="w-4 h-4" /></h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Je suis votre assistant IA de voyage. Comment puis-je vous aider aujourd'hui ?
+                  {t('aiAssistant.intro', 'Je suis votre assistant de voyage. Comment puis-je vous aider ?')}
                 </p>
-                
+
                 {/* Questions suggérées */}
                 <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">Questions suggérées :</p>
+                  <p className="text-xs text-muted-foreground">{t('aiAssistant.suggestedLabel', 'Questions suggérées :')}</p>
                   <div className="flex flex-wrap gap-2">
                     {suggestedQuestions.slice(0, 3).map((question, index) => (
                       <Button
@@ -170,7 +175,7 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
                       <Bot className="w-4 h-4 text-primary" />
                       <Loader2 className="w-4 h-4 animate-spin" />
                       <span className="text-sm text-muted-foreground">
-                        Je réfléchis...
+                        {t('aiAssistant.thinking', 'Je réfléchis…')}
                       </span>
                     </div>
                   </CardContent>
@@ -185,7 +190,7 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
               value={currentMessage}
               onChange={(e) => setCurrentMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Posez votre question sur le voyage..."
+              placeholder={t('aiAssistant.placeholder', 'Posez votre question sur le voyage…')}
               className="flex-1"
               rows={2}
               disabled={loading}
@@ -205,8 +210,8 @@ export const TravelAIAssistant: React.FC<TravelAIAssistantProps> = ({
           </div>
 
           {user && (
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              ✨ Conseils personnalisés basés sur vos préférences
+            <p className="text-xs text-muted-foreground mt-2 text-center flex items-center justify-center gap-1">
+              <Sparkles className="w-3 h-3" /> {t('aiAssistant.personalizedHint', 'Conseils basés sur la zone affichée et vos préférences')}
             </p>
           )}
         </div>

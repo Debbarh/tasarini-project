@@ -49,7 +49,7 @@ def lt_one(text):
 targets = {l: [] for l in LANGS}  # lang -> list of (obj, fieldname, src)
 for model in dj.get_app_config('poi').get_models():
     fields = {f.name for f in model._meta.get_fields() if hasattr(f, 'name')}
-    for base in ('label', 'name'):
+    for base in ('label', 'name', 'description'):
         if f'{base}_fr' in fields and any(f'{base}_{l}' in fields for l in LANGS):
             for obj in model.objects.all():
                 src = (getattr(obj, f'{base}_fr', None) or getattr(obj, base, None) or '').strip()
@@ -59,7 +59,7 @@ for model in dj.get_app_config('poi').get_models():
                     fld = f'{base}_{l}'
                     if fld in fields and not (getattr(obj, fld, None) or '').strip():
                         targets[l].append((obj, fld, src))
-            break
+            # pas de break : on traite label/name ET description
 
 total = sum(len(v) for v in targets.values())
 print(f'Champs à remplir: {total}')

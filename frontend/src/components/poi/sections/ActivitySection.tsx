@@ -9,6 +9,7 @@ import { X } from 'lucide-react';
 import { UnifiedPOIFormData } from '@/types/poi-form';
 import { useActivitySettings } from '@/hooks/useActivitySettings';
 import { getLocalizedDescription, getLocalizedLabel } from '@/utils/multilingualHelpers';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
 
 interface ActivitySectionProps {
   formData: UnifiedPOIFormData;
@@ -81,7 +82,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                     }`}
                   >
                     <div className="text-sm font-medium flex items-center gap-2">
-                      {category.icon_emoji} {getLocalizedLabel(category, i18n.language)}
+                      <TaxonomyIcon iconName={category.icon_name} code={category.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(category, i18n.language)}
                     </div>
                     {getLocalizedDescription(category, i18n.language) && (
                       <div className="text-xs text-muted-foreground mt-1">
@@ -110,7 +111,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                     }`}
                   >
                     <div className="text-sm font-medium flex items-center gap-2">
-                      {level.icon_emoji} {getLocalizedLabel(level, i18n.language)}
+                      <TaxonomyIcon iconName={level.icon_name} code={level.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(level, i18n.language)}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {getLocalizedDescription(level, i18n.language)}

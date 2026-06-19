@@ -67,110 +67,102 @@ LOCATION_NAMES_DICT = {
 }
 
 
-def translate_text(text, source_lang='en', target_lang='fr', is_location=False):
-    """
-    Traduit un texte via DeepL API
+# --- Moteur de traduction unifié : translategemma:4b via Ollama (remplace DeepL) ---
+import re as _re
 
-    Args:
-        text: Le texte à traduire
-        source_lang: Langue source (code ISO)
-        target_lang: Langue cible (code ISO)
-        is_location: Si True, vérifie d'abord dans le dictionnaire manuel pour les noms de lieux connus
-    """
+_LANG_NAME = {
+    'fr': 'French', 'en': 'English', 'es': 'Spanish', 'de': 'German', 'it': 'Italian',
+    'pt': 'Portuguese', 'ru': 'Russian', 'ja': 'Japanese', 'zh': 'Chinese', 'ar': 'Arabic', 'hi': 'Hindi',
+}
+_TARGET_SCRIPT = {
+    'fr': 'latin', 'en': 'latin', 'es': 'latin', 'de': 'latin', 'it': 'latin', 'pt': 'latin',
+    'ru': 'cyrillic', 'ja': 'cjk', 'zh': 'cjk', 'ar': 'arabic', 'hi': 'devanagari',
+}
+
+
+def _char_script(ch):
+    o = ord(ch)
+    if (0x41 <= o <= 0x24F) or (0x1E00 <= o <= 0x1EFF):
+        return 'latin'
+    if (0x600 <= o <= 0x6FF) or (0x750 <= o <= 0x77F):
+        return 'arabic'
+    if 0x400 <= o <= 0x4FF:
+        return 'cyrillic'
+    if (0x4E00 <= o <= 0x9FFF) or (0x3040 <= o <= 0x30FF):
+        return 'cjk'
+    if 0x900 <= o <= 0x97F:
+        return 'devanagari'
+    return 'other'
+
+
+def _foreign_fraction(text, target_lang):
+    """Fraction de lettres dont le script DIFFÈRE de celui de la langue cible.
+    0 = texte entièrement dans le script cible (nom propre déjà lisible → on garde)."""
+    target = _TARGET_SCRIPT.get(target_lang)
+    if not target:
+        return 1.0
+    total = foreign = 0
+    for ch in text:
+        if not ch.isalpha():
+            continue
+        total += 1
+        if _char_script(ch) != target:
+            foreign += 1
+    return (foreign / total) if total else 0.0
+
+
+def _clean_translation(out):
+    if not out:
+        return None
+    out = out.replace('**', '').strip()
+    if len(out) >= 2 and out[0] in '"«“' and out[-1] in '"»”':
+        out = out[1:-1].strip()
+    out = _re.sub(r'^(translation|traduction|traducción|übersetzung)\s*[:\-]\s*', '', out, flags=_re.I).strip()
+    return out or None
+
+
+def translate_via_ollama(text, target_lang):
+    """Traduit `text` vers `target_lang` via translategemma:4b (Ollama). None si échec."""
+    lang_name = _LANG_NAME.get(target_lang, target_lang)
+    base = getattr(settings, 'OLLAMA_API_BASE', 'http://ollama:11434')
+    model = getattr(settings, 'TRANSLATION_OLLAMA_MODEL', 'translategemma:4b')
+    prompt = (
+        f"Translate the following text to {lang_name}. Reply with ONLY the translated "
+        f"text - no explanation, no alternatives, no quotes, no notes.\n\n{text}"
+    )
     try:
-        # Vérifier d'abord dans le dictionnaire manuel pour les noms de lieux connus
-        if is_location:
-            text_normalized = text.lower().strip()
-            if text_normalized in LOCATION_NAMES_DICT:
-                dict_entry = LOCATION_NAMES_DICT[text_normalized]
-                if target_lang in dict_entry:
-                    translated = dict_entry[target_lang]
-                    logger.info(
-                        "DeepL: Found '%s' in location dictionary for %s: %s",
-                        text,
-                        target_lang,
-                        translated
-                    )
-                    return translated
-
-        # Utiliser DeepL pour la traduction
-        from django.conf import settings
-        import deepl
-
-        api_key = settings.DEEPL_API_KEY
-        if not api_key:
-            logger.error("DeepL API key not configured")
-            return None
-
-        # Mapping des codes de langue pour DeepL
-        # DeepL utilise des codes différents pour source et target
-        # Source languages: codes simples (EN, FR, DE, etc.)
-        deepl_source_lang_map = {
-            'en': 'EN',
-            'fr': 'FR',
-            'es': 'ES',
-            'de': 'DE',
-            'it': 'IT',
-            'pt': 'PT',
-            'ru': 'RU',
-            'ja': 'JA',
-            'zh': 'ZH',
-            'ar': 'AR',
-            'hi': 'EN',  # Fallback to EN since DeepL doesn't support Hindi
-        }
-
-        # Target languages: codes avec variantes (EN-US, PT-PT, etc.)
-        deepl_target_lang_map = {
-            'en': 'EN-US',
-            'fr': 'FR',
-            'es': 'ES',
-            'de': 'DE',
-            'it': 'IT',
-            'pt': 'PT-PT',
-            'ru': 'RU',
-            'ja': 'JA',
-            'zh': 'ZH',
-            'ar': 'AR',
-            'hi': 'HI',  # Will fail, but kept for completeness
-        }
-
-        source_deepl = deepl_source_lang_map.get(source_lang, source_lang.upper())
-        target_deepl = deepl_target_lang_map.get(target_lang, target_lang.upper())
-
-        logger.info(
-            "DeepL: translating text='%s...' from %s to %s",
-            text[:50],
-            source_deepl,
-            target_deepl,
+        resp = requests.post(
+            f"{base}/api/generate",
+            json={'model': model, 'prompt': prompt, 'stream': False, 'options': {'temperature': 0}},
+            timeout=getattr(settings, 'TRANSLATION_TIMEOUT', 90),
         )
-
-        translator = deepl.Translator(api_key)
-
-        # Pour les noms propres (locations), utiliser preserve_formatting pour garder la casse
-        result = translator.translate_text(
-            text,
-            source_lang=source_deepl if source_lang != 'auto' else None,
-            target_lang=target_deepl,
-            preserve_formatting=is_location,
-            tag_handling='xml' if not is_location else None
-        )
-
-        translated = result.text
-
-        logger.info(
-            "DeepL: success from %s to %s -> %s",
-            source_lang,
-            target_lang,
-            translated,
-        )
-        return translated
-
-    except deepl.DeepLException as e:
-        logger.error("DeepL API error: %s", str(e))
+        resp.raise_for_status()
+        out = (resp.json().get('response') or '').strip()
+    except Exception as exc:  # noqa: BLE001 - résilient
+        logger.warning("Ollama translate failed (%s): %s", target_lang, exc)
         return None
-    except Exception as e:
-        logger.exception("Error translating to %s: %s", target_lang, e)
-        return None
+    return _clean_translation(out)
+
+
+def translate_text(text, source_lang='en', target_lang='fr', is_location=False):
+    """Traduit un texte via translategemma:4b (Ollama). Même signature qu'avant.
+
+    is_location=True (noms de lieux / adresses) : raccourci dictionnaire, ET on NE traduit
+    PAS si le texte est déjà dans le script de la langue cible (évite de corrompre un nom
+    propre déjà lisible, ex. « Mosquée El Takwa » en français). Les descriptions
+    (is_location=False) sont toujours traduites. Renvoie l'original si la traduction échoue.
+    """
+    if not text or not str(text).strip():
+        return text
+    text = str(text)
+    if is_location:
+        entry = LOCATION_NAMES_DICT.get(text.lower().strip())
+        if entry and target_lang in entry:
+            return entry[target_lang]
+        if _foreign_fraction(text, target_lang) < 0.25:
+            return text  # nom propre quasi entièrement dans le script cible → on garde tel quel
+    translated = translate_via_ollama(text, target_lang)
+    return translated or text
 
 
 def fill_missing_translations(obj, base_name_field='name'):

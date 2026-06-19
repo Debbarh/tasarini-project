@@ -8,6 +8,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView
 
+from apps.accounts.oauth_views import OAuthLoginView, OAuthCallbackView
 from apps.accounts.views import (
     AdminAuditLogViewSet,
     AdminDashboardView,
@@ -52,6 +53,7 @@ from apps.analytics.views import (
     BeInspiredAIStatsView,
 )
 from apps.media.views import MediaDeleteView, MediaUploadView
+from apps.poi.external_views import ExternalPOIListView, ExternalPOIImportView, POIImageView, POIEnrichView
 from apps.poi.views import (
     ActivityAvoidanceViewSet,
     ActivityCategoryViewSet,
@@ -83,6 +85,10 @@ from apps.poi.views import (
     AccommodationAmbianceViewSet,
     FavoriteTouristPointViewSet,
     TouristPointReviewViewSet,
+    POIClaimViewSet,
+    POISuggestionViewSet,
+    POIReportViewSet,
+    TranslationCronView,
     ActivityMetadataCollectionView,
     ActivityMetadataDetailView,
     AccommodationMetadataCollectionView,
@@ -179,6 +185,9 @@ router.register('poi/conversations', POIConversationViewSet, basename='poiconver
 router.register('poi/media', POIMediaViewSet, basename='poi-media')
 router.register('poi/favorites', FavoriteTouristPointViewSet, basename='poi-favorite')
 router.register('poi/reviews', TouristPointReviewViewSet, basename='poi-review')
+router.register('poi/claims', POIClaimViewSet, basename='poi-claim')
+router.register('poi/suggestions', POISuggestionViewSet, basename='poi-suggestion')
+router.register('poi/reports', POIReportViewSet, basename='poi-report')
 router.register('partners/profiles', PartnerProfileViewSet, basename='partnerprofile')
 router.register('partners/applications', PartnerApplicationViewSet, basename='partnerapplication')
 router.register('partners/notifications', PartnerNotificationViewSet , basename='partnernotification')
@@ -212,7 +221,9 @@ router.register('admin/api-providers', APIProviderViewSet, basename='api-provide
 router.register('admin/widgets', WidgetViewSet, basename='widget')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Admin Django déplacé hors de /admin/ (réservé au panel React) vers une URL secrète,
+    # elle-même restreinte aux IP du Maroc côté nginx (+ login Django). Triple barrière.
+    path('ops-console-7q9x3m/', admin.site.urls),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='api-docs'),
     path('api/token/', EmailTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -245,6 +256,9 @@ urlpatterns = [
     path('api/v1/accounts/delete-account/', DeleteAccountView.as_view(), name='delete-account'),
     path('api/v1/media/upload/', MediaUploadView.as_view(), name='media-upload'),
     path('api/v1/media/delete/', MediaDeleteView.as_view(), name='media-delete'),
+    # Doit précéder le router : sinon `stories/generate/` est capté par le détail
+    # du StoryViewSet (pk='generate') → POST renvoie 405.
+    path('api/v1/stories/generate/', StoryGenerationView.as_view(), name='story-generate'),
     path('api/v1/', include(router.urls)),
     path('api/v1/admin/dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
     path('api/v1/admin/permissions/', AdminPermissionsView.as_view(), name='admin-permissions'),
@@ -256,6 +270,10 @@ urlpatterns = [
     path('api/v1/analytics/be-inspired/pois/', BeInspiredPOIStatsView.as_view(), name='be-inspired-pois'),
     path('api/v1/analytics/be-inspired/users/', BeInspiredUserActivityView.as_view(), name='be-inspired-users'),
     path('api/v1/analytics/be-inspired/ai/', BeInspiredAIStatsView.as_view(), name='be-inspired-ai'),
+    path('api/v1/poi/external/', ExternalPOIListView.as_view(), name='poi-external-list'),
+    path('api/v1/poi/external/import/', ExternalPOIImportView.as_view(), name='poi-external-import'),
+    path('api/v1/poi/image/', POIImageView.as_view(), name='poi-image'),
+    path('api/v1/poi/enrich/', POIEnrichView.as_view(), name='poi-enrich'),
     path(
         'api/v1/poi/tourist-points/<uuid:pk>/activity/<str:section>/',
         ActivityMetadataCollectionView.as_view(),
@@ -293,11 +311,14 @@ urlpatterns = [
     path('api/v1/travel/activity-images/', ActivityImagesView.as_view(), name='travel-activity-images'),
     path('api/v1/travel/assistant/', TravelAIAssistantView.as_view(), name='travel-assistant'),
     path('api/v1/travel/smart-recommendations/', SmartRecommendationsView.as_view(), name='travel-smart-recommendations'),
+    path('api/v1/poi/translation-cron/', TranslationCronView.as_view(), name='poi-translation-cron'),
+    # OAuth social (Google / Facebook) — login redirige vers le fournisseur, callback émet le JWT.
+    path('api/v1/auth/<str:provider>/login/', OAuthLoginView.as_view(), name='oauth-login'),
+    path('api/v1/auth/<str:provider>/callback/', OAuthCallbackView.as_view(), name='oauth-callback'),
     path('api/v1/travel/amadeus/', AmadeusProxyView.as_view(), name='travel-amadeus'),
     path('api/v1/travel/hotelbeds/', HotelBedsProxyView.as_view(), name='travel-hotelbeds'),
     path('api/v1/travel/kayak/<str:endpoint>/', KayakProxyView.as_view(), name='travel-kayak'),
     path('api/v1/partners/subscriptions/checkout/', PartnerSubscriptionCheckoutView.as_view(), name='partner-subscription-checkout'),
-    path('api/v1/stories/generate/', StoryGenerationView.as_view(), name='story-generate'),
     path('api/v1/content/check-spam/', SpamCheckView.as_view(), name='check-spam'),
 ]
 

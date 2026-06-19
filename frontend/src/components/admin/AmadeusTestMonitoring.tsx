@@ -14,7 +14,8 @@ import {
   Globe, 
   Settings,
   TrendingUp,
-  Zap
+  Zap,
+  FlaskConical
 } from 'lucide-react';
 import { amadeusTestEnhancer } from '@/services/amadeusTestEnhancer';
 import { cacheService } from '@/services/cacheService';
@@ -60,8 +61,8 @@ export const AmadeusTestMonitoring = () => {
             Surveillance et configuration des APIs de test
           </p>
         </div>
-        <Badge variant="outline" className="text-sm">
-          🧪 Mode Test
+        <Badge variant="outline" className="text-sm inline-flex items-center gap-1">
+          <FlaskConical className="w-4 h-4" /> Mode Test
         </Badge>
       </div>
 

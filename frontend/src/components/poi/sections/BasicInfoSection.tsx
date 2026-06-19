@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { MapPin } from 'lucide-react';
 import { UnifiedPOIFormData } from '@/types/poi-form';
 
 interface BasicInfoSectionProps {
@@ -22,7 +23,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <span>📍</span>
+          <MapPin className="w-5 h-5" />
           Informations de base
           {required && <span className="text-destructive">*</span>}
         </CardTitle>

@@ -56,6 +56,15 @@ const PlanTrip = () => {
         setGeneratedItinerary(JSON.parse(pending));
       } catch { /* JSON invalide : on ignore */ }
       sessionStorage.removeItem('tasarini_pending_itinerary');
+      return;
+    }
+    // Restaurer le dernier programme généré (survit à un rechargement / remontage,
+    // notamment sur mobile où un reload renverrait sinon au 1er step du wizard).
+    const last = sessionStorage.getItem('tasarini_last_generated');
+    if (last) {
+      try {
+        setGeneratedItinerary(JSON.parse(last));
+      } catch { /* ignore */ }
     }
   }, []);
 
@@ -63,12 +72,13 @@ const PlanTrip = () => {
   useEffect(() => {
     if (streamingState.itinerary && !streamingState.isStreaming && !streamingState.error) {
       setGeneratedItinerary(streamingState.itinerary);
+      try { sessionStorage.setItem('tasarini_last_generated', JSON.stringify(streamingState.itinerary)); } catch { /* quota */ }
       setIsLoading(false);
       setShowAdvertisement(false);
 
       toast({
         title: t('planTrip.itineraryGenerated'),
-        description: "Itinéraire généré avec streaming en temps réel ⚡",
+        description: "Itinéraire généré avec streaming en temps réel",
       });
     }
 
@@ -207,6 +217,7 @@ const PlanTrip = () => {
           itinerary={streamingState.partialItinerary}
           onStartOver={() => {
             cancelStreaming();
+            sessionStorage.removeItem('tasarini_last_generated');
             setGeneratedItinerary(null);
           }}
           isStreaming={true}
@@ -217,6 +228,7 @@ const PlanTrip = () => {
           <DetailedItineraryView
             itinerary={generatedItinerary}
             onStartOver={() => {
+              sessionStorage.removeItem('tasarini_last_generated');
               setGeneratedItinerary(null);
               setEnrichmentData(null);
               setIsEnriching(false);
@@ -256,7 +268,11 @@ const PlanTrip = () => {
       <AdvertisementModal
         isOpen={showAdvertisement}
         onClose={handleAdvertisementClose}
-        generationProgress={progress}
+        generationProgress={{
+          step: '',
+          progress: streamingState.progress?.progress ?? 0,
+          message: streamingState.progress?.message || '',
+        }}
       />
     </main>
   );

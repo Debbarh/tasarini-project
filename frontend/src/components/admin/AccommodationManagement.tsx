@@ -10,11 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Edit, Trash2, Save, X, Home, Globe } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Home, Globe, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAccommodationSettings } from '@/hooks/useAccommodationSettings';
 import { accommodationSettingsService, AccommodationTaxonomyEntry } from '@/services/accommodationSettingsService';
 import { getLocalizedLabel } from '@/utils/multilingualHelpers';
+import IconPicker from '@/components/admin/IconPicker';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
 
 type EntityKey =
   | 'accommodation_types'
@@ -34,6 +36,7 @@ type AccommodationFormState = {
   id?: string;
   code: string;
   icon_emoji: string;
+  icon_name: string;
   display_order: number;
   is_active: boolean;
   category: string;
@@ -116,6 +119,7 @@ const createDefaultFormState = (): AccommodationFormState => {
     id: undefined,
     code: '',
     icon_emoji: '',
+    icon_name: '',
     display_order: 0,
     is_active: true,
     category: '',
@@ -133,6 +137,7 @@ const mapItemToFormState = (item?: AccommodationTaxonomyEntry | null): Accommoda
     id: item.id,
     code: item.code ?? '',
     icon_emoji: item.icon_emoji ?? '',
+    icon_name: item.icon_name ?? '',
     display_order: item.display_order ?? 0,
     is_active: item.is_active ?? true,
     category: item.category ?? '',
@@ -303,7 +308,7 @@ export const AccommodationManagement = () => {
       setFormState(mapItemToFormState(translatedObject));
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await refetch();
@@ -345,7 +350,7 @@ export const AccommodationManagement = () => {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="icon_emoji">Emoji</Label>
+            <Label htmlFor="icon_emoji">Emoji (legacy)</Label>
             <Input
               id="icon_emoji"
               value={formState.icon_emoji}
@@ -353,6 +358,11 @@ export const AccommodationManagement = () => {
               onChange={(e) => handleFieldChange('icon_emoji', e.target.value)}
             />
           </div>
+        </div>
+
+        <div className="space-y-1">
+          <Label>Icône SVG</Label>
+          <IconPicker value={formState.icon_name} onChange={(name) => handleFieldChange('icon_name', name)} />
         </div>
 
         {hasCategory && (
@@ -458,7 +468,7 @@ export const AccommodationManagement = () => {
             <TableHead>Code</TableHead>
             <TableHead>Label FR</TableHead>
             <TableHead>{`Label (${i18n.language.toUpperCase()})`}</TableHead>
-            <TableHead>Emoji</TableHead>
+            <TableHead>Icône / Emoji</TableHead>
             {hasCategory && <TableHead>Catégorie</TableHead>}
             <TableHead>Ordre</TableHead>
             <TableHead>Statut</TableHead>
@@ -471,7 +481,12 @@ export const AccommodationManagement = () => {
               <TableCell className="font-medium">{item.code}</TableCell>
               <TableCell>{item.label_fr}</TableCell>
               <TableCell>{getLocalizedLabel(item, i18n.language)}</TableCell>
-              <TableCell>{item.icon_emoji}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <TaxonomyIcon iconName={item.icon_name} code={item.code} className="h-5 w-5" />
+                  {item.icon_emoji && <span className="text-lg">{item.icon_emoji}</span>}
+                </div>
+              </TableCell>
               {hasCategory && (
                 <TableCell>
                   {item.category ? <Badge variant="outline">{item.category}</Badge> : <span className="text-muted-foreground">—</span>}

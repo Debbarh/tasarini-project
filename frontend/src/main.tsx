@@ -17,6 +17,7 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Layout from "./components/layout/Layout";
 
 const Auth = lazy(() => import("./pages/Auth"));
+const SocialAuthCallback = lazy(() => import("./pages/SocialAuthCallback"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Admin = lazy(() => import("./pages/Admin"));
 const PartnerCenter = lazy(() => import("./pages/PartnerCenter"));
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "auth",
         element: <Auth />,
+      },
+      {
+        path: "auth/social-callback",
+        element: <SocialAuthCallback />,
       },
       {
         path: "profile",
@@ -161,6 +166,30 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+// Récupération automatique des onglets périmés : après un déploiement, les
+// anciens chunks (hash) n'existent plus. Si un import dynamique échoue, on
+// recharge la page une fois (index.html est en no-cache → nouveaux chunks).
+const PRELOAD_RELOAD_KEY = 'vite_preload_reloaded';
+window.addEventListener('vite:preloadError', (event: Event) => {
+  event.preventDefault();
+  if (!sessionStorage.getItem(PRELOAD_RELOAD_KEY)) {
+    sessionStorage.setItem(PRELOAD_RELOAD_KEY, '1');
+    window.location.reload();
+  }
+});
+// Filet de sécurité : certains échecs de fetch de module remontent en rejet non géré.
+window.addEventListener('unhandledrejection', (event) => {
+  const msg = (event.reason?.message || '').toLowerCase();
+  if (msg.includes('failed to fetch dynamically imported module') || msg.includes('error loading dynamically imported module')) {
+    if (!sessionStorage.getItem(PRELOAD_RELOAD_KEY)) {
+      sessionStorage.setItem(PRELOAD_RELOAD_KEY, '1');
+      window.location.reload();
+    }
+  }
+});
+// Page chargée correctement → on réarme le mécanisme pour un futur déploiement.
+window.addEventListener('load', () => sessionStorage.removeItem(PRELOAD_RELOAD_KEY));
 
 // Global error handlers for external widgets and scripts
 // List of known external widget domains that may have errors

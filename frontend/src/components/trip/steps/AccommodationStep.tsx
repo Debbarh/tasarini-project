@@ -1,15 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Home, Shield, MapPin, Heart, Accessibility } from "lucide-react";
+import { Home, Shield, MapPin, Heart, Accessibility, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { TaxonomyIcon } from "@/lib/taxonomyIcon";
 import { TripFormData, AccommodationPreferences } from "@/types/trip";
 import { useAccommodationSettings } from "@/hooks/useAccommodationSettings";
 import { AccommodationTaxonomyEntry } from "@/services/accommodationSettingsService";
 import { getLocalizedLabel } from "@/utils/multilingualHelpers";
+
+// Ordre de popularité des types d'hébergement (les plus demandés en premier).
+const TYPE_POPULARITY = ['hotel', 'apartment', 'resort', 'guesthouse', 'bnb', 'hostel', 'serviced_apartment', 'camping'];
+const typeRank = (code: string) => {
+  const i = TYPE_POPULARITY.indexOf(code);
+  return i === -1 ? 999 : i;
+};
 
 const matchEntryByValue = (value: string, entries: AccommodationTaxonomyEntry[]) => {
   return entries.find((entry) =>
@@ -61,16 +69,16 @@ interface AccommodationStepProps {
 
 export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationStepProps) => {
   const { t, i18n } = useTranslation();
-  const { 
-    accommodationTypes, 
-    accommodationAmenities, 
+  const {
+    accommodationTypes,
+    accommodationAmenities,
     accommodationLocations,
     accommodationAccessibility,
     accommodationSecurity,
     accommodationAmbiance,
-    loading 
+    loading
   } = useAccommodationSettings();
-  
+
   const [accommodation, setAccommodation] = useState<AccommodationPreferences>(
     data.accommodationPreferences || {
       type: [],
@@ -80,6 +88,17 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
       security: [],
       ambiance: []
     }
+  );
+
+  // Sections avancées masquées par défaut (services, accessibilité, sécurité,
+  // ambiance) pour réduire la taille du stepper ; ouvertes si déjà renseignées.
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(
+    Boolean(
+      data.accommodationPreferences?.amenities?.length ||
+      data.accommodationPreferences?.accessibility?.length ||
+      data.accommodationPreferences?.security?.length ||
+      data.accommodationPreferences?.ambiance?.length
+    )
   );
 
   useEffect(() => {
@@ -121,6 +140,19 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
     accommodationSecurity,
     accommodationAmbiance,
   ]);
+
+  // Sélection par défaut de "Hotel" (une seule fois, si pas de préférences enregistrées).
+  const typeDefaultedRef = useRef(false);
+  useEffect(() => {
+    if (typeDefaultedRef.current) return;
+    if (data.accommodationPreferences) { typeDefaultedRef.current = true; return; }
+    if (accommodationTypes.length === 0) return;
+    const hotel = accommodationTypes.find((t) => t.code === 'hotel' && t.is_active);
+    if (hotel) {
+      typeDefaultedRef.current = true;
+      setAccommodation((prev) => (prev.type.length ? prev : { ...prev, type: ['hotel'] }));
+    }
+  }, [accommodationTypes, data.accommodationPreferences]);
 
   useEffect(() => {
     const isValid = accommodation.type.length > 0;
@@ -179,16 +211,14 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
     );
   }
 
+  const sortedTypes = [...accommodationTypes]
+    .filter((t) => t.is_active)
+    .sort((a, b) => typeRank(a.code) - typeRank(b.code));
+
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">{t('planTrip.accommodationStep.title')}</h3>
-        <p className="text-muted-foreground">
-          {t('planTrip.accommodationStep.description')}
-        </p>
-      </div>
 
-      {/* Accommodation Types */}
+      {/* 1. Accommodation Types (triés par popularité, Hotel par défaut) */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -199,14 +229,14 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {accommodationTypes.filter(t => t.is_active).map((type) => (
+            {sortedTypes.map((type) => (
               <Button
                 key={type.id}
                 variant={accommodation.type.includes(type.code) ? "default" : "outline"}
-                className="h-auto flex-col gap-2 p-4"
+                className="h-auto flex-col gap-2 p-4 whitespace-normal text-center"
                 onClick={() => toggleType(type.code)}
               >
-                <span className="text-2xl">{type.icon_emoji}</span>
+                <TaxonomyIcon iconName={type.icon_name} code={type.code} className={`h-6 w-6 ${accommodation.type.includes(type.code) ? 'text-primary-foreground' : 'text-primary'}`} fallback="Hotel" />
                 <span className="text-sm text-center">
                   {getLabelFromCode(type.code, accommodationTypes, i18n.language)}
                 </span>
@@ -221,37 +251,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
         </CardContent>
       </Card>
 
-      {/* Amenities */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Heart className="h-4 w-4 text-primary" />
-            {t('planTrip.accommodationStep.amenities')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {accommodationAmenities.filter(a => a.is_active).map((amenity) => (
-                <div key={amenity.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`amenity-${amenity.id}`}
-                    checked={accommodation.amenities.includes(amenity.code)}
-                    onCheckedChange={() => toggleAmenity(amenity.code)}
-                  />
-                  <Label htmlFor={`amenity-${amenity.id}`} className="text-sm flex items-center gap-1">
-                    {amenity.icon_emoji && <span>{amenity.icon_emoji}</span>}
-                    <span>{getLabelFromCode(amenity.code, accommodationAmenities, i18n.language)}</span>
-                    {amenity.category && (
-                      <Badge variant="outline" className="text-xs ml-1">{amenity.category}</Badge>
-                    )}
-                  </Label>
-                </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Location Preferences */}
+      {/* 2. Location Preferences */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -265,10 +265,10 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
               <Button
                 key={location.id}
                 variant={accommodation.location.includes(location.code) ? "default" : "outline"}
-                className="h-auto flex-col gap-2 p-3"
+                className="h-auto flex-col gap-2 p-3 whitespace-normal text-center"
                 onClick={() => toggleLocation(location.code)}
               >
-                <span className="text-xl">{location.icon_emoji}</span>
+                <TaxonomyIcon iconName={location.icon_name} code={location.code} className={`h-5 w-5 ${accommodation.location.includes(location.code) ? 'text-primary-foreground' : 'text-primary'}`} fallback="MapPin" />
                 <span className="text-xs text-center">
                   {getLabelFromCode(location.code, accommodationLocations, i18n.language)}
                 </span>
@@ -278,88 +278,136 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Accessibility */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Accessibility className="h-4 w-4 text-primary" />
-              {t('planTrip.accommodationStep.accessibility')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              {accommodationAccessibility.filter(a => a.is_active).map((accessibility) => (
-                <div key={accessibility.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`accessibility-${accessibility.id}`}
-                    checked={accommodation.accessibility.includes(accessibility.code)}
-                    onCheckedChange={() => toggleAccessibility(accessibility.code)}
-                  />
-                  <Label htmlFor={`accessibility-${accessibility.id}`} className="text-sm">
-                    {accessibility.icon_emoji && <span className="mr-2">{accessibility.icon_emoji}</span>}
-                    {getLabelFromCode(accessibility.code, accommodationAccessibility, i18n.language)}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      {/* 3. Préférences avancées (services, accessibilité, sécurité, ambiance) — repliées */}
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full border-dashed border-2 hover:border-primary"
+        onClick={() => setShowAdvanced(v => !v)}
+      >
+        <Sparkles className="h-4 w-4 mr-2 text-primary" />
+        {showAdvanced
+          ? t('planTrip.accommodationStep.refineLess', 'Masquer les préférences avancées')
+          : t('planTrip.accommodationStep.refineMore', 'Affiner mes préférences (services, accessibilité, sécurité, ambiance)')}
+        {showAdvanced ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+      </Button>
 
-        {/* Security */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Shield className="h-4 w-4 text-primary" />
-              {t('planTrip.accommodationStep.security')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              {accommodationSecurity.filter(s => s.is_active).map((security) => (
-                <div key={security.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`security-${security.id}`}
-                    checked={accommodation.security.includes(security.code)}
-                    onCheckedChange={() => toggleSecurity(security.code)}
-                  />
-                  <Label htmlFor={`security-${security.id}`} className="text-sm">
-                    {security.icon_emoji && <span className="mr-2">{security.icon_emoji}</span>}
-                    {getLabelFromCode(security.code, accommodationSecurity, i18n.language)}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      {showAdvanced && (
+        <>
+          {/* Amenities */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Heart className="h-4 w-4 text-primary" />
+                {t('planTrip.accommodationStep.amenities')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {accommodationAmenities.filter(a => a.is_active).map((amenity) => (
+                  <div key={amenity.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`amenity-${amenity.id}`}
+                      checked={accommodation.amenities.includes(amenity.code)}
+                      onCheckedChange={() => toggleAmenity(amenity.code)}
+                    />
+                    <Label htmlFor={`amenity-${amenity.id}`} className="text-sm flex items-center gap-1">
+                      <TaxonomyIcon iconName={amenity.icon_name} code={amenity.code} className="h-4 w-4" />
+                      <span>{getLabelFromCode(amenity.code, accommodationAmenities, i18n.language)}</span>
+                      {amenity.category && (
+                        <Badge variant="outline" className="text-xs ml-1">{amenity.category}</Badge>
+                      )}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Ambiance */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Heart className="h-4 w-4 text-primary" />
-              {t('planTrip.accommodationStep.ambiance')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              {accommodationAmbiance.filter(a => a.is_active).map((ambiance) => (
-                <div key={ambiance.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`ambiance-${ambiance.id}`}
-                    checked={accommodation.ambiance.includes(ambiance.code)}
-                    onCheckedChange={() => toggleAmbiance(ambiance.code)}
-                  />
-                  <Label htmlFor={`ambiance-${ambiance.id}`} className="text-sm">
-                    {ambiance.icon_emoji && <span className="mr-2">{ambiance.icon_emoji}</span>}
-                    {getLabelFromCode(ambiance.code, accommodationAmbiance, i18n.language)}
-                  </Label>
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Accessibility */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Accessibility className="h-4 w-4 text-primary" />
+                  {t('planTrip.accommodationStep.accessibility')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  {accommodationAccessibility.filter(a => a.is_active).map((accessibility) => (
+                    <div key={accessibility.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`accessibility-${accessibility.id}`}
+                        checked={accommodation.accessibility.includes(accessibility.code)}
+                        onCheckedChange={() => toggleAccessibility(accessibility.code)}
+                      />
+                      <Label htmlFor={`accessibility-${accessibility.id}`} className="text-sm">
+                        <TaxonomyIcon iconName={accessibility.icon_name} code={accessibility.code} className="h-4 w-4 mr-2" />
+                        {getLabelFromCode(accessibility.code, accommodationAccessibility, i18n.language)}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
+
+            {/* Security */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Shield className="h-4 w-4 text-primary" />
+                  {t('planTrip.accommodationStep.security')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  {accommodationSecurity.filter(s => s.is_active).map((security) => (
+                    <div key={security.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`security-${security.id}`}
+                        checked={accommodation.security.includes(security.code)}
+                        onCheckedChange={() => toggleSecurity(security.code)}
+                      />
+                      <Label htmlFor={`security-${security.id}`} className="text-sm">
+                        <TaxonomyIcon iconName={security.icon_name} code={security.code} className="h-4 w-4 mr-2" />
+                        {getLabelFromCode(security.code, accommodationSecurity, i18n.language)}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Ambiance */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Heart className="h-4 w-4 text-primary" />
+                  {t('planTrip.accommodationStep.ambiance')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  {accommodationAmbiance.filter(a => a.is_active).map((ambiance) => (
+                    <div key={ambiance.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`ambiance-${ambiance.id}`}
+                        checked={accommodation.ambiance.includes(ambiance.code)}
+                        onCheckedChange={() => toggleAmbiance(ambiance.code)}
+                      />
+                      <Label htmlFor={`ambiance-${ambiance.id}`} className="text-sm">
+                        <TaxonomyIcon iconName={ambiance.icon_name} code={ambiance.code} className="h-4 w-4 mr-2" />
+                        {getLabelFromCode(ambiance.code, accommodationAmbiance, i18n.language)}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
 
       {/* Summary */}
       <Card className="bg-secondary/50">
@@ -377,7 +425,7 @@ export const AccommodationStep = ({ data, onUpdate, onValidate }: AccommodationS
                   ))}
                 </div>
               )}
-              
+
               {accommodation.amenities.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   <span className="text-sm font-medium">{t('planTrip.accommodationStep.services')} :</span>

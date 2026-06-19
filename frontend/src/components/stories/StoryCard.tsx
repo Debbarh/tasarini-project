@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Eye, MapPin, Calendar, ExternalLink, Bookmark, Verified, Award, Star } from "lucide-react";
+import { Heart, MessageCircle, Eye, MapPin, Calendar, ExternalLink, Bookmark, Verified, Award, Star, Bot, Briefcase } from "lucide-react";
 import { MediaCarousel } from "@/components/media/MediaCarousel";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { storyService, Story } from "@/services/storyService";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface StoryCardProps {
   story: Story;
@@ -22,8 +23,13 @@ interface StoryCardProps {
 export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark }: StoryCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  // Gardes : ces champs peuvent arriver non-tableau (null/chaîne) → éviter .map crash
+  const categories = Array.isArray(story.activity_categories) ? story.activity_categories : [];
+  const storyTags = Array.isArray(story.tags) ? story.tags : [];
+  const storyLinks = Array.isArray(story.travel_story_links) ? story.travel_story_links : [];
   const storyType = (story.story_type as 'user' | 'ai_generated' | 'partner_sponsored') || 'user';
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -43,7 +49,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
 
   const handleLikeClick = async () => {
     if (!currentUserId) {
-      toast.error('Connectez-vous pour liker les stories');
+      toast.error(t('travelStories.card.loginToLike', 'Connectez-vous pour liker les stories'));
       return;
     }
     try {
@@ -51,7 +57,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
       setIsLiked(result.liked);
       onLike(story.id, result.liked);
     } catch (error) {
-      toast.error('Impossible de modifier le like');
+      toast.error(t('travelStories.card.likeError', 'Impossible de modifier le like'));
     }
   };
 
@@ -61,7 +67,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
   const fullName = firstName && lastName ? `${firstName} ${lastName}` : '';
 
   const authorName = fullName || (story.author_name && story.author_name.trim()) || 'Voyageur';
-  const displayText = fullName || (story.author_name && story.author_name.trim()) ? `par ${authorName}` : 'Créé par voyageur';
+  const displayText = fullName || (story.author_name && story.author_name.trim()) ? `par ${authorName}` : t('travelStories.card.authorFallback', 'Créé par voyageur');
 
   const authorInitials = firstName && lastName
     ? `${firstName[0]}${lastName[0]}`.toUpperCase()
@@ -74,7 +80,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
 
   const handleBookmarkClick = async () => {
     if (!onBookmark || !currentUserId) {
-      toast.error('Connectez-vous pour enregistrer des stories');
+      toast.error(t('travelStories.card.loginToBookmark', 'Connectez-vous pour enregistrer des stories'));
       return;
     }
     try {
@@ -82,7 +88,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
       setIsBookmarked(result.bookmarked);
       onBookmark(story.id, result.bookmarked);
     } catch (error) {
-      toast.error('Impossible de mettre à jour le signet');
+      toast.error(t('travelStories.card.bookmarkError', 'Impossible de mettre à jour le signet'));
     }
   };
 
@@ -95,19 +101,20 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
   const getStoryTypeIcon = () => {
     switch (storyType) {
       case 'ai_generated':
-        return '🤖';
+        return Bot;
       case 'partner_sponsored':
-        return '💼';
+        return Briefcase;
       default:
-        return '';
+        return null;
     }
   };
+  const StoryTypeIcon = getStoryTypeIcon();
 
   const getLinkedTypeLabel = (type: string) => {
     switch (type) {
-      case 'tourist_point': return 'Point d\'intérêt';
-      case 'itinerary': return 'Itinéraire';
-      case 'activity': return 'Activité';
+      case 'tourist_point': return t('travelStories.card.linkTypes.touristPoint', 'Point d\'intérêt');
+      case 'itinerary': return t('travelStories.card.linkTypes.itinerary', 'Itinéraire');
+      case 'activity': return t('travelStories.card.linkTypes.activity', 'Activité');
       default: return type;
     }
   };
@@ -125,8 +132,8 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold line-clamp-1">{story.title}</h3>
-                {getStoryTypeIcon() && (
-                  <span className="text-sm">{getStoryTypeIcon()}</span>
+                {StoryTypeIcon && (
+                  <StoryTypeIcon className="w-4 h-4 text-muted-foreground" />
                 )}
                 {storyType === 'partner_sponsored' && (
                   <Verified className="w-4 h-4 text-blue-500" />
@@ -139,7 +146,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
           </div>
           {!story.is_public && (
             <Badge variant="secondary" className="text-xs">
-              Privé
+              {t('travelStories.card.private', 'Privé')}
             </Badge>
           )}
         </div>
@@ -180,7 +187,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
         {/* Tags et catégories */}
         <div className="flex flex-wrap gap-1">
           {/* Catégories d'activités */}
-          {story.activity_categories?.slice(0, 2).map((category, index) => (
+          {categories.slice(0, 2).map((category, index) => (
             <Badge key={index} variant="default" className="text-xs">
               {category}
             </Badge>
@@ -194,32 +201,32 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
           )}
           
           {/* Tags personnalisés */}
-          {story.tags?.slice(0, 2).map((tag, index) => (
+          {storyTags.slice(0, 2).map((tag, index) => (
             <Badge key={`tag-${index}`} variant="outline" className="text-xs">
               #{tag}
             </Badge>
           ))}
-          
+
           {/* Indicateur de tags supplémentaires */}
-          {(story.activity_categories?.length > 2 || story.tags?.length > 2) && (
+          {(categories.length > 2 || storyTags.length > 2) && (
             <Badge variant="outline" className="text-xs">
-              +{(story.activity_categories?.length || 0) + (story.tags?.length || 0) - 4}
+              +{categories.length + storyTags.length - 4}
             </Badge>
           )}
         </div>
 
         {/* Linked entities */}
-        {story.travel_story_links && story.travel_story_links.length > 0 && (
+        {storyLinks.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {story.travel_story_links.slice(0, 2).map((link, index) => (
+            {storyLinks.slice(0, 2).map((link, index) => (
               <Badge key={index} variant="secondary" className="text-xs flex items-center gap-1">
                 <ExternalLink className="w-3 h-3" />
                 {getLinkedTypeLabel(link.linked_type)}
               </Badge>
             ))}
-            {story.travel_story_links.length > 2 && (
+            {storyLinks.length > 2 && (
               <Badge variant="secondary" className="text-xs">
-                +{story.travel_story_links.length - 2}
+                +{storyLinks.length - 2}
               </Badge>
             )}
           </div>
@@ -276,7 +283,7 @@ export const StoryCard = ({ story, currentUserId, onLike, onComment, onBookmark 
         <div className="pt-2 flex justify-end">
           <Button variant="outline" size="sm" onClick={() => navigate(`/travel-stories/${story.id}`)}>
             <ExternalLink className="w-4 h-4 mr-1" />
-            Voir les détails
+            {t('travelStories.card.viewDetails', 'Voir les détails')}
           </Button>
         </div>
       </CardContent>

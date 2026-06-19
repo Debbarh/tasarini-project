@@ -8,12 +8,15 @@ interface POIFavoriteButtonProps {
   touristPointId: string;
   size?: 'sm' | 'default';
   variant?: 'default' | 'outline' | 'ghost';
+  // POI externe non encore importé : on l'importe à la demande et on renvoie l'UUID réel.
+  onActivate?: () => Promise<string | null>;
 }
 
 export const POIFavoriteButton: React.FC<POIFavoriteButtonProps> = ({
   touristPointId,
   size = 'sm',
-  variant = 'ghost'
+  variant = 'ghost',
+  onActivate
 }) => {
   const { user } = useAuth();
   const { toggleFavorite, isFavorite } = useFavoritePOIs();
@@ -22,14 +25,22 @@ export const POIFavoriteButton: React.FC<POIFavoriteButtonProps> = ({
 
   const favorite = isFavorite(touristPointId);
 
+  const handleClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    let id = touristPointId;
+    if (id.startsWith('ext:') && onActivate) {
+      const resolved = await onActivate();
+      if (!resolved) return; // import échoué / non connecté
+      id = resolved;
+    }
+    toggleFavorite(id);
+  };
+
   return (
     <Button
       variant={variant}
       size={size}
-      onClick={(e) => {
-        e.stopPropagation();
-        toggleFavorite(touristPointId);
-      }}
+      onClick={handleClick}
       className={`hover-scale ${favorite ? 'text-red-500' : 'text-muted-foreground'}`}
     >
       <Heart 

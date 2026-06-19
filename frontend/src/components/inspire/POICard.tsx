@@ -143,15 +143,15 @@ export const POICard: React.FC<POICardProps> = ({
             <span className={isCompact ? "text-xs" : "text-sm"}>Carte</span>
           </Button>
 
-          {/* Partner Booking Button */}
-          {showBooking && poi.has_booking_system && (
+          {/* Bouton « Réserver » : seulement si le POI est lié à un partenaire */}
+          {showBooking && (poi.has_booking_system || poi.is_partner_point) && (
             <PartnerBookingButton
               touristPoint={{
                 id: poi.id,
                 name: poi.name,
                 description: poi.description,
                 price_range: poi.price_range,
-                has_booking_system: poi.has_booking_system,
+                has_booking_system: poi.has_booking_system || poi.is_partner_point,
                 booking_system_type: poi.booking_system_type,
                 booking_instructions: poi.booking_instructions
               }}

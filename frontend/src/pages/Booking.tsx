@@ -1,7 +1,9 @@
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { Hotel } from "lucide-react";
+import { Navigate } from "react-router-dom";
 import { BookingEnrichmentPanel } from "@/components/trip/BookingEnrichmentPanel";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 /**
  * Page dédiée à la recherche/réservation (hôtels, vols, transferts, activités).
@@ -9,6 +11,12 @@ import { BookingEnrichmentPanel } from "@/components/trip/BookingEnrichmentPanel
  */
 const Booking = () => {
   const { t } = useTranslation();
+  const { settings } = useSystemSettings();
+
+  // Module Centrale de réservation désactivé par l'admin → page inaccessible
+  if (!settings.bookingCenterEnabled) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <main className="container mx-auto px-4 py-8 sm:py-12">

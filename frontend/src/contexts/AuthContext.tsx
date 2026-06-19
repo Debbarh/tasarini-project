@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
-import { authTokenStorage } from '@/integrations/api/client';
+import { authTokenStorage, API_BASE_URL } from '@/integrations/api/client';
 import { ApiUser, ApiUserProfile, authService } from '@/services/authService';
 import { sessionService } from '@/services/sessionService';
 
@@ -207,8 +207,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signInWithGoogle = unsupported;
-  const signInWithFacebook = unsupported;
+  // OAuth social : on quitte le SPA vers le endpoint backend qui redirige vers le fournisseur.
+  // Le backend revient ensuite sur /auth/social-callback#access=...&refresh=... (cf. SocialAuthCallback).
+  const startOAuth = async (provider: 'google' | 'facebook') => {
+    try {
+      const base = API_BASE_URL.replace(/\/$/, '');
+      const redirectTo = '/';
+      window.location.href = `${base}/auth/${provider}/login/?redirect_to=${encodeURIComponent(redirectTo)}`;
+      return { error: null };
+    } catch (error) {
+      toast.error(t('auth.signInError'));
+      return { error };
+    }
+  };
+
+  const signInWithGoogle = () => startOAuth('google');
+  const signInWithFacebook = () => startOAuth('facebook');
 
   const signOut = async () => {
     authTokenStorage.clear();

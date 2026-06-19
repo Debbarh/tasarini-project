@@ -18,7 +18,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationDialog } from "@/components/notifications/NotificationDialog";
-import { LogOut, User, Building2, Bell, Menu, X } from "lucide-react";
+import { LogOut, User, Building2, Bell, Menu, X, Bookmark } from "lucide-react";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 const Navbar = () => {
@@ -72,9 +72,9 @@ const Navbar = () => {
           {t('navigation.travelStories')}
         </NavLink>
       )}
-      {user && (
-        <NavLink 
-          to="/my-discoveries" 
+      {user && settings.beInspiredEnabled && (
+        <NavLink
+          to="/my-discoveries"
           className={({isActive}) => `${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"} whitespace-nowrap ${mobile ? "text-lg" : ""}`}
           onClick={onLinkClick}
         >
@@ -191,9 +191,21 @@ const Navbar = () => {
                       {t('navigation.myProfile')}
                     </Link>
                   </Button>
-                  
-                  <Button 
-                    variant="outline" 
+
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Link to="/saved-itineraries">
+                      <Bookmark className="w-4 h-4 mr-2" />
+                      {t('navigation.savedItineraries', 'Mes itinéraires')}
+                    </Link>
+                  </Button>
+
+                  <Button
+                    variant="outline"
                     className="w-full justify-start"
                     onClick={() => {
                       signOut();
@@ -279,6 +291,12 @@ const Navbar = () => {
                     <Link to="/profile" className="cursor-pointer">
                       <User className="w-4 h-4 mr-2" />
                       {t('navigation.myProfile')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/saved-itineraries" className="cursor-pointer">
+                      <Bookmark className="w-4 h-4 mr-2" />
+                      {t('navigation.savedItineraries', 'Mes itinéraires')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

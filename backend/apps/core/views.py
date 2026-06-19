@@ -27,6 +27,10 @@ DEFAULT_SETTINGS = [
     ('plan_your_trip_enabled', 'true', 'boolean', 'Active le module Plan Your Trip', 'features'),
     ('be_inspired_enabled', 'true', 'boolean', 'Active le module Be Inspired', 'features'),
     ('travel_stories_enabled', 'true', 'boolean', 'Active le module Travel Stories', 'features'),
+    # Traduction automatique des POI (cron worker translategemma:4b)
+    ('translation_cron_enabled', 'false', 'boolean', 'Active la traduction automatique des POI (cron)', 'translation'),
+    ('translation_cron_interval_minutes', '5', 'number', 'Intervalle du cron de traduction (minutes)', 'translation'),
+    ('translation_batch_size', '20', 'number', 'Nombre de POI traduits par cycle', 'translation'),
 ]
 
 

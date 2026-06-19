@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, MapPin, Users, Wallet, Utensils, Home, Activity, Sparkles, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Users, Wallet, Utensils, Home, Activity, Sparkles, Check, Clock } from "lucide-react";
 
 const DRAFT_KEY = "tasarini_trip_draft";
 
@@ -77,6 +77,12 @@ export const TripWizard = ({ onComplete, isLoading }: TripWizardProps) => {
       /* quota/private mode: on ignore */
     }
   }, [formData, currentStep]);
+
+  // Remonter en haut de la page à chaque changement d'étape (sinon on reste
+  // au milieu en cliquant sur Suivant/Précédent).
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep]);
 
   // Une étape est accessible au clic si déjà atteinte ou validée
   const goToStep = (index: number) => {
@@ -205,163 +211,174 @@ export const TripWizard = ({ onComplete, isLoading }: TripWizardProps) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Progress Bar */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+    <div className="max-w-6xl mx-auto">
+      <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+        {/* Barre latérale verticale (desktop) */}
+        <aside className="hidden lg:block lg:sticky lg:top-6 h-fit">
+          <Card>
+            <CardContent className="p-4 space-y-4">
               <div>
-                <h2 className="text-xl font-semibold">{t('planTrip.wizard.title')}</h2>
-                <span className="text-xs text-muted-foreground">⏱ {t('planTrip.wizard.estimatedTime', '~3 min')}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                {savedTick && (
-                  <span className="hidden sm:flex items-center gap-1 text-xs text-green-600">
-                    <Check className="h-3.5 w-3.5" />
-                    {t('planTrip.wizard.autosaved', 'Progression sauvegardée')}
-                  </span>
-                )}
-                <span className="text-sm text-muted-foreground">
-                  {t('planTrip.wizard.stepOf', { current: currentStep + 1, total: STEPS.length })}
+                <h2 className="text-base font-semibold">{t('planTrip.wizard.title')}</h2>
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> {t('planTrip.wizard.estimatedTime', '~3 min')} · {t('planTrip.wizard.stepOf', { current: currentStep + 1, total: STEPS.length })}
                 </span>
               </div>
-            </div>
-            <Progress value={progress} className="h-2" />
-            
-            {/* Steps indicator */}
-            <div className="flex justify-between items-center">
-              {STEPS.map((step, index) => {
-                const Icon = step.icon;
-                const isActive = index === currentStep;
-                const isCompleted = stepValidation[index];
-                const isPassed = index < currentStep;
-                const clickable = !isActive && (isPassed || isCompleted);
+              <Progress value={progress} className="h-1.5" />
 
-                return (
-                  <button
-                    key={step.id}
-                    type="button"
-                    onClick={() => goToStep(index)}
-                    disabled={!clickable}
-                    aria-label={step.title}
-                    title={clickable ? step.title : undefined}
-                    className={`flex flex-col items-center space-y-1 ${clickable ? 'cursor-pointer' : 'cursor-default'} ${
-                      isActive ? 'text-primary' : isPassed || isCompleted ? 'text-green-600' : 'text-muted-foreground'
-                    }`}
-                  >
-                    <div
-                      className={`relative w-8 h-8 rounded-full flex items-center justify-center border-2 transition-transform ${clickable ? 'hover:scale-110' : ''} ${
-                        isActive
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : isPassed || isCompleted
-                          ? 'border-green-600 bg-green-600 text-white'
-                          : 'border-muted-foreground'
+              {/* Liste verticale des étapes */}
+              <nav className="space-y-1">
+                {STEPS.map((step, index) => {
+                  const Icon = step.icon;
+                  const isActive = index === currentStep;
+                  const isCompleted = stepValidation[index];
+                  const isPassed = index < currentStep;
+                  const clickable = !isActive && (isPassed || isCompleted);
+
+                  return (
+                    <button
+                      key={step.id}
+                      type="button"
+                      onClick={() => goToStep(index)}
+                      disabled={!clickable}
+                      aria-label={step.title}
+                      title={clickable ? step.title : undefined}
+                      className={`w-full flex items-center gap-3 rounded-md px-2 py-2 text-left transition-colors ${
+                        isActive ? 'bg-primary/10' : clickable ? 'hover:bg-accent cursor-pointer' : 'cursor-default'
                       }`}
                     >
-                      <Icon className="h-4 w-4" />
-                      {(isPassed || isCompleted) && !isActive && (
-                        <span className="absolute -top-1 -right-1 bg-white rounded-full p-px shadow-sm">
-                          <Check className="h-3 w-3 text-green-600" />
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-xs text-center hidden sm:block max-w-20">
-                      {step.title}
-                    </span>
-                  </button>
-                );
-              })}
+                      <div
+                        className={`relative w-8 h-8 shrink-0 rounded-full flex items-center justify-center border-2 ${
+                          isActive
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : isPassed || isCompleted
+                            ? 'border-green-600 bg-green-600 text-white'
+                            : 'border-muted-foreground text-muted-foreground'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {(isPassed || isCompleted) && !isActive && (
+                          <span className="absolute -top-1 -right-1 bg-white rounded-full p-px shadow-sm">
+                            <Check className="h-3 w-3 text-green-600" />
+                          </span>
+                        )}
+                      </div>
+                      <span className={`text-sm truncate ${
+                        isActive ? 'font-medium text-primary' : isPassed || isCompleted ? 'text-green-700' : 'text-muted-foreground'
+                      }`}>
+                        {step.title}
+                      </span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {savedTick && (
+                <span className="flex items-center gap-1 text-xs text-green-600">
+                  <Check className="h-3.5 w-3.5" />
+                  {t('planTrip.wizard.autosaved', 'Progression sauvegardée')}
+                </span>
+              )}
+            </CardContent>
+          </Card>
+        </aside>
+
+        {/* Colonne contenu */}
+        <div className="space-y-6 min-w-0">
+          {/* En-tête compacte mobile (la barre latérale est masquée sous lg) */}
+          <div className="lg:hidden space-y-2">
+            <Progress value={progress} className="h-1.5" />
+            <p className="text-sm font-medium">
+              {t('planTrip.wizard.stepOf', { current: currentStep + 1, total: STEPS.length })} — {currentStepData.title}
+            </p>
+          </div>
+
+          {/* Current Step Content */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {(() => {
+                  const Icon = currentStepData.icon;
+                  return <Icon className="h-5 w-5 text-primary" />;
+                })()}
+                {currentStepData.title}
+              </CardTitle>
+              <p className="text-muted-foreground">{currentStepData.description}</p>
+            </CardHeader>
+            <CardContent>
+              <ErrorBoundary key={currentStep}>
+                {renderStepContent()}
+              </ErrorBoundary>
+            </CardContent>
+          </Card>
+
+          {/* Navigation */}
+          <div className="space-y-3">
+            <div className="flex justify-between items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                disabled={!canGoBack || isLoading}
+                className="flex items-center gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                {t('planTrip.wizard.previous')}
+              </Button>
+
+              {currentStepData.optional && currentStep < STEPS.length - 1 && (
+                <Button
+                  variant="ghost"
+                  onClick={handleSkip}
+                  disabled={isLoading}
+                  className="flex items-center gap-1 text-muted-foreground"
+                >
+                  {t('planTrip.wizard.skipStep', 'Passer cette étape')}
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              )}
+
+              <Button
+                onClick={handleNext}
+                disabled={!canProceed || isLoading}
+                className="flex items-center gap-2"
+              >
+                {currentStep === STEPS.length - 1 ? (
+                  isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+                      {t('planTrip.wizard.generating')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      {t('planTrip.wizard.createItinerary')}
+                    </>
+                  )
+                ) : (
+                  <>
+                    {t('planTrip.wizard.next')}
+                    <ChevronRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
             </div>
+
+            {/* Générer maintenant : raccourci dès l'étape 2 */}
+            {currentStep >= 1 && currentStep < STEPS.length - 1 && (
+              <div className="flex justify-center">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={generateNow}
+                  disabled={isLoading}
+                  className="gap-1"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  {t('planTrip.wizard.generateNow', 'Générer maintenant')}
+                </Button>
+              </div>
+            )}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Current Step Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {(() => {
-              const Icon = currentStepData.icon;
-              return <Icon className="h-5 w-5 text-primary" />;
-            })()}
-            {currentStepData.title}
-          </CardTitle>
-          <p className="text-muted-foreground">{currentStepData.description}</p>
-        </CardHeader>
-        <CardContent>
-          <ErrorBoundary key={currentStep}>
-            {renderStepContent()}
-          </ErrorBoundary>
-        </CardContent>
-      </Card>
-
-      {/* Navigation */}
-      <div className="space-y-3">
-        <div className="flex justify-between items-center gap-2">
-        <Button
-          variant="outline"
-          onClick={handleBack}
-          disabled={!canGoBack || isLoading}
-          className="flex items-center gap-2"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          {t('planTrip.wizard.previous')}
-        </Button>
-
-        {currentStepData.optional && currentStep < STEPS.length - 1 && (
-          <Button
-            variant="ghost"
-            onClick={handleSkip}
-            disabled={isLoading}
-            className="flex items-center gap-1 text-muted-foreground"
-          >
-            {t('planTrip.wizard.skipStep', 'Passer cette étape')}
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        )}
-
-        <Button
-          onClick={handleNext}
-          disabled={!canProceed || isLoading}
-          className="flex items-center gap-2"
-        >
-          {currentStep === STEPS.length - 1 ? (
-            isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
-                {t('planTrip.wizard.generating')}
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4" />
-                {t('planTrip.wizard.createItinerary')}
-              </>
-            )
-          ) : (
-            <>
-              {t('planTrip.wizard.next')}
-              <ChevronRight className="h-4 w-4" />
-            </>
-          )}
-        </Button>
         </div>
-
-        {/* Générer maintenant : raccourci dès l'étape 2 */}
-        {currentStep >= 1 && currentStep < STEPS.length - 1 && (
-          <div className="flex justify-center">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={generateNow}
-              disabled={isLoading}
-              className="gap-1"
-            >
-              <Sparkles className="h-4 w-4" />
-              {t('planTrip.wizard.generateNow', 'Générer maintenant')}
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

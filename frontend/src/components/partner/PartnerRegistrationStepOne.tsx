@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Building2, Mail, Phone, Clock, CheckCircle, Info } from 'lucide-react';
+import { Building2, Mail, Phone, Clock, CheckCircle, Info, ClipboardList } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
@@ -213,14 +213,14 @@ const PartnerRegistrationStepOne: React.FC = () => {
               <div className="w-8 h-px bg-gray-300"></div>
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">
-                  ✉️
+                  <Mail className="w-4 h-4" />
                 </div>
                 <span className="ml-2 text-sm text-gray-500">Email</span>
               </div>
               <div className="w-8 h-px bg-gray-300"></div>
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">
-                  📋
+                  <ClipboardList className="w-4 h-4" />
                 </div>
                 <span className="ml-2 text-sm text-gray-500">Profil</span>
               </div>
@@ -390,11 +390,13 @@ const PartnerRegistrationStepOne: React.FC = () => {
           <Alert className="bg-blue-50 border-blue-200">
             <Clock className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
-              <strong>Prochaines étapes :</strong><br />
-              1️⃣ Vérifiez votre email (2 min)<br />
-              2️⃣ Complétez votre profil (optionnel)<br />
-              3️⃣ Validation par notre équipe (24-48h)<br />
-              4️⃣ Accès à votre dashboard partenaire
+              <strong>Prochaines étapes :</strong>
+              <ol className="mt-1 ml-5 list-decimal space-y-0.5">
+                <li>Vérifiez votre email (2 min)</li>
+                <li>Complétez votre profil (optionnel)</li>
+                <li>Validation par notre équipe (24-48h)</li>
+                <li>Accès à votre dashboard partenaire</li>
+              </ol>
             </AlertDescription>
           </Alert>
 

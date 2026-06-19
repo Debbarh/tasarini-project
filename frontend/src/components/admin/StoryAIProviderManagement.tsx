@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { storyAIProviderService, StoryAIProviderConfig } from "@/services/storyAIProviderService";
-import { BookOpen, Sparkles } from "lucide-react";
+import { BookOpen, Sparkles, Palette, AlertTriangle } from "lucide-react";
 
 // Modèles disponibles par provider
 const AVAILABLE_MODELS = {
@@ -32,6 +32,12 @@ const AVAILABLE_MODELS = {
     { value: 'sonar', label: 'Sonar (Recommandé - Faits précis)' },
     { value: 'sonar-pro', label: 'Sonar Pro (Plus puissant, meilleure qualité)' },
     { value: 'sonar-reasoning', label: 'Sonar Reasoning (Raisonnement complexe)' },
+  ],
+  ollama: [
+    { value: 'qwen2.5:3b', label: 'Qwen2.5 3B (Recommandé - Local, bon en JSON)' },
+    { value: 'qwen2.5:7b', label: 'Qwen2.5 7B (Local, meilleure qualité - lent, RAM élevée)' },
+    { value: 'llama3.2:3b', label: 'Llama 3.2 3B (Local, léger)' },
+    { value: 'qwen2.5:1.5b', label: 'Qwen2.5 1.5B (Local, le plus rapide)' },
   ],
 };
 
@@ -108,7 +114,7 @@ const StoryAIProviderManagement = () => {
         {/* Info sur le provider actif */}
         {providers.some(p => p.is_enabled) && (
           <div className="mb-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
-            <p className="text-sm font-medium mb-1">🎨 Modèle actif :</p>
+            <p className="text-sm font-medium mb-1 flex items-center gap-1"><Palette className="w-4 h-4" /> Modèle actif :</p>
             <div className="flex flex-wrap gap-2">
               {providers
                 .filter(p => p.is_enabled)
@@ -239,7 +245,7 @@ const StoryAIProviderManagement = () => {
             <li><strong>Sauvegarde :</strong> Les changements sont sauvegardés automatiquement.</li>
           </ul>
           <div className="mt-3 p-2 bg-primary/10 rounded text-xs">
-            <strong>⚠️ Important :</strong> Les clés API doivent être configurées dans le fichier backend/.env (OPENAI_API_KEY, GEMINI_API_KEY, PERPLEXITY_API_KEY)
+            <strong className="inline-flex items-center"><AlertTriangle className="w-4 h-4 mr-1" /> Important :</strong> Les clés API doivent être configurées dans le fichier backend/.env (OPENAI_API_KEY, GEMINI_API_KEY, PERPLEXITY_API_KEY)
           </div>
         </div>
       </CardContent>

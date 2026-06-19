@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Sun, Plane, Shield, Heart, Utensils, Gift, MapPin, Bus, Info, Leaf, Calendar, Landmark } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Sun, Plane, Shield, Heart, Utensils, Gift, MapPin, Bus, Info, Leaf, Calendar, Landmark, Flower2, Snowflake, AlertTriangle, Syringe, Siren, Lock, Droplet, TrainFront, Car, Bike, Footprints, Ticket, Lightbulb, Sparkles, PartyPopper, Sprout, Check } from "lucide-react";
 import { TransportationAdvice, LocalEvent } from "@/types/trip";
 
 // Section: Pourquoi visiter cette destination
@@ -11,6 +11,7 @@ interface WhyVisitSectionProps {
 }
 
 export const WhyVisitSection = ({ whyVisit, title }: WhyVisitSectionProps) => {
+  const { t } = useTranslation();
   if (!whyVisit) return null;
 
   return (
@@ -18,7 +19,7 @@ export const WhyVisitSection = ({ whyVisit, title }: WhyVisitSectionProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
           <Heart className="h-5 w-5" />
-          Pourquoi {title || 'cette destination'} ?
+          {t('itinerary.enriched.whyTitle', 'Pourquoi {{name}} ?', { name: title || t('itinerary.enriched.thisDestination', 'cette destination') })}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -46,6 +47,7 @@ interface BestTimeToVisitSectionProps {
 }
 
 export const BestTimeToVisitSection = ({ bestTimeToVisit }: BestTimeToVisitSectionProps) => {
+  const { t } = useTranslation();
   if (!bestTimeToVisit) return null;
 
   // Allow a simple string response from the provider
@@ -58,20 +60,20 @@ export const BestTimeToVisitSection = ({ bestTimeToVisit }: BestTimeToVisitSecti
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sun className="h-5 w-5 text-orange-500" />
-          Meilleure période pour visiter
+          {t('itinerary.enriched.bestTime', 'Meilleure période pour visiter')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {bestTimeToVisit.overall && (
           <div className="bg-orange-50 dark:bg-orange-950/20 p-4 rounded-lg border border-orange-200">
-            <p className="font-semibold mb-2 text-orange-900 dark:text-orange-100">Recommandation générale</p>
+            <p className="font-semibold mb-2 text-orange-900 dark:text-orange-100">{t('itinerary.enriched.overallRec', 'Recommandation générale')}</p>
             <p className="text-sm text-gray-700 dark:text-gray-300">{bestTimeToVisit.overall}</p>
           </div>
         )}
 
         {bestTimeToVisit.byDestination && Object.keys(bestTimeToVisit.byDestination).length > 0 && (
           <div className="space-y-3">
-            <p className="font-semibold text-sm">Par destination :</p>
+            <p className="font-semibold text-sm">{t('itinerary.enriched.byDestination', 'Par destination :')}</p>
             {Object.entries(bestTimeToVisit.byDestination).map(([destination, period]) => (
               <div key={destination} className="pl-4 border-l-2 border-orange-200">
                 <p className="font-medium text-sm">{destination}</p>
@@ -83,29 +85,29 @@ export const BestTimeToVisitSection = ({ bestTimeToVisit }: BestTimeToVisitSecti
 
         {bestTimeToVisit.seasons && (
           <div>
-            <p className="font-semibold text-sm mb-3">Par saison :</p>
+            <p className="font-semibold text-sm mb-3">{t('itinerary.enriched.bySeason', 'Par saison :')}</p>
             <div className="grid gap-3 sm:grid-cols-2">
               {bestTimeToVisit.seasons.spring && (
                 <div className="bg-green-50 dark:bg-green-950/20 p-3 rounded-lg">
-                  <p className="font-medium text-sm text-green-900 dark:text-green-100">🌸 Printemps</p>
+                  <p className="font-medium text-sm text-green-900 dark:text-green-100 flex items-center gap-1.5"><Flower2 className="h-3.5 w-3.5" /> {t('itinerary.enriched.spring', 'Printemps')}</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{bestTimeToVisit.seasons.spring}</p>
                 </div>
               )}
               {bestTimeToVisit.seasons.summer && (
                 <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-lg">
-                  <p className="font-medium text-sm text-yellow-900 dark:text-yellow-100">☀️ Été</p>
+                  <p className="font-medium text-sm text-yellow-900 dark:text-yellow-100 flex items-center gap-1.5"><Sun className="h-3.5 w-3.5" /> {t('itinerary.enriched.summer', 'Été')}</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{bestTimeToVisit.seasons.summer}</p>
                 </div>
               )}
               {bestTimeToVisit.seasons.autumn && (
                 <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg">
-                  <p className="font-medium text-sm text-amber-900 dark:text-amber-100">🍂 Automne</p>
+                  <p className="font-medium text-sm text-amber-900 dark:text-amber-100 flex items-center gap-1.5"><Leaf className="h-3.5 w-3.5" /> {t('itinerary.enriched.autumn', 'Automne')}</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{bestTimeToVisit.seasons.autumn}</p>
                 </div>
               )}
               {bestTimeToVisit.seasons.winter && (
                 <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg">
-                  <p className="font-medium text-sm text-blue-900 dark:text-blue-100">❄️ Hiver</p>
+                  <p className="font-medium text-sm text-blue-900 dark:text-blue-100 flex items-center gap-1.5"><Snowflake className="h-3.5 w-3.5" /> {t('itinerary.enriched.winter', 'Hiver')}</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{bestTimeToVisit.seasons.winter}</p>
                 </div>
               )}
@@ -115,7 +117,7 @@ export const BestTimeToVisitSection = ({ bestTimeToVisit }: BestTimeToVisitSecti
 
         {bestTimeToVisit.avoidPeriods && bestTimeToVisit.avoidPeriods.length > 0 && (
           <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200">
-            <p className="font-semibold text-sm text-red-900 dark:text-red-100 mb-2">⚠️ Périodes à éviter :</p>
+            <p className="font-semibold text-sm text-red-900 dark:text-red-100 mb-2 flex items-center gap-1.5"><AlertTriangle className="h-3.5 w-3.5" /> {t('itinerary.enriched.avoidPeriods', 'Périodes à éviter :')}</p>
             <ul className="space-y-1">
               {bestTimeToVisit.avoidPeriods.map((period, idx) => (
                 <li key={idx} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
@@ -144,6 +146,7 @@ interface VisaAndEntrySectionProps {
 }
 
 export const VisaAndEntrySection = ({ visaAndEntry }: VisaAndEntrySectionProps) => {
+  const { t } = useTranslation();
   if (!visaAndEntry) return null;
 
   // Allow a flat string response
@@ -163,7 +166,7 @@ export const VisaAndEntrySection = ({ visaAndEntry }: VisaAndEntrySectionProps) 
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Plane className="h-5 w-5 text-blue-500" />
-          Visa & Formalités d'entrée
+          {t('itinerary.enriched.visaTitle', "Visa & Formalités d'entrée")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -173,11 +176,11 @@ export const VisaAndEntrySection = ({ visaAndEntry }: VisaAndEntrySectionProps) 
 
         {requirements.length > 0 && (
           <div>
-            <p className="font-semibold text-sm mb-2">Exigences :</p>
+            <p className="font-semibold text-sm mb-2">{t('itinerary.enriched.requirements', 'Exigences :')}</p>
             <ul className="space-y-1.5">
               {requirements.map((req, idx) => (
                 <li key={idx} className="text-sm flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">✓</span>
+                  <Check className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                   <span>{req}</span>
                 </li>
               ))}
@@ -188,13 +191,13 @@ export const VisaAndEntrySection = ({ visaAndEntry }: VisaAndEntrySectionProps) 
         <div className="grid gap-3 sm:grid-cols-2">
           {visaAndEntry.processingTime && (
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs text-muted-foreground">Délai de traitement</p>
+              <p className="text-xs text-muted-foreground">{t('itinerary.enriched.processingTime', 'Délai de traitement')}</p>
               <p className="font-medium text-sm mt-1">{visaAndEntry.processingTime}</p>
             </div>
           )}
           {visaAndEntry.cost && (
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs text-muted-foreground">Coût approximatif</p>
+              <p className="text-xs text-muted-foreground">{t('itinerary.enriched.cost', 'Coût approximatif')}</p>
               <p className="font-medium text-sm mt-1">{visaAndEntry.cost}</p>
             </div>
           )}
@@ -202,14 +205,14 @@ export const VisaAndEntrySection = ({ visaAndEntry }: VisaAndEntrySectionProps) 
 
         {exemptions.length > 0 && (
           <div className="bg-green-50 dark:bg-green-950/20 p-3 rounded-lg border border-green-200">
-            <p className="font-semibold text-sm text-green-900 dark:text-green-100 mb-2">Pays exemptés de visa :</p>
+            <p className="font-semibold text-sm text-green-900 dark:text-green-100 mb-2">{t('itinerary.enriched.exemptions', 'Pays exemptés de visa :')}</p>
             <p className="text-sm text-gray-700 dark:text-gray-300">{exemptions.join(", ")}</p>
           </div>
         )}
 
         {entryRequirements.length > 0 && (
           <div>
-            <p className="font-semibold text-sm mb-2">Conditions d'entrée :</p>
+            <p className="font-semibold text-sm mb-2">{t('itinerary.enriched.entryRequirements', "Conditions d'entrée :")}</p>
             <ul className="space-y-1.5">
               {entryRequirements.map((req, idx) => (
                 <li key={idx} className="text-sm flex items-start gap-2">
@@ -239,6 +242,7 @@ interface HealthAndSafetySectionProps {
 }
 
 export const HealthAndSafetySection = ({ healthAndSafety }: HealthAndSafetySectionProps) => {
+  const { t } = useTranslation();
   if (!healthAndSafety) return null;
 
   // Allow a flat string response
@@ -267,18 +271,34 @@ export const HealthAndSafetySection = ({ healthAndSafety }: HealthAndSafetySecti
 
   if (!hasContent) return null;
 
+  // Traduction des intitulés de numéros d'urgence courants (clé technique -> libellé)
+  const emergencyLabel = (type: string) => {
+    const key = (type || '').toLowerCase();
+    const map: Record<string, string> = {
+      police: t('itinerary.enriched.emPolice', 'Police'),
+      medical: t('itinerary.enriched.emMedical', 'Médical'),
+      ambulance: t('itinerary.enriched.emMedical', 'Médical'),
+      fire: t('itinerary.enriched.emFire', 'Pompiers'),
+      firefighters: t('itinerary.enriched.emFire', 'Pompiers'),
+      embassy: t('itinerary.enriched.emEmbassy', 'Ambassade'),
+      consulate: t('itinerary.enriched.emEmbassy', 'Ambassade'),
+      general: t('itinerary.enriched.emGeneral', "Urgences générales"),
+    };
+    return map[key] || (type.charAt(0).toUpperCase() + type.slice(1));
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-green-500" />
-          Santé & Sécurité
+          {t('itinerary.enriched.healthTitle', 'Santé & Sécurité')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {vaccinations.length > 0 && (
           <div>
-            <p className="font-semibold text-sm mb-2">💉 Vaccinations :</p>
+            <p className="font-semibold text-sm mb-2 flex items-center gap-1.5"><Syringe className="h-3.5 w-3.5" /> {t('itinerary.enriched.vaccinations', 'Vaccinations :')}</p>
             <ul className="space-y-1.5">
               {vaccinations.map((vac, idx) => (
                 <li key={idx} className="text-sm flex items-start gap-2">
@@ -292,7 +312,7 @@ export const HealthAndSafetySection = ({ healthAndSafety }: HealthAndSafetySecti
 
         {healthTips.length > 0 && (
           <div>
-            <p className="font-semibold text-sm mb-2">Conseils santé :</p>
+            <p className="font-semibold text-sm mb-2">{t('itinerary.enriched.healthTips', 'Conseils santé :')}</p>
             <ul className="space-y-1.5">
               {healthTips.map((tip, idx) => (
                 <li key={idx} className="text-sm flex items-start gap-2">
@@ -306,18 +326,18 @@ export const HealthAndSafetySection = ({ healthAndSafety }: HealthAndSafetySecti
 
         {healthAndSafety.insurance && (
           <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200">
-            <p className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-1">Assurance voyage</p>
+            <p className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-1">{t('itinerary.enriched.insurance', 'Assurance voyage')}</p>
             <p className="text-sm text-gray-700 dark:text-gray-300">{healthAndSafety.insurance}</p>
           </div>
         )}
 
         {healthAndSafety.emergencyNumbers && Object.keys(healthAndSafety.emergencyNumbers).length > 0 && (
           <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200">
-            <p className="font-semibold text-sm text-red-900 dark:text-red-100 mb-3">🚨 Numéros d'urgence :</p>
+            <p className="font-semibold text-sm text-red-900 dark:text-red-100 mb-3 flex items-center gap-1.5"><Siren className="h-3.5 w-3.5" /> {t('itinerary.enriched.emergencyNumbers', "Numéros d'urgence :")}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {Object.entries(healthAndSafety.emergencyNumbers).map(([type, number]) => (
                 <div key={type} className="flex justify-between items-center">
-                  <span className="text-sm capitalize">{type} :</span>
+                  <span className="text-sm">{emergencyLabel(type)} :</span>
                   <span className="font-mono font-semibold text-sm">{number}</span>
                 </div>
               ))}
@@ -327,7 +347,7 @@ export const HealthAndSafetySection = ({ healthAndSafety }: HealthAndSafetySecti
 
         {safetyTips.length > 0 && (
           <div>
-            <p className="font-semibold text-sm mb-2">🔒 Conseils sécurité :</p>
+            <p className="font-semibold text-sm mb-2 flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> {t('itinerary.enriched.safetyTips', 'Conseils sécurité :')}</p>
             <ul className="space-y-1.5">
               {safetyTips.map((tip, idx) => (
                 <li key={idx} className="text-sm flex items-start gap-2">
@@ -342,13 +362,13 @@ export const HealthAndSafetySection = ({ healthAndSafety }: HealthAndSafetySecti
         <div className="grid gap-3 sm:grid-cols-2">
           {healthAndSafety.waterQuality && (
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">💧 Eau potable</p>
+              <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1.5"><Droplet className="h-3.5 w-3.5" /> {t('itinerary.enriched.waterQuality', 'Eau potable')}</p>
               <p className="text-sm">{healthAndSafety.waterQuality}</p>
             </div>
           )}
           {healthAndSafety.foodSafety && (
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">🍽️ Alimentation</p>
+              <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1.5"><Utensils className="h-3.5 w-3.5" /> {t('itinerary.enriched.foodSafety', 'Alimentation')}</p>
               <p className="text-sm">{healthAndSafety.foodSafety}</p>
             </div>
           )}
@@ -372,6 +392,7 @@ interface MustTryDishesSectionProps {
 }
 
 export const MustTryDishesSection = ({ mustTryDishes }: MustTryDishesSectionProps) => {
+  const { t } = useTranslation();
   if (!mustTryDishes || mustTryDishes.length === 0) return null;
 
   const dishes: MustTryDish[] = mustTryDishes.map((dish) => {
@@ -392,7 +413,7 @@ export const MustTryDishesSection = ({ mustTryDishes }: MustTryDishesSectionProp
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Utensils className="h-5 w-5 text-orange-500" />
-          Plats incontournables
+          {t('itinerary.enriched.dishesTitle', 'Plats incontournables')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -441,6 +462,7 @@ interface GiftIdeasSectionProps {
 }
 
 export const GiftIdeasSection = ({ giftIdeas }: GiftIdeasSectionProps) => {
+  const { t } = useTranslation();
   if (!giftIdeas || giftIdeas.length === 0) return null;
 
   const ideas: GiftIdea[] = giftIdeas.map((gift) => {
@@ -460,7 +482,7 @@ export const GiftIdeasSection = ({ giftIdeas }: GiftIdeasSectionProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Gift className="h-5 w-5 text-pink-500" />
-          Idées cadeaux & Souvenirs
+          {t('itinerary.enriched.giftsTitle', 'Idées cadeaux & Souvenirs')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -483,8 +505,8 @@ export const GiftIdeasSection = ({ giftIdeas }: GiftIdeasSectionProps) => {
                 </div>
               )}
               {gift.tips && (
-                <div className="mt-2 bg-white/50 dark:bg-black/20 p-2 rounded text-xs text-gray-600 dark:text-gray-400">
-                  💡 {gift.tips}
+                <div className="mt-2 bg-white/50 dark:bg-black/20 p-2 rounded text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
+                  <Lightbulb className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" /> <span>{gift.tips}</span>
                 </div>
               )}
             </div>
@@ -509,6 +531,7 @@ interface SimilarDestinationsSectionProps {
 }
 
 export const SimilarDestinationsSection = ({ similarDestinations }: SimilarDestinationsSectionProps) => {
+  const { t } = useTranslation();
   if (!similarDestinations || similarDestinations.length === 0) return null;
 
   const items: SimilarDestination[] = similarDestinations.map((dest) => {
@@ -527,7 +550,7 @@ export const SimilarDestinationsSection = ({ similarDestinations }: SimilarDesti
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5 text-purple-500" />
-          Destinations similaires à explorer
+          {t('itinerary.enriched.similarTitle', 'Destinations similaires à explorer')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -545,10 +568,10 @@ export const SimilarDestinationsSection = ({ similarDestinations }: SimilarDesti
               )}
               <div className="flex flex-wrap gap-2 mt-2">
                 {dest.distance && (
-                  <Badge variant="outline" className="text-xs">📍 {dest.distance}</Badge>
+                  <Badge variant="outline" className="text-xs gap-1"><MapPin className="h-3 w-3" /> {dest.distance}</Badge>
                 )}
                 {dest.bestFor && (
-                  <Badge variant="secondary" className="text-xs">✨ {dest.bestFor}</Badge>
+                  <Badge variant="secondary" className="text-xs gap-1"><Sparkles className="h-3 w-3" /> {dest.bestFor}</Badge>
                 )}
               </div>
             </div>
@@ -565,6 +588,7 @@ interface TransportationAdviceSectionProps {
 }
 
 export const TransportationAdviceSection = ({ transportationAdvice }: TransportationAdviceSectionProps) => {
+  const { t } = useTranslation();
   if (!transportationAdvice) return null;
 
   // Normalize string payload
@@ -594,62 +618,62 @@ export const TransportationAdviceSection = ({ transportationAdvice }: Transporta
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bus className="h-5 w-5 text-blue-500" />
-          Transports & Déplacements
+          {t('itinerary.enriched.transportTitle', 'Transports & Déplacements')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {transportationAdvice.gettingThere && (
           <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200">
-            <p className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-2">✈️ Comment s'y rendre :</p>
+            <p className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-1.5"><Plane className="h-3.5 w-3.5" /> {t('itinerary.enriched.gettingThere', "Comment s'y rendre :")}</p>
             <p className="text-sm text-gray-700 dark:text-gray-300">{toText(transportationAdvice.gettingThere)}</p>
           </div>
         )}
 
         {transportationAdvice.localTransport && (
           <div>
-            <p className="font-semibold text-sm mb-3">🚇 Transports locaux :</p>
+            <p className="font-semibold text-sm mb-3 flex items-center gap-1.5"><TrainFront className="h-3.5 w-3.5" /> {t('itinerary.enriched.localTransport', 'Transports locaux :')}</p>
             <div className="grid gap-3">
               {lt.metro && (
                 <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                  <span className="text-xl">🚇</span>
+                  <TrainFront className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium text-sm">Métro</p>
+                    <p className="font-medium text-sm">{t('itinerary.enriched.metro', 'Métro')}</p>
                     <p className="text-sm text-muted-foreground">{toText(lt.metro)}</p>
                   </div>
                 </div>
               )}
               {lt.bus && (
                 <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                  <span className="text-xl">🚌</span>
+                  <Bus className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium text-sm">Bus</p>
+                    <p className="font-medium text-sm">{t('itinerary.enriched.bus', 'Bus')}</p>
                     <p className="text-sm text-muted-foreground">{toText(lt.bus)}</p>
                   </div>
                 </div>
               )}
               {lt.taxi && (
                 <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                  <span className="text-xl">🚕</span>
+                  <Car className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium text-sm">Taxi & VTC</p>
+                    <p className="font-medium text-sm">{t('itinerary.enriched.taxi', 'Taxi & VTC')}</p>
                     <p className="text-sm text-muted-foreground">{toText(lt.taxi)}</p>
                   </div>
                 </div>
               )}
               {lt.bike && (
                 <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                  <span className="text-xl">🚲</span>
+                  <Bike className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium text-sm">Vélos</p>
+                    <p className="font-medium text-sm">{t('itinerary.enriched.bike', 'Vélos')}</p>
                     <p className="text-sm text-muted-foreground">{toText(lt.bike)}</p>
                   </div>
                 </div>
               )}
               {lt.walking && (
                 <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                  <span className="text-xl">🚶</span>
+                  <Footprints className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium text-sm">À pied</p>
+                    <p className="font-medium text-sm">{t('itinerary.enriched.walking', 'À pied')}</p>
                     <p className="text-sm text-muted-foreground">{toText(lt.walking)}</p>
                   </div>
                 </div>
@@ -660,14 +684,14 @@ export const TransportationAdviceSection = ({ transportationAdvice }: Transporta
 
         {transportationAdvice.transportCards && (
           <div className="bg-green-50 dark:bg-green-950/20 p-3 rounded-lg border border-green-200">
-            <p className="font-semibold text-sm text-green-900 dark:text-green-100 mb-1">🎫 Cartes de transport</p>
+            <p className="font-semibold text-sm text-green-900 dark:text-green-100 mb-1 flex items-center gap-1.5"><Ticket className="h-3.5 w-3.5" /> {t('itinerary.enriched.transportCards', 'Cartes de transport')}</p>
             <p className="text-sm text-gray-700 dark:text-gray-300">{toText(transportationAdvice.transportCards)}</p>
           </div>
         )}
 
         {tipsArray.length > 0 && (
           <div>
-            <p className="font-semibold text-sm mb-2">💡 Conseils pratiques :</p>
+            <p className="font-semibold text-sm mb-2 flex items-center gap-1.5"><Lightbulb className="h-3.5 w-3.5" /> {t('itinerary.enriched.practicalTips', 'Conseils pratiques :')}</p>
             <ul className="space-y-1.5">
               {tipsArray.map((tip, idx) => (
                 <li key={idx} className="text-sm flex items-start gap-2">
@@ -690,6 +714,7 @@ interface MustSeeSectionProps {
 }
 
 export const MustSeeSection = ({ mustSee, title }: MustSeeSectionProps) => {
+  const { t } = useTranslation();
   if (!mustSee || mustSee.length === 0) return null;
 
   return (
@@ -697,7 +722,9 @@ export const MustSeeSection = ({ mustSee, title }: MustSeeSectionProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Landmark className="h-5 w-5 text-primary" />
-          Incontournables {title ? `à ${title}` : ''}
+          {title
+            ? t('itinerary.enriched.mustSeeAt', 'Incontournables à {{name}}', { name: title })
+            : t('itinerary.enriched.mustSee', 'Incontournables')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -720,6 +747,7 @@ interface CulturalTipsSectionProps {
 }
 
 export const CulturalTipsSection = ({ culturalTips }: CulturalTipsSectionProps) => {
+  const { t } = useTranslation();
   if (!culturalTips || culturalTips.length === 0) return null;
 
   return (
@@ -727,14 +755,14 @@ export const CulturalTipsSection = ({ culturalTips }: CulturalTipsSectionProps) 
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Info className="h-5 w-5 text-indigo-500" />
-          Conseils culturels & Coutumes
+          {t('itinerary.enriched.culturalTitle', 'Conseils culturels & Coutumes')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 sm:grid-cols-2">
           {culturalTips.map((tip, idx) => (
             <div key={idx} className="flex items-start gap-3 p-3 bg-indigo-50 dark:bg-indigo-950/20 rounded-lg border border-indigo-200">
-              <span className="text-indigo-500 mt-0.5">✓</span>
+              <Check className="h-4 w-4 text-indigo-500 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-gray-700 dark:text-gray-300">{tip}</p>
             </div>
           ))}
@@ -750,6 +778,7 @@ interface LocalEventsSectionProps {
 }
 
 export const LocalEventsSection = ({ localEvents }: LocalEventsSectionProps) => {
+  const { t } = useTranslation();
   if (!localEvents || localEvents.length === 0) return null;
 
   const events = localEvents.map((event) => {
@@ -771,7 +800,7 @@ export const LocalEventsSection = ({ localEvents }: LocalEventsSectionProps) => 
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5 text-purple-500" />
-          Événements & Festivals locaux
+          {t('itinerary.enriched.eventsTitle', 'Événements & Festivals locaux')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -780,7 +809,7 @@ export const LocalEventsSection = ({ localEvents }: LocalEventsSectionProps) => 
             <div key={idx} className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200">
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">🎉</span>
+                  <PartyPopper className="h-5 w-5 text-purple-500" />
                   <h4 className="font-semibold text-sm">{event.name}</h4>
                 </div>
                 {event.date && (
@@ -812,6 +841,7 @@ interface SustainabilityTipsSectionProps {
 }
 
 export const SustainabilityTipsSection = ({ sustainabilityTips }: SustainabilityTipsSectionProps) => {
+  const { t } = useTranslation();
   if (!sustainabilityTips || sustainabilityTips.length === 0) return null;
 
   return (
@@ -819,14 +849,14 @@ export const SustainabilityTipsSection = ({ sustainabilityTips }: Sustainability
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-green-900 dark:text-green-100">
           <Leaf className="h-5 w-5 text-green-500" />
-          Voyage éco-responsable
+          {t('itinerary.enriched.sustainabilityTitle', 'Voyage éco-responsable')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="space-y-2">
           {sustainabilityTips.map((tip, idx) => (
             <li key={idx} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-              <span className="text-green-500 mt-0.5">🌱</span>
+              <Sprout className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
               <span>{tip}</span>
             </li>
           ))}

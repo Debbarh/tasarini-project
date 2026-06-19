@@ -16,12 +16,14 @@ import { MapPin, Calendar as CalendarIcon, Plus, X, Link, Upload, Sparkles, Book
 import { MediaUploader } from "@/components/media/MediaUploader";
 import LocationPicker from "@/components/LocationPicker";
 import { useActivitySettings } from "@/hooks/useActivitySettings";
+import { TaxonomyIcon } from "@/lib/taxonomyIcon";
+import { getLocalizedLabel } from "@/utils/multilingualHelpers";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { storyService } from "@/services/storyService";
 import { savedItineraryService } from "@/services/savedItineraryService";
-import { apiClient } from "@/integrations/api/client";
+import { apiClient, extractArrayFromResponse } from "@/integrations/api/client";
 import { storyGenerationService } from "@/services/storyGenerationService";
 
 interface CreateSocialStoryDialogProps {
@@ -68,7 +70,7 @@ interface ItineraryData {
 }
 
 export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledData }: CreateSocialStoryDialogProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { categories, intensityLevels, loading: activityLoading } = useActivitySettings();
   const [loading, setLoading] = useState(false);
@@ -80,6 +82,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
   const [searchType, setSearchType] = useState<'tourist_point' | 'itinerary' | 'activity'>('tourist_point');
   const [userItineraries, setUserItineraries] = useState<ItineraryData[]>([]);
   const [selectedItinerary, setSelectedItinerary] = useState<string>('');
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('manual');
   
   const [formData, setFormData] = useState<StoryFormData>({
@@ -108,7 +111,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
   const fetchUserItineraries = async () => {
     try {
       const data = await savedItineraryService.list({ limit: 10 });
-      setUserItineraries(data || []);
+      setUserItineraries(extractArrayFromResponse(data));
     } catch (error) {
       console.error('Error fetching user itineraries:', error);
     }
@@ -123,7 +126,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
     setAiGenerating(true);
     try {
       const itinerary = userItineraries.find(i => i.id === selectedItinerary);
-      if (!itinerary) throw new Error('Itinéraire non trouvé');
+      if (!itinerary) throw new Error(t('travelStories.createDialog.itineraryNotFound', 'Itinéraire non trouvé'));
 
       const data = await storyGenerationService.generateFromItinerary({
         title: itinerary.title,
@@ -133,7 +136,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
       // Pre-fill form with AI-generated content
       setFormData(prev => ({
         ...prev,
-        title: data.title || `Mon voyage: ${itinerary.title}`,
+        title: data.title || t('travelStories.createDialog.defaultTitle', 'Mon voyage : {{title}}', { title: itinerary.title }),
         content: data.content || '',
         tags: data.tags || [],
         location_name: data.location || '',
@@ -202,15 +205,15 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
       let data = [];
 
       if (searchType === 'tourist_point') {
-      const points = await apiClient.get<any[]>('poi/tourist-points/', {
+      const points = await apiClient.get<any>('poi/tourist-points/', {
         search: searchTerm,
         is_active: true,
         limit: 5,
       });
-      data = (points || []).slice(0, 5).map(p => ({ ...p, type: 'tourist_point' }));
+      data = extractArrayFromResponse(points).slice(0, 5).map(p => ({ ...p, type: 'tourist_point' }));
     } else if (searchType === 'itinerary') {
       const itineraries = await savedItineraryService.list({ search: searchTerm, limit: 5 });
-      data = (itineraries || []).map(i => ({ id: i.id, name: i.title, type: 'itinerary' }));
+      data = extractArrayFromResponse(itineraries).map((i: any) => ({ id: i.id, name: i.title, type: 'itinerary' }));
     }
 
       setSearchResults(data);
@@ -295,17 +298,50 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
     }
   };
 
+  // Itinéraire sélectionné + ses activités (aplaties depuis days[].activities[])
+  const selectedItineraryObj = userItineraries.find(i => i.id === selectedItinerary);
+  const itineraryActivities: { id: string; title: string; day: number }[] = (() => {
+    const days = (selectedItineraryObj?.itinerary_data?.days) || [];
+    const out: { id: string; title: string; day: number }[] = [];
+    days.forEach((d: any, di: number) => (d?.activities || []).forEach((a: any, ai: number) => {
+      if (a?.title) out.push({ id: a.id || `${di}:${ai}`, title: a.title, day: d.dayNumber ?? di + 1 });
+    }));
+    return out;
+  })();
+
+  const toggleActivity = (id: string) => {
+    setSelectedActivities(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  // Lie l'itinéraire + les activités choisies à la story, puis bascule en saisie manuelle.
+  const applyItineraryLink = () => {
+    if (!selectedItineraryObj) return;
+    const entities: LinkedEntity[] = [
+      { type: 'itinerary', id: selectedItineraryObj.id, name: selectedItineraryObj.title },
+      ...selectedActivities
+        .map(aid => itineraryActivities.find(a => a.id === aid))
+        .filter(Boolean)
+        .map(a => ({ type: 'activity' as const, id: a!.id, name: a!.title })),
+    ];
+    setLinkedEntities(prev => {
+      const seen = new Set(prev.map(e => `${e.type}:${e.id}`));
+      return [...prev, ...entities.filter(e => !seen.has(`${e.type}:${e.id}`))];
+    });
+    setFormData(prev => ({
+      ...prev,
+      title: prev.title || selectedItineraryObj.title,
+      ai_generated_from: selectedItineraryObj.id,
+    }));
+    setActiveTab('manual');
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="ai-itinerary" className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             {t('travelStories.createDialog.tabs.aiItinerary')}
-          </TabsTrigger>
-          <TabsTrigger value="ai-instant" className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
-            {t('travelStories.createDialog.tabs.aiInstant')}
           </TabsTrigger>
           <TabsTrigger value="manual" className="flex items-center gap-2">
             <Activity className="w-4 h-4" />
@@ -324,7 +360,7 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>{t('travelStories.createDialog.aiItinerary.selectLabel')}</Label>
-                <Select value={selectedItinerary} onValueChange={setSelectedItinerary}>
+                <Select value={selectedItinerary} onValueChange={(v) => { setSelectedItinerary(v); setSelectedActivities([]); }}>
                   <SelectTrigger>
                     <SelectValue placeholder={t('travelStories.createDialog.aiItinerary.selectPlaceholder')} />
                   </SelectTrigger>
@@ -337,93 +373,46 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                   </SelectContent>
                 </Select>
               </div>
-              
-              <Button 
-                onClick={generateStoryFromItinerary}
-                disabled={!selectedItinerary || aiGenerating}
-                className="w-full"
-              >
-                {aiGenerating ? (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-                    {t('travelStories.createDialog.aiItinerary.generating')}
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    {t('travelStories.createDialog.aiItinerary.generate')}
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="ai-instant" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                {t('travelStories.createDialog.aiInstant.title')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button
-                  variant="outline"
-                  onClick={() => generateInstantStory("Créer une story sur un voyage romantique à Paris avec visite de monuments historiques")}
-                  disabled={aiGenerating}
-                  className="h-auto p-4 text-left"
-                >
-                  <div>
-                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.paris.title')}</div>
-                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.paris.description')}</div>
+              {!selectedItinerary ? (
+                <p className="text-sm text-muted-foreground">
+                  {t('travelStories.createDialog.aiItinerary.selectFirst', "Sélectionnez d'abord un itinéraire pour choisir ses activités.")}
+                </p>
+              ) : itineraryActivities.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  {t('travelStories.createDialog.aiItinerary.noActivities', "Cet itinéraire n'a pas d'activités détaillées.")}
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  <Label>{t('travelStories.createDialog.aiItinerary.chooseActivities', 'Choisissez une ou plusieurs activités à lier à votre story')}</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-auto pr-1">
+                    {itineraryActivities.map((act) => (
+                      <Button
+                        key={act.id}
+                        type="button"
+                        variant={selectedActivities.includes(act.id) ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => toggleActivity(act.id)}
+                        className="justify-start text-left h-auto py-2 px-3 whitespace-normal"
+                      >
+                        <Badge variant="secondary" className="mr-2 shrink-0">
+                          {t('travelStories.createDialog.aiItinerary.dayShort', 'J{{day}}', { day: act.day })}
+                        </Badge>
+                        <span className="text-xs">{act.title}</span>
+                      </Button>
+                    ))}
                   </div>
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={() => generateInstantStory("Créer une story sur une aventure de trekking en montagne avec des paysages époustouflants")}
-                  disabled={aiGenerating}
-                  className="h-auto p-4 text-left"
-                >
-                  <div>
-                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.mountain.title')}</div>
-                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.mountain.description')}</div>
-                  </div>
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={() => generateInstantStory("Créer une story sur un road trip côtier avec plages paradisiaques et couchers de soleil")}
-                  disabled={aiGenerating}
-                  className="h-auto p-4 text-left"
-                >
-                  <div>
-                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.coastal.title')}</div>
-                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.coastal.description')}</div>
-                  </div>
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={() => generateInstantStory("Créer une story sur une découverte culturelle urbaine avec street art et gastronomie locale")}
-                  disabled={aiGenerating}
-                  className="h-auto p-4 text-left"
-                >
-                  <div>
-                    <div className="font-medium">{t('travelStories.createDialog.aiInstant.templates.urban.title')}</div>
-                    <div className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.templates.urban.description')}</div>
-                  </div>
-                </Button>
-              </div>
-              
-              {aiGenerating && (
-                <div className="text-center py-4">
-                  <Sparkles className="w-6 h-6 mx-auto animate-spin text-primary mb-2" />
-                  <p className="text-sm text-muted-foreground">{t('travelStories.createDialog.aiInstant.preparing')}</p>
                 </div>
               )}
+
+              <Button
+                onClick={applyItineraryLink}
+                disabled={!selectedItinerary}
+                className="w-full"
+              >
+                <Link className="w-4 h-4 mr-2" />
+                {t('travelStories.createDialog.aiItinerary.linkButton', 'Lier et rédiger ma story')}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -500,8 +489,8 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                       }}
                       className="justify-start text-left h-auto py-2 px-3"
                     >
-                      <span className="mr-2">{category.icon_emoji}</span>
-                      <span className="text-xs">{category.label_fr}</span>
+                      <TaxonomyIcon iconName={category.icon_name} code={category.code} className="h-4 w-4 mr-2" fallback="Activity" />
+                      <span className="text-xs">{getLocalizedLabel(category, i18n.language) || category.code}</span>
                     </Button>
                   ))}
                 </div>
@@ -527,8 +516,8 @@ export const CreateSocialStoryDialog = ({ onStoryCreated, onCancel, prefilledDat
                       onClick={() => handleInputChange('intensity_level', level.code)}
                       className="justify-center text-center h-auto py-3 px-2 flex-col gap-1"
                     >
-                      <span className="text-lg">{level.icon_emoji}</span>
-                      <span className="text-xs">{level.label_fr}</span>
+                      <TaxonomyIcon iconName={level.icon_name} code={level.code} className="h-5 w-5" fallback="Activity" />
+                      <span className="text-xs">{getLocalizedLabel(level, i18n.language) || level.code}</span>
                     </Button>
                   ))}
                 </div>

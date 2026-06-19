@@ -19,7 +19,9 @@ import {
   CheckCircle,
   Clock,
   Filter,
-  Plus
+  Plus,
+  Landmark,
+  Wallet
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { partnerService } from '@/services/partnerService';
@@ -263,10 +265,10 @@ const PartnerEarningsManager: React.FC = () => {
 
   const getPaymentMethodIcon = (type: string) => {
     switch (type) {
-      case 'bank': return '🏦';
-      case 'paypal': return '💳';
-      case 'stripe': return '💰';
-      default: return '💳';
+      case 'bank': return <Landmark className="w-6 h-6" />;
+      case 'paypal': return <CreditCard className="w-6 h-6" />;
+      case 'stripe': return <Wallet className="w-6 h-6" />;
+      default: return <CreditCard className="w-6 h-6" />;
     }
   };
 

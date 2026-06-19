@@ -4,14 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminDebugPanel } from "@/components/debug/AdminDebugPanel";
-import { Users, MapPin, Building2, Settings, Plane, BarChart3, Compass, Shield, Hotel } from "lucide-react";
+import { Users, MapPin, Building2, Settings, Plane, BarChart3, Compass, Shield, Hotel, BookOpen } from "lucide-react";
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import { AdminPerformanceMonitor } from "@/components/admin/AdminPerformanceMonitor";
 
 // Lazy load admin components for better performance
 const ComprehensivePartnerManagement = lazy(() => import("@/components/admin/ComprehensivePartnerManagement"));
 const PartnerManagement = lazy(() => import("@/components/admin/PartnerManagement"));
-const TouristPointsApproval = lazy(() => import("@/components/admin/TouristPointsApproval"));
 const UserManagement = lazy(() => import("@/components/admin/UserManagement"));
 const TouristPointsManagement = lazy(() => import("@/components/admin/TouristPointsManagement"));
 const SystemSettings = lazy(() => import("@/components/admin/SystemSettings"));
@@ -23,6 +22,7 @@ const BeInspiredManagement = lazy(() => import("@/components/admin/BeInspiredMan
 const AdminSecurityDashboard = lazy(() => import("@/components/admin/AdminSecurityDashboard").then(module => ({ default: module.AdminSecurityDashboard })));
 const RLSSecurityDashboard = lazy(() => import("@/components/admin/RLSSecurityDashboard"));
 const BookingCenterManagement = lazy(() => import("@/components/admin/BookingCenterManagement"));
+const StoryAIProviderManagement = lazy(() => import("@/components/admin/StoryAIProviderManagement"));
 
 // Loading component for suspense fallbacks
 const TabLoader = () => (
@@ -173,10 +173,6 @@ const Admin = () => {
               <Building2 className="w-4 h-4" />
               Partenaires
             </TabsTrigger>
-            <TabsTrigger value="partner-points" className="flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              Approbation POI
-            </TabsTrigger>
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Utilisateurs
@@ -196,6 +192,10 @@ const Admin = () => {
           <TabsTrigger value="be-inspired" className="flex items-center gap-2">
             <Compass className="w-4 h-4" />
             Be Inspired
+          </TabsTrigger>
+          <TabsTrigger value="travel-stories" className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4" />
+            Travel Stories
           </TabsTrigger>
           <TabsTrigger value="analytics" className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
@@ -219,12 +219,6 @@ const Admin = () => {
           </Suspense>
         </TabsContent>
           
-        <TabsContent value="partner-points">
-          <Suspense fallback={<TabLoader />}>
-            <TouristPointsApproval />
-          </Suspense>
-        </TabsContent>
-
         <TabsContent value="users">
           <Suspense fallback={<TabLoader />}>
             <UserManagement />
@@ -255,6 +249,12 @@ const Admin = () => {
         <TabsContent value="be-inspired">
           <Suspense fallback={<TabLoader />}>
             <BeInspiredManagement />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="travel-stories">
+          <Suspense fallback={<TabLoader />}>
+            <StoryAIProviderManagement />
           </Suspense>
         </TabsContent>
 

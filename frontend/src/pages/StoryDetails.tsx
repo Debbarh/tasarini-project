@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Calendar, ArrowLeft, ExternalLink } from "lucide-react";
+import { MapPin, Calendar, ArrowLeft, ExternalLink, Bot } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { storyService, Story } from "@/services/storyService";
@@ -30,8 +30,8 @@ const StoryDetails = () => {
 
     const authorName = fullName || (story.author_name && story.author_name.trim()) || 'Voyageur';
     return fullName || (story.author_name && story.author_name.trim())
-      ? `par ${authorName}`
-      : 'Créé par voyageur';
+      ? t('travelStories.details.byAuthor', 'par {{name}}', { name: authorName })
+      : t('travelStories.details.authorFallback', 'Créé par voyageur');
   };
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const StoryDetails = () => {
   if (!id) {
     return (
       <main className="container mx-auto px-4 py-6">
-        <p className="text-muted-foreground">Story introuvable.</p>
+        <p className="text-muted-foreground">{t('travelStories.details.notFound', 'Story introuvable.')}</p>
       </main>
     );
   }
@@ -71,8 +71,9 @@ const StoryDetails = () => {
           {t("common.back", "Retour")}
         </Button>
         {story && story.story_type === "ai_generated" && (
-          <Badge variant="outline" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
-            🤖 IA
+          <Badge variant="outline" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 flex items-center gap-1">
+            <Bot className="w-3.5 h-3.5" />
+            {t('travelStories.details.aiBadge', 'IA')}
           </Badge>
         )}
         {story && story.is_featured && (

@@ -60,6 +60,7 @@ export interface ActivityIntensityLevel {
   description_hi?: string;
   description_ar?: string;
   icon_emoji?: string;
+  icon_name?: string;
   level_value: number;
   is_active: boolean;
   display_order: number;

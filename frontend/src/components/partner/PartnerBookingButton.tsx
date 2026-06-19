@@ -53,8 +53,9 @@ export const PartnerBookingButton: React.FC<PartnerBookingButtonProps> = ({
     setShowBookingDialog(true);
   };
 
-  // Don't show button if no booking system is configured
-  if (!touristPoint.has_booking_system && bookingType !== 'activity') {
+  // N'afficher le bouton « Réserver » que pour un POI lié à un partenaire
+  // (has_booking_system reflète la liaison partenaire). Sinon, on le masque.
+  if (!touristPoint.has_booking_system) {
     return null;
   }
 

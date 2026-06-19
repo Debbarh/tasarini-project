@@ -102,8 +102,8 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
                 <p className="font-medium text-foreground">"{itemName}"</p>
               </div>
               <div className="space-y-2">
-                <p className="text-destructive font-medium">
-                  ⚠️ Cette action est irréversible
+                <p className="text-destructive font-medium flex items-center gap-1">
+                  <AlertTriangle className="w-4 h-4" /> Cette action est irréversible
                 </p>
                 <p>
                   Une fois supprimé, cet élément ne pourra pas être récupéré. Toutes les données associées seront perdues.

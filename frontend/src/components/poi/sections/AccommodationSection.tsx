@@ -6,6 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { UnifiedPOIFormData } from '@/types/poi-form';
 import { useAccommodationSettings } from '@/hooks/useAccommodationSettings';
+import { useTranslation } from 'react-i18next';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
+import { getLocalizedLabel } from '@/utils/multilingualHelpers';
 
 interface AccommodationSectionProps {
   formData: UnifiedPOIFormData;
@@ -27,6 +30,7 @@ export const AccommodationSection: React.FC<AccommodationSectionProps> = ({
     accommodationAmbiance: ambiance,
     loading
   } = useAccommodationSettings();
+  const { i18n } = useTranslation();
 
   const handleArrayFieldToggle = (field: keyof UnifiedPOIFormData, value: string) => {
     const currentArray = formData[field] as string[];
@@ -79,7 +83,7 @@ export const AccommodationSection: React.FC<AccommodationSectionProps> = ({
                     }`}
                   >
                     <div className="text-sm font-medium flex items-center gap-2">
-                      {type.icon_emoji} {type.label_fr}
+                      <TaxonomyIcon iconName={type.icon_name} code={type.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(type, i18n.language) || type.label_fr}
                     </div>
                     {type.description_fr && (
                       <div className="text-xs text-muted-foreground mt-1">{type.description_fr}</div>
@@ -102,7 +106,7 @@ export const AccommodationSection: React.FC<AccommodationSectionProps> = ({
                     className="cursor-pointer"
                     onClick={() => handleArrayFieldToggle('accommodation_amenities', amenity.code)}
                   >
-                    {amenity.icon_emoji} {amenity.label_fr}
+                    <TaxonomyIcon iconName={amenity.icon_name} code={amenity.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(amenity, i18n.language) || amenity.label_fr}
                     {formData.accommodation_amenities.includes(amenity.code) && (
                       <X className="ml-1 h-3 w-3" />
                     )}
@@ -125,7 +129,7 @@ export const AccommodationSection: React.FC<AccommodationSectionProps> = ({
                     }`}
                   >
                     <div className="text-sm font-medium flex items-center gap-2">
-                      {location.icon_emoji} {location.label_fr}
+                      <TaxonomyIcon iconName={location.icon_name} code={location.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(location, i18n.language) || location.label_fr}
                     </div>
                   </div>
                 ))}
@@ -142,7 +146,7 @@ export const AccommodationSection: React.FC<AccommodationSectionProps> = ({
                     className="cursor-pointer"
                     onClick={() => handleArrayFieldToggle('accommodation_accessibility', access.code)}
                   >
-                    {access.icon_emoji} {access.label_fr}
+                    <TaxonomyIcon iconName={access.icon_name} code={access.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(access, i18n.language) || access.label_fr}
                     {formData.accommodation_accessibility.includes(access.code) && (
                       <X className="ml-1 h-3 w-3" />
                     )}
@@ -161,7 +165,7 @@ export const AccommodationSection: React.FC<AccommodationSectionProps> = ({
                     className="cursor-pointer"
                     onClick={() => handleArrayFieldToggle('accommodation_security', sec.code)}
                   >
-                    {sec.icon_emoji} {sec.label_fr}
+                    <TaxonomyIcon iconName={sec.icon_name} code={sec.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(sec, i18n.language) || sec.label_fr}
                     {formData.accommodation_security.includes(sec.code) && (
                       <X className="ml-1 h-3 w-3" />
                     )}
@@ -180,7 +184,7 @@ export const AccommodationSection: React.FC<AccommodationSectionProps> = ({
                     className="cursor-pointer"
                     onClick={() => handleArrayFieldToggle('accommodation_ambiance', amb.code)}
                   >
-                    {amb.icon_emoji} {amb.label_fr}
+                    <TaxonomyIcon iconName={amb.icon_name} code={amb.code} className="h-4 w-4 mr-2" fallback="Tag" /> {getLocalizedLabel(amb, i18n.language) || amb.label_fr}
                     {formData.accommodation_ambiance.includes(amb.code) && (
                       <X className="ml-1 h-3 w-3" />
                     )}

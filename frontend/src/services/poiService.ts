@@ -34,6 +34,7 @@ export interface POI {
   opening_hours?: any;
   is_active: boolean;
   owner_id?: string;
+  is_partner_point?: boolean;
   distance?: number;
   difficulty_level_id?: string;
   is_wheelchair_accessible?: boolean;
@@ -86,6 +87,9 @@ export interface POI {
   activity_duration_minutes?: number;
   activity_difficulty_level_id?: string;
   metadata?: Record<string, any>;
+  // Externe (Be Inspired): POI venant d'une source tierce (OSM, Wikidata, Geoapify,
+  // Foursquare, LocationIQ), pas encore en base. id préfixé "ext:<source>:<id>".
+  is_external?: boolean;
 }
 
 export interface POIFilters {
@@ -206,6 +210,7 @@ const mapApiPoi = (item: any, centerLat: number, centerLon: number): POI | null 
     opening_hours: metadata.opening_hours ?? item.opening_hours ?? undefined,
     is_active: item.is_active,
     owner_id: item.owner ?? item.owner_id ?? '',
+    is_partner_point: item.is_partner_point ?? false,
     distance: calculateDistance(centerLat, centerLon, latitude, longitude),
     difficulty_level_id: item.difficulty_level_id ?? undefined,
     is_wheelchair_accessible: item.is_wheelchair_accessible ?? metadata.is_wheelchair_accessible ?? false,
@@ -254,20 +259,30 @@ const applyArrayFilter = (source: string[] = [], values?: string[], matchAll?: b
     : source.some(value => values.includes(value));
 };
 
-// Récupère les POI dans un rayon donné
+// Récupère les POI dans un rayon donné.
+// options.ignoreRadius = true → renvoie TOUS les POI plateforme (la distance reste
+// calculée pour le tri/affichage), utilisé par Be Inspired qui veut tout afficher.
 export const getPOIsInRadius = async (
   centerLat: number,
   centerLon: number,
   radiusKm: number = 30,
-  filters?: POIFilters
+  filters?: POIFilters,
+  options?: { ignoreRadius?: boolean; pageSize?: number }
 ): Promise<POI[]> => {
   try {
-    const params = buildSearchParams(filters);
+    // Filtrage géographique CÔTÉ SERVEUR (bbox via index lat/lon) : sans ça, avec des
+    // millions de POI en base, on ne récupérait que les 1ers par ordre alpha (jamais la zone).
+    const params: Record<string, string> = {
+      ...buildSearchParams(filters),
+      page_size: String(options?.pageSize ?? 2000),
+      near: `${centerLat},${centerLon}`,
+      radius_km: String(radiusKm),
+    };
     const data = await apiClient.get<any[]>('poi/tourist-points/', params);
 
     let filteredPOIs = normalizeApiResponse(data)
       .map(item => mapApiPoi(item, centerLat, centerLon))
-      .filter((poi): poi is POI => !!poi && poi.distance !== undefined && poi.distance <= radiusKm);
+      .filter((poi): poi is POI => !!poi && poi.distance !== undefined && (options?.ignoreRadius || poi.distance <= radiusKm));
 
     // Filtres numériques et booléens
     if (filters?.rating) {
@@ -471,34 +486,190 @@ export const categorizePOI = (poi: POI): string => {
   return 'other';
 };
 
-// Obtient l'icône appropriée pour le type de POI
+// Obtient le NOM d'icône lucide approprié pour le type de POI (rendu en SVG)
 export const getPOIIcon = (category: string): string => {
   switch (category) {
     case 'restaurant':
-      return '🍽️';
+      return 'UtensilsCrossed';
     case 'accommodation':
-      return '🏨';
+      return 'Hotel';
     case 'activity':
-      return '🎯';
+      return 'Target';
     case 'tourist':
-      return '🏛️';
+      return 'Landmark';
     default:
-      return '📍';
+      return 'MapPin';
   }
 };
 
 // Obtient la couleur appropriée pour le type de POI
+// Type précis d'un POI (ex. monument, musée, parc…) déduit de ses catégories,
+// pour l'afficher dans la fiche en plus de la catégorie large. Renvoie une CLÉ i18n
+// (beInspired.map.type.<clé>) ou null si indéterminé.
+const _TYPE_RULES: [RegExp, string][] = [
+  [/museum|mus[ée]e/i, 'museum'],
+  [/gallery|art_|_art|\bart\b/i, 'art'],
+  [/castle|palace|fort|citadel|kasbah|ch[aâ]teau/i, 'castle'],
+  [/mosque|minaret/i, 'mosque'],
+  [/church|cathedral|basilica|chapel|abbey|monaster|convent/i, 'religious'],
+  [/temple|shrine|pagoda/i, 'temple'],
+  [/monument|memorial|mausole|tomb|statue|sculpt|obelisk|arch\b/i, 'monument'],
+  [/theatre|theater|opera|concert|amphitheatre/i, 'culture'],
+  [/zoo|aquarium|wildlife|safari/i, 'zoo'],
+  [/park|garden|botanic/i, 'park'],
+  [/viewpoint|view_point|scenic|lookout/i, 'viewpoint'],
+  [/waterfall|peak|volcano|mountain|cave|beach|lake|gorge|canyon|cliff|natural|dune|oasis/i, 'nature'],
+  [/square|plaza|fountain|promenade|medina|souk/i, 'square'],
+  [/historic|heritage|archaeolog|ruins?/i, 'historic'],
+];
+
+export const getPoiType = (poi: POI): string | null => {
+  const blob = [
+    ...(poi.tags || []),
+    ...(((poi.metadata as any)?.categories) || []),
+  ].join(' ').toLowerCase();
+  if (!blob.trim()) return null;
+  for (const [re, key] of _TYPE_RULES) {
+    if (re.test(blob)) return key;
+  }
+  return null;
+};
+
 export const getPOIColor = (category: string): string => {
   switch (category) {
     case 'restaurant':
-      return '#ef4444'; // red-500
+      return '#f43f5e'; // rose-500
     case 'accommodation':
       return '#10b981'; // emerald-500
     case 'activity':
-      return '#3b82f6'; // blue-500
+      return '#2563eb'; // blue-600
     case 'tourist':
-      return '#8b5cf6'; // violet-500
+      return '#7c3aed'; // violet-600
     default:
-      return '#6b7280'; // gray-500
+      return '#64748b'; // slate-500
+  }
+};
+
+// --- POI externes (Be Inspired) ---------------------------------------------
+// Sources tierces (OSM/Overpass, Wikidata, Geoapify, Foursquare, LocationIQ).
+// Live-fetch côté backend + cache, fusionnés avec les POI plateforme.
+export const EXTERNAL_POI_SOURCES = ['geoapify', 'osm', 'wikidata', 'foursquare', 'locationiq'] as const;
+export type ExternalPOISource = typeof EXTERNAL_POI_SOURCES[number];
+
+export const getExternalPOIs = async (
+  centerLat: number,
+  centerLon: number,
+  radiusKm: number = 30,
+  sources?: ExternalPOISource[],
+  lang: string = 'fr'
+): Promise<POI[]> => {
+  try {
+    const params: Record<string, string> = {
+      lat: String(centerLat),
+      lng: String(centerLon),
+      radius: String(radiusKm),
+      lang,
+    };
+    if (sources?.length) params.sources = sources.join(',');
+
+    const data = await apiClient.get<{ results?: any[] }>('poi/external/', params);
+    const results = Array.isArray(data) ? data : (data?.results ?? []);
+
+    return results
+      .map((item: any): POI | null => {
+        const latitude = Number(item.latitude);
+        const longitude = Number(item.longitude);
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+        return {
+          ...item,
+          latitude,
+          longitude,
+          is_external: true,
+          distance: calculateDistance(centerLat, centerLon, latitude, longitude),
+        } as POI;
+      })
+      .filter((p): p is POI => !!p && (p.distance ?? Infinity) <= radiusKm);
+  } catch (error) {
+    console.error('Erreur lors du chargement des POI externes:', error);
+    return [];
+  }
+};
+
+// Import à la volée d'un POI externe → crée/retrouve un TouristPoint réel (UUID).
+export const importExternalPOI = async (poi: POI): Promise<POI> => {
+  const data = await apiClient.post<any>('poi/external/import/', poi);
+  return { ...data, latitude: Number(data.latitude), longitude: Number(data.longitude) } as POI;
+};
+
+// --- Revendication (claim) d'un POI ---
+export const createPOIClaim = async (poiId: string, data: { motivation: string; proof_url?: string }) =>
+  apiClient.post('poi/claims/', { tourist_point: poiId, motivation: data.motivation, proof_url: data.proof_url || '' });
+
+export const getPendingPOIClaims = async () =>
+  apiClient.get<any>('poi/claims/', { status: 'pending' });
+
+export const moderatePOIClaim = async (id: string, action: 'approve' | 'reject', admin_message?: string) =>
+  apiClient.post(`poi/claims/${id}/moderate/`, { action, admin_message: admin_message || '' });
+
+// --- Suggestion d'enrichissement (wiki) d'un POI ---
+export const createPOISuggestion = async (poiId: string, proposed_changes: Record<string, any>, comment?: string) =>
+  apiClient.post('poi/suggestions/', { tourist_point: poiId, proposed_changes, comment: comment || '' });
+
+export const getPendingPOISuggestions = async () =>
+  apiClient.get<any>('poi/suggestions/', { status: 'pending' });
+
+export const moderatePOISuggestion = async (id: string, action: 'approve' | 'reject', admin_message?: string) =>
+  apiClient.post(`poi/suggestions/${id}/moderate/`, { action, admin_message: admin_message || '' });
+
+// --- Signalement (report) d'un POI : gèle le POI jusqu'à décision admin ---
+export const createPOIReport = async (poiId: string, reason: string, description?: string) =>
+  apiClient.post('poi/reports/', { tourist_point: poiId, reason, description: description || '' });
+
+export const getPendingPOIReports = async () =>
+  apiClient.get<any>('poi/reports/', { status: 'pending' });
+
+export const moderatePOIReport = async (id: string, action: 'delete' | 'keep', admin_message?: string) =>
+  apiClient.post(`poi/reports/${id}/moderate/`, { action, admin_message: admin_message || '' });
+
+// --- Suivi du cron de traduction (admin) ---
+export const getTranslationCronStats = async () =>
+  apiClient.get<any>('poi/translation-cron/');
+
+export const runTranslationCronNow = async (batchSize = 10) =>
+  apiClient.post<any>('poi/translation-cron/', { batch_size: batchSize });
+
+// Enrichissement OpenTripMap à la demande (description Wikipédia + image) pour un POI.
+export const getPOIEnrichment = async (
+  q: string, lat: number, lng: number, lang?: string
+): Promise<{ description: string; image: string | null }> => {
+  try {
+    const d = await apiClient.get<any>('poi/enrich/', { q, lat: String(lat), lng: String(lng), lang: lang || 'en' });
+    return { description: d?.description || '', image: d?.image || null };
+  } catch {
+    return { description: '', image: null };
+  }
+};
+
+// Image Wikimedia Commons à la demande pour un POI sans photo (cachée 7j côté serveur).
+// Traduit nom/description/adresse d'un POI dans la langue donnée (cache backend metadata).
+export const translatePOI = async (
+  id: string, lang: string
+): Promise<{ name?: string; description?: string; address?: string }> => {
+  try {
+    return await apiClient.post<{ name?: string; description?: string; address?: string }>(
+      `poi/tourist-points/${id}/translate/`, { lang }
+    );
+  } catch {
+    return {};
+  }
+};
+
+export const getPOIImage = async (query: string): Promise<string | null> => {
+  if (!query?.trim()) return null;
+  try {
+    const data = await apiClient.get<{ image?: string | null }>('poi/image/', { q: query });
+    return (data && data.image) || null;
+  } catch {
+    return null;
   }
 };

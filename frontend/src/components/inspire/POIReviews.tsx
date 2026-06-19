@@ -25,11 +25,14 @@ interface Review {
 interface POIReviewsProps {
   touristPointId: string;
   children: React.ReactNode;
+  // POI externe non encore importé : importe à la demande et renvoie l'UUID réel (avant de poster un avis).
+  onActivate?: () => Promise<string | null>;
 }
 
 export const POIReviews: React.FC<POIReviewsProps> = ({
   touristPointId,
-  children
+  children,
+  onActivate
 }) => {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
@@ -50,13 +53,19 @@ export const POIReviews: React.FC<POIReviewsProps> = ({
   }, [open, touristPointId]);
 
   const fetchReviews = async () => {
+    // POI externe non encore importé (id "ext:source:id") → pas d'avis en base, on n'appelle pas l'API.
+    if (touristPointId.startsWith('ext:')) {
+      setReviews([]);
+      return;
+    }
     setLoading(true);
     try {
       const data = await reviewService.getReviewsForPOI(touristPointId);
       setReviews(data || []);
     } catch (error: any) {
+      // Pas de toast alarmant : on affiche simplement "aucun avis".
       console.error('Erreur lors du chargement des avis:', error);
-      toast.error('Erreur lors du chargement des avis');
+      setReviews([]);
     } finally {
       setLoading(false);
     }
@@ -75,8 +84,15 @@ export const POIReviews: React.FC<POIReviewsProps> = ({
 
     setSubmitting(true);
     try {
+      // POI externe non encore importé : on l'importe à la demande pour obtenir un UUID réel.
+      let targetId = touristPointId;
+      if (targetId.startsWith('ext:') && onActivate) {
+        const resolved = await onActivate();
+        if (!resolved) { setSubmitting(false); return; }
+        targetId = resolved;
+      }
       await reviewService.createReview({
-        tourist_point: touristPointId,
+        tourist_point: targetId,
         rating: newReview.rating,
         comment: newReview.comment.trim()
       });

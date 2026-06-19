@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { storyService, Story } from "@/services/storyService";
 import { normalizeApiResponse } from "@/utils/apiHelpers";
+import { useTranslation } from "react-i18next";
 
 interface TrendingTabProps {
   currentUserId?: string | number;
@@ -14,6 +15,7 @@ interface TrendingTabProps {
 }
 
 export const TrendingTab = ({ currentUserId, onLike, onComment, onBookmark }: TrendingTabProps) => {
+  const { t } = useTranslation();
   const [trendingStories, setTrendingStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<'day' | 'week' | 'month'>('week');
@@ -40,7 +42,7 @@ export const TrendingTab = ({ currentUserId, onLike, onComment, onBookmark }: Tr
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Tendances</h2>
+          <h2 className="text-xl font-semibold">{t('travelStories.trending.heading', 'Tendances')}</h2>
         </div>
         
         <div className="flex gap-2">
@@ -50,32 +52,32 @@ export const TrendingTab = ({ currentUserId, onLike, onComment, onBookmark }: Tr
             onClick={() => setTimeframe('day')}
           >
             <Clock className="h-4 w-4 mr-1" />
-            24h
+            {t('travelStories.trending.timeframe24h', '24h')}
           </Button>
           <Button
             variant={timeframe === 'week' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setTimeframe('week')}
           >
-            7j
+            {t('travelStories.trending.timeframe7j', '7j')}
           </Button>
           <Button
             variant={timeframe === 'month' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setTimeframe('month')}
           >
-            30j
+            {t('travelStories.trending.timeframe30j', '30j')}
           </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="text-center py-8 text-muted-foreground">
-          Chargement des tendances...
+          {t('travelStories.trending.loading', 'Chargement des tendances...')}
         </div>
       ) : trendingStories.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          Aucune tendance trouvée pour cette période
+          {t('travelStories.trending.empty', 'Aucune tendance trouvée pour cette période')}
         </div>
       ) : (
         <div className="space-y-4">

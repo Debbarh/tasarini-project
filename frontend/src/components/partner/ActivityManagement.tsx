@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, Coins, Package, Users, AlertTriangle, Plus, Edit, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Coins, Package, Users, AlertTriangle, Plus, Edit, Trash2, Mail, Phone, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCurrencySettings } from '@/hooks/useCurrencySettings';
 import {
@@ -1027,21 +1027,21 @@ export function ActivityManagement({ touristPointId, activityName }: ActivityMan
                               {booking.booking_status}
                             </Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground">
-                            📧 {booking.customer_email}
-                            {booking.customer_phone && <span> • 📞 {booking.customer_phone}</span>}
+                          <p className="text-sm text-muted-foreground flex items-center gap-1 flex-wrap">
+                            <Mail className="w-4 h-4" /> {booking.customer_email}
+                            {booking.customer_phone && <span className="flex items-center gap-1"> • <Phone className="w-4 h-4" /> {booking.customer_phone}</span>}
                           </p>
-                          <p className="text-sm">
-                            📅 {booking.booking_date} • 🕒 {booking.start_time} - {booking.end_time}
+                          <p className="text-sm flex items-center gap-1 flex-wrap">
+                            <Calendar className="w-4 h-4" /> {booking.booking_date} • <Clock className="w-4 h-4" /> {booking.start_time} - {booking.end_time}
                           </p>
-                          <p className="text-sm">
-                            👥 {booking.total_participants} participants 
+                          <p className="text-sm flex items-center gap-1 flex-wrap">
+                            <Users className="w-4 h-4" /> {booking.total_participants} participants
                             ({booking.adult_participants}A, {booking.child_participants}E, {booking.senior_participants}S)
                           </p>
                           <p className="text-lg font-bold text-primary">{formatPrice(booking.total_amount)}</p>
                           {booking.special_requests && (
-                            <p className="text-sm text-muted-foreground">
-                              💬 {booking.special_requests}
+                            <p className="text-sm text-muted-foreground flex items-center gap-1">
+                              <MessageSquare className="w-4 h-4" /> {booking.special_requests}
                             </p>
                           )}
                         </div>

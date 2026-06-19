@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Users, UserCheck, Globe } from "lucide-react";
+import { Plus, Edit, Trash2, Users, UserCheck, Globe, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { travelGroupService, TravelGroupType, TravelGroupSubtype, TravelGroupConfiguration } from "@/services/travelGroupService";
 import { getLocalizedLabel } from "@/utils/multilingualHelpers";
@@ -430,7 +430,7 @@ export const TravelGroupManagement = () => {
       });
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       fetchData();
@@ -480,7 +480,7 @@ export const TravelGroupManagement = () => {
       });
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       fetchData();

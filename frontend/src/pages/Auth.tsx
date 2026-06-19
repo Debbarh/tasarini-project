@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
 import { ForgotPasswordDialog } from "@/components/auth/ForgotPasswordDialog";
-import { Loader2, Mail, Lock, User, Info } from "lucide-react";
+import { Loader2, Mail, Lock, User, Info, PartyPopper } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -50,6 +50,10 @@ const Auth = () => {
     
     if (message === 'confirm-email' && isPartner === 'true') {
       setShowPartnerMessage(true);
+    }
+    // Erreur renvoyée par le flux OAuth social (backend → /auth?error=...).
+    if (searchParams.get('error')) {
+      toast.error('La connexion sociale a échoué. Veuillez réessayer ou utiliser votre e-mail.');
     }
   }, [searchParams]);
 
@@ -175,8 +179,9 @@ const Auth = () => {
             <CardDescription>
               {showPartnerMessage ? (
                 <div className="space-y-2">
-                  <p className="text-green-600 dark:text-green-400 font-medium">
-                    🎉 Inscription partenaire réussie !
+                  <p className="text-green-600 dark:text-green-400 font-medium flex items-center justify-center gap-2">
+                    <PartyPopper className="w-4 h-4" />
+                    Inscription partenaire réussie !
                   </p>
                   <p className="text-sm">
                     Veuillez vérifier votre email et cliquer sur le lien de confirmation. 
@@ -257,6 +262,7 @@ const Auth = () => {
                       <Input
                         id="signin-email"
                         type="email"
+                        autoComplete="email"
                         placeholder={t('auth.emailPlaceholder')}
                         value={signInEmail}
                         onChange={(e) => setSignInEmail(e.target.value)}
@@ -273,6 +279,7 @@ const Auth = () => {
                       <Input
                         id="signin-password"
                         type="password"
+                        autoComplete="current-password"
                         placeholder={t('auth.passwordPlaceholder')}
                         value={signInPassword}
                         onChange={(e) => setSignInPassword(e.target.value)}
@@ -320,6 +327,7 @@ const Auth = () => {
                         <Input
                           id="signup-firstname"
                           type="text"
+                          autoComplete="given-name"
                           placeholder={t('auth.firstNamePlaceholder')}
                           value={signUpFirstName}
                           onChange={(e) => setSignUpFirstName(e.target.value)}
@@ -333,6 +341,7 @@ const Auth = () => {
                       <Input
                         id="signup-lastname"
                         type="text"
+                        autoComplete="family-name"
                         placeholder={t('auth.lastNamePlaceholder')}
                         value={signUpLastName}
                         onChange={(e) => setSignUpLastName(e.target.value)}
@@ -347,6 +356,7 @@ const Auth = () => {
                       <Input
                         id="signup-email"
                         type="email"
+                        autoComplete="email"
                         placeholder={t('auth.emailPlaceholder')}
                         value={signUpEmail}
                         onChange={(e) => {
@@ -371,6 +381,7 @@ const Auth = () => {
                       <Input
                         id="signup-password"
                         type="password"
+                        autoComplete="new-password"
                         placeholder={t('auth.passwordPlaceholder')}
                         value={signUpPassword}
                         onChange={(e) => setSignUpPassword(e.target.value)}
@@ -391,6 +402,7 @@ const Auth = () => {
                       <Input
                         id="signup-password-confirm"
                         type="password"
+                        autoComplete="new-password"
                         placeholder={t('auth.gdpr.confirmPasswordPlaceholder')}
                         value={signUpPasswordConfirm}
                         onChange={(e) => setSignUpPasswordConfirm(e.target.value)}
@@ -419,6 +431,7 @@ const Auth = () => {
                     <Input
                       id="signup-dob"
                       type="date"
+                      autoComplete="bday"
                       value={dateOfBirth}
                       onChange={(e) => setDateOfBirth(e.target.value)}
                       max={new Date(new Date().setFullYear(new Date().getFullYear() - 13))

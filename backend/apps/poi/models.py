@@ -65,6 +65,7 @@ class BudgetLevel(TimeStampedModel):
     description_hi = models.TextField(blank=True, default='')
     description_ar = models.TextField(blank=True, default='')
     icon_emoji = models.CharField(max_length=8, blank=True)
+    icon_name = models.CharField(max_length=64, blank=True, default='')
     min_daily_amount = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     max_daily_amount = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     default_daily_amount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
@@ -255,6 +256,7 @@ class ActivityIntensityLevel(TimeStampedModel):
     description_hi = models.TextField(blank=True, default='')
     description_ar = models.TextField(blank=True, default='')
     icon_emoji = models.CharField(max_length=8, blank=True)
+    icon_name = models.CharField(max_length=64, blank=True, default='')
     level_value = models.PositiveSmallIntegerField(default=1)
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveSmallIntegerField(default=0)
@@ -376,6 +378,7 @@ class AccommodationBaseModel(TimeStampedModel):
     description_hi = models.TextField(blank=True, default='')
     description_ar = models.TextField(blank=True, default='')
     icon_emoji = models.CharField(max_length=8, blank=True)
+    icon_name = models.CharField(max_length=64, blank=True, default='')
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveSmallIntegerField(default=0)
 
@@ -430,6 +433,7 @@ class DietaryRestriction(TimeStampedModel):
     description_es = models.TextField(blank=True, default='')
     description_de = models.TextField(blank=True, default='')
     icon_emoji = models.CharField(max_length=8, blank=True)
+    icon_name = models.CharField(max_length=64, blank=True, default='')
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveSmallIntegerField(default=0)
 
@@ -538,6 +542,7 @@ class RestaurantCategory(TimeStampedModel):
     description_hi = models.TextField(blank=True, default='')
     description_ar = models.TextField(blank=True, default='')
     icon_emoji = models.CharField(max_length=8, blank=True)
+    icon_name = models.CharField(max_length=64, blank=True, default='')
     price_range_min = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     price_range_max = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -704,6 +709,10 @@ class TouristPoint(TimeStampedModel):
 
     class Meta:
         ordering = ['name']
+        indexes = [
+            # Requêtes carte par fenêtre lat/lon (essentiel à grande échelle, ex. import Overture mondial).
+            models.Index(fields=['latitude', 'longitude'], name='poi_lat_lon_idx'),
+        ]
 
     def __str__(self) -> str:  # pragma: no cover
         return self.name
@@ -760,6 +769,140 @@ class POIConversationMessage(TimeStampedModel):
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.conversation_id} - {self.sender_type}"
+
+
+class POIClaim(TimeStampedModel):
+    """Revendication de gestion d'un POI par un utilisateur (« ce lieu m'appartient »).
+
+    Validée par un admin → l'utilisateur devient partenaire et gère le POI.
+    Calqué sur PartnerApplication (motivation + statut + reviewed_by).
+    """
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'En attente'
+        APPROVED = 'approved', 'Approuvée'
+        REJECTED = 'rejected', 'Rejetée'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tourist_point = models.ForeignKey(TouristPoint, related_name='claims', on_delete=models.CASCADE)
+    claimed_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='poi_claims', on_delete=models.CASCADE)
+    motivation = models.TextField()
+    proof_url = models.URLField(blank=True)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='reviewed_poi_claims',
+    )
+    review_message = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['tourist_point', 'claimed_by'],
+                condition=models.Q(status='pending'),
+                name='uniq_pending_claim_per_user_poi',
+            ),
+        ]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"Claim {self.tourist_point_id} by {self.claimed_by_id} ({self.status})"
+
+
+class POISuggestion(TimeStampedModel):
+    """Suggestion d'enrichissement « wiki » d'un POI (modérée par un admin).
+
+    `proposed_changes` = dict plat champ→valeur (whitelist SUGGESTABLE_FIELDS).
+    """
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'En attente'
+        APPROVED = 'approved', 'Approuvée'
+        REJECTED = 'rejected', 'Rejetée'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tourist_point = models.ForeignKey(TouristPoint, related_name='suggestions', on_delete=models.CASCADE)
+    suggested_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='poi_suggestions', on_delete=models.CASCADE)
+    proposed_changes = models.JSONField(default=dict)
+    comment = models.TextField(blank=True)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='reviewed_poi_suggestions',
+    )
+    review_message = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"Suggestion {self.tourist_point_id} by {self.suggested_by_id} ({self.status})"
+
+
+class POITranslationQueue(TimeStampedModel):
+    """File d'attente de traduction d'un POI vers une langue (vidée par le cron worker
+    translategemma:4b). Une entrée par (POI, langue) ; le résultat va dans
+    TouristPoint.metadata['translations'][lang]."""
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'En attente'
+        DONE = 'done', 'Traduit'
+        FAILED = 'failed', 'Échec'
+
+    tourist_point = models.ForeignKey(TouristPoint, related_name='translation_jobs', on_delete=models.CASCADE)
+    lang = models.CharField(max_length=8)
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.PENDING)
+    attempts = models.PositiveSmallIntegerField(default=0)
+    last_error = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['tourist_point', 'lang'], name='uniq_poi_lang_translation'),
+        ]
+        indexes = [models.Index(fields=['status', 'created_at'], name='poitransq_status_idx')]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"TranslationJob {self.tourist_point_id} {self.lang} ({self.status})"
+
+
+class POIReport(TimeStampedModel):
+    """Signalement d'un POI par un utilisateur connecté. Au 1er signalement le POI est
+    gelé (is_active=False, status=under_review) jusqu'à décision admin (supprimer/garder)."""
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'En attente'
+        RESOLVED_DELETED = 'resolved_deleted', 'Supprimé'
+        RESOLVED_KEPT = 'resolved_kept', 'Conservé'
+
+    class Reason(models.TextChoices):
+        SPAM = 'spam', 'Spam / publicité'
+        OFFENSIVE = 'offensive', 'Contenu offensant'
+        WRONG_LOCATION = 'wrong_location', 'Mauvaise localisation'
+        CLOSED = 'closed', 'Lieu fermé / inexistant'
+        DUPLICATE = 'duplicate', 'Doublon'
+        OTHER = 'other', 'Autre'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tourist_point = models.ForeignKey(TouristPoint, related_name='reports', on_delete=models.CASCADE)
+    reported_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='poi_reports', on_delete=models.CASCADE)
+    reason = models.CharField(max_length=20, choices=Reason.choices, default=Reason.OTHER)
+    description = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    previous_status = models.CharField(max_length=32, blank=True)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='reviewed_poi_reports',
+    )
+    review_message = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['tourist_point', 'reported_by'],
+                condition=models.Q(status='pending'),
+                name='uniq_pending_report_per_user',
+            ),
+        ]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"Report {self.tourist_point_id} by {self.reported_by_id} ({self.status})"
 
 
 class FavoriteTouristPoint(TimeStampedModel):

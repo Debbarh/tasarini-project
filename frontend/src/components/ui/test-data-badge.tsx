@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, TestTube } from 'lucide-react';
+import { AlertTriangle, TestTube, FlaskConical, Plane, UtensilsCrossed, Target } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface TestDataBadgeProps {
@@ -17,10 +17,10 @@ export const TestDataBadge: React.FC<TestDataBadgeProps> = ({
   className
 }) => {
   const typeLabels = {
-    hotel: '🧪 Hôtel de test',
-    flight: '✈️ Vol de test', 
-    restaurant: '🍽️ Restaurant de test',
-    activity: '🎯 Activité de test'
+    hotel: <><FlaskConical className="h-3 w-3 mr-1" />Hôtel de test</>,
+    flight: <><Plane className="h-3 w-3 mr-1" />Vol de test</>,
+    restaurant: <><UtensilsCrossed className="h-3 w-3 mr-1" />Restaurant de test</>,
+    activity: <><Target className="h-3 w-3 mr-1" />Activité de test</>
   };
 
   const tooltipMessages = {

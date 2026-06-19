@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash2, Save, X, Globe } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Globe, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCulinarySettings } from '@/hooks/useCulinarySettings';
 import { culinaryAdminService } from '@/services/culinaryAdminService';
 import { getLocalizedLabel } from '@/utils/multilingualHelpers';
 import { useTranslation } from 'react-i18next';
+import IconPicker from '@/components/admin/IconPicker';
+import { TaxonomyIcon } from '@/lib/taxonomyIcon';
 
 const LABEL_LANGUAGE_OPTIONS = [
   { code: 'fr', label: 'Français', required: true },
@@ -46,6 +48,13 @@ export const CulinaryManagement = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dietary');
+  // Icône SVG (lucide) gérée en état contrôlé, car IconPicker n'est pas un input natif
+  // capturé par FormData. Synchronisée à l'ouverture/édition d'un élément.
+  const [iconName, setIconName] = useState<string>('');
+
+  useEffect(() => {
+    setIconName(editingItem?.icon_name || '');
+  }, [editingItem]);
 
   type CulinaryType = 'dietary' | 'cuisine' | 'adventure' | 'restaurant';
 
@@ -169,7 +178,7 @@ export const CulinaryManagement = () => {
       const result = await culinaryAdminService.translateDietaryRestriction(id);
       setEditingItem(result.dietary_restriction);
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await refetch();
@@ -187,7 +196,7 @@ export const CulinaryManagement = () => {
       const result = await culinaryAdminService.translateCuisineType(id);
       setEditingItem(result.cuisine_type);
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await refetch();
@@ -205,7 +214,7 @@ export const CulinaryManagement = () => {
       const result = await culinaryAdminService.translateAdventureLevel(id);
       setEditingItem(result.culinary_adventure_level);
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await refetch();
@@ -223,7 +232,7 @@ export const CulinaryManagement = () => {
       const result = await culinaryAdminService.translateRestaurantCategory(id);
       setEditingItem(result.restaurant_category);
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await refetch();
@@ -246,6 +255,7 @@ export const CulinaryManagement = () => {
         id: editingItem?.id,
         code: formData.get('code'),
         icon_emoji: formData.get('icon_emoji'),
+        icon_name: iconName,
         is_active: editingItem?.is_active ?? true,
         display_order: parseInt(formData.get('display_order') as string) || 0,
         ...labels,
@@ -258,9 +268,13 @@ export const CulinaryManagement = () => {
           <Input name="code" defaultValue={editingItem?.code} required />
         </div>
         <div>
-          <Label htmlFor="icon_emoji">Emoji</Label>
+          <Label htmlFor="icon_emoji">Emoji (legacy)</Label>
           <Input name="icon_emoji" defaultValue={editingItem?.icon_emoji} />
         </div>
+      </div>
+      <div className="space-y-1">
+        <Label>Icône SVG</Label>
+        <IconPicker value={iconName} onChange={setIconName} />
       </div>
       {editingItem && (
         <div className="border rounded-lg p-3 bg-blue-50 mb-4">
@@ -480,6 +494,7 @@ export const CulinaryManagement = () => {
         id: editingItem?.id,
         code: formData.get('code'),
         icon_emoji: formData.get('icon_emoji'),
+        icon_name: iconName,
         price_range_min: parseInt(formData.get('price_range_min') as string) || null,
         price_range_max: parseInt(formData.get('price_range_max') as string) || null,
         is_active: editingItem?.is_active ?? true,
@@ -494,9 +509,13 @@ export const CulinaryManagement = () => {
           <Input name="code" defaultValue={editingItem?.code} required />
         </div>
         <div>
-          <Label htmlFor="icon_emoji">Emoji</Label>
+          <Label htmlFor="icon_emoji">Emoji (legacy)</Label>
           <Input name="icon_emoji" defaultValue={editingItem?.icon_emoji} />
         </div>
+      </div>
+      <div className="space-y-1">
+        <Label>Icône SVG</Label>
+        <IconPicker value={iconName} onChange={setIconName} />
       </div>
       {editingItem && (
         <div className="border rounded-lg p-3 bg-blue-50 mb-4">
@@ -604,7 +623,7 @@ export const CulinaryManagement = () => {
                   <TableHead>Code</TableHead>
                   <TableHead>Label FR</TableHead>
                   <TableHead>Label EN</TableHead>
-                  <TableHead>Emoji</TableHead>
+                  <TableHead>Icône / Emoji</TableHead>
                   <TableHead>Ordre</TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead>Actions</TableHead>
@@ -616,7 +635,12 @@ export const CulinaryManagement = () => {
                     <TableCell className="font-medium">{item.code}</TableCell>
                     <TableCell>{item.label_fr}</TableCell>
                     <TableCell>{item.label_en}</TableCell>
-                    <TableCell>{item.icon_emoji}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <TaxonomyIcon iconName={item.icon_name} code={item.code} className="h-5 w-5" />
+                        {item.icon_emoji && <span className="text-lg">{item.icon_emoji}</span>}
+                      </div>
+                    </TableCell>
                     <TableCell>{item.display_order}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
@@ -838,7 +862,7 @@ export const CulinaryManagement = () => {
                   <TableHead>Code</TableHead>
                   <TableHead>Label FR</TableHead>
                   <TableHead>Label EN</TableHead>
-                  <TableHead>Emoji</TableHead>
+                  <TableHead>Icône / Emoji</TableHead>
                   <TableHead>Prix (€)</TableHead>
                   <TableHead>Ordre</TableHead>
                   <TableHead>Statut</TableHead>
@@ -851,9 +875,14 @@ export const CulinaryManagement = () => {
                     <TableCell className="font-medium">{item.code}</TableCell>
                     <TableCell>{item.label_fr}</TableCell>
                     <TableCell>{item.label_en}</TableCell>
-                    <TableCell>{item.icon_emoji}</TableCell>
                     <TableCell>
-                      {item.price_range_min && item.price_range_max ? 
+                      <div className="flex items-center gap-2">
+                        <TaxonomyIcon iconName={item.icon_name} code={item.code} className="h-5 w-5" />
+                        {item.icon_emoji && <span className="text-lg">{item.icon_emoji}</span>}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {item.price_range_min && item.price_range_max ?
                         `${item.price_range_min}-${item.price_range_max}` : 
                         '-'
                       }

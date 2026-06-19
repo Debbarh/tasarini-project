@@ -1,28 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { Play, Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX, Loader2, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { apiClient } from "@/integrations/api/client";
+import { apiClient, extractArrayFromResponse } from "@/integrations/api/client";
 
-// Fonction pour convertir URL YouTube en embed
 const getYouTubeEmbedUrl = (url: string): string | null => {
   const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
   const match = url.match(youtubeRegex);
   if (match) {
-    return `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=1&controls=0&loop=1&playlist=${match[1]}`;
+    return `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=1&controls=0&loop=1&playlist=${match[1]}&enablejsapi=1`;
   }
   return null;
 };
 
-// Fonction pour vérifier si c'est une URL de vidéo directe
-const isDirectVideoUrl = (url: string): boolean => {
-  return /\.(mp4|webm|ogg|mov|avi)(\?.*)?$/i.test(url);
-};
+const isDirectVideoUrl = (url: string): boolean => /\.(mp4|webm|ogg|mov|avi)(\?.*)?$/i.test(url);
 
 interface AdvertisementSettings {
   video_url?: string;
-  video_type: 'link' | 'upload';
+  video_type: "link" | "upload";
   is_enabled: boolean;
   title?: string;
   description?: string;
@@ -42,139 +39,95 @@ interface AdvertisementModalProps {
 }
 
 const AdvertisementModal = ({ isOpen, onClose, generationProgress }: AdvertisementModalProps) => {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<AdvertisementSettings | null>(null);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true); // Démarrer muet pour éviter le blocage autoplay
-  const [audioBlocked, setAudioBlocked] = useState(false); // Détecter si l'audio est bloqué
-  const [showAudioPrompt, setShowAudioPrompt] = useState(false); // Afficher le prompt pour activer l'audio
+  const [isMuted, setIsMuted] = useState(true);
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
+  const ytRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     if (isOpen) {
+      setSettings(null);
       loadAdvertisementSettings();
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (settings && isOpen && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            onClose();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [timeLeft, isOpen, settings, onClose]);
-
   const loadAdvertisementSettings = async () => {
     try {
-      const data = await apiClient.get<any[]>('content/advertisements/', {
+      const data = await apiClient.get<any>("content/advertisements/", {
         is_enabled: true,
-        ordering: '-created_at',
-        limit: 1
+        ordering: "-created_at",
+        limit: 1,
       });
-
-      if (data && data.length > 0) {
-        const adSettings = {
-          ...data[0],
-          video_type: data[0].video_type as 'link' | 'upload'
-        };
-        setSettings(adSettings);
-        setTimeLeft(adSettings.duration_seconds);
-      } else {
-        // Pas de publicité activée, fermer immédiatement
-        onClose();
+      const list = extractArrayFromResponse<any>(data);
+      const active = list.find((a) => a?.is_enabled && a?.video_url);
+      // S'il y a une pub valide on l'affiche ; sinon on garde l'écran d'attente
+      // rassurant (pas de fermeture — la génération est toujours en cours).
+      if (active) {
+        setSettings({ ...active, video_type: active.video_type as "link" | "upload" });
       }
     } catch (error) {
-      console.error('Erreur lors du chargement de la publicité:', error);
-      onClose();
+      console.error("Erreur lors du chargement de la publicité:", error);
     }
   };
 
   const handleVideoRef = (video: HTMLVideoElement | null) => {
     setVideoElement(video);
     if (video) {
-      video.muted = true; // Toujours démarrer muet
-      video.addEventListener('canplay', () => {
-        video.play().then(() => {
-          setIsPlaying(true);
-          // Afficher le prompt pour activer l'audio après 2 secondes
-          setTimeout(() => {
-            setShowAudioPrompt(true);
-          }, 2000);
-        }).catch((error) => {
-          console.error('Erreur autoplay:', error);
-          setAudioBlocked(true);
-        });
-      });
-
-      // Détecter si l'utilisateur peut interagir avec l'audio
-      video.addEventListener('loadedmetadata', () => {
-        // Tester la capacité d'autoplay avec son
-        const testAudio = video.cloneNode() as HTMLVideoElement;
-        testAudio.muted = false;
-        testAudio.play().catch(() => {
-          setAudioBlocked(true);
-        });
-      });
+      video.muted = true;
+      video.play().catch(() => {});
     }
   };
 
   const toggleMute = () => {
+    // YouTube : piloté via l'API IFrame (postMessage, enablejsapi=1)
+    if (youtubeEmbedUrl) {
+      const win = ytRef.current?.contentWindow;
+      if (!win) return;
+      const cmd = (func: string, args: unknown[] = []) =>
+        win.postMessage(JSON.stringify({ event: "command", func, args }), "*");
+      if (isMuted) {
+        cmd("unMute");
+        cmd("setVolume", [100]);
+        cmd("playVideo");
+      } else {
+        cmd("mute");
+      }
+      setIsMuted(!isMuted);
+      return;
+    }
+    // Vidéo .mp4 directe
     if (videoElement) {
       videoElement.muted = !isMuted;
       setIsMuted(!isMuted);
-      setShowAudioPrompt(false); // Cacher le prompt une fois que l'utilisateur a interagi
     }
   };
 
-  const enableAudio = () => {
-    if (videoElement) {
-      videoElement.muted = false;
-      setIsMuted(false);
-      setShowAudioPrompt(false);
-    }
-  };
+  if (!isOpen) return null;
 
-  const skipAd = () => {
-    onClose();
-  };
-
-  if (!settings || !settings.video_url) {
-    return null;
-  }
-
-  const progress = ((settings.duration_seconds - timeLeft) / settings.duration_seconds) * 100;
-  const youtubeEmbedUrl = getYouTubeEmbedUrl(settings.video_url);
-  const isDirectVideo = isDirectVideoUrl(settings.video_url);
+  const videoUrl = settings?.video_url;
+  const youtubeEmbedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
+  const isDirectVideo = videoUrl ? isDirectVideoUrl(videoUrl) : false;
+  const progressValue = generationProgress?.progress || 0;
+  const progressMsg = generationProgress?.message || t("itinerary.preparingTitle", "Préparation de votre programme en cours…");
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent 
-        className="max-w-4xl w-full h-[90vh] p-0 overflow-hidden [&>button]:hidden"
-      >
+      <DialogContent className="max-w-4xl w-[95vw] h-[88vh] p-0 overflow-hidden [&>button]:hidden">
         <div className="relative w-full h-full bg-black">
-          {/* Affichage conditionnel selon le type de vidéo */}
           {youtubeEmbedUrl ? (
-            // YouTube embed
             <iframe
+              ref={ytRef}
               src={youtubeEmbedUrl}
               className="w-full h-full"
               frameBorder="0"
               allow="autoplay; encrypted-media"
               allowFullScreen
             />
-          ) : isDirectVideo ? (
-            // Vidéo directe
+          ) : isDirectVideo && videoUrl ? (
             <video
               ref={handleVideoRef}
-              src={settings.video_url}
+              src={videoUrl}
               className="w-full h-full object-contain"
               autoPlay
               muted={isMuted}
@@ -182,122 +135,54 @@ const AdvertisementModal = ({ isOpen, onClose, generationProgress }: Advertiseme
               playsInline
             />
           ) : (
-            // Fallback pour URLs non supportées
-            <div className="w-full h-full flex items-center justify-center bg-gray-900">
-              <div className="text-center text-white">
-                <div className="text-6xl mb-4">🎬</div>
-                <h3 className="text-xl mb-2">Format vidéo non supporté</h3>
-                <p className="text-sm opacity-75">
-                  Veuillez utiliser une URL YouTube ou un fichier vidéo direct (MP4, WebM)
-                </p>
+            // Écran d'attente rassurant (aucune vidéo configurée / en attente)
+            <div className="w-full h-full flex flex-col items-center justify-center text-center p-8 bg-gradient-to-br from-primary/30 via-black to-black text-white">
+              <div className="relative mb-6">
+                <Loader2 className="h-14 w-14 animate-spin text-primary" />
+                <Plane className="h-6 w-6 text-primary absolute inset-0 m-auto" />
               </div>
+              <h3 className="text-xl sm:text-2xl font-semibold mb-2">
+                {t("itinerary.preparingTitle", "Préparation de votre programme en cours…")}
+              </h3>
+              <p className="text-sm sm:text-base text-white/80 max-w-md">
+                {t("itinerary.preparingDescription", "Notre IA conçoit votre itinéraire sur mesure. Le programme s'affiche au fur et à mesure — encore quelques instants.")}
+              </p>
             </div>
           )}
 
-          {/* Overlay avec contrôles */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30">
-            
-            {/* Prompt pour activer l'audio - affiché au centre */}
-            {showAudioPrompt && isDirectVideo && (
-              <div className="absolute inset-0 flex items-center justify-center z-50">
-                <div className="bg-black/80 backdrop-blur-sm rounded-lg p-6 max-w-sm mx-4 text-center">
-                  <div className="text-white">
-                    <div className="text-4xl mb-3">🔊</div>
-                    <h3 className="text-lg font-semibold mb-2">Activer le son</h3>
-                    <p className="text-sm opacity-90 mb-4">
-                      Cliquez pour profiter de la bande sonore de cette vidéo
-                    </p>
-                    <div className="flex gap-2 justify-center">
-                      <Button
-                        onClick={enableAudio}
-                        className="bg-primary hover:bg-primary/90"
-                      >
-                        <Volume2 className="w-4 h-4 mr-2" />
-                        Activer le son
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowAudioPrompt(false)}
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        Continuer sans son
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Header */}
-            <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+          {/* Overlay : titre/desc pub + contrôle son + bouton passer */}
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/60 via-transparent to-black/30">
+            <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-auto">
               <div className="text-white">
-                {settings.title && (
-                  <h3 className="text-lg font-semibold mb-1">{settings.title}</h3>
-                )}
-                {settings.description && (
-                  <p className="text-sm opacity-90">{settings.description}</p>
-                )}
+                {settings?.title && <h3 className="text-lg font-semibold mb-1">{settings.title}</h3>}
+                {settings?.description && <p className="text-sm opacity-90">{settings.description}</p>}
               </div>
-              
               <div className="flex items-center gap-2">
-                {/* Bouton mute seulement pour les vidéos directes */}
-                {isDirectVideo && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={toggleMute}
-                    className="bg-black/50 hover:bg-black/70 text-white"
-                  >
+                {(youtubeEmbedUrl || isDirectVideo) && (
+                  <Button variant="secondary" size="sm" onClick={toggleMute} className="bg-black/50 hover:bg-black/70 text-white">
                     {isMuted ? (
-                      <>
-                        <VolumeX className="w-4 h-4 mr-1" />
-                        {audioBlocked ? 'Son bloqué' : 'Activer le son'}
-                      </>
+                      <><VolumeX className="w-4 h-4 mr-1" />{t("itinerary.enableSound", "Activer le son")}</>
                     ) : (
-                      <>
-                        <Volume2 className="w-4 h-4 mr-1" />
-                        Couper le son
-                      </>
+                      <><Volume2 className="w-4 h-4 mr-1" />{t("itinerary.muteSound", "Couper le son")}</>
                     )}
                   </Button>
                 )}
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={skipAd}
-                  className="bg-black/50 hover:bg-black/70"
-                >
-                  Passer ({timeLeft}s)
+                <Button variant="secondary" size="sm" onClick={onClose} className="bg-black/50 hover:bg-black/70 text-white">
+                  {t("itinerary.skipAd", "Passer")}
                 </Button>
               </div>
             </div>
 
-            {/* Footer avec progress */}
-            <div className="absolute bottom-4 left-4 right-4">
-              <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white text-sm">
-                    {generationProgress?.message || 'Génération de votre itinéraire en cours...'}
-                  </span>
-                  <span className="text-white text-sm">
-                    {generationProgress?.progress ? `${Math.round(generationProgress.progress)}%` : `${timeLeft}s restantes`}
-                  </span>
+            {/* Footer : progression réelle de la génération */}
+            <div className="absolute bottom-4 left-4 right-4 pointer-events-auto">
+              <div className="bg-black/60 backdrop-blur-sm rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2 gap-3">
+                  <span className="text-white text-sm truncate">{progressMsg}</span>
+                  {progressValue > 0 && <span className="text-white text-sm shrink-0">{Math.round(progressValue)}%</span>}
                 </div>
-                <Progress
-                  value={generationProgress?.progress || progress}
-                  className="h-2"
-                />
+                <Progress value={progressValue} className="h-2" />
               </div>
             </div>
-
-            {/* Play button si pas en cours de lecture - seulement pour vidéos directes */}
-            {isDirectVideo && !isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-black/50 rounded-full p-4">
-                  <Play className="w-12 h-12 text-white" />
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </DialogContent>

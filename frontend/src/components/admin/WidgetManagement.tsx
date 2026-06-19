@@ -12,36 +12,36 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { widgetService, Widget, WidgetsByPlacement } from "@/services/widgetService";
-import { Check, X, Loader2, RefreshCw, Settings, Layout, Plus, Edit, Trash2, Search, Filter, Sparkles } from "lucide-react";
+import { Check, X, Loader2, RefreshCw, Settings, Layout, Plus, Edit, Trash2, Search, Filter, Sparkles, CheckCircle2, XCircle, Save } from "lucide-react";
 import { WIDGET_TEMPLATES } from "@/components/widgets/widgetRegistry";
 
 const WIDGET_TYPE_OPTIONS = [
-  { value: 'booking', label: '📅 Widget de réservation' },
-  { value: 'search', label: '🔍 Widget de recherche' },
-  { value: 'promotion', label: '🎁 Widget promotionnel' },
-  { value: 'information', label: 'ℹ️ Widget informatif' },
-  { value: 'partner', label: '🤝 Widget partenaire' },
-  { value: 'social', label: '👥 Widget social' },
-  { value: 'custom', label: '⚙️ Widget personnalisé' },
+  { value: 'booking', label: 'Widget de réservation' },
+  { value: 'search', label: 'Widget de recherche' },
+  { value: 'promotion', label: 'Widget promotionnel' },
+  { value: 'information', label: 'Widget informatif' },
+  { value: 'partner', label: 'Widget partenaire' },
+  { value: 'social', label: 'Widget social' },
+  { value: 'custom', label: 'Widget personnalisé' },
 ];
 
 const PLACEMENT_OPTIONS = [
-  { value: 'home', label: '🏠 Page d\'accueil' },
-  { value: 'home_transport_car', label: '🚗 Accueil - Location de voiture' },
-  { value: 'home_transport_transfers', label: '🚕 Accueil - Transferts' },
-  { value: 'home_transport_public', label: '🚌 Accueil - Transport public' },
-  { value: 'home_transport_urban', label: '🚖 Accueil - Transport urbain' },
-  { value: 'home_activities_tours', label: '🗺️ Accueil - Tours & Visites' },
-  { value: 'home_activities_dining', label: '🍽️ Accueil - Gastronomie' },
-  { value: 'home_services_esim', label: '📱 Accueil - Cartes eSIM' },
-  { value: 'home_services_compensation', label: '⚖️ Accueil - Indemnisation' },
-  { value: 'search_results', label: '📋 Résultats de recherche' },
-  { value: 'detail_page', label: '📄 Page de détail' },
-  { value: 'sidebar', label: '📌 Barre latérale' },
-  { value: 'footer', label: '⬇️ Pied de page' },
-  { value: 'header', label: '⬆️ En-tête' },
-  { value: 'floating', label: '🎈 Flottant' },
-  { value: 'modal', label: '🪟 Modal/Popup' },
+  { value: 'home', label: 'Page d\'accueil' },
+  { value: 'home_transport_car', label: 'Accueil - Location de voiture' },
+  { value: 'home_transport_transfers', label: 'Accueil - Transferts' },
+  { value: 'home_transport_public', label: 'Accueil - Transport public' },
+  { value: 'home_transport_urban', label: 'Accueil - Transport urbain' },
+  { value: 'home_activities_tours', label: 'Accueil - Tours & Visites' },
+  { value: 'home_activities_dining', label: 'Accueil - Gastronomie' },
+  { value: 'home_services_esim', label: 'Accueil - Cartes eSIM' },
+  { value: 'home_services_compensation', label: 'Accueil - Indemnisation' },
+  { value: 'search_results', label: 'Résultats de recherche' },
+  { value: 'detail_page', label: 'Page de détail' },
+  { value: 'sidebar', label: 'Barre latérale' },
+  { value: 'footer', label: 'Pied de page' },
+  { value: 'header', label: 'En-tête' },
+  { value: 'floating', label: 'Flottant' },
+  { value: 'modal', label: 'Modal/Popup' },
 ];
 
 const SERVICE_OPTIONS = [
@@ -520,8 +520,8 @@ const WidgetManagement = () => {
 
           {widgets.filter((w) => w.is_active).length > 0 && (
             <div className="mb-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
-              <p className="text-sm font-medium mb-2">
-                ✅ {widgets.filter((w) => w.is_active).length} widget(s) actif(s) sur {widgets.length}
+              <p className="text-sm font-medium mb-2 flex items-center">
+                <CheckCircle2 className="w-4 h-4 mr-1" /> {widgets.filter((w) => w.is_active).length} widget(s) actif(s) sur {widgets.length}
               </p>
             </div>
           )}
@@ -598,8 +598,8 @@ const WidgetManagement = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous</SelectItem>
-                    <SelectItem value="active">✅ Actifs uniquement</SelectItem>
-                    <SelectItem value="inactive">❌ Inactifs uniquement</SelectItem>
+                    <SelectItem value="active"><span className="flex items-center"><CheckCircle2 className="w-4 h-4 mr-1" /> Actifs uniquement</span></SelectItem>
+                    <SelectItem value="inactive"><span className="flex items-center"><XCircle className="w-4 h-4 mr-1" /> Inactifs uniquement</span></SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -691,7 +691,7 @@ const WidgetManagement = () => {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingWidget ? '✏️ Éditer le widget' : '➕ Créer un nouveau widget'}
+              <span className="flex items-center gap-2">{editingWidget ? <><Edit className="w-5 h-5" /> Éditer le widget</> : <><Plus className="w-5 h-5" /> Créer un nouveau widget</>}</span>
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -832,7 +832,7 @@ const WidgetManagement = () => {
               Annuler
             </Button>
             <Button onClick={handleSaveWidget}>
-              {editingWidget ? '💾 Enregistrer' : '✅ Créer le widget'}
+              <span className="flex items-center gap-2">{editingWidget ? <><Save className="w-4 h-4" /> Enregistrer</> : <><CheckCircle2 className="w-4 h-4" /> Créer le widget</>}</span>
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -857,7 +857,7 @@ const WidgetManagement = () => {
                 <Card key={template.code} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => createFromTemplate(template)}>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <div className="text-3xl">{template.icon}</div>
+                      <template.icon className="w-8 h-8 text-muted-foreground" />
                       <div className="flex-1">
                         <h4 className="font-semibold mb-1">{template.name}</h4>
                         <p className="text-sm text-muted-foreground mb-2">

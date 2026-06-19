@@ -126,7 +126,6 @@ class StoryViewSet(viewsets.ModelViewSet):
         qs = (
             Story.objects.select_related('author', 'author__profile', 'tourist_point')
             .prefetch_related(
-                'media',
                 Prefetch('comments', queryset=comments_queryset),
                 'links'
             )
@@ -872,18 +871,23 @@ class StoryGenerationView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        from .ai_providers import generate_story_with_provider, AIProviderException
+        from .ai_providers import generate_story_with_retry, AIProviderException
         from .models import StoryAIProviderConfig
 
-        # Get active AI provider
+        # Get active AI provider (premier actif par ordre alphabétique de display_name,
+        # comme Plan Your Trip).
         try:
-            provider = StoryAIProviderConfig.objects.filter(is_enabled=True).first()
+            provider = (
+                StoryAIProviderConfig.objects.filter(is_enabled=True)
+                .order_by('display_name')
+                .first()
+            )
             if not provider:
                 # Fallback to template-based generation
                 return self._generate_with_template(request.data)
 
-            # Use AI provider
-            result = generate_story_with_provider(provider, request.data)
+            # Use AI provider (avec réessais sur erreurs transitoires)
+            result = generate_story_with_retry(provider, request.data)
             if result:
                 return Response(result)
             else:

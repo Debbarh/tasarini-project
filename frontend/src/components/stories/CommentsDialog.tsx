@@ -9,6 +9,7 @@ import { fr } from "date-fns/locale";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { storyService, StoryComment } from "@/services/storyService";
+import { useTranslation } from "react-i18next";
 
 interface CommentsDialogProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ interface CommentsDialogProps {
 
 export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: CommentsDialogProps) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [comments, setComments] = useState<StoryComment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +39,7 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
       setComments(data || []);
     } catch (error) {
       console.error('Error fetching comments:', error);
-      toast.error('Impossible de charger les commentaires');
+      toast.error(t('travelStories.comments.loadError', 'Impossible de charger les commentaires'));
     } finally {
       setIsLoading(false);
     }
@@ -52,10 +54,10 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
 
       setNewComment("");
       fetchComments(); // Refresh comments
-      toast.success('Commentaire ajouté !');
+      toast.success(t('travelStories.comments.added', 'Commentaire ajouté !'));
     } catch (error) {
       console.error('Error submitting comment:', error);
-      toast.error('Impossible d\'ajouter le commentaire');
+      toast.error(t('travelStories.comments.addError', 'Impossible d\'ajouter le commentaire'));
     } finally {
       setIsSubmitting(false);
     }
@@ -88,20 +90,20 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5" />
-            Commentaires - {storyTitle}
+            {t('travelStories.comments.title', 'Commentaires - {{title}}', { title: storyTitle })}
           </DialogTitle>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-4 py-4">
           {isLoading ? (
             <div className="text-center text-muted-foreground">
-              Chargement des commentaires...
+              {t('travelStories.comments.loading', 'Chargement des commentaires...')}
             </div>
           ) : comments.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
               <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>Aucun commentaire pour le moment.</p>
-              <p className="text-sm">Soyez le premier à partager votre avis !</p>
+              <p>{t('travelStories.comments.emptyTitle', 'Aucun commentaire pour le moment.')}</p>
+              <p className="text-sm">{t('travelStories.comments.emptySubtitle', 'Soyez le premier à partager votre avis !')}</p>
             </div>
           ) : (
             comments.map((comment) => (
@@ -132,7 +134,7 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
         {user && (
           <div className="border-t pt-4 space-y-3">
             <Textarea
-              placeholder="Partagez votre avis sur cette story..."
+              placeholder={t('travelStories.comments.placeholder', 'Partagez votre avis sur cette story...')}
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               className="min-h-[80px] resize-none"
@@ -140,7 +142,7 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
             />
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
-                {newComment.length}/500 caractères
+                {t('travelStories.comments.charCount', '{{count}}/500 caractères', { count: newComment.length })}
               </span>
               <Button
                 onClick={handleSubmitComment}
@@ -149,7 +151,7 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
                 className="gap-2"
               >
                 <Send className="w-4 h-4" />
-                {isSubmitting ? 'Envoi...' : 'Commenter'}
+                {isSubmitting ? t('travelStories.comments.sending', 'Envoi...') : t('travelStories.comments.submit', 'Commenter')}
               </Button>
             </div>
           </div>
@@ -157,7 +159,7 @@ export const CommentsDialog = ({ isOpen, onClose, storyId, storyTitle }: Comment
 
         {!user && (
           <div className="border-t pt-4 text-center text-muted-foreground">
-            <p>Connectez-vous pour commenter cette story</p>
+            <p>{t('travelStories.comments.loginToComment', 'Connectez-vous pour commenter cette story')}</p>
           </div>
         )}
       </DialogContent>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Loader2, MapPin, Database } from "lucide-react";
+import { Loader2, Globe, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface OsmPick {
@@ -140,15 +140,20 @@ export default function LocationAutocomplete({
     onSelect(pick);
   };
 
-  // Entrées de la base correspondant à la saisie (proposées en premier)
+  // Entrées de la base : filtrées par la saisie, OU liste complète parcourable
+  // quand le champ est vide (choix dans la liste sans rien taper).
+  const q = query.trim().toLowerCase();
   const dbMatches: OsmPick[] = (dbOptions || [])
-    .filter((o) => o.name && query.trim() && o.name.toLowerCase().includes(query.trim().toLowerCase()))
-    .slice(0, 5)
+    .filter((o) => o.name && (!q || o.name.toLowerCase().includes(q)))
+    .slice(0, q ? 8 : 50)
     .map((o) => ({ name: o.name, fromDb: true }));
 
   const dbNames = new Set(dbMatches.map((d) => d.name.toLowerCase()));
   const osmOnly = suggestions.filter((s) => !dbNames.has(s.name.toLowerCase()));
   const allItems = [...dbMatches, ...osmOnly];
+
+  // Icône adaptée au contexte : pays -> globe, ville -> bâtiment.
+  const ContextIcon = kind === "country" ? Globe : Building2;
 
   return (
     <div ref={containerRef} className="relative">
@@ -159,7 +164,7 @@ export default function LocationAutocomplete({
         placeholder={placeholder}
         autoComplete="off"
         onChange={(e) => handleChange(e.target.value)}
-        onFocus={() => query.trim().length >= 2 && setOpen(true)}
+        onFocus={() => setOpen(true)}
       />
       {loading && (
         <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
@@ -177,11 +182,7 @@ export default function LocationAutocomplete({
                 item.fromDb && "font-medium"
               )}
             >
-              {item.fromDb ? (
-                <Database className="h-3.5 w-3.5 text-primary shrink-0" />
-              ) : (
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              )}
+              <ContextIcon className={cn("h-3.5 w-3.5 shrink-0", item.fromDb ? "text-primary" : "text-muted-foreground")} />
               <span className="truncate">{item.name}</span>
               {!item.fromDb && item.countryName && kind === "city" && (
                 <span className="ml-auto text-xs text-muted-foreground truncate">{item.countryName}</span>

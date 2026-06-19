@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Settings, TestTube, Globe, Webhook, Lock } from 'lucide-react';
+import { Settings, TestTube, Globe, Webhook, Lock, Check } from 'lucide-react';
 import { partnerService, PartnerTouristPointSummary, BookingSystemType } from '@/services/partnerService';
 
 type EditableBookingConfig = {
@@ -219,7 +219,14 @@ export const PartnerBookingSettings: React.FC = () => {
                     const isConfigured = point.bookingStatus?.is_active;
                     return (
                       <SelectItem key={point.id} value={point.id}>
-                        {point.name} {isConfigured && '(✓ Configuré)'}
+                        <span className="flex items-center gap-1">
+                          {point.name}
+                          {isConfigured && (
+                            <span className="flex items-center gap-0.5">
+                              (<Check className="w-3 h-3" /> Configuré)
+                            </span>
+                          )}
+                        </span>
                       </SelectItem>
                     );
                   })}

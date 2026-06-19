@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { aiProviderService, AIProviderConfig } from "@/services/aiProviderService";
+import { Lightbulb, AlertTriangle } from "lucide-react";
 
 // Modèles disponibles par provider
 const AVAILABLE_MODELS = {
@@ -218,7 +219,7 @@ const AIProviderManagement = () => {
 
         {/* Guide d'utilisation */}
         <div className="mt-6 p-4 bg-muted/50 rounded-lg space-y-2">
-          <h4 className="text-sm font-semibold">💡 Guide d'utilisation</h4>
+          <h4 className="text-sm font-semibold flex items-center"><Lightbulb className="w-4 h-4 mr-1" /> Guide d'utilisation</h4>
           <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
             <li><strong>Modèle :</strong> Sélectionnez le modèle d'IA dans la liste déroulante. Les modèles "Flash" sont plus rapides, les "Pro" plus puissants.</li>
             <li><strong>Température :</strong> Contrôle la créativité (0 = déterministe, 1 = très créatif). Recommandé : 0.7</li>
@@ -226,7 +227,7 @@ const AIProviderManagement = () => {
             <li><strong>Sauvegarde :</strong> Les changements sont sauvegardés automatiquement.</li>
           </ul>
           <div className="mt-3 p-2 bg-primary/10 rounded text-xs">
-            <strong>⚠️ Important :</strong> Les clés API doivent être configurées dans le fichier backend/.env
+            <strong className="inline-flex items-center"><AlertTriangle className="w-4 h-4 mr-1" /> Important :</strong> Les clés API doivent être configurées dans le fichier backend/.env
           </div>
         </div>
       </CardContent>

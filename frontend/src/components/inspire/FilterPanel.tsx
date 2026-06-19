@@ -182,7 +182,7 @@ const FilterPanel = ({ filters, onFiltersChange, poiCount, isLoading }: FilterPa
                 />
                 <div className="flex justify-between text-xs text-muted-foreground mt-1">
                   <span>{t('beInspired.filters.allRatings')}</span>
-                  <span>5⭐</span>
+                  <span className="flex items-center gap-0.5">5<Star className="w-3 h-3" /></span>
                 </div>
               </div>
             </div>

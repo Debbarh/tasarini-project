@@ -52,13 +52,6 @@ class Story(models.Model):
         ]
 
 
-class StoryMedia(models.Model):
-    story = models.ForeignKey(Story, related_name='media', on_delete=models.CASCADE)
-    file = models.FileField(upload_to='story-media/', blank=True)
-    external_url = models.URLField(blank=True)
-    caption = models.CharField(max_length=255, blank=True)
-
-
 class StoryComment(models.Model):
     story = models.ForeignKey(Story, related_name='comments', on_delete=models.CASCADE)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -161,6 +154,7 @@ class StoryAIProviderConfig(models.Model):
         OPENAI = 'openai', 'OpenAI'
         GEMINI = 'gemini', 'Gemini'
         PERPLEXITY = 'perplexity', 'Perplexity'
+        OLLAMA = 'ollama', 'Ollama (local)'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.CharField(max_length=50, choices=Provider.choices, unique=True)

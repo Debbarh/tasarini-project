@@ -19,6 +19,9 @@ from .models import (
     DifficultyLevel,
     POIConversation,
     POIConversationMessage,
+    POIClaim,
+    POISuggestion,
+    POIReport,
     POIMedia,
     RestaurantCategory,
     Tag,
@@ -377,6 +380,7 @@ class TouristPointSerializer(serializers.ModelSerializer):
     media = POIMediaSerializer(many=True, read_only=True)
     owner_detail = serializers.SerializerMethodField()
     partner_detail = serializers.SerializerMethodField()
+    is_partner_point = serializers.SerializerMethodField()
     status_enum = serializers.CharField(source='status', required=False)
     conversation_id = serializers.SerializerMethodField()
 
@@ -417,6 +421,7 @@ class TouristPointSerializer(serializers.ModelSerializer):
             'media',
             'owner_detail',
             'partner_detail',
+            'is_partner_point',
             'conversation_id',
             'created_at',
             'updated_at',
@@ -459,11 +464,25 @@ class TouristPointSerializer(serializers.ModelSerializer):
             'website': profile.website,
         }
 
+    def get_is_partner_point(self, obj):
+        # « Lié à un partenaire » = le propriétaire a un profil partenaire approuvé.
+        profile = getattr(obj.owner, 'partner_profile', None)
+        return bool(profile and profile.status == 'approved')
+
     def get_conversation_id(self, obj):
-        conversation = getattr(obj, 'conversation', None)
-        if not conversation:
+        # En LISTE on ne crée jamais de conversation (1 get_or_create par POI = des milliers
+        # d'écritures sur la carte → très lent). On ne crée qu'au DÉTAIL (retrieve).
+        try:
+            conversation = obj.conversation
+        except Exception:
+            conversation = None
+        if conversation:
+            return str(conversation.id)
+        view = self.context.get('view')
+        if view is not None and getattr(view, 'action', None) == 'retrieve':
             conversation, _ = POIConversation.objects.get_or_create(tourist_point=obj)
-        return str(conversation.id)
+            return str(conversation.id)
+        return None
 
 
 class MinimalTouristPointSerializer(serializers.ModelSerializer):
@@ -828,3 +847,118 @@ class TouristPointReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['reviewer'] = self.context['request'].user
         return super().create(validated_data)
+
+
+# Champs d'un POI qu'une suggestion wiki peut proposer de modifier.
+# - colonnes/FK : description, contact_phone, website_url, address, budget_level_id, difficulty_level_id
+# - M2M : tags
+# - flags : is_restaurant, is_accommodation, is_activity
+# - colonne JSON : amenities
+# - metadata (scalaire) : opening_hours, activity_intensity_level, culinary_adventure_level, recommendation_level
+# - metadata (listes/taxonomies par code) : activity_categories, ... accommodation_ambiance
+# - photos : media_images (URLs ≤ 3) → POIMedia + metadata.images
+SUGGESTABLE_FIELDS = {
+    # colonnes / FK / M2M
+    'name', 'description', 'contact_phone', 'website_url', 'address', 'budget_level_id', 'difficulty_level_id',
+    'is_restaurant', 'is_accommodation', 'is_activity', 'amenities', 'tags', 'media_images',
+    # metadata scalaires / booléens (clés canoniques lues par mapApiPoi)
+    'opening_hours', 'recommendation_level',
+    'is_wheelchair_accessible', 'has_accessible_parking', 'has_accessible_restrooms',
+    'has_audio_guide', 'has_sign_language_support',
+    'culinary_adventure_level_id', 'activity_intensity_level_id',
+    # metadata listes (taxonomies par code)
+    'cuisine_types', 'dietary_restrictions_supported', 'restaurant_categories',
+    'accommodation_types', 'accommodation_amenities', 'accommodation_locations',
+    'accommodation_accessibility', 'accommodation_security', 'accommodation_ambiance',
+    'activity_categories', 'activity_interests', 'activity_avoidances',
+}
+
+
+class POIClaimSerializer(serializers.ModelSerializer):
+    tourist_point_name = serializers.CharField(source='tourist_point.name', read_only=True)
+    claimed_by_detail = UserSerializer(source='claimed_by', read_only=True)
+
+    class Meta:
+        model = POIClaim
+        fields = [
+            'id', 'tourist_point', 'tourist_point_name', 'claimed_by', 'claimed_by_detail',
+            'motivation', 'proof_url', 'status', 'reviewed_by', 'review_message',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ('id', 'claimed_by', 'claimed_by_detail', 'tourist_point_name',
+                            'status', 'reviewed_by', 'review_message', 'created_at', 'updated_at')
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        poi = attrs.get('tourist_point')
+        if user and poi:
+            if POIClaim.objects.filter(tourist_point=poi, claimed_by=user, status=POIClaim.Status.PENDING).exists():
+                raise serializers.ValidationError('Vous avez déjà une revendication en attente pour ce lieu.')
+            if poi.owner_id == user.id:
+                raise serializers.ValidationError('Vous gérez déjà ce lieu.')
+        return attrs
+
+
+class POISuggestionSerializer(serializers.ModelSerializer):
+    tourist_point_name = serializers.CharField(source='tourist_point.name', read_only=True)
+    suggested_by_detail = UserSerializer(source='suggested_by', read_only=True)
+
+    class Meta:
+        model = POISuggestion
+        fields = [
+            'id', 'tourist_point', 'tourist_point_name', 'suggested_by', 'suggested_by_detail',
+            'proposed_changes', 'comment', 'status', 'reviewed_by', 'review_message',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ('id', 'suggested_by', 'suggested_by_detail', 'tourist_point_name',
+                            'status', 'reviewed_by', 'review_message', 'created_at', 'updated_at')
+
+    def validate_proposed_changes(self, value):
+        if not isinstance(value, dict):
+            raise serializers.ValidationError('proposed_changes doit être un objet.')
+        cleaned = {k: v for k, v in value.items() if k in SUGGESTABLE_FIELDS}
+        if not cleaned:
+            raise serializers.ValidationError('Aucun champ modifiable proposé.')
+        return cleaned
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        poi = attrs.get('tourist_point')
+        changes = attrs.get('proposed_changes')
+        if user and poi and changes:
+            dup = POISuggestion.objects.filter(
+                tourist_point=poi, suggested_by=user, status=POISuggestion.Status.PENDING,
+                proposed_changes=changes,
+            ).exists()
+            if dup:
+                raise serializers.ValidationError('Suggestion identique déjà en attente.')
+        return attrs
+
+
+class POIReportSerializer(serializers.ModelSerializer):
+    tourist_point_name = serializers.CharField(source='tourist_point.name', read_only=True)
+    reported_by_detail = UserSerializer(source='reported_by', read_only=True)
+    reason_display = serializers.CharField(source='get_reason_display', read_only=True)
+
+    class Meta:
+        model = POIReport
+        fields = [
+            'id', 'tourist_point', 'tourist_point_name', 'reported_by', 'reported_by_detail',
+            'reason', 'reason_display', 'description', 'status', 'reviewed_by', 'review_message',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ('id', 'reported_by', 'reported_by_detail', 'tourist_point_name',
+                            'reason_display', 'status', 'reviewed_by', 'review_message',
+                            'created_at', 'updated_at')
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        poi = attrs.get('tourist_point')
+        if user and poi:
+            if POIReport.objects.filter(tourist_point=poi, reported_by=user,
+                                        status=POIReport.Status.PENDING).exists():
+                raise serializers.ValidationError('Vous avez déjà signalé ce lieu.')
+        return attrs

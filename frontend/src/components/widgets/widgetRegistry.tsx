@@ -1,4 +1,5 @@
 import { ComponentType } from 'react';
+import { Car, Map, Bus, Smartphone, UtensilsCrossed, Scale, Plane } from 'lucide-react';
 import CarRentalWidget from './CarRentalWidget';
 import TransferWidget from './TransferWidget';
 import TransferWidgetAlt from './TransferWidgetAlt';
@@ -42,7 +43,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'car_rental',
     placement: 'home_transport_car',
     description: 'Widget de recherche et réservation de voitures de location',
-    icon: '🚗',
+    icon: Car,
   },
   {
     code: 'transfer_basic',
@@ -51,7 +52,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'transfers',
     placement: 'home_transport_transfers',
     description: 'Widget de réservation de transferts aéroport - Version basique',
-    icon: '🚕',
+    icon: Car,
   },
   {
     code: 'transfer_alt',
@@ -60,7 +61,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'transfers',
     placement: 'home_transport_transfers',
     description: 'Widget de réservation de transferts aéroport - Version alternative',
-    icon: '🚕',
+    icon: Car,
   },
   {
     code: 'transfer_3',
@@ -69,7 +70,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'transfers',
     placement: 'home_transport_transfers',
     description: 'Widget de réservation de transferts aéroport - Version 3',
-    icon: '🚕',
+    icon: Car,
   },
   {
     code: 'tours_basic',
@@ -78,7 +79,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'activities',
     placement: 'home_activities_tours',
     description: 'Widget de recherche et réservation d\'activités touristiques',
-    icon: '🗺️',
+    icon: Map,
   },
   {
     code: 'tours_alt',
@@ -87,7 +88,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'activities',
     placement: 'home_activities_tours',
     description: 'Widget de recherche et réservation d\'activités touristiques - Version alternative',
-    icon: '🗺️',
+    icon: Map,
   },
   {
     code: 'public_transport',
@@ -96,7 +97,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'transfers',
     placement: 'home_transport_public',
     description: 'Widget de réservation de bus, trains et ferries',
-    icon: '🚌',
+    icon: Bus,
   },
   {
     code: 'airalo_esim',
@@ -105,7 +106,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'all',
     placement: 'home_services_esim',
     description: 'Widget de vente de cartes eSIM pour connectivité internationale',
-    icon: '📱',
+    icon: Smartphone,
   },
   {
     code: 'eatwith',
@@ -114,7 +115,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'restaurants',
     placement: 'home_activities_dining',
     description: 'Widget de réservation d\'expériences gastronomiques',
-    icon: '🍽️',
+    icon: UtensilsCrossed,
   },
   {
     code: 'airhelp',
@@ -123,7 +124,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'flights',
     placement: 'home_services_compensation',
     description: 'Widget pour réclamer une indemnisation en cas d\'annulation ou retard de vol',
-    icon: '⚖️',
+    icon: Scale,
   },
   {
     code: 'indrive_city',
@@ -132,7 +133,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'transfers',
     placement: 'home_transport_urban',
     description: 'Widget de réservation de transport urbain avec inDrive',
-    icon: '🚖',
+    icon: Car,
   },
   {
     code: 'expedia_search',
@@ -141,7 +142,7 @@ export const WIDGET_TEMPLATES = [
     service_type: 'all',
     placement: 'home_services_booking',
     description: 'Widget de recherche de vols et hébergements Expedia',
-    icon: '✈️',
+    icon: Plane,
   },
 ];
 

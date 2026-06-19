@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { storyService, Story } from "@/services/storyService";
 import { normalizeApiResponse } from "@/utils/apiHelpers";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface AIRecommendationsTabProps {
   currentUserId?: string | number;
@@ -14,6 +15,7 @@ interface AIRecommendationsTabProps {
 }
 
 export const AIRecommendationsTab = ({ currentUserId, onLike, onComment, onBookmark }: AIRecommendationsTabProps) => {
+  const { t } = useTranslation();
   const [recommendations, setRecommendations] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +28,7 @@ export const AIRecommendationsTab = ({ currentUserId, onLike, onComment, onBookm
       setRecommendations(normalizeApiResponse(data));
     } catch (error) {
       console.error('Erreur lors du chargement des recommandations:', error);
-      toast.error('Impossible de charger les recommandations pour le moment.');
+      toast.error(t('travelStories.aiRecommendations.loadError', 'Impossible de charger les recommandations pour le moment.'));
     } finally {
       setLoading(false);
     }
@@ -41,7 +43,7 @@ export const AIRecommendationsTab = ({ currentUserId, onLike, onComment, onBookm
       <div className="text-center py-8">
         <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
         <p className="text-muted-foreground">
-          Connectez-vous pour voir vos recommandations personnalisées
+          {t('travelStories.aiRecommendations.loginCta', 'Connectez-vous pour voir vos recommandations personnalisées')}
         </p>
       </div>
     );
@@ -51,20 +53,20 @@ export const AIRecommendationsTab = ({ currentUserId, onLike, onComment, onBookm
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Sparkles className="h-5 w-5 text-primary" />
-        <h2 className="text-xl font-semibold">Recommandations IA</h2>
+        <h2 className="text-xl font-semibold">{t('travelStories.aiRecommendations.heading', 'Recommandations IA')}</h2>
         <Badge variant="secondary" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-          Personnalisé
+          {t('travelStories.aiRecommendations.personalizedBadge', 'Personnalisé')}
         </Badge>
       </div>
 
       {loading ? (
         <div className="text-center py-8 text-muted-foreground">
           <Brain className="h-8 w-8 animate-pulse mx-auto mb-2" />
-          Analyse de vos préférences...
+          {t('travelStories.aiRecommendations.loading', 'Analyse de vos préférences...')}
         </div>
       ) : recommendations.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          <p>Aimez quelques histoires pour recevoir des recommandations personnalisées !</p>
+          <p>{t('travelStories.aiRecommendations.empty', 'Aimez quelques histoires pour recevoir des recommandations personnalisées !')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -75,7 +77,7 @@ export const AIRecommendationsTab = ({ currentUserId, onLike, onComment, onBookm
                 className="absolute -top-2 -right-2 z-10 bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0"
               >
                 <Sparkles className="h-3 w-3 mr-1" />
-                Recommandé
+                {t('travelStories.aiRecommendations.recommendedBadge', 'Recommandé')}
               </Badge>
               <StoryCard
                 story={story}

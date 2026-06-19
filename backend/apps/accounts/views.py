@@ -99,6 +99,29 @@ class UserViewSet(viewsets.ModelViewSet):
             }
         )
 
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def activate_account(self, request, pk=None):
+        """Active manuellement un compte (admin) : marque l'email vérifié et le compte actif.
+
+        Utile quand l'email de vérification n'a pas pu être délivré.
+        Body optionnel: {"active": bool} pour (dés)activer; défaut = activer.
+        """
+        user = self.get_object()
+        activate = request.data.get('active', True)
+        if isinstance(activate, str):
+            activate = activate.lower() not in ('false', '0', 'no')
+        user.is_active = bool(activate)
+        if activate:
+            user.email_verified = True
+        user.save(update_fields=['is_active', 'email_verified'])
+        return Response(
+            {
+                'detail': 'Compte activé' if activate else 'Compte désactivé',
+                'is_active': user.is_active,
+                'email_verified': user.email_verified,
+            }
+        )
+
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.select_related('user')
@@ -598,29 +621,54 @@ class VerifyEmailView(APIView):
 
 
 class ResendVerificationEmailView(APIView):
-    """Vue pour renvoyer l'email de vérification."""
-    permission_classes = [permissions.IsAuthenticated]
+    """Vue pour renvoyer l'email de vérification.
+
+    Accepte deux cas :
+    - Utilisateur authentifié (depuis l'app) : renvoie pour ce compte.
+    - Anonyme avec un `email` dans le body (depuis un lien expiré, hors session) :
+      renvoie pour ce compte si trouvé et non vérifié. Réponse générique pour
+      éviter l'énumération d'emails.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    # Message générique renvoyé au cas anonyme, quel que soit l'état réel du compte.
+    _GENERIC_OK = (
+        "Si un compte non vérifié est associé à cette adresse, "
+        "un nouvel email de vérification vient d'être envoyé."
+    )
 
     def post(self, request):
-        user = request.user
+        user = request.user if request.user.is_authenticated else None
+        email = (request.data.get('email') or '').strip()
 
-        if user.email_verified:
+        # Cas authentifié : comportement explicite (messages précis).
+        if user is not None:
+            if user.email_verified:
+                return Response(
+                    {'detail': 'Votre email est déjà vérifié.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if EmailService.resend_verification_email(user):
+                return Response(
+                    {'detail': 'Un nouvel email de vérification a été envoyé.'},
+                    status=status.HTTP_200_OK
+                )
             return Response(
-                {'detail': 'Votre email est déjà vérifié.'},
+                {'detail': "Erreur lors de l'envoi de l'email."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Cas anonyme : email requis, réponse toujours générique (anti-énumération).
+        if not email:
+            return Response(
+                {'detail': 'Adresse email requise.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Renvoyer l'email de vérification
-        if EmailService.resend_verification_email(user):
-            return Response(
-                {'detail': 'Un nouvel email de vérification a été envoyé.'},
-                status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                {'detail': 'Erreur lors de l\'envoi de l\'email.'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        target = User.objects.filter(email__iexact=email).first()
+        if target is not None and not target.email_verified:
+            EmailService.resend_verification_email(target)
+        return Response({'detail': self._GENERIC_OK}, status=status.HTTP_200_OK)
 
 
 class RequestPasswordResetView(APIView):

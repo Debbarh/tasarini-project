@@ -169,3 +169,12 @@ All colors MUST be HSL.
     animation: blink 1s infinite;
   }
 }
+
+/* Forçage best-effort de la police Jost sur le widget vols TravelPayouts
+   (rendu dans notre DOM). Ne s'applique PAS au contenu en iframe — ex. Stay22. */
+#tpwl-search, #tpwl-search *,
+#tpwl-tickets, #tpwl-tickets *,
+#tpwl-hotels, #tpwl-hotels *,
+#tpwl-modals, #tpwl-modals * {
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif !important;
+}

@@ -13,7 +13,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import {
   Building2, Search, Filter, Mail, Phone, MapPin, CheckCircle, XCircle,
   CreditCard, RefreshCw, Edit, UserCheck, Clock, AlertTriangle,
-  Key, Globe
+  Key, Globe, Pause, Check, X
 } from 'lucide-react';
 import { useOptimizedPartners, OptimizedPartner } from '@/hooks/useOptimizedPartners';
 import { toast } from 'sonner';
@@ -150,9 +150,9 @@ const PartnerValidationDialog = ({ partner, onValidated }: { partner: OptimizedP
                 <SelectValue placeholder="Choisir une action" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="approve">✅ Approuver</SelectItem>
-                <SelectItem value="reject">❌ Refuser</SelectItem>
-                <SelectItem value="suspend">⏸️ Suspendre</SelectItem>
+                <SelectItem value="approve"><span className="flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Approuver</span></SelectItem>
+                <SelectItem value="reject"><span className="flex items-center gap-1"><XCircle className="w-4 h-4" /> Refuser</span></SelectItem>
+                <SelectItem value="suspend"><span className="flex items-center gap-1"><Pause className="w-4 h-4" /> Suspendre</span></SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -495,7 +495,7 @@ const PartnerPOIDialog = ({ partner }: { partner: OptimizedPartner }) => {
                                 onClick={() => updatePOIStatus(poi.id, 'approved')}
                                 className="h-8 px-2"
                               >
-                                ✓
+                                <Check className="w-4 h-4" />
                               </Button>
                               <Button
                                 size="sm"
@@ -503,7 +503,7 @@ const PartnerPOIDialog = ({ partner }: { partner: OptimizedPartner }) => {
                                 onClick={() => updatePOIStatus(poi.id, 'rejected')}
                                 className="h-8 px-2"
                               >
-                                ✗
+                                <X className="w-4 h-4" />
                               </Button>
                             </>
                           )}

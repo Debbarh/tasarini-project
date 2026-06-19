@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,6 +44,7 @@ interface LinkedEntity {
 }
 
 export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialogProps) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [newTag, setNewTag] = useState('');
@@ -127,12 +129,12 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
     e.preventDefault();
     
     if (!user) {
-      toast.error('Vous devez être connecté pour créer une story');
+      toast.error(t('travelStories.createStory.loginRequired', 'Vous devez être connecté pour créer une story'));
       return;
     }
 
     if (!formData.title.trim() || !formData.content.trim()) {
-      toast.error('Le titre et le contenu sont requis');
+      toast.error(t('travelStories.createStory.fieldsRequired', 'Le titre et le contenu sont requis'));
       return;
     }
 
@@ -165,7 +167,7 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
       
     } catch (error: any) {
       console.error('Erreur lors de la création de la story:', error);
-      toast.error(`Erreur lors de la création: ${error.message}`);
+      toast.error(t('travelStories.createStory.createError', 'Erreur lors de la création: {{msg}}', { msg: error.message }));
     } finally {
       setLoading(false);
     }
@@ -175,24 +177,24 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Title */}
       <div className="space-y-2">
-        <Label htmlFor="title">Titre de votre story *</Label>
+        <Label htmlFor="title">{t('travelStories.createStory.titleLabel', 'Titre de votre story *')}</Label>
         <Input
           id="title"
           value={formData.title}
           onChange={(e) => handleInputChange('title', e.target.value)}
-          placeholder="Un titre accrocheur pour votre expérience..."
+          placeholder={t('travelStories.createStory.titlePlaceholder', 'Un titre accrocheur pour votre expérience...')}
           required
         />
       </div>
 
       {/* Content */}
       <div className="space-y-2">
-        <Label htmlFor="content">Votre histoire *</Label>
+        <Label htmlFor="content">{t('travelStories.createStory.contentLabel', 'Votre histoire *')}</Label>
         <Textarea
           id="content"
           value={formData.content}
           onChange={(e) => handleInputChange('content', e.target.value)}
-          placeholder="Racontez votre expérience, vos émotions, vos découvertes..."
+          placeholder={t('travelStories.createStory.contentPlaceholder', 'Racontez votre expérience, vos émotions, vos découvertes...')}
           rows={6}
           required
         />
@@ -201,14 +203,14 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Location */}
         <div className="space-y-2">
-          <Label htmlFor="location">Lieu</Label>
+          <Label htmlFor="location">{t('travelStories.createStory.locationLabel', 'Lieu')}</Label>
           <div className="relative">
             <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="location"
               value={formData.location_name}
               onChange={(e) => handleInputChange('location_name', e.target.value)}
-              placeholder="Paris, France"
+              placeholder={t('travelStories.createStory.locationPlaceholder', 'Paris, France')}
               className="pl-10"
             />
           </div>
@@ -216,7 +218,7 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
 
         {/* Date */}
         <div className="space-y-2">
-          <Label>Date du voyage</Label>
+          <Label>{t('travelStories.createStory.tripDateLabel', 'Date du voyage')}</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -224,7 +226,7 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
                 className="w-full justify-start text-left font-normal"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData.trip_date ? format(formData.trip_date, "PPP", { locale: fr }) : "Choisir une date"}
+                {formData.trip_date ? format(formData.trip_date, "PPP", { locale: fr }) : t('travelStories.createStory.chooseDate', 'Choisir une date')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -241,12 +243,12 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
 
       {/* Tags */}
       <div className="space-y-2">
-        <Label>Tags</Label>
+        <Label>{t('travelStories.createStory.tagsLabel', 'Tags')}</Label>
         <div className="flex gap-2">
           <Input
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
-            placeholder="Ajouter un tag..."
+            placeholder={t('travelStories.createStory.addTagPlaceholder', 'Ajouter un tag...')}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
           />
           <Button type="button" onClick={addTag} size="sm">
@@ -273,7 +275,7 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
 
       {/* Linked Entities */}
       <div className="space-y-4">
-        <Label>Lier à des éléments de l'application</Label>
+        <Label>{t('travelStories.createStory.linkLabel', "Lier à des éléments de l'application")}</Label>
         
         <div className="flex gap-2">
           <Select value={searchType} onValueChange={(value: any) => setSearchType(value)}>
@@ -281,9 +283,9 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="tourist_point">Point d'intérêt</SelectItem>
-              <SelectItem value="itinerary">Itinéraire</SelectItem>
-              <SelectItem value="activity">Activité</SelectItem>
+              <SelectItem value="tourist_point">{t('travelStories.createStory.linkTouristPoint', "Point d'intérêt")}</SelectItem>
+              <SelectItem value="itinerary">{t('travelStories.createStory.linkItinerary', 'Itinéraire')}</SelectItem>
+              <SelectItem value="activity">{t('travelStories.createStory.linkActivity', 'Activité')}</SelectItem>
             </SelectContent>
           </Select>
           
@@ -291,7 +293,7 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Rechercher..."
+              placeholder={t('travelStories.createStory.searchPlaceholder', 'Rechercher...')}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), searchEntities())}
             />
             <Button
@@ -328,7 +330,7 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
         {/* Linked Entities */}
         {linkedEntities.length > 0 && (
           <div className="space-y-2">
-            <Label className="text-sm">Éléments liés:</Label>
+            <Label className="text-sm">{t('travelStories.createStory.linkedItems', 'Éléments liés:')}</Label>
             <div className="flex flex-wrap gap-2">
               {linkedEntities.map((entity, index) => (
                 <Badge key={index} variant="outline" className="pr-1">
@@ -357,17 +359,17 @@ export const CreateStoryDialog = ({ onStoryCreated, onCancel }: CreateStoryDialo
           onCheckedChange={(checked) => handleInputChange('is_public', checked)}
         />
         <Label htmlFor="is_public">
-          {formData.is_public ? 'Story publique' : 'Story privée'}
+          {formData.is_public ? t('travelStories.createStory.publicLabel', 'Story publique') : t('travelStories.createStory.privateLabel', 'Story privée')}
         </Label>
       </div>
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-2 pt-4">
         <Button type="button" variant="outline" onClick={onCancel}>
-          Annuler
+          {t('travelStories.createStory.cancel', 'Annuler')}
         </Button>
         <Button type="submit" disabled={loading}>
-          {loading ? 'Création...' : 'Créer la story'}
+          {loading ? t('travelStories.createStory.creating', 'Création...') : t('travelStories.createStory.create', 'Créer la story')}
         </Button>
       </div>
     </form>

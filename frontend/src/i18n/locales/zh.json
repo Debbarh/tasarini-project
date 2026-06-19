@@ -9,7 +9,8 @@
     "myProfile": "我的档案",
     "logout": "登出",
     "login": "登录",
-    "notifications": "通知"
+    "notifications": "通知",
+    "savedItineraries": "我的行程"
   },
   "notFound": {
     "title": "404",
@@ -68,7 +69,10 @@
     "goToImage": "跳转到图片{{index}}",
     "searchDestination": "你要去哪里？",
     "searchCta": "搜索",
-    "openBookingCenter": "打开预订中心"
+    "openBookingCenter": "打开预订中心",
+    "flightComparatorTitle": "比较航班",
+    "flightComparatorDesc": "从数百家航空公司和旅行社中找到最优惠的价格。",
+    "hotelsMapTitle": "查找住宿"
   },
   "planTrip": {
     "title": "计划您的完美度假",
@@ -80,8 +84,8 @@
     "pageDescription": "只需几次点击就能创建您的梦幻旅程。我们的AI设计个性化冒险，将您的愿望转化为神奇的回忆。",
     "itineraryGenerated": "旅程生成成功！",
     "personalizedTravel": "您的AI个性化旅行已经准备好。",
-    "withPreferences": "✨ 根据您的喜好！",
-    "withLocalPlaces": "📍 包含正宗的当地地点！",
+    "withPreferences": "根据您的喜好！",
+    "withLocalPlaces": "包含正宗的当地地点！",
     "generationError": "生成旅程时出错",
     "tryAgainLater": "请稍后再试，如果问题仍然存在，请联系客服支持。",
     "enrichmentComplete": "旅行丰富化完成！",
@@ -127,8 +131,6 @@
       "generateNow": "立即生成"
     },
     "destinationStep": {
-      "selectCountry": "选择国家",
-      "selectCity": "选择城市",
       "numberOfDays": "天数",
       "exactDates": "确切日期",
       "start": "开始",
@@ -158,7 +160,9 @@
       "invalidAddress": "请在地图上选择有效地址。",
       "fetchingTranslations": "Fetching multilingual translations...",
       "geocodeFailed": "无法确定该位置所在的城市。请选择其他位置或手动输入城市名称。",
-      "chooseOnMapHint": "打开交互式地图，精确定位您的目的地并获取其坐标。"
+      "chooseOnMapHint": "打开交互式地图，精确定位您的目的地并获取其坐标。",
+      "selectCountry": "请输入或选择一个国家",
+      "selectCity": "输入或选择一个城市"
     },
     "travelDetailsStep": {
       "title": "旅行伙伴",
@@ -229,7 +233,9 @@
       "conservative": "保守",
       "moderate": "中等",
       "adventurous": "冒险",
-      "consumesAlcohol": "饮酒"
+      "consumesAlcohol": "饮酒",
+      "refineMore": "调整我的偏好（餐厅、饮食习惯）",
+      "refineLess": "隐藏高级设置"
     },
     "accommodationStep": {
       "title": "住宿偏好",
@@ -246,7 +252,9 @@
       "services": "服务",
       "locations": "位置",
       "others": "其他",
-      "typeRequired": "请至少选择一种住宿类型，以便继续。"
+      "typeRequired": "请至少选择一种住宿类型，以便继续。",
+      "refineMore": "调整我的偏好（服务、无障碍设施、安全、氛围）",
+      "refineLess": "隐藏高级设置"
     },
     "activitiesStep": {
       "title": "活动和体验",
@@ -265,25 +273,27 @@
       "summaryIntensity": "强度：",
       "summaryInterests": "兴趣：",
       "moderate": "中等",
-      "others": "其他"
+      "others": "其他",
+      "refineMore": "添加兴趣点和特殊要求",
+      "refineLess": "隐藏其他选项"
     }
   },
   "beInspired": {
     "pageTitle": "获得灵感 | AI旅行",
     "pageDescription": "探索您周围隐藏的奇迹世界。发现秘密珍宝、正宗风味和等待您的神奇体验。",
-    "title": "✨ 获得灵感",
+    "title": "获得灵感",
     "subtitle": "在{{radius}}公里半径内发现隐藏的宝藏。每个地方都讲述一个故事，每次经历都创造一个难忘的回忆。",
-    "searchHotels": "🏨 酒店",
-    "searchHotelsShort": "🏨",
-    "aiGuide": "🤖 AI向导",
-    "aiGuideShort": "🤖 向导",
-    "shareDiscovery": "🌟 分享宝藏",
-    "shareDiscoveryShort": "🌟 分享",
-    "dialogTitle": "🌟 分享您的发现",
+    "searchHotels": "酒店",
+    "searchHotelsShort": "",
+    "aiGuide": "AI向导",
+    "aiGuideShort": "向导",
+    "shareDiscovery": "分享宝藏",
+    "shareDiscoveryShort": "分享",
+    "dialogTitle": "分享您的发现",
     "dialogDescription": "向探索者社区展示您喜爱的神奇地方",
     "exploreMap": "探索地图",
     "findInspiration": "寻找灵感",
-    "radiusLabel": "🎯 探索半径",
+    "radiusLabel": "探索半径",
     "radius10": "10 公里",
     "radius20": "20 公里",
     "radius30": "30 公里",
@@ -318,7 +328,12 @@
       "error": "无法加载智能推荐",
       "noNewRecommendations": "未找到新推荐。探索更多以改善您的建议！",
       "successGenerated": "已生成{{count}}条个性化推荐！",
-      "loadingError": "加载推荐时出错"
+      "loadingError": "加载推荐时出错",
+      "previewBadge": "概述",
+      "previewIntro": "先来一睹该区域景点风采。登录即可获取根据您的喜好量身定制的推荐。",
+      "previewEmpty": "拖动地图，即可在此查看景点推荐。",
+      "loginCta": "登录以获取个性化推荐",
+      "loginPerk": "根据您的偏好定制的行程、收藏夹和推荐。"
     },
     "filters": {
       "title": "筛选",
@@ -331,7 +346,7 @@
       "categoryActivities": "活动与休闲",
       "categoryTourist": "景点",
       "categoryOther": "其他",
-      "minRating": "最低评分 ({{rating}}⭐)",
+      "minRating": "最低评分 ({{rating}})",
       "allRatings": "全部",
       "priceRange": "价格区间",
       "allPrices": "所有价格",
@@ -340,6 +355,235 @@
       "priceHigh": "€€€ - 高端",
       "accessibility": "轮椅无障碍",
       "reset": "重置"
+    },
+    "map": {
+      "searchCenter": "研究中心",
+      "yourPosition": "您的位置",
+      "mapLoadError": "无法加载地图",
+      "resultsFound": "{{count}} 找到的兴趣点",
+      "loadError": "加载兴趣点时发生错误",
+      "viewDetails": "查看详情",
+      "loginToSave": "请登录以收藏此地点。",
+      "alreadyInItinerary": "该景点已添加到您的行程中",
+      "addedToItinerary": "{{name}} 已添加到您的行程中！",
+      "itineraryCreated": "您的行程已创建！",
+      "positionUpdated": "最新立场",
+      "geoDenied": "浏览器拒绝授予定位权限。请启用定位功能以将地图居中。",
+      "geoUnavailable": "定位服务不可用。请检查您的网络设置，或稍后再试。",
+      "geoError": "无法获取您的位置。请检查您的浏览器设置。",
+      "geoNotSupported": "不支持地理定位",
+      "myPosition": "我的立场",
+      "createItinerary": "创建路线（{{count}} ）",
+      "retry": "重试",
+      "loading": "正在加载兴趣点...",
+      "clickHint": "点击某个地点，查看其详情页",
+      "reviews": "通知",
+      "reviewsCount": "{{count}} 意见",
+      "website": "网站",
+      "directions": "行程安排",
+      "addToItinerary": "添加到我的行程中",
+      "geoPanel": {
+        "title": "允许定位服务",
+        "b1": "请确认您的浏览器允许本网站访问您的位置。",
+        "b2": "如果被锁定，请点击挂锁图标或定位图标将其解锁。",
+        "b3": "您也可以在筛选条件中手动输入地点。"
+      },
+      "category": {
+        "restaurant": "餐厅",
+        "accommodation": "住宿",
+        "activity": "活动",
+        "tourist": "旅游景点"
+      },
+      "open": "开放",
+      "closed": "关闭",
+      "openUntil": "开放 · 关闭于{{time}}",
+      "opensAt": "已关闭 · 营业时间：{{time}}",
+      "share": "分享",
+      "linkCopied": "链接已复制到剪贴板",
+      "shareError": "无法分享此地点",
+      "loadFailedTitle": "无法加载",
+      "loadFailedDesc": "该服务响应较慢。请稍后再试。",
+      "suggestImprovement": "建议",
+      "claimPlace": "主张",
+      "searchPoiPlaceholder": "搜索地点…",
+      "searchPoiEmpty": "在此区域未找到地点。",
+      "type": {
+        "museum": "博物馆",
+        "art": "美术馆",
+        "castle": "城堡",
+        "mosque": "清真寺",
+        "religious": "宗教场所",
+        "temple": "寺庙",
+        "monument": "纪念碑",
+        "culture": "文化场所",
+        "zoo": "动物园/水族馆",
+        "park": "公园/花园",
+        "viewpoint": "观景点",
+        "nature": "自然景观",
+        "square": "广场/地标",
+        "historic": "历史遗迹"
+      },
+      "priceLabel": "价格"
+    },
+    "morePlacesOn": "更多地点：已启用",
+    "morePlacesOff": "更多地点：已禁用",
+    "morePlacesHint": "包含来自外部来源的地点",
+    "list": {
+      "empty": "该区域内没有地点。请移动地图或扩大搜索范围。",
+      "countInView": "{{count}} 视图中的位置"
+    },
+    "chips": {
+      "all": "全部",
+      "gastronomy": "美食",
+      "activities": "活动",
+      "culture": "文化与景点",
+      "lodging": "住宿",
+      "hotels": "酒店",
+      "flights": "航班"
+    },
+    "sort": {
+      "label": "按……排序",
+      "distance": "邻近性",
+      "rating": "注",
+      "popularity": "人气"
+    },
+    "aiSuggestions": {
+      "must": "这一带有哪些必去景点？",
+      "itinerary": "请根据这些地点为我规划一条一日游路线",
+      "halfday": "请为我推荐在这个领域的一场半日文化活动",
+      "food": "你能推荐这里哪些当地餐厅吗？"
+    },
+    "citySearchLabel": "搜索城市",
+    "citySearchPlaceholder": "例如：菲斯、马拉喀什、巴黎……",
+    "cityCentered": "地图中心位于{{city}}",
+    "radius75": "75 公里",
+    "radius100": "100公里",
+    "claim": {
+      "title": "认领此地",
+      "desc": "申请管理“{{name}} ”。经审核通过后，您将成为合作伙伴，并可对其进行编辑。",
+      "motivationLabel": "您与这个地方的联系 *",
+      "motivationPlaceholder": "例如：我是这家店铺的业主/经营者……",
+      "motivationRequired": "请说明您与该地点的关联。",
+      "proofLabel": "证明链接（可选）",
+      "submit": "提交申请",
+      "success": "请求已发送！管理员将进行审核。",
+      "error": "无法发送请求。"
+    },
+    "suggest": {
+      "title": "提出改进建议",
+      "desc": "请为“{{name}} ”提供修改建议。这些建议将在发布前由我们的团队审核通过。",
+      "description": "描述",
+      "address": "地址",
+      "phone": "电话",
+      "hours": "时间表",
+      "website": "网站",
+      "comment": "评论（可选）",
+      "submit": "提交建议",
+      "success": "谢谢！我们将对您的建议进行研究。",
+      "error": "无法发送该建议。",
+      "noChange": "请至少修改一个字段。",
+      "sectionInfo": "基本信息",
+      "sectionPhotos": "照片（1 至 3 张）",
+      "photosHint": "最多添加 3 张该地点的照片。",
+      "sectionType": "类型与价格",
+      "isActivity": "活动 / 体验",
+      "isRestaurant": "餐厅",
+      "isAccommodation": "住宿",
+      "budget": "预算",
+      "difficulty": "难度",
+      "choose": "选择",
+      "sectionAccessibility": "无障碍设施",
+      "wheelchair": "轮椅通道",
+      "parking": "无障碍停车位",
+      "restrooms": "无障碍卫生间",
+      "audioGuide": "语音导览",
+      "signLanguage": "手语服务",
+      "accessibilityDetails": "无障碍详情",
+      "sectionCulinary": "餐饮",
+      "cuisineTypes": "菜系",
+      "dietary": "饮食选择",
+      "restaurantCategories": "餐厅类别",
+      "adventureLevel": "美食探险等级",
+      "sectionAccommodation": "住宿",
+      "accTypes": "类型",
+      "accAmenities": "设施",
+      "accLocations": "位置",
+      "accSecurity": "安全",
+      "accAmbiance": "氛围",
+      "sectionActivity": "活动",
+      "activityCategories": "类别",
+      "activityInterests": "兴趣",
+      "activityAvoidances": "需避免",
+      "intensity": "强度",
+      "sectionRecommendation": "推荐等级",
+      "clear": "清除",
+      "field": {
+        "description": "描述",
+        "address": "地址",
+        "contact_phone": "电话",
+        "website_url": "网站",
+        "opening_hours": "营业时间",
+        "media_images": "照片",
+        "is_restaurant": "餐厅",
+        "is_accommodation": "住宿",
+        "is_activity": "活动",
+        "budget_level_id": "预算",
+        "difficulty_level_id": "难度",
+        "is_wheelchair_accessible": "轮椅通道",
+        "has_accessible_parking": "无障碍停车位",
+        "has_accessible_restrooms": "无障碍卫生间",
+        "has_audio_guide": "语音导览",
+        "has_sign_language_support": "手语服务",
+        "cuisine_types": "菜系",
+        "dietary_restrictions_supported": "饮食选择",
+        "restaurant_categories": "餐厅类别",
+        "culinary_adventure_level_id": "美食探险",
+        "accommodation_types": "住宿类型",
+        "accommodation_amenities": "设施",
+        "accommodation_locations": "位置",
+        "accommodation_accessibility": "无障碍设施",
+        "accommodation_security": "安全",
+        "accommodation_ambiance": "氛围",
+        "activity_categories": "活动类别",
+        "activity_interests": "兴趣",
+        "activity_avoidances": "需避免",
+        "activity_intensity_level_id": "强度",
+        "recommendation_level": "推荐等级",
+        "tags": "标签",
+        "amenities": "设施",
+        "name": "名称"
+      },
+      "name": "名称"
+    },
+    "becomePartner": "成为合作伙伴",
+    "becomePartnerShort": "合作伙伴",
+    "searchPoiPlaceholder": "搜索地点…",
+    "addPlace": {
+      "button": "添加地点",
+      "title": "添加地点",
+      "desc": "您想如何添加这个地点？",
+      "directTitle": "填写地点",
+      "directDesc": "添加地点及其信息。经我们团队审核后发布。",
+      "partnerTitle": "作为合作伙伴管理",
+      "partnerDesc": "成为合作伙伴，管理您场所的预订和价格。"
+    },
+    "report": {
+      "button": "举报",
+      "title": "举报此地点",
+      "desc": "举报「{{name}}」的问题。该地点将被暂时隐藏，直到管理员审核。",
+      "reason": "原因",
+      "description": "详情（可选）",
+      "submit": "提交举报",
+      "success": "感谢您，该地点已被举报并等待审核。",
+      "error": "无法提交举报。",
+      "reasons": {
+        "spam": "垃圾信息/广告",
+        "offensive": "冒犯性内容",
+        "wrong_location": "位置错误",
+        "closed": "已关闭/不存在",
+        "duplicate": "重复",
+        "other": "其他"
+      }
     }
   },
   "travelStories": {
@@ -422,7 +666,12 @@
         "selectLabel": "选择行程",
         "selectPlaceholder": "选择行程...",
         "generating": "生成中...",
-        "generate": "生成故事"
+        "generate": "生成故事",
+        "selectFirst": "请先选择一条路线，再挑选相应的活动。",
+        "noActivities": "该行程没有详细的活动安排。",
+        "chooseActivities": "选择一项或多项活动与您的故事关联",
+        "dayShort": "J{{day}}",
+        "linkButton": "链接并撰写我的故事"
       },
       "aiInstant": {
         "title": "AI即时生成",
@@ -478,7 +727,97 @@
         "loginRequired": "您必须登录才能创建故事",
         "fieldsRequired": "标题和内容为必填项",
         "createError": "创建时出错"
-      }
+      },
+      "itineraryNotFound": "未找到路线",
+      "defaultTitle": "我的旅程：{{title}}"
+    },
+    "card": {
+      "loginToLike": "登录后即可点赞故事",
+      "likeError": "无法修改点赞",
+      "loginToBookmark": "请登录以保存故事",
+      "bookmarkError": "无法更新书签",
+      "authorFallback": "由旅行者创建",
+      "linkTypes": {
+        "touristPoint": "景点",
+        "itinerary": "行程",
+        "activity": "活动",
+        "accommodation": "住宿",
+        "restaurant": "餐厅"
+      },
+      "private": "私密",
+      "featured": "头条",
+      "viewDetails": "查看详情"
+    },
+    "comments": {
+      "loadError": "无法加载评论",
+      "added": "已添加评论！",
+      "addError": "无法添加评论",
+      "title": "评论 -{{title}}",
+      "loading": "正在加载评论...",
+      "emptyTitle": "目前尚无评论。",
+      "emptySubtitle": "快来成为首位分享评价的人吧！",
+      "placeholder": "请分享您对这条动态的看法……",
+      "charCount": "{{count}}/500个字符",
+      "sending": "正在发送...",
+      "submit": "评论",
+      "loginToComment": "请登录后评论此故事"
+    },
+    "trending": {
+      "heading": "趋势",
+      "timeframe24h": "24小时",
+      "timeframe7j": "7天",
+      "timeframe30j": "30天",
+      "loading": "正在加载流行趋势...",
+      "empty": "未找到该时段的趋势"
+    },
+    "aiRecommendations": {
+      "loadError": "目前无法加载推荐内容。",
+      "loginCta": "请登录以查看您的个性化推荐",
+      "heading": "AI建议",
+      "personalizedBadge": "自定义",
+      "loading": "正在分析您的偏好...",
+      "empty": "点赞几篇故事，即可获得个性化推荐！",
+      "recommendedBadge": "推荐"
+    },
+    "mapTab": {
+      "heading": "交互式地图",
+      "hideList": "隐藏列表",
+      "showList": "查看列表",
+      "geoStories": "基于地理位置的故事 ({{count}})",
+      "loading": "正在加载...",
+      "empty": "未找到任何基于地理位置的故事"
+    },
+    "createStory": {
+      "titleLabel": "您的故事标题 *",
+      "titlePlaceholder": "一个引人入胜的标题，来展现您的体验……",
+      "contentLabel": "您的故事 *",
+      "contentPlaceholder": "请分享您的经历、感受和发现……",
+      "locationLabel": "地点",
+      "locationPlaceholder": "法国巴黎",
+      "tripDateLabel": "旅行日期",
+      "chooseDate": "选择日期",
+      "tagsLabel": "标签",
+      "addTagPlaceholder": "添加标签...",
+      "linkLabel": "与应用程序中的元素建立关联",
+      "linkTouristPoint": "景点",
+      "linkItinerary": "行程",
+      "linkActivity": "活动",
+      "searchPlaceholder": "搜索...",
+      "linkedItems": "相关内容：",
+      "publicLabel": "公开故事",
+      "privateLabel": "私人故事",
+      "cancel": "取消",
+      "creating": "正在加载...",
+      "create": "创建故事",
+      "loginRequired": "您必须登录才能发布故事",
+      "fieldsRequired": "标题和内容均为必填项",
+      "createError": "创建时发生错误：{{msg}}"
+    },
+    "details": {
+      "authorFallback": "由旅行者创建",
+      "byAuthor": "作者：{{name}}",
+      "notFound": "找不到该故事。",
+      "aiBadge": "AI"
     }
   },
   "partnerApplication": {
@@ -685,7 +1024,10 @@
     "create": "创建",
     "search": "搜索",
     "close": "Close",
-    "back": "Back"
+    "back": "Back",
+    "yes": "是",
+    "no": "否",
+    "clear": "清除"
   },
   "touristPoints": {
     "pageTitle": "景点",
@@ -1288,7 +1630,15 @@
       "flights": "航班",
       "transfers": "转会",
       "restaurants": "餐厅",
-      "activities": "活动"
+      "activities": "活动",
+      "tours": "活动与游览",
+      "flightsHotels": "机票与酒店",
+      "carRental": "租车",
+      "publicTransport": "公交车与火车",
+      "urban": "城市交通",
+      "esim": "eSIM卡",
+      "dining": "当地美食",
+      "compensation": "盗窃赔偿"
     },
     "searchHotel": "搜索酒店",
     "searchFlight": "查询航班",
@@ -1341,7 +1691,8 @@
     "toastActivitiesFound": "{{count}} 找到的活动",
     "toastHotelsError": "无法搜索酒店。请检查目的地代码。",
     "toastFlightsError": "无法搜索航班。请检查IATA代码。",
-    "toastActivitiesError": "无法搜索活动。请检查目的地代码。"
+    "toastActivitiesError": "无法搜索活动。请检查目的地代码。",
+    "dialogTitle": "预订服务"
   },
   "savedItineraries": {
     "pageTitle": "我的已保存路线",
@@ -1580,8 +1931,8 @@
   },
   "theme": {
     "toggleLabel": "更改主题",
-    "light": "克莱尔",
-    "dark": "阴沉",
+    "light": "浅色",
+    "dark": "深色",
     "system": "系统"
   },
   "notifications": {
@@ -1939,7 +2290,63 @@
     "health": "健康",
     "localCustoms": "当地习俗",
     "customize": "自定义",
-    "loginToEdit": "登录以进行编辑"
+    "loginToEdit": "登录以进行编辑",
+    "enriched": {
+      "whyTitle": "为什么选择{{name}} ？",
+      "thisDestination": "该目的地",
+      "bestTime": "最佳游览时间",
+      "overallRec": "一般性建议",
+      "byDestination": "按目的地分类：",
+      "bySeason": "按季节：",
+      "spring": "春天",
+      "summer": "夏天",
+      "autumn": "秋天",
+      "winter": "冬季",
+      "avoidPeriods": "应避免的时段：",
+      "visaTitle": "签证及入境手续",
+      "requirements": "要求：",
+      "processingTime": "处理时间",
+      "cost": "大致费用",
+      "exemptions": "免签国家：",
+      "entryRequirements": "入场条件：",
+      "healthTitle": "健康与安全",
+      "vaccinations": "疫苗接种：",
+      "healthTips": "健康建议：",
+      "insurance": "旅行保险",
+      "emergencyNumbers": "紧急电话号码：",
+      "safetyTips": "安全提示：",
+      "waterQuality": "饮用水",
+      "foodSafety": "电源",
+      "emPolice": "警察",
+      "emMedical": "医疗",
+      "emFire": "消防员",
+      "emEmbassy": "大使馆",
+      "emGeneral": "综合急诊",
+      "dishesTitle": "必尝佳肴",
+      "giftsTitle": "礼品与纪念品",
+      "similarTitle": "值得探索的类似目的地",
+      "transportTitle": "交通与出行",
+      "gettingThere": "如何前往：",
+      "localTransport": "当地交通：",
+      "metro": "地铁",
+      "bus": "公交车",
+      "taxi": "出租车与专车",
+      "bike": "自行车",
+      "walking": "步行",
+      "transportCards": "交通卡",
+      "practicalTips": "实用建议：",
+      "mustSee": "必看",
+      "mustSeeAt": "不容错过的{{name}}",
+      "culturalTitle": "文化建议与习俗",
+      "eventsTitle": "当地活动与节日",
+      "sustainabilityTitle": "生态旅游"
+    },
+    "flexibleDates": "日期灵活",
+    "tips": "提示",
+    "bookServices": "预订",
+    "skipAd": "跳过",
+    "enableSound": "打开声音",
+    "muteSound": "关闭声音"
   },
   "editor": {
     "editActivity": "编辑活动",
@@ -1984,5 +2391,44 @@
     "addDay": "添加一天",
     "close": "关闭",
     "dropActivitiesHint": "在此发布活动或添加新活动"
+  },
+  "aiAssistant": {
+    "title": "AI旅行助手",
+    "subtitle": "请提出您的问题，我会针对这一区域为您提供个性化建议。",
+    "greeting": "你好！",
+    "intro": "我是您的旅行助理。有什么可以帮到您的吗？",
+    "suggestedLabel": "建议问题：",
+    "placeholder": "请提出您关于旅行的问题……",
+    "thinking": "我在思考……",
+    "personalized": "根据显示的位置给出的回答。",
+    "errorComm": "与AI助手通信时发生错误",
+    "errorReply": "抱歉，我遇到了技术问题。请重试。",
+    "personalizedHint": "根据当前显示区域和您的偏好提供的建议"
+  },
+  "hotels": {
+    "stay22Title": "酒店与住宿",
+    "stay22Desc": "比较并预订该区域附近的住宿。",
+    "stay22DescDest": "周边住宿{{dest}}"
+  },
+  "flights": {
+    "title": "航班",
+    "desc": "比较并预订航班。"
+  },
+  "admin": {
+    "poiModeration": {
+      "loadError": "加载错误。",
+      "actionError": "无法执行该操作。",
+      "approved": "已批准",
+      "rejected": "被驳回",
+      "noClaims": "没有待处理的索赔。",
+      "noSuggestions": "没有待处理的建议。"
+    },
+    "poiClaims": {
+      "title": "POI的权利要求",
+      "proof": "证明文件"
+    },
+    "poiSuggestions": {
+      "title": "拓展建议"
+    }
   }
 }

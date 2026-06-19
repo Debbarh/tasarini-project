@@ -6,11 +6,12 @@ export interface AssistantResponse {
 }
 
 export const travelAssistantService = {
-  ask(prompt: string, userId?: string | number, userContext?: string) {
+  ask(prompt: string, userId?: string | number, userContext?: string, lang?: string) {
     return apiClient.post<AssistantResponse>('travel/assistant/', {
       prompt,
       userId,
       userContext,
+      lang,
     });
   },
 };

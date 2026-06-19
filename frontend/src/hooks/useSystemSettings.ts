@@ -39,10 +39,6 @@ const mapSettingsToState = (settings: SystemSetting[]): SystemSettingsState => {
     return acc;
   }, {} as any);
 
-  // Debug logging
-  console.log('🔧 Settings from backend:', settingsMap);
-  console.log('🎯 booking_center_enabled raw value:', settingsMap.booking_center_enabled);
-
   return {
     siteName: settingsMap.site_name || 'Voyage AI',
     siteDescription: settingsMap.site_description || 'Plateforme de recommandations touristiques',

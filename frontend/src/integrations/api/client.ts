@@ -1,7 +1,7 @@
 const DEFAULT_API_BASE_URL = 'http://localhost:8000/api/v1';
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL;
-const API_ROOT_URL = API_BASE_URL.replace(/\/v1\/?$/, '/');
+export const API_ROOT_URL = API_BASE_URL.replace(/\/v1\/?$/, '/');
 let tokenRefreshPromise: Promise<boolean> | null = null;
 
 if (!API_BASE_URL) {
@@ -37,6 +37,9 @@ const getAuthHeaders = (): HeadersInit => {
 const requestNewTokens = async (): Promise<boolean> => {
   const refresh = authTokenStorage.getRefreshToken();
   if (!refresh) {
+    // Pas de refresh token mais un access token périmé pouvait rester → on le purge,
+    // sinon le retry réenvoie le token invalide et les endpoints PUBLICS renvoient 401.
+    authTokenStorage.clear();
     return false;
   }
 

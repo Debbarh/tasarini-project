@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Wallet, DollarSign } from "lucide-react";
+import { TaxonomyIcon } from "@/lib/taxonomyIcon";
 import { TripFormData, Budget } from "@/types/trip";
 import { useBudgetSettings } from "@/hooks/useBudgetSettings";
 import { getLocalizedLabel, getLocalizedName, getLocalizedDescription } from "@/utils/multilingualHelpers";
@@ -78,13 +79,14 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
   const getBudgetRange = (levelCode: string) => {
     const level = budgetLevels.find(l => l.code === levelCode);
     if (!level) return '';
-    
+    const sym = selectedCurrency?.symbol || '€';
+    const per = t('planTrip.budgetStep.perDay');
     if (level.min_daily_amount && level.max_daily_amount) {
-      return `${level.min_daily_amount}€ - ${level.max_daily_amount}€/jour`;
+      return `${level.min_daily_amount}${sym} - ${level.max_daily_amount}${sym}/${per}`;
     } else if (level.min_daily_amount) {
-      return `> ${level.min_daily_amount}€/jour`;
+      return `> ${level.min_daily_amount}${sym}/${per}`;
     } else if (level.max_daily_amount) {
-      return `< ${level.max_daily_amount}€/jour`;
+      return `< ${level.max_daily_amount}${sym}/${per}`;
     }
     return '';
   };
@@ -124,12 +126,6 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">{t('planTrip.budgetStep.title')}</h3>
-        <p className="text-muted-foreground">
-          {t('planTrip.budgetStep.description')}
-        </p>
-      </div>
 
       <Card>
         <CardHeader>
@@ -144,16 +140,16 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
               <Button
                 key={level.code}
                 variant={budget.level === level.code ? "default" : "outline"}
-                className="h-auto flex-col gap-2 p-4"
+                className="h-auto flex-col gap-2 p-4 whitespace-normal text-center"
                 onClick={() => updateBudget({ 
                   level: level.code,
                   dailyBudget: level.default_daily_amount
                 })}
               >
-                <span className="text-2xl">{level.icon_emoji}</span>
+                <TaxonomyIcon iconName={level.icon_name} code={level.code} className={`h-6 w-6 ${budget.level === level.code ? 'text-primary-foreground' : 'text-primary'}`} fallback="Wallet" />
                 <div className="text-center">
                   <div className="font-medium">{getLocalizedLabel(level, i18n.language)}</div>
-                  <div className="text-xs text-muted-foreground">{getBudgetRange(level.code)}</div>
+                  <div className={`text-xs ${budget.level === level.code ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>{getBudgetRange(level.code)}</div>
                 </div>
               </Button>
             ))}
@@ -163,7 +159,7 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
             <div className="space-y-2">
               <Label htmlFor="daily-budget">{t('planTrip.budgetStep.dailyBudget')}</Label>
               <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground w-5 text-center">{selectedCurrency?.symbol || '€'}</span>
                 <Input
                   id="daily-budget"
                   type="number"

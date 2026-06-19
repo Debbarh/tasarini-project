@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Edit, Plus, MapPin, Globe, Download, Upload } from "lucide-react";
+import { Trash2, Edit, Plus, MapPin, Globe, Download, Upload, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { locationAdminService, Country, City } from "@/services/locationAdminService";
 import { API_BASE_URL, extractArrayFromResponse } from "@/integrations/api/client";
@@ -355,7 +355,7 @@ export default function CountriesCitiesManagement() {
       }
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
     } catch (error: any) {
@@ -382,7 +382,7 @@ export default function CountriesCitiesManagement() {
       }
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
     } catch (error: any) {

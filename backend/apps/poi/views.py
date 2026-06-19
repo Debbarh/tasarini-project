@@ -5,6 +5,9 @@ import copy
 import io
 import uuid
 
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -32,6 +35,10 @@ from .models import (
     DifficultyLevel,
     POIConversation,
     POIConversationMessage,
+    POIClaim,
+    POISuggestion,
+    POIReport,
+    POITranslationQueue,
     POIMedia,
     RestaurantCategory,
     Tag,
@@ -64,6 +71,10 @@ from .serializers import (
     DifficultyLevelSerializer,
     POIConversationMessageSerializer,
     POIConversationSerializer,
+    POIClaimSerializer,
+    POISuggestionSerializer,
+    POIReportSerializer,
+    SUGGESTABLE_FIELDS,
     POIMediaSerializer,
     RestaurantCategorySerializer,
     TagSerializer,
@@ -1236,9 +1247,33 @@ class DifficultyLevelViewSet(BaseReadOnlyViewSet):
     search_fields = ['code', 'label_fr', 'label_en']
 
 
+from rest_framework.pagination import PageNumberPagination
+
+
+class TouristPointPagination(PageNumberPagination):
+    """Permet de demander tous les POI d'un coup (carte Be Inspired) via ?page_size=.
+
+    Be Inspired veut afficher TOUS les POI plateforme; on autorise un grand page_size
+    (la page par défaut reste 20 pour les autres usages paginés).
+    """
+    page_size_query_param = 'page_size'
+    max_page_size = 5000
+
+
+def can_manage_poi(user, point) -> bool:
+    """Peut gérer un POI = admin, propriétaire, ou partenaire l'ayant dans managed_pois."""
+    if not user or not user.is_authenticated:
+        return False
+    if user.is_staff or point.owner_id == user.id:
+        return True
+    from apps.partners.models import PartnerProfile  # lazy: évite l'import circulaire
+    return PartnerProfile.objects.filter(owner=user, managed_pois=point).exists()
+
+
 class TouristPointViewSet(viewsets.ModelViewSet):
-    queryset = TouristPoint.objects.select_related('budget_level', 'difficulty_level').prefetch_related('tags', 'media')
+    queryset = TouristPoint.objects.select_related('budget_level', 'difficulty_level', 'owner', 'owner__partner_profile').prefetch_related('tags', 'media')
     serializer_class = TouristPointSerializer
+    pagination_class = TouristPointPagination
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filterset_fields = {
         'is_active': ['exact'],
@@ -1258,10 +1293,42 @@ class TouristPointViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         user = self.request.user
 
+        # Filtre source (admin) : 'overture' = POI importés, 'platform' = soumis (non importés).
+        source = self.request.query_params.get('source')
+        if source == 'overture':
+            qs = qs.filter(metadata__external_source='overture')
+        elif source == 'platform':
+            qs = qs.exclude(metadata__external_source='overture')
+
+        # Filtre géographique « autour de » (carte Be Inspire) : near=lat,lon + radius_km.
+        # Indispensable à grande échelle (3M+ POI) : sans ça, on renverrait les 1ers POI
+        # par ordre alpha, jamais ceux de la zone. On filtre par bbox (index latitude/longitude).
+        near = self.request.query_params.get('near')
+        radius_km = self.request.query_params.get('radius_km')
+        if near and radius_km:
+            try:
+                lat, lon = (float(x) for x in near.split(','))
+                r = float(radius_km)
+                import math
+                dlat = r / 111.0
+                dlon = r / (111.0 * max(0.01, math.cos(math.radians(lat))))
+                qs = qs.filter(
+                    latitude__range=(lat - dlat, lat + dlat),
+                    longitude__range=(lon - dlon, lon + dlon),
+                )
+            except (ValueError, TypeError):
+                pass
+
+        # L'action publique 'translate' est un POST mais reste une LECTURE (cache traduction) :
+        # elle ne doit pas passer par la restriction owner (qui casse pour un anonyme).
+        if getattr(self, 'action', None) == 'translate':
+            return qs.filter(is_active=True)
+
         if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
             owner_filter = self.request.query_params.get('owner')
             if owner_filter in {'me', 'self'} and user.is_authenticated:
-                return qs.filter(owner=user)
+                # POI possédés OU gérés en tant que partenaire (managed_pois).
+                return qs.filter(Q(owner=user) | Q(partner_profiles__owner=user)).distinct()
             if owner_filter and user.is_staff:
                 if owner_filter.isdigit():
                     return qs.filter(owner_id=int(owner_filter))
@@ -1272,7 +1339,45 @@ class TouristPointViewSet(viewsets.ModelViewSet):
 
         if user.is_staff or (user.is_authenticated and user.role in {'admin', 'editor'}):
             return qs
-        return qs.filter(owner=user)
+        # Édition : propriétaire OU partenaire gestionnaire.
+        return qs.filter(Q(owner=user) | Q(partner_profiles__owner=user)).distinct()
+
+    def perform_create(self, serializer):  # type: ignore[override]
+        # Le serializer fixe owner=request.user. Si l'auteur est un partenaire approuvé,
+        # on rattache aussi le POI à managed_pois (source unique de la gestion partenaire).
+        point = serializer.save()
+        try:
+            from apps.partners.models import PartnerProfile
+            profile = PartnerProfile.objects.filter(owner=self.request.user, status='approved').first()
+            if profile:
+                profile.managed_pois.add(point)
+        except Exception:  # noqa: BLE001 - rattachement best-effort
+            pass
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.AllowAny], url_path='translate')
+    def translate(self, request, pk=None):
+        """Cache-or-enqueue : si la traduction est en cache (metadata.translations[lang]) on la
+        renvoie ; sinon on met (POI, langue) dans la file `POITranslationQueue` (le cron worker
+        translategemma:4b la traduira en arrière-plan) et on renvoie l'original tout de suite.
+        Aucune traduction synchrone (Ollama est lent sur CPU)."""
+        lang = (str(request.data.get('lang') or 'fr')).split('-')[0].lower()
+        point = self.get_object()
+        meta = point.metadata or {}
+        cache = meta.get('translations') or {}
+        if isinstance(cache.get(lang), dict):
+            return Response({**cache[lang], 'translated': True})
+        # Pas en cache : enfiler (idempotent) et renvoyer l'original.
+        try:
+            POITranslationQueue.objects.get_or_create(
+                tourist_point=point, lang=lang,
+                defaults={'status': POITranslationQueue.Status.PENDING},
+            )
+        except Exception:  # noqa: BLE001
+            pass
+        return Response({
+            'name': point.name or '', 'description': point.description or '',
+            'address': point.address or '', 'translated': False, 'queued': True,
+        })
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
     def moderate(self, request, pk=None):
@@ -1361,7 +1466,7 @@ class ActivityMetadataMixin:
     def get_tourist_point(self, pk):
         point = get_object_or_404(TouristPoint, pk=pk)
         user = self.request.user
-        if user.is_staff or point.owner_id == user.id:
+        if can_manage_poi(user, point):
             return point
         raise permissions.PermissionDenied('Accès refusé.')
 
@@ -1461,7 +1566,7 @@ class AccommodationMetadataMixin:
     def get_tourist_point(self, pk):
         point = get_object_or_404(TouristPoint, pk=pk)
         user = self.request.user
-        if user.is_staff or point.owner_id == user.id:
+        if can_manage_poi(user, point):
             return point
         raise permissions.PermissionDenied('Accès refusé.')
 
@@ -1591,7 +1696,7 @@ class RestaurantMetadataMixin:
     def get_tourist_point(self, pk):
         point = get_object_or_404(TouristPoint, pk=pk)
         user = self.request.user
-        if user.is_staff or point.owner_id == user.id:
+        if can_manage_poi(user, point):
             return point
         raise permissions.PermissionDenied('Accès refusé.')
 
@@ -1778,10 +1883,21 @@ class TouristPointReviewViewSet(viewsets.ModelViewSet):
     filterset_fields = ['tourist_point']
     ordering_fields = ['created_at', 'rating']
 
+    def get_permissions(self):  # type: ignore[override]
+        # Lecture publique des avis ; écriture réservée aux connectés.
+        if self.action in ('list', 'retrieve', 'featured'):
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
+
     def get_queryset(self):  # type: ignore[override]
         qs = TouristPointReview.objects.select_related('reviewer', 'tourist_point').all()
         tourist_point_id = self.request.query_params.get('tourist_point_id')
         if tourist_point_id:
+            # Un id externe ("ext:source:id") n'est pas un UUID → aucun avis (pas d'erreur 500).
+            try:
+                uuid.UUID(str(tourist_point_id))
+            except (ValueError, AttributeError, TypeError):
+                return qs.none()
             qs = qs.filter(tourist_point_id=tourist_point_id)
         return qs.order_by('-created_at')
 
@@ -1853,3 +1969,310 @@ class POIMediaViewSet(viewsets.ModelViewSet):
         if tourist_point.owner != self.request.user and not self.request.user.is_staff:
             raise permissions.PermissionDenied('Vous ne pouvez ajouter des médias qu\'à vos propres points d\'intérêt.')
         serializer.save()
+
+
+def post_admin_message(point, sender, content, message_type='comment'):
+    """Poste un message admin dans la conversation du POI (réutilisé par claims/suggestions)."""
+    conv, _ = POIConversation.objects.get_or_create(tourist_point=point)
+    msg = POIConversationMessage.objects.create(
+        conversation=conv, sender=sender, sender_type='admin',
+        message_type=message_type, content=content or '',
+    )
+    conv.last_message_at = msg.created_at
+    conv.save(update_fields=['last_message_at'])
+
+
+def _notify_partner(user, title, body):
+    """Notification partenaire best-effort (réutilise PartnerNotification)."""
+    try:
+        from apps.partners.models import PartnerNotification
+        PartnerNotification.objects.create(partner=user, title=title, body=body or '', category='moderation')
+    except Exception:  # noqa: BLE001
+        pass
+
+
+# Clés metadata canoniques (lues par mapApiPoi côté frontend).
+_META_LIST_FIELDS = {
+    'cuisine_types', 'dietary_restrictions_supported', 'restaurant_categories',
+    'accommodation_types', 'accommodation_amenities', 'accommodation_locations',
+    'accommodation_accessibility', 'accommodation_security', 'accommodation_ambiance',
+    'activity_categories', 'activity_interests', 'activity_avoidances',
+}
+_META_SCALAR_FIELDS = {'culinary_adventure_level_id', 'activity_intensity_level_id'}
+_META_BOOL_FIELDS = {
+    'is_wheelchair_accessible', 'has_accessible_parking', 'has_accessible_restrooms',
+    'has_audio_guide', 'has_sign_language_support',
+}
+_FLAG_FIELDS = {'is_restaurant', 'is_accommodation', 'is_activity'}
+
+
+def _resolve_level(model, value):
+    """Résout un BudgetLevel/DifficultyLevel par pk (int ou uuid) puis par code.
+    Robuste aux types de pk : un pk invalide ne lève pas, on retombe sur le code."""
+    obj = None
+    try:
+        obj = model.objects.filter(pk=value).first()
+    except (ValueError, TypeError, ValidationError):
+        obj = None
+    if obj is None:
+        obj = model.objects.filter(code=value).first()
+    return obj
+
+
+def _apply_suggestion(suggestion) -> list:
+    """Applique proposed_changes au POI (mirroir de la sauvegarde POICreationForm).
+    Renvoie la liste des champs réellement appliqués."""
+    poi = suggestion.tourist_point
+    changes = {k: v for k, v in (suggestion.proposed_changes or {}).items() if k in SUGGESTABLE_FIELDS}
+    applied = []
+    update_fields = set()
+    meta = poi.metadata or {}
+    for field, value in changes.items():
+        if value is None:
+            continue
+        if field in {'name', 'description', 'contact_phone', 'website_url', 'address'}:
+            setattr(poi, field, value); update_fields.add(field); applied.append(field)
+        elif field == 'amenities' and isinstance(value, list):
+            poi.amenities = value; update_fields.add('amenities'); applied.append(field)
+        elif field in _FLAG_FIELDS:
+            setattr(poi, field, bool(value)); update_fields.add(field); applied.append(field)
+        elif field == 'budget_level_id':
+            obj = _resolve_level(BudgetLevel, value)
+            if obj:
+                poi.budget_level = obj; update_fields.add('budget_level'); applied.append('budget_level')
+        elif field == 'difficulty_level_id':
+            obj = _resolve_level(DifficultyLevel, value)
+            if obj:
+                poi.difficulty_level = obj; update_fields.add('difficulty_level'); applied.append('difficulty_level')
+        elif field == 'tags' and isinstance(value, list):
+            tags = Tag.objects.filter(Q(code__in=value) | Q(id__in=[v for v in value if str(v).isdigit()]))
+            if tags.exists():
+                poi.tags.set(list(tags)); applied.append('tags')
+        elif field == 'opening_hours':
+            meta['opening_hours'] = value; applied.append(field)
+        elif field in _META_BOOL_FIELDS:
+            meta[field] = bool(value); applied.append(field)
+        elif field in _META_LIST_FIELDS and isinstance(value, list):
+            meta[field] = value; applied.append(field)
+        elif field in _META_SCALAR_FIELDS:
+            meta[field] = value; applied.append(field)
+        elif field == 'recommendation_level':
+            try:
+                meta['recommendation_level'] = max(1, min(5, int(float(value))))
+                applied.append(field)
+            except (TypeError, ValueError):
+                pass
+        elif field == 'media_images' and isinstance(value, list):
+            imgs = meta.get('images') or []
+            for url in value[:3]:
+                if not url:
+                    continue
+                POIMedia.objects.create(tourist_point=poi, kind='image', external_url=url)
+                if url not in imgs:
+                    imgs.append(url)
+            meta['images'] = imgs[:6]
+            applied.append('media_images')
+    # provenance
+    history = meta.get('enrichment_history') or []
+    history.append({
+        'suggestion_id': str(suggestion.id),
+        'by': str(suggestion.suggested_by_id),
+        'fields': applied,
+        'at': timezone.now().isoformat(),
+    })
+    meta['enrichment_history'] = history
+    poi.metadata = meta
+    update_fields.add('metadata'); update_fields.add('updated_at')
+    poi.save(update_fields=list(update_fields))
+    return applied
+
+
+class POIClaimViewSet(viewsets.ModelViewSet):
+    """Revendications de gestion de POI. Création par tout connecté ; modération admin."""
+    serializer_class = POIClaimSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_queryset(self):  # type: ignore[override]
+        qs = POIClaim.objects.select_related('tourist_point', 'claimed_by').all()
+        user = self.request.user
+        if user.is_staff:
+            status_param = self.request.query_params.get('status')
+            return qs.filter(status=status_param) if status_param else qs
+        return qs.filter(claimed_by=user)
+
+    def perform_create(self, serializer):  # type: ignore[override]
+        serializer.save(claimed_by=self.request.user)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def moderate(self, request, pk=None):
+        claim = self.get_object()
+        action_name = request.data.get('action')
+        admin_message = request.data.get('admin_message', '')
+        if action_name not in {'approve', 'reject'}:
+            return Response({'detail': 'Action invalide'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if action_name == 'approve':
+            if claim.status != POIClaim.Status.APPROVED:
+                with transaction.atomic():
+                    from apps.partners.models import PartnerProfile
+                    claimer = claim.claimed_by
+                    poi = claim.tourist_point
+                    default_name = (getattr(claimer, 'display_name', '') or
+                                    (claimer.email.split('@')[0] if claimer.email else 'Partenaire'))
+                    profile, _ = PartnerProfile.objects.get_or_create(
+                        owner=claimer, defaults={'company_name': default_name, 'status': 'approved'},
+                    )
+                    if profile.status != 'approved':
+                        profile.status = 'approved'
+                        profile.save(update_fields=['status', 'updated_at'])
+                    poi.owner = claimer
+                    poi.save(update_fields=['owner', 'updated_at'])
+                    profile.managed_pois.add(poi)
+                    claim.status = POIClaim.Status.APPROVED
+                    claim.reviewed_by = request.user
+                    claim.review_message = admin_message
+                    claim.save(update_fields=['status', 'reviewed_by', 'review_message', 'updated_at'])
+                    post_admin_message(poi, request.user,
+                                       admin_message or f'Revendication approuvée : vous gérez désormais « {poi.name} ».',
+                                       message_type='status_change')
+                    _notify_partner(claimer, 'Revendication approuvée',
+                                    admin_message or f'Vous gérez désormais « {poi.name} ».')
+        else:
+            claim.status = POIClaim.Status.REJECTED
+            claim.reviewed_by = request.user
+            claim.review_message = admin_message
+            claim.save(update_fields=['status', 'reviewed_by', 'review_message', 'updated_at'])
+            post_admin_message(claim.tourist_point, request.user,
+                               admin_message or 'Revendication refusée.', message_type='status_change')
+            _notify_partner(claim.claimed_by, 'Revendication refusée', admin_message or '')
+
+        return Response(POIClaimSerializer(claim, context={'request': request}).data)
+
+
+class POISuggestionViewSet(viewsets.ModelViewSet):
+    """Suggestions d'enrichissement wiki. Création par tout connecté ; modération admin (applique)."""
+    serializer_class = POISuggestionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_queryset(self):  # type: ignore[override]
+        qs = POISuggestion.objects.select_related('tourist_point', 'suggested_by').all()
+        user = self.request.user
+        if user.is_staff:
+            status_param = self.request.query_params.get('status')
+            return qs.filter(status=status_param) if status_param else qs
+        return qs.filter(suggested_by=user)
+
+    def perform_create(self, serializer):  # type: ignore[override]
+        serializer.save(suggested_by=self.request.user)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def moderate(self, request, pk=None):
+        suggestion = self.get_object()
+        action_name = request.data.get('action')
+        admin_message = request.data.get('admin_message', '')
+        if action_name not in {'approve', 'reject'}:
+            return Response({'detail': 'Action invalide'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if action_name == 'approve' and suggestion.status != POISuggestion.Status.APPROVED:
+            with transaction.atomic():
+                applied = _apply_suggestion(suggestion)
+                suggestion.status = POISuggestion.Status.APPROVED
+                suggestion.reviewed_by = request.user
+                suggestion.review_message = admin_message
+                suggestion.save(update_fields=['status', 'reviewed_by', 'review_message', 'updated_at'])
+                post_admin_message(suggestion.tourist_point, request.user,
+                                   admin_message or f'Suggestion appliquée ({", ".join(applied) or "aucun champ"}).',
+                                   message_type='status_change')
+        elif action_name == 'reject':
+            suggestion.status = POISuggestion.Status.REJECTED
+            suggestion.reviewed_by = request.user
+            suggestion.review_message = admin_message
+            suggestion.save(update_fields=['status', 'reviewed_by', 'review_message', 'updated_at'])
+            post_admin_message(suggestion.tourist_point, request.user,
+                               admin_message or 'Suggestion refusée.', message_type='status_change')
+
+        return Response(POISuggestionSerializer(suggestion, context={'request': request}).data)
+
+
+class POIReportViewSet(viewsets.ModelViewSet):
+    """Signalements de POI. Création par tout utilisateur connecté → GEL immédiat du POI.
+    Modération admin : `delete` (supprimer) ou `keep` (dégeler)."""
+    serializer_class = POIReportSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_queryset(self):  # type: ignore[override]
+        qs = POIReport.objects.select_related('tourist_point', 'reported_by').all()
+        user = self.request.user
+        if user.is_staff:
+            status_param = self.request.query_params.get('status')
+            return qs.filter(status=status_param) if status_param else qs
+        return qs.filter(reported_by=user)
+
+    def perform_create(self, serializer):  # type: ignore[override]
+        report = serializer.save(reported_by=self.request.user)
+        poi = report.tourist_point
+        # Gel au 1er signalement (si pas déjà gelé).
+        if poi.is_active or poi.status != TouristPoint.Status.UNDER_REVIEW:
+            report.previous_status = poi.status
+            report.save(update_fields=['previous_status', 'updated_at'])
+            poi.is_active = False
+            poi.status = TouristPoint.Status.UNDER_REVIEW
+            poi.save(update_fields=['is_active', 'status', 'updated_at'])
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def moderate(self, request, pk=None):
+        report = self.get_object()
+        action_name = request.data.get('action')  # 'delete' | 'keep'
+        admin_message = request.data.get('admin_message', '')
+        if action_name not in {'delete', 'keep'}:
+            return Response({'detail': 'Action invalide'}, status=status.HTTP_400_BAD_REQUEST)
+        if report.status != POIReport.Status.PENDING:
+            return Response(POIReportSerializer(report, context={'request': request}).data)
+
+        poi = report.tourist_point
+        if action_name == 'delete':
+            with transaction.atomic():
+                poi.delete()  # cascade : supprime aussi reports + file de traduction du POI
+            return Response({'detail': 'POI supprimé', 'deleted': True})
+        # keep → dégel + résolution de tous les signalements en attente du POI
+        with transaction.atomic():
+            poi.is_active = True
+            poi.status = report.previous_status or TouristPoint.Status.APPROVED
+            poi.save(update_fields=['is_active', 'status', 'updated_at'])
+            POIReport.objects.filter(tourist_point=poi, status=POIReport.Status.PENDING).update(
+                status=POIReport.Status.RESOLVED_KEPT, reviewed_by=request.user, review_message=admin_message,
+            )
+            post_admin_message(poi, request.user,
+                               admin_message or 'Signalement examiné : POI conservé.', message_type='status_change')
+        report.refresh_from_db()
+        return Response(POIReportSerializer(report, context={'request': request}).data)
+
+
+class TranslationCronView(APIView):
+    """Suivi du cron de traduction (admin). GET = stats ; POST = lance un lot maintenant."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        qs = POITranslationQueue.objects
+        recent = list(
+            qs.filter(status=POITranslationQueue.Status.DONE).select_related('tourist_point')
+            .order_by('-updated_at')[:10]
+            .values('tourist_point__name', 'lang', 'updated_at')
+        )
+        return Response({
+            'pending': qs.filter(status=POITranslationQueue.Status.PENDING).count(),
+            'done': qs.filter(status=POITranslationQueue.Status.DONE).count(),
+            'failed': qs.filter(status=POITranslationQueue.Status.FAILED).count(),
+            'recent': recent,
+        })
+
+    def post(self, request):
+        from .services_translation import process_batch
+        try:
+            n = int(request.data.get('batch_size') or 10)
+        except (TypeError, ValueError):
+            n = 10
+        return Response(process_batch(min(max(n, 1), 100)))

@@ -71,7 +71,24 @@ services:
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              python manage.py check_ai_providers &&
-             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 300 tasarini_backend.wsgi:application"
+             gunicorn --bind 0.0.0.0:8000 --workers 3 --threads 4 --worker-class gthread --timeout 1800 tasarini_backend.wsgi:application"
+
+  # Worker cron de traduction des POI (translategemma:4b). Mono-instance ; activation +
+  # intervalle + taille de lot réglés depuis l'admin (SystemSetting). Désactivé par défaut.
+  translator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: tasarini_translator
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.production
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tasarini_network
+    command: python manage.py translate_worker
 
   frontend:
     build:

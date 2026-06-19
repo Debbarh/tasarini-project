@@ -11,31 +11,31 @@ export const ACCESSIBILITY_FEATURES: AccessibilityFeature[] = [
   {
     key: 'is_wheelchair_accessible',
     label: 'Accès fauteuil roulant',
-    icon: '♿',
+    icon: 'Accessibility',
     description: 'Lieu accessible aux personnes en fauteuil roulant'
   },
   {
     key: 'has_accessible_parking',
     label: 'Parking accessible',
-    icon: '🅿️',
+    icon: 'SquareParking',
     description: 'Places de parking réservées aux personnes handicapées'
   },
   {
     key: 'has_accessible_restrooms',
     label: 'Toilettes accessibles',
-    icon: '🚽',
+    icon: 'Bath',
     description: 'Toilettes adaptées aux personnes à mobilité réduite'
   },
   {
     key: 'has_audio_guide',
     label: 'Guide audio',
-    icon: '🎧',
+    icon: 'Headphones',
     description: 'Guide audio disponible pour les personnes malvoyantes'
   },
   {
     key: 'has_sign_language_support',
     label: 'Langue des signes',
-    icon: '🤟',
+    icon: 'Hand',
     description: 'Support en langue des signes disponible'
   }
 ];

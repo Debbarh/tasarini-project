@@ -10,15 +10,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiProviderService, APIProvider, APIProvidersByService } from "@/services/apiProviderService";
-import { Check, X, Loader2, RefreshCw, Settings, Server, AlertCircle } from "lucide-react";
+import { Check, X, Loader2, RefreshCw, Settings, Server, AlertCircle, Hotel, Plane, Target, Car, UtensilsCrossed, CheckCircle2, AlertTriangle } from "lucide-react";
 
-const SERVICE_ICONS = {
-  hotels: '🏨',
-  flights: '✈️',
-  activities: '🎯',
-  transfers: '🚗',
-  restaurants: '🍽️',
-  car_rental: '🚙',
+const SERVICE_ICONS: Record<string, typeof Hotel> = {
+  hotels: Hotel,
+  flights: Plane,
+  activities: Target,
+  transfers: Car,
+  restaurants: UtensilsCrossed,
+  car_rental: Car,
+};
+
+const ServiceIcon = ({ serviceType, className = "w-4 h-4" }: { serviceType: string; className?: string }) => {
+  const Icon = SERVICE_ICONS[serviceType];
+  return Icon ? <Icon className={className} /> : null;
 };
 
 const SERVICE_COLORS = {
@@ -148,9 +153,9 @@ const APIProvidersManagement = () => {
       <TableCell>
         <Badge
           variant="outline"
-          className={SERVICE_COLORS[provider.service_type as keyof typeof SERVICE_COLORS] || ''}
+          className={`inline-flex items-center gap-1 ${SERVICE_COLORS[provider.service_type as keyof typeof SERVICE_COLORS] || ''}`}
         >
-          {SERVICE_ICONS[provider.service_type as keyof typeof SERVICE_ICONS]}{' '}
+          <ServiceIcon serviceType={provider.service_type} />
           {provider.service_type_display}
         </Badge>
       </TableCell>
@@ -255,16 +260,16 @@ const APIProvidersManagement = () => {
         {/* Active Providers Summary */}
         {providers.filter((p) => p.is_active).length > 0 && (
           <div className="mb-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
-            <p className="text-sm font-medium mb-2">
-              ✅ {providers.filter((p) => p.is_active).length} fournisseur(s) actif(s) sur {providers.length}
+            <p className="text-sm font-medium mb-2 flex items-center">
+              <CheckCircle2 className="w-4 h-4 mr-1" /> {providers.filter((p) => p.is_active).length} fournisseur(s) actif(s) sur {providers.length}
             </p>
             <div className="flex flex-wrap gap-2">
               {providers
                 .filter((p) => p.is_active)
                 .sort((a, b) => a.priority - b.priority)
                 .map((p) => (
-                  <Badge key={p.id} variant="default">
-                    {SERVICE_ICONS[p.service_type as keyof typeof SERVICE_ICONS]} {p.provider_name} ({p.service_type_display}) - Priorité {p.priority}
+                  <Badge key={p.id} variant="default" className="inline-flex items-center gap-1">
+                    <ServiceIcon serviceType={p.service_type} /> {p.provider_name} ({p.service_type_display}) - Priorité {p.priority}
                   </Badge>
                 ))}
             </div>
@@ -297,8 +302,8 @@ const APIProvidersManagement = () => {
           <Tabs defaultValue={Object.keys(groupedProviders)[0] || 'hotels'} className="space-y-4">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
               {Object.keys(groupedProviders).map((serviceType) => (
-                <TabsTrigger key={serviceType} value={serviceType}>
-                  {SERVICE_ICONS[serviceType as keyof typeof SERVICE_ICONS]}{' '}
+                <TabsTrigger key={serviceType} value={serviceType} className="flex items-center gap-1">
+                  <ServiceIcon serviceType={serviceType} />
                   {groupedProviders[serviceType][0]?.service_type_display}
                 </TabsTrigger>
               ))}
@@ -353,7 +358,7 @@ const APIProvidersManagement = () => {
             </li>
           </ul>
           <div className="mt-3 p-2 bg-primary/10 rounded text-xs">
-            <strong>⚠️ Important :</strong> Les clés API doivent être configurées dans le fichier backend/.env. La modification de la priorité peut affecter les résultats de recherche.
+            <strong className="inline-flex items-center"><AlertTriangle className="w-4 h-4 mr-1" /> Important :</strong> Les clés API doivent être configurées dans le fichier backend/.env. La modification de la priorité peut affecter les résultats de recherche.
           </div>
         </div>
       </CardContent>

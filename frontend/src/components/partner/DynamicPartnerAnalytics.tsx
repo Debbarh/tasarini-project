@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { Calendar, Eye, TrendingUp, MapPin } from 'lucide-react';
+import { Calendar, Eye, TrendingUp, MapPin, PartyPopper, Lightbulb } from 'lucide-react';
 import { partnerService } from '@/services/partnerService';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -258,24 +258,24 @@ const DynamicPartnerAnalytics: React.FC = () => {
         <CardContent className="space-y-3">
           {metrics.conversionRate > 5 && (
             <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">
-                🎉 {t('partnerCenter.dashboard.analytics.excellentConversion', { rate: metrics.conversionRate.toFixed(2) })}
+              <p className="text-sm text-green-800 flex items-center gap-1">
+                <PartyPopper className="w-4 h-4" /> {t('partnerCenter.dashboard.analytics.excellentConversion', { rate: metrics.conversionRate.toFixed(2) })}
               </p>
             </div>
           )}
           
           {metrics.monthOverMonthGrowth > 20 && (
             <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                📈 {t('partnerCenter.dashboard.analytics.exceptionalGrowth', { growth: metrics.monthOverMonthGrowth.toFixed(1) })}
+              <p className="text-sm text-blue-800 flex items-center gap-1">
+                <TrendingUp className="w-4 h-4" /> {t('partnerCenter.dashboard.analytics.exceptionalGrowth', { growth: metrics.monthOverMonthGrowth.toFixed(1) })}
               </p>
             </div>
           )}
 
           {metrics.conversionRate < 2 && metrics.totalViews > 100 && (
             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800">
-                💡 {t('partnerCenter.dashboard.analytics.lowConversion', { rate: metrics.conversionRate.toFixed(2) })}
+              <p className="text-sm text-yellow-800 flex items-center gap-1">
+                <Lightbulb className="w-4 h-4" /> {t('partnerCenter.dashboard.analytics.lowConversion', { rate: metrics.conversionRate.toFixed(2) })}
               </p>
             </div>
           )}

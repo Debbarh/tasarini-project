@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
+import FlightComparatorWidget from "@/components/widgets/FlightComparatorWidget";
+import Stay22HotelMap from "@/components/widgets/Stay22HotelMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import Testimonials from "@/components/home/Testimonials";
@@ -43,6 +45,18 @@ const Index = () => {
   const [searchCheckIn, setSearchCheckIn] = useState('');
   const [searchCheckOut, setSearchCheckOut] = useState('');
 
+  // Centre partagé des cartes (Stay22 + Tasarini) : géoloc si autorisée, sinon Paris.
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 48.8566, lng: 2.3522 });
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setMapCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => { /* refus/échec -> on garde Paris */ },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 }
+      );
+    }
+  }, []);
+
   const handleQuickSearch = () => {
     const params = new URLSearchParams();
     if (searchDest) params.set('destination', searchDest.toUpperCase());
@@ -78,14 +92,9 @@ const Index = () => {
     return () => clearInterval(timer);
   }, [inspirationRoutes.length]);
 
-  // Debug: log booking center setting
-  useEffect(() => {
-    console.log('🏠 Index page - bookingCenterEnabled:', settings.bookingCenterEnabled);
-  }, [settings.bookingCenterEnabled]);
-
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => 
+      setCurrentImageIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
     }, 4000); // Change d'image toutes les 4 secondes
@@ -107,6 +116,27 @@ const Index = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.15),transparent_70%)]" />
         
         <div className="container mx-auto px-4 py-12 sm:py-20 relative z-10">
+          {/* Vols (TravelPayouts) + Hébergements (Stay22) regroupés en onglets pour gagner
+              de la place ; le widget inactif n'est pas monté (chargement à la demande). */}
+          <div className="mb-8 sm:mb-10">
+            <Tabs defaultValue="flights" className="bg-background/80 backdrop-blur-sm border rounded-2xl p-3 sm:p-4 shadow-lg">
+              <TabsList className="grid w-full grid-cols-2 mb-3 sm:max-w-md">
+                <TabsTrigger value="flights" className="gap-2">
+                  <Plane className="h-4 w-4" /> {t('home.flightComparatorTitle', 'Comparez les vols')}
+                </TabsTrigger>
+                <TabsTrigger value="hotels" className="gap-2">
+                  <Hotel className="h-4 w-4" /> {t('home.hotelsMapTitle', 'Trouvez votre hébergement')}
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="flights">
+                <FlightComparatorWidget />
+              </TabsContent>
+              <TabsContent value="hotels">
+                <Stay22HotelMap lat={mapCenter.lat} lng={mapCenter.lng} />
+              </TabsContent>
+            </Tabs>
+          </div>
+
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-20 items-center">
             {/* Contenu textuel */}
             <div className="flex flex-col gap-6 sm:gap-8 animate-fade-in order-2 lg:order-1">
@@ -137,14 +167,17 @@ const Index = () => {
                     </svg>
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-4 sm:py-6 hover-scale">
-                  <Link to="/inspire">
-                    {t('home.discoverTreasures')}
-                  </Link>
-                </Button>
+                {settings.beInspiredEnabled && (
+                  <Button asChild variant="outline" size="lg" className="text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-4 sm:py-6 hover-scale">
+                    <Link to="/inspire">
+                      {t('home.discoverTreasures')}
+                    </Link>
+                  </Button>
+                )}
               </div>
 
-              {/* Barre de recherche rapide -> /booking */}
+              {/* Barre de recherche rapide -> /booking (masquée si module désactivé) */}
+              {settings.bookingCenterEnabled && (
               <div className="bg-background/80 backdrop-blur-sm border rounded-2xl p-3 shadow-lg flex flex-col sm:flex-row gap-2 relative z-10">
                 <div className="flex-1 min-w-0">
                   <DestinationCodeAutocomplete
@@ -173,7 +206,8 @@ const Index = () => {
                   {t('home.searchCta')}
                 </Button>
               </div>
-              
+              )}
+
               {/* Stats */}
               <div className="flex justify-center sm:justify-start gap-4 sm:gap-8 pt-6 sm:pt-8 border-t border-border/50">
                 <div className="text-center">
@@ -259,13 +293,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-        
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-primary/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-primary rounded-full mt-2 animate-pulse" />
-          </div>
-        </div>
+
       </section>
 
       {/* How it works */}
@@ -353,6 +381,9 @@ const Index = () => {
         </section>
       )}
 
+      {/* Sections de widgets d'affiliation — masquées au lancement (module Centrale de réservation OFF), réactivables par l'admin */}
+      {settings.bookingCenterEnabled && (
+      <>
       {/* Transport Section with Tabs */}
       <section className="py-12 sm:py-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4">
@@ -457,16 +488,20 @@ const Index = () => {
           </Tabs>
         </div>
       </section>
+      </>
+      )}
 
       {/* Testimonials - vrais avis utilisateurs (masqué si aucun) */}
       <Testimonials />
 
-      {/* Dynamic Widgets Section - Managed from Admin */}
-      <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-primary/5">
-        <div className="container mx-auto px-4">
-          <WidgetRenderer placement="home" className="max-w-7xl mx-auto" />
-        </div>
-      </section>
+      {/* Dynamic Widgets Section - Managed from Admin (masquée si module désactivé) */}
+      {settings.bookingCenterEnabled && (
+        <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-primary/5">
+          <div className="container mx-auto px-4">
+            <WidgetRenderer placement="home" className="max-w-7xl mx-auto" />
+          </div>
+        </section>
+      )}
 
     </main>
   );

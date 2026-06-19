@@ -9,7 +9,8 @@
     "myProfile": "ملفي الشخصي",
     "logout": "تسجيل الخروج",
     "login": "تسجيل الدخول",
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "savedItineraries": "مساراتي"
   },
   "notFound": {
     "title": "404",
@@ -68,7 +69,10 @@
     "goToImage": "الانتقال إلى الصورة {{index}}",
     "searchDestination": "إلى أين أنت ذاهب؟",
     "searchCta": "بحث",
-    "openBookingCenter": "فتح مركز الحجز"
+    "openBookingCenter": "فتح مركز الحجز",
+    "flightComparatorTitle": "قارن الرحلات",
+    "flightComparatorDesc": "اعثر على أفضل الأسعار من بين مئات الشركات والوكالات.",
+    "hotelsMapTitle": "ابحث عن إقامتك"
   },
   "planTrip": {
     "title": "خطط لعطلتك المثالية",
@@ -80,8 +84,8 @@
     "pageDescription": "أنشئ مسار أحلامك بضغطات قليلة. يصمم ذكاؤنا الاصطناعي مغامرات مخصصة تحول رغباتك إلى ذكريات سحرية.",
     "itineraryGenerated": "تم إنشاء المسار بنجاح!",
     "personalizedTravel": "رحلتك المخصصة التي أنشأها الذكاء الاصطناعي جاهزة.",
-    "withPreferences": "✨ بناءً على تفضيلاتك!",
-    "withLocalPlaces": "📍 مع أماكن محلية أصيلة!",
+    "withPreferences": "بناءً على تفضيلاتك!",
+    "withLocalPlaces": "مع أماكن محلية أصيلة!",
     "generationError": "خطأ في إنشاء المسار",
     "tryAgainLater": "يرجى المحاولة مرة أخرى لاحقاً أو الاتصال بالدعم إذا استمرت المشكلة.",
     "enrichmentComplete": "تم إثراء الرحلة!",
@@ -127,8 +131,6 @@
       "generateNow": "إنشاء الآن"
     },
     "destinationStep": {
-      "selectCountry": "اختر بلداً",
-      "selectCity": "اختر مدينة",
       "numberOfDays": "عدد الأيام",
       "exactDates": "تواريخ محددة",
       "start": "البداية",
@@ -158,7 +160,9 @@
       "invalidAddress": "يرجى تحديد عنوان صالح على الخريطة.",
       "fetchingTranslations": "Fetching multilingual translations...",
       "geocodeFailed": "يتعذر تحديد المدينة لهذا الموقع. يرجى اختيار موقع آخر أو إدخال اسم المدينة يدويًّا.",
-      "chooseOnMapHint": "افتح خريطة تفاعلية لتحديد موقع وجهتك بدقة والحصول على إحداثياتها."
+      "chooseOnMapHint": "افتح خريطة تفاعلية لتحديد موقع وجهتك بدقة والحصول على إحداثياتها.",
+      "selectCountry": "اكتب اسم البلد أو اختره",
+      "selectCity": "اكتب اسم المدينة أو اخترها"
     },
     "travelDetailsStep": {
       "title": "رفقاء السفر",
@@ -229,7 +233,9 @@
       "conservative": "محافظ",
       "moderate": "معتدل",
       "adventurous": "مغامر",
-      "consumesAlcohol": "يتناول الكحول"
+      "consumesAlcohol": "يتناول الكحول",
+      "refineMore": "تحديد تفضيلاتي (المطاعم، الأنظمة الغذائية)",
+      "refineLess": "إخفاء الإعدادات المتقدمة"
     },
     "accommodationStep": {
       "title": "تفضيلات الإقامة",
@@ -246,7 +252,9 @@
       "services": "الخدمات",
       "locations": "المواقع",
       "others": "آخرون",
-      "typeRequired": "يرجى تحديد نوع واحد على الأقل من أماكن الإقامة للمتابعة."
+      "typeRequired": "يرجى تحديد نوع واحد على الأقل من أماكن الإقامة للمتابعة.",
+      "refineMore": "تحديد تفضيلاتي (الخدمات، سهولة الوصول، الأمان، الأجواء)",
+      "refineLess": "إخفاء الإعدادات المتقدمة"
     },
     "activitiesStep": {
       "title": "الأنشطة والتجارب",
@@ -265,25 +273,27 @@
       "summaryIntensity": "الكثافة:",
       "summaryInterests": "الاهتمامات:",
       "moderate": "معتدل",
-      "others": "آخرون"
+      "others": "آخرون",
+      "refineMore": "إضافة اهتمامات وطلبات خاصة",
+      "refineLess": "إخفاء الخيارات الإضافية"
     }
   },
   "beInspired": {
     "pageTitle": "استلهم | السفر بالذكاء الاصطناعي",
     "pageDescription": "استكشف عالمًا من العجائب الخفية حولك. اكتشف الجواهر السرية، والنكهات الأصيلة، والتجارب السحرية التي تنتظرك.",
-    "title": "✨ استلهم",
+    "title": "استلهم",
     "subtitle": "اكتشف الكنوز المخفية في دائرة نصف قطرها {{radius}} كم. كل مكان يحكي قصة، وكل تجربة تخلق ذكرى لا تُنسى.",
-    "searchHotels": "🏨 الفنادق",
-    "searchHotelsShort": "🏨",
-    "aiGuide": "🤖 الدليل الذكي",
-    "aiGuideShort": "🤖 دليل",
-    "shareDiscovery": "🌟 مشاركة كنز",
-    "shareDiscoveryShort": "🌟 مشاركة",
-    "dialogTitle": "🌟 شارك اكتشافك",
+    "searchHotels": "الفنادق",
+    "searchHotelsShort": "",
+    "aiGuide": "الدليل الذكي",
+    "aiGuideShort": "دليل",
+    "shareDiscovery": "مشاركة كنز",
+    "shareDiscoveryShort": "مشاركة",
+    "dialogTitle": "شارك اكتشافك",
     "dialogDescription": "اكشف عن مكان سحري تحبه لمجتمع المستكشفين",
     "exploreMap": "استكشف الخريطة",
     "findInspiration": "ابحث عن الإلهام",
-    "radiusLabel": "🎯 نطاق الاستكشاف",
+    "radiusLabel": "نطاق الاستكشاف",
     "radius10": "10 كم",
     "radius20": "20 كم",
     "radius30": "30 كم",
@@ -318,7 +328,12 @@
       "error": "غير قادر على تحميل التوصيات الذكية",
       "noNewRecommendations": "لم يتم العثور على توصيات جديدة. استكشف المزيد لتحسين اقتراحاتك!",
       "successGenerated": "تم إنشاء {{count}} توصية مخصصة!",
-      "loadingError": "خطأ في تحميل التوصيات"
+      "loadingError": "خطأ في تحميل التوصيات",
+      "previewBadge": "نظرة عامة",
+      "previewIntro": "نظرة أولية على الأماكن في هذه المنطقة. سجّل الدخول للحصول على توصيات مخصصة وفقًا لذوقك.",
+      "previewEmpty": "حرك الخريطة لترى اقتراحات الأماكن هنا.",
+      "loginCta": "سجّل الدخول للحصول على توصيات مخصصة",
+      "loginPerk": "مسارات مخصصة، ومفضلة، واقتراحات وفقًا لتفضيلاتك."
     },
     "filters": {
       "title": "الفلاتر",
@@ -331,7 +346,7 @@
       "categoryActivities": "أنشطة وترفيه",
       "categoryTourist": "نقاط الاهتمام",
       "categoryOther": "أخرى",
-      "minRating": "التقييم الأدنى ({{rating}}⭐)",
+      "minRating": "التقييم الأدنى ({{rating}})",
       "allRatings": "الكل",
       "priceRange": "نطاق الأسعار",
       "allPrices": "جميع الأسعار",
@@ -340,6 +355,235 @@
       "priceHigh": "€€€ - مرتفع",
       "accessibility": "متاح للكراسي المتحركة",
       "reset": "إعادة تعيين"
+    },
+    "map": {
+      "searchCenter": "مركز الأبحاث",
+      "yourPosition": "موقعك",
+      "mapLoadError": "يتعذر تحميل الخريطة",
+      "resultsFound": "{{count}} نقاط الاهتمام التي تم العثور عليها",
+      "loadError": "حدث خطأ أثناء تحميل نقاط الاهتمام",
+      "viewDetails": "عرض التفاصيل",
+      "loginToSave": "سجّل الدخول لتسجيل هذا المكان.",
+      "alreadyInItinerary": "هذه المعلم السياحي موجود بالفعل في مسار رحلتك",
+      "addedToItinerary": "{{name}} تمت إضافته إلى مسار رحلتك!",
+      "itineraryCreated": "تم إنشاء مسار رحلتك!",
+      "positionUpdated": "آخر تحديث للموقف",
+      "geoDenied": "رفض المتصفح السماح بالوصول إلى الموقع. قم بتفعيل تحديد الموقع الجغرافي لتوسيط الخريطة.",
+      "geoUnavailable": "خدمة تحديد الموقع غير متاحة. يرجى التحقق من إعدادات الشبكة أو المحاولة لاحقًا.",
+      "geoError": "يتعذر تحديد موقعك. يرجى التحقق من إعدادات متصفحك.",
+      "geoNotSupported": "التحديد الجغرافي غير مدعوم",
+      "myPosition": "موقفي",
+      "createItinerary": "إنشاء مسار ({{count}})",
+      "retry": "حاول مرة أخرى",
+      "loading": "جاري تحميل نقاط الاهتمام...",
+      "clickHint": "انقر على أحد الأماكن للاطلاع على ملفه التفصيلي",
+      "reviews": "رأي",
+      "reviewsCount": "{{count}} رأي",
+      "website": "الموقع الإلكتروني",
+      "directions": "مسار الرحلة",
+      "addToItinerary": "إضافة إلى مساري",
+      "geoPanel": {
+        "title": "السماح بتحديد الموقع الجغرافي",
+        "b1": "تأكد من أن متصفحك يسمح بتحديد الموقع على هذا الموقع.",
+        "b2": "إذا كان معطلاً، فانقر على أيقونة القفل أو رمز الموقع لتفعيله.",
+        "b3": "يمكنك أيضًا إدخال موقع يدويًّا في عوامل التصفية."
+      },
+      "category": {
+        "restaurant": "مطعم",
+        "accommodation": "الإقامة",
+        "activity": "النشاط",
+        "tourist": "معلم سياحي"
+      },
+      "open": "مفتوح",
+      "closed": "مغلق",
+      "openUntil": "مفتوح · مغلق في {{time}}",
+      "opensAt": "مغلق · يفتح في {{time}}",
+      "share": "مشاركة",
+      "linkCopied": "تم نسخ الرابط إلى الحافظة",
+      "shareError": "يتعذر مشاركة هذا المكان",
+      "loadFailedTitle": "يتعذر التحميل",
+      "loadFailedDesc": "يستغرق الخدمة بعض الوقت للرد. يرجى إعادة المحاولة بعد قليل.",
+      "suggestImprovement": "اقتراح",
+      "claimPlace": "المطالبة بـ",
+      "searchPoiPlaceholder": "ابحث عن مكان…",
+      "searchPoiEmpty": "لم يتم العثور على أي مكان في هذه المنطقة.",
+      "type": {
+        "museum": "متحف",
+        "art": "معرض فني",
+        "castle": "قلعة",
+        "mosque": "مسجد",
+        "religious": "موقع ديني",
+        "temple": "معبد",
+        "monument": "نصب تذكاري",
+        "culture": "مكان ثقافي",
+        "zoo": "حديقة حيوان",
+        "park": "حديقة",
+        "viewpoint": "نقطة مشاهدة",
+        "nature": "موقع طبيعي",
+        "square": "ساحة / معلم",
+        "historic": "موقع تاريخي"
+      },
+      "priceLabel": "السعر"
+    },
+    "morePlacesOn": "المزيد من المواقع: تم التفعيل",
+    "morePlacesOff": "المزيد من المواقع: معطّل",
+    "morePlacesHint": "تضمين مواقع من مصادر خارجية",
+    "list": {
+      "empty": "لا توجد أي أماكن في هذه المنطقة. حرك الخريطة أو وسّع نطاق البحث.",
+      "countInView": "{{count}} الأماكن الظاهرة في الصورة"
+    },
+    "chips": {
+      "all": "كل شيء",
+      "gastronomy": "فن الطهي",
+      "activities": "الأنشطة",
+      "culture": "الثقافة والمعالم السياحية",
+      "lodging": "أماكن الإقامة",
+      "hotels": "الفنادق",
+      "flights": "الرحلات الجوية"
+    },
+    "sort": {
+      "label": "الترتيب حسب",
+      "distance": "القرب",
+      "rating": "ملاحظة",
+      "popularity": "الشعبية"
+    },
+    "aiSuggestions": {
+      "must": "ما هي الأماكن التي لا بد من زيارتها في هذه المنطقة؟",
+      "itinerary": "أعد لي خط سيرًا ليوم واحد يشمل هذه الأماكن",
+      "halfday": "اقترح عليّ برنامجًا ثقافيًّا لمدة نصف يوم في هذا القسم",
+      "food": "ما هي المطاعم المحلية التي تنصحني بها هنا؟"
+    },
+    "citySearchLabel": "البحث عن مدينة",
+    "citySearchPlaceholder": "مثل: فاس، مراكش، باريس…",
+    "cityCentered": "خريطة تركز على {{city}}",
+    "radius75": "75 كم",
+    "radius100": "100 كم",
+    "claim": {
+      "title": "المطالبة بهذا المكان",
+      "desc": "اطلب إدارة « {{name}} ». بعد الموافقة، ستصبح شريكًا وستتمكن من تعديلها.",
+      "motivationLabel": "علاقتك بهذا المكان *",
+      "motivationPlaceholder": "مثال: أنا مالك/مدير هذا المكان…",
+      "motivationRequired": "يرجى توضيح علاقتك بهذا المكان.",
+      "proofLabel": "رابط إثبات (اختياري)",
+      "submit": "إرسال الطلب",
+      "success": "تم إرسال الطلب! سيقوم أحد المسؤولين بالموافقة عليه.",
+      "error": "يتعذر إرسال الطلب."
+    },
+    "suggest": {
+      "title": "اقتراح تحسين",
+      "desc": "اقترحوا تصحيحات لعبارة « {{name}} ». سيتم التحقق من صحتها من قبل فريقنا قبل النشر.",
+      "description": "الوصف",
+      "address": "العنوان",
+      "phone": "الهاتف",
+      "hours": "أوقات العمل",
+      "website": "الموقع الإلكتروني",
+      "comment": "تعليق (اختياري)",
+      "submit": "إرسال الاقتراح",
+      "success": "شكرًا! سيتم النظر في اقتراحك.",
+      "error": "يتعذر إرسال الاقتراح.",
+      "noChange": "يرجى تعديل حقل واحد على الأقل.",
+      "sectionInfo": "معلومات",
+      "sectionPhotos": "صور (من 1 إلى 3)",
+      "photosHint": "أضف حتى 3 صور للمكان.",
+      "sectionType": "النوع والسعر",
+      "isActivity": "نشاط / أشياء للقيام بها",
+      "isRestaurant": "مطعم",
+      "isAccommodation": "إقامة",
+      "budget": "الميزانية",
+      "difficulty": "الصعوبة",
+      "choose": "اختر",
+      "sectionAccessibility": "إمكانية الوصول",
+      "wheelchair": "وصول الكراسي المتحركة",
+      "parking": "موقف سيارات مهيأ",
+      "restrooms": "دورات مياه مهيأة",
+      "audioGuide": "دليل صوتي",
+      "signLanguage": "لغة الإشارة",
+      "accessibilityDetails": "تفاصيل إمكانية الوصول",
+      "sectionCulinary": "المطاعم",
+      "cuisineTypes": "أنواع المطبخ",
+      "dietary": "خيارات غذائية",
+      "restaurantCategories": "فئات المطعم",
+      "adventureLevel": "مستوى المغامرة الطهوية",
+      "sectionAccommodation": "الإقامة",
+      "accTypes": "الأنواع",
+      "accAmenities": "المرافق",
+      "accLocations": "الموقع",
+      "accSecurity": "الأمان",
+      "accAmbiance": "الأجواء",
+      "sectionActivity": "النشاط",
+      "activityCategories": "الفئات",
+      "activityInterests": "الاهتمامات",
+      "activityAvoidances": "يُتجنّب",
+      "intensity": "الشدة",
+      "sectionRecommendation": "مستوى التوصية",
+      "clear": "مسح",
+      "field": {
+        "description": "الوصف",
+        "address": "العنوان",
+        "contact_phone": "الهاتف",
+        "website_url": "الموقع الإلكتروني",
+        "opening_hours": "ساعات العمل",
+        "media_images": "صور",
+        "is_restaurant": "مطعم",
+        "is_accommodation": "إقامة",
+        "is_activity": "نشاط",
+        "budget_level_id": "الميزانية",
+        "difficulty_level_id": "الصعوبة",
+        "is_wheelchair_accessible": "وصول الكراسي المتحركة",
+        "has_accessible_parking": "موقف سيارات مهيأ",
+        "has_accessible_restrooms": "دورات مياه مهيأة",
+        "has_audio_guide": "دليل صوتي",
+        "has_sign_language_support": "لغة الإشارة",
+        "cuisine_types": "أنواع المطبخ",
+        "dietary_restrictions_supported": "خيارات غذائية",
+        "restaurant_categories": "فئات المطعم",
+        "culinary_adventure_level_id": "المغامرة الطهوية",
+        "accommodation_types": "أنواع الإقامة",
+        "accommodation_amenities": "المرافق",
+        "accommodation_locations": "الموقع",
+        "accommodation_accessibility": "إمكانية الوصول",
+        "accommodation_security": "الأمان",
+        "accommodation_ambiance": "الأجواء",
+        "activity_categories": "فئات النشاط",
+        "activity_interests": "الاهتمامات",
+        "activity_avoidances": "يُتجنّب",
+        "activity_intensity_level_id": "الشدة",
+        "recommendation_level": "مستوى التوصية",
+        "tags": "وسوم",
+        "amenities": "المرافق",
+        "name": "الاسم"
+      },
+      "name": "الاسم"
+    },
+    "becomePartner": "أن تصبح شريكًا",
+    "becomePartnerShort": "شريك",
+    "searchPoiPlaceholder": "ابحث عن مكان…",
+    "addPlace": {
+      "button": "إضافة مكان",
+      "title": "إضافة مكان",
+      "desc": "كيف ترغب في إضافة هذا المكان؟",
+      "directTitle": "إدخال المكان",
+      "directDesc": "أضف المكان ومعلوماته. يُنشر بعد المراجعة من قبل فريقنا.",
+      "partnerTitle": "الإدارة كشريك",
+      "partnerDesc": "كن شريكًا لإدارة الحجوزات والأسعار الخاصة بمنشأتك."
+    },
+    "report": {
+      "button": "إبلاغ",
+      "title": "الإبلاغ عن هذا المكان",
+      "desc": "أبلغ عن مشكلة في «{{name}}». سيتم تعليق المكان حتى يراجعه المسؤول.",
+      "reason": "السبب",
+      "description": "تفاصيل (اختياري)",
+      "submit": "إرسال البلاغ",
+      "success": "شكرًا، تم الإبلاغ عن هذا المكان وهو في انتظار المراجعة.",
+      "error": "تعذّر إرسال البلاغ.",
+      "reasons": {
+        "spam": "بريد مزعج / إعلان",
+        "offensive": "محتوى مسيء",
+        "wrong_location": "موقع خاطئ",
+        "closed": "مغلق / غير موجود",
+        "duplicate": "مكرر",
+        "other": "أخرى"
+      }
     }
   },
   "travelStories": {
@@ -422,7 +666,12 @@
         "selectLabel": "اختر مسارًا",
         "selectPlaceholder": "اختر مسارًا...",
         "generating": "جارٍ التوليد...",
-        "generate": "إنشاء قصة"
+        "generate": "إنشاء قصة",
+        "selectFirst": "اختر أولاً مسارًا لتحديد الأنشطة التي تريد القيام بها.",
+        "noActivities": "لا تتضمن هذه الرحلة أي أنشطة مفصلة.",
+        "chooseActivities": "اختر نشاطًا واحدًا أو أكثر لربطه بقصتك",
+        "dayShort": "J{{day}}",
+        "linkButton": "ربط وصياغة قصتي"
       },
       "aiInstant": {
         "title": "إنشاء فوري بواسطة AI",
@@ -478,7 +727,97 @@
         "loginRequired": "يجب أن تكون مسجلاً للدخول لإنشاء قصة",
         "fieldsRequired": "العنوان والمحتوى مطلوبان",
         "createError": "خطأ أثناء الإنشاء"
-      }
+      },
+      "itineraryNotFound": "لم يتم العثور على المسار",
+      "defaultTitle": "رحلتي: {{title}}"
+    },
+    "card": {
+      "loginToLike": "سجّل الدخول لتعجب بقصصك",
+      "likeError": "لا يمكن تعديل الإعجاب",
+      "loginToBookmark": "سجّل الدخول لتسجيل القصص",
+      "bookmarkError": "يتعذر تحديث الإشارة المرجعية",
+      "authorFallback": "أنشأه voyageur",
+      "linkTypes": {
+        "touristPoint": "معلم سياحي",
+        "itinerary": "مسار الرحلة",
+        "activity": "النشاط",
+        "accommodation": "الإقامة",
+        "restaurant": "مطعم"
+      },
+      "private": "خاص",
+      "featured": "القارب السريع",
+      "viewDetails": "عرض التفاصيل"
+    },
+    "comments": {
+      "loadError": "يتعذر تحميل التعليقات",
+      "added": "تمت إضافة تعليق!",
+      "addError": "يتعذر إضافة التعليق",
+      "title": "التعليقات - {{title}}",
+      "loading": "جاري تحميل التعليقات...",
+      "emptyTitle": "لا توجد تعليقات حتى الآن.",
+      "emptySubtitle": "كن أول من يشارك برأيه!",
+      "placeholder": "شاركنا رأيك في هذه القصة...",
+      "charCount": "{{count}}/500 حرف",
+      "sending": "جاري الإرسال...",
+      "submit": "التعليق",
+      "loginToComment": "سجّل الدخول للتعليق على هذه القصة"
+    },
+    "trending": {
+      "heading": "الاتجاهات",
+      "timeframe24h": "24 ساعة",
+      "timeframe7j": "7 أيام",
+      "timeframe30j": "30 يومًا",
+      "loading": "جاري تحميل الاتجاهات...",
+      "empty": "لم يتم العثور على أي اتجاهات لهذه الفترة"
+    },
+    "aiRecommendations": {
+      "loadError": "يتعذر تحميل التوصيات في الوقت الحالي.",
+      "loginCta": "سجّل الدخول للاطلاع على توصياتك المخصصة",
+      "heading": "توصيات الذكاء الاصطناعي",
+      "personalizedBadge": "مخصص",
+      "loading": "تحليل تفضيلاتك...",
+      "empty": "أعجب ببعض القصص لتتلقى توصيات مخصصة لك!",
+      "recommendedBadge": "موصى به"
+    },
+    "mapTab": {
+      "heading": "خريطة تفاعلية",
+      "hideList": "إخفاء القائمة",
+      "showList": "عرض القائمة",
+      "geoStories": "قصص محددة الموقع ({{count}})",
+      "loading": "جاري التحميل...",
+      "empty": "لم يتم العثور على أي قصة محددة الموقع"
+    },
+    "createStory": {
+      "titleLabel": "عنوان قصتك *",
+      "titlePlaceholder": "عنوان جذاب لتجربتك...",
+      "contentLabel": "قصتك *",
+      "contentPlaceholder": "شاركنا تجربتك ومشاعرك واكتشافاتك...",
+      "locationLabel": "المكان",
+      "locationPlaceholder": "باريس، فرنسا",
+      "tripDateLabel": "تاريخ الرحلة",
+      "chooseDate": "اختر تاريخًا",
+      "tagsLabel": "العلامات",
+      "addTagPlaceholder": "إضافة علامة...",
+      "linkLabel": "الربط بعناصر التطبيق",
+      "linkTouristPoint": "معلم سياحي",
+      "linkItinerary": "مسار الرحلة",
+      "linkActivity": "النشاط",
+      "searchPlaceholder": "بحث...",
+      "linkedItems": "العناصر ذات الصلة:",
+      "publicLabel": "قصة عامة",
+      "privateLabel": "قصة خاصة",
+      "cancel": "إلغاء",
+      "creating": "جاري التحميل...",
+      "create": "إنشاء القصة",
+      "loginRequired": "يجب أن تكون مسجلاً للدخول لإنشاء قصة",
+      "fieldsRequired": "يجب إدخال العنوان والمحتوى",
+      "createError": "حدث خطأ أثناء الإنشاء: {{msg}}"
+    },
+    "details": {
+      "authorFallback": "أنشأه voyageur",
+      "byAuthor": "بواسطة {{name}}",
+      "notFound": "لا يمكن العثور على القصة.",
+      "aiBadge": "الذكاء الاصطناعي"
     }
   },
   "partnerApplication": {
@@ -685,7 +1024,10 @@
     "create": "إنشاء",
     "search": "بحث",
     "close": "Close",
-    "back": "Back"
+    "back": "Back",
+    "yes": "نعم",
+    "no": "لا",
+    "clear": "مسح"
   },
   "touristPoints": {
     "pageTitle": "المعالم السياحية",
@@ -1288,7 +1630,15 @@
       "flights": "الرحلات الجوية",
       "transfers": "التحويلات",
       "restaurants": "المطاعم",
-      "activities": "الأنشطة"
+      "activities": "الأنشطة",
+      "tours": "الأنشطة والزيارات",
+      "flightsHotels": "الرحلات الجوية والفنادق",
+      "carRental": "تأجير السيارات",
+      "publicTransport": "الحافلات والقطارات",
+      "urban": "النقل الحضري",
+      "esim": "بطاقة eSIM",
+      "dining": "الأطباق المحلية",
+      "compensation": "التعويض عن السرقة"
     },
     "searchHotel": "البحث عن فندق",
     "searchFlight": "البحث عن رحلة",
@@ -1341,7 +1691,8 @@
     "toastActivitiesFound": "{{count}} تم العثور على نشاط (أنشطة)",
     "toastHotelsError": "يتعذر البحث عن الفنادق. يرجى التحقق من رمز الوجهة.",
     "toastFlightsError": "يتعذر البحث عن الرحلات الجوية. يرجى التحقق من رموز IATA.",
-    "toastActivitiesError": "يتعذر البحث عن الأنشطة. يرجى التحقق من رمز الوجهة."
+    "toastActivitiesError": "يتعذر البحث عن الأنشطة. يرجى التحقق من رمز الوجهة.",
+    "dialogTitle": "احجز خدماتك"
   },
   "savedItineraries": {
     "pageTitle": "مساراتي المحفوظة",
@@ -1580,8 +1931,8 @@
   },
   "theme": {
     "toggleLabel": "تغيير السمة",
-    "light": "واضح",
-    "dark": "قاتم",
+    "light": "فاتح",
+    "dark": "داكن",
     "system": "النظام"
   },
   "notifications": {
@@ -1939,7 +2290,63 @@
     "health": "الصحة",
     "localCustoms": "العادات المحلية",
     "customize": "تخصيص",
-    "loginToEdit": "تسجيل الدخول لتعديل"
+    "loginToEdit": "تسجيل الدخول لتعديل",
+    "enriched": {
+      "whyTitle": "لماذا موقع {{name}} ؟",
+      "thisDestination": "هذه الوجهة",
+      "bestTime": "أفضل وقت للزيارة",
+      "overallRec": "توصية عامة",
+      "byDestination": "حسب الوجهة:",
+      "bySeason": "حسب الموسم:",
+      "spring": "الربيع",
+      "summer": "الصيف",
+      "autumn": "الخريف",
+      "winter": "الشتاء",
+      "avoidPeriods": "الفترات التي يجب تجنبها:",
+      "visaTitle": "التأشيرة وإجراءات الدخول",
+      "requirements": "المتطلبات:",
+      "processingTime": "مدة المعالجة",
+      "cost": "التكلفة التقريبية",
+      "exemptions": "الدول المعفاة من تأشيرة الدخول:",
+      "entryRequirements": "شروط الدخول:",
+      "healthTitle": "الصحة والسلامة",
+      "vaccinations": "التطعيمات:",
+      "healthTips": "نصائح صحية:",
+      "insurance": "تأمين السفر",
+      "emergencyNumbers": "أرقام الطوارئ:",
+      "safetyTips": "نصائح السلامة:",
+      "waterQuality": "مياه الشرب",
+      "foodSafety": "الأغذية",
+      "emPolice": "الشرطة",
+      "emMedical": "طبي",
+      "emFire": "رجال الإطفاء",
+      "emEmbassy": "السفارة",
+      "emGeneral": "حالات الطوارئ العامة",
+      "dishesTitle": "أطباق لا تفوت",
+      "giftsTitle": "أفكار للهدايا والتذكارات",
+      "similarTitle": "وجهات مشابهة تستحق الاستكشاف",
+      "transportTitle": "النقل والمواصلات",
+      "gettingThere": "كيفية الوصول إلى هناك:",
+      "localTransport": "وسائل النقل المحلية:",
+      "metro": "المترو",
+      "bus": "حافلة",
+      "taxi": "سيارات الأجرة وسيارات الأجرة الخاصة",
+      "bike": "الدراجات",
+      "walking": "سيرًا على الأقدام",
+      "transportCards": "بطاقات النقل",
+      "practicalTips": "نصائح عملية:",
+      "mustSee": "لا تفوت",
+      "mustSeeAt": "أماكن لا بد من زيارتها في {{name}}",
+      "culturalTitle": "نصائح ثقافية وعادات",
+      "eventsTitle": "الفعاليات والمهرجانات المحلية",
+      "sustainabilityTitle": "السفر الصديق للبيئة"
+    },
+    "flexibleDates": "تواريخ مرنة",
+    "tips": "نصائح",
+    "bookServices": "الحجز",
+    "skipAd": "تخطي",
+    "enableSound": "تشغيل الصوت",
+    "muteSound": "كتم الصوت"
   },
   "editor": {
     "editActivity": "تعديل النشاط",
@@ -1984,5 +2391,44 @@
     "addDay": "إضافة يوم",
     "close": "إغلاق",
     "dropActivitiesHint": "انشر الأنشطة هنا أو أضف نشاطًا جديدًا"
+  },
+  "aiAssistant": {
+    "title": "مساعد السفر بالذكاء الاصطناعي",
+    "subtitle": "اطرحوا أسئلتكم، وسأقدم لكم نصائح مخصصة بشأن هذه المنطقة.",
+    "greeting": "مرحبًا!",
+    "intro": "أنا مساعدكم في السفر. كيف يمكنني مساعدتكم؟",
+    "suggestedLabel": "أسئلة مقترحة:",
+    "placeholder": "اطرح سؤالك حول الرحلة…",
+    "thinking": "أنا أفكر...",
+    "personalized": "إجابة تستند إلى المواقع المعروضة.",
+    "errorComm": "حدث خطأ أثناء الاتصال بمساعد الذكاء الاصطناعي",
+    "errorReply": "آسف، أواجه بعض المشاكل التقنية. يرجى إعادة المحاولة.",
+    "personalizedHint": "نصائح تستند إلى المنطقة المعروضة وتفضيلاتك"
+  },
+  "hotels": {
+    "stay22Title": "الفنادق وأماكن الإقامة",
+    "stay22Desc": "قارن بين أماكن الإقامة المتوفرة في هذه المنطقة واحجز إحداها.",
+    "stay22DescDest": "أماكن الإقامة في محيط {{dest}}"
+  },
+  "flights": {
+    "title": "الرحلات الجوية",
+    "desc": "قارن بين رحلات الطيران واحجزها."
+  },
+  "admin": {
+    "poiModeration": {
+      "loadError": "حدث خطأ أثناء التحميل.",
+      "actionError": "الإجراء غير ممكن.",
+      "approved": "تمت الموافقة عليه",
+      "rejected": "مرفوض",
+      "noClaims": "لا توجد مطالبات معلقة.",
+      "noSuggestions": "لا توجد اقتراحات قيد الانتظار."
+    },
+    "poiClaims": {
+      "title": "مطالبات POI",
+      "proof": "إثبات"
+    },
+    "poiSuggestions": {
+      "title": "اقتراحات للتطوير"
+    }
   }
 }

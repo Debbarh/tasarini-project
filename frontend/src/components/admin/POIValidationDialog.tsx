@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Clock, CheckCircle, XCircle, Shield, AlertCircle, Globe, Mail, Loader2 } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, Shield, AlertCircle, Globe, Mail, Loader2, Film } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { normalizeOpeningHoursForForm } from '@/utils/poiFormNormalization';
 import { formatOpeningHours } from '@/utils/openingHoursUtils';
@@ -589,7 +589,7 @@ export function POIValidationDialog({ poi, isOpen, onClose, onStatusUpdate }: PO
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                       >
-                        🎬 {video}
+                        <Film className="w-4 h-4" /> {video}
                       </a>
                     ))}
                   </div>

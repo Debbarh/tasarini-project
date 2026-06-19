@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Star, Users, Calendar, Sparkles } from 'lucide-react';
+import { MapPin, Star, Users, Calendar, Sparkles, Wallet } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/integrations/api/client';
 
@@ -244,7 +244,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
               </div>
               {destination.estimatedBudget && (
                 <div className="flex items-center gap-1">
-                  <span>💰</span>
+                  <Wallet className="w-3 h-3" />
                   <span>{destination.estimatedBudget}</span>
                 </div>
               )}

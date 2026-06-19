@@ -31,6 +31,10 @@ from .models import (
 
 # Configuration for content validation
 ALLOWED_MEDIA_DOMAINS = [
+    # Domaine du site (médias uploadés via /media/upload/ → https://tasarini.com/media/...)
+    'tasarini.com',
+    'localhost',
+    '127.0.0.1',
     'cloudinary.com',
     'amazonaws.com',
     's3.amazonaws.com',
@@ -76,13 +80,6 @@ def sanitize_html(content: str) -> str:
         attributes=ALLOWED_HTML_ATTRS,
         strip=True
     )
-
-
-class StoryMediaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StoryMedia
-        fields = ['id', 'file', 'external_url', 'caption']
-        read_only_fields = ('id',)
 
 
 class StoryCommentSerializer(serializers.ModelSerializer):
@@ -131,7 +128,6 @@ class AdvertisementSettingSerializer(serializers.ModelSerializer):
 
 class BaseStorySerializer(serializers.ModelSerializer):
     """Base serializer with common fields and methods"""
-    media = StoryMediaSerializer(many=True, read_only=True)
     comments = StoryCommentSerializer(many=True, read_only=True)
     author_name = serializers.SerializerMethodField()
     author_first_name = serializers.SerializerMethodField()
@@ -170,7 +166,6 @@ class BaseStorySerializer(serializers.ModelSerializer):
             'comments_count',
             'shares_count',
             'published_at',
-            'media',
             'comments',
             'travel_story_links',
             'linked_entities',
@@ -307,20 +302,16 @@ class UserStorySerializer(BaseStorySerializer):
                 seen.add(tag_clean)
         return cleaned_tags
 
-    def validate_media_images(self, value):
-        """Validate media images URLs"""
+    @staticmethod
+    def _clean_media_urls(value, label):
+        """Déduplique (en préservant l'ordre), valide le domaine, puis applique la limite.
+
+        On déduplique AVANT le contrôle de limite : un bug client a déjà produit des
+        milliers de fois la même URL (carrousel ~80k images) ; on veut réduire à 1
+        plutôt que rejeter la sauvegarde.
+        """
         if not value:
             return value
-        if len(value) > MAX_MEDIA_COUNT:
-            raise serializers.ValidationError(
-                f"Vous ne pouvez pas avoir plus de {MAX_MEDIA_COUNT} images"
-            )
-        # Validate each URL domain
-        for url in value:
-            if not validate_url_domain(url, ALLOWED_MEDIA_DOMAINS):
-                raise serializers.ValidationError(
-                    f"Le domaine de l'URL '{url}' n'est pas autorisé"
-                )
         # Remove duplicates while preserving order
         unique_urls = []
         seen = set()
@@ -328,30 +319,25 @@ class UserStorySerializer(BaseStorySerializer):
             if url not in seen:
                 unique_urls.append(url)
                 seen.add(url)
+        # Validate each URL domain
+        for url in unique_urls:
+            if not validate_url_domain(url, ALLOWED_MEDIA_DOMAINS):
+                raise serializers.ValidationError(
+                    f"Le domaine de l'URL '{url}' n'est pas autorisé"
+                )
+        if len(unique_urls) > MAX_MEDIA_COUNT:
+            raise serializers.ValidationError(
+                f"Vous ne pouvez pas avoir plus de {MAX_MEDIA_COUNT} {label}"
+            )
         return unique_urls
+
+    def validate_media_images(self, value):
+        """Validate media images URLs"""
+        return self._clean_media_urls(value, "images")
 
     def validate_media_videos(self, value):
         """Validate media videos URLs"""
-        if not value:
-            return value
-        if len(value) > MAX_MEDIA_COUNT:
-            raise serializers.ValidationError(
-                f"Vous ne pouvez pas avoir plus de {MAX_MEDIA_COUNT} vidéos"
-            )
-        # Validate each URL domain
-        for url in value:
-            if not validate_url_domain(url, ALLOWED_MEDIA_DOMAINS):
-                raise serializers.ValidationError(
-                    f"Le domaine de l'URL '{url}' n'est pas autorisé"
-                )
-        # Remove duplicates while preserving order
-        unique_urls = []
-        seen = set()
-        for url in value:
-            if url not in seen:
-                unique_urls.append(url)
-                seen.add(url)
-        return unique_urls
+        return self._clean_media_urls(value, "vidéos")
 
 
 class AdminStorySerializer(BaseStorySerializer):

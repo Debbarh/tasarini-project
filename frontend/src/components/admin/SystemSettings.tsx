@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Settings, Database, Shield, Globe, Zap, Loader2 } from "lucide-react";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
+import TranslationCronPanel from "./TranslationCronPanel";
 import CountriesCitiesManagement from "./CountriesCitiesManagement";
 import TravelGroupManagement from "./TravelGroupManagement";
 import BudgetManagement from "./BudgetManagement";
@@ -58,10 +59,11 @@ const SystemSettings = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="general" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="general">Général</TabsTrigger>
               <TabsTrigger value="security">Sécurité</TabsTrigger>
               <TabsTrigger value="technical">Technique</TabsTrigger>
+              <TabsTrigger value="translation">Traduction</TabsTrigger>
             </TabsList>
 
             <TabsContent value="general" className="space-y-8">
@@ -388,6 +390,10 @@ const SystemSettings = () => {
               Réinitialiser aux valeurs par défaut
             </Button>
           </div>
+            </TabsContent>
+
+            <TabsContent value="translation" className="space-y-8">
+              <TranslationCronPanel />
             </TabsContent>
           </Tabs>
         </CardContent>

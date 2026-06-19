@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, MapPin, Users, DollarSign, Clock } from "lucide-react";
+import { CalendarIcon, MapPin, Users, DollarSign, Clock, Trees, Landmark, Umbrella, Wine, Mountain, Building2, Wallet, Gem, Crown } from "lucide-react";
 import { format } from "date-fns";
 import LocationPicker from "@/components/LocationPicker";
 import { cn } from "@/lib/utils";
@@ -203,12 +203,12 @@ export const TripPlannerForm = ({ onSubmit, isLoading }: TripPlannerFormProps) =
                   <SelectValue placeholder="Choisir un thème" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="nature">🌲 Nature & plein air</SelectItem>
-                  <SelectItem value="culture">🏛️ Culture & musées</SelectItem>
-                  <SelectItem value="plage">🏖️ Plage & détente</SelectItem>
-                  <SelectItem value="gastronomie">🍷 Gastronomie</SelectItem>
-                  <SelectItem value="adventure">🧗 Aventure</SelectItem>
-                  <SelectItem value="city">🏙️ Ville & shopping</SelectItem>
+                  <SelectItem value="nature"><span className="flex items-center gap-2"><Trees className="w-4 h-4" /> Nature & plein air</span></SelectItem>
+                  <SelectItem value="culture"><span className="flex items-center gap-2"><Landmark className="w-4 h-4" /> Culture & musées</span></SelectItem>
+                  <SelectItem value="plage"><span className="flex items-center gap-2"><Umbrella className="w-4 h-4" /> Plage & détente</span></SelectItem>
+                  <SelectItem value="gastronomie"><span className="flex items-center gap-2"><Wine className="w-4 h-4" /> Gastronomie</span></SelectItem>
+                  <SelectItem value="adventure"><span className="flex items-center gap-2"><Mountain className="w-4 h-4" /> Aventure</span></SelectItem>
+                  <SelectItem value="city"><span className="flex items-center gap-2"><Building2 className="w-4 h-4" /> Ville & shopping</span></SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -220,9 +220,9 @@ export const TripPlannerForm = ({ onSubmit, isLoading }: TripPlannerFormProps) =
                   <SelectValue placeholder="Votre budget" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="budget">💰 Économique (&lt; 50€/jour)</SelectItem>
-                  <SelectItem value="moderate">💎 Modéré (50-150€/jour)</SelectItem>
-                  <SelectItem value="luxury">👑 Luxe (&gt; 150€/jour)</SelectItem>
+                  <SelectItem value="budget"><span className="flex items-center gap-2"><Wallet className="w-4 h-4" /> Économique (&lt; 50€/jour)</span></SelectItem>
+                  <SelectItem value="moderate"><span className="flex items-center gap-2"><Gem className="w-4 h-4" /> Modéré (50-150€/jour)</span></SelectItem>
+                  <SelectItem value="luxury"><span className="flex items-center gap-2"><Crown className="w-4 h-4" /> Luxe (&gt; 150€/jour)</span></SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -246,6 +246,8 @@ class UserSerializer(serializers.ModelSerializer):
             'roles',
             'preferred_language',
             'onboarding_completed',
+            'is_active',
+            'email_verified',
             'profile',
             'role_assignments_detail',
         ]
@@ -255,6 +257,8 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'roles',
+            'is_active',
+            'email_verified',
             'profile',
             'role_assignments_detail',
         )

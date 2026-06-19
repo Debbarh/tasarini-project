@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Calendar, Users, MapPin, Loader2 } from 'lucide-react';
+import { Search, Calendar, Users, MapPin, Loader2, Star, Camera, FlaskConical } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -252,8 +252,8 @@ export function HotelSearchDialog({ children, defaultLocation }: HotelSearchDial
                           )}
                         </div>
                         {hotel.rating && (
-                          <Badge variant="secondary">
-                            ⭐ {hotel.rating}
+                          <Badge variant="secondary" className="flex items-center gap-1">
+                            <Star className="w-3 h-3" /> {hotel.rating}
                           </Badge>
                         )}
                       </div>
@@ -291,8 +291,8 @@ export function HotelSearchDialog({ children, defaultLocation }: HotelSearchDial
                       
                        <div className="space-y-2">
                         {hotel.fallbackImageUsed && (
-                          <p className="text-xs text-muted-foreground">
-                            📷 Images de fallback utilisées
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Camera className="w-3 h-3" /> Images de fallback utilisées
                           </p>
                         )}
                         
@@ -302,7 +302,7 @@ export function HotelSearchDialog({ children, defaultLocation }: HotelSearchDial
                           size="sm"
                           variant={hotel.isTestData ? "outline" : "default"}
                         >
-                          {hotel.isTestData ? '🧪 Réserver (Test)' : 'Réserver'}
+                          {hotel.isTestData ? <span className="flex items-center gap-1"><FlaskConical className="w-4 h-4" /> Réserver (Test)</span> : 'Réserver'}
                         </Button>
                       </div>
                     </CardContent>

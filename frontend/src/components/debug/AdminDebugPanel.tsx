@@ -18,9 +18,11 @@ export const AdminDebugPanel = () => {
     setRefreshing(true);
     try {
       
-      // Direct query to check roles via API
-      const rolesData = await apiClient.get<any[]>('accounts/user-roles/', { user: user.id });
-      const permissionsData = await apiClient.get<any[]>('admin/permission-rules/', { admin: user.id });
+      // Direct query to check roles via API. Les endpoints peuvent renvoyer
+      // soit un tableau, soit un objet paginé {results: [...]} → on normalise.
+      const toArray = (d: any): any[] => (Array.isArray(d) ? d : (d?.results ?? []));
+      const rolesData = toArray(await apiClient.get<any>('accounts/user-roles/', { user: user.id }));
+      const permissionsData = toArray(await apiClient.get<any>('admin/permission-rules/', { admin: user.id }));
 
 
       setDebugInfo({
@@ -84,7 +86,7 @@ export const AdminDebugPanel = () => {
             <div>
               <strong>Context Roles:</strong>
               <div className="flex gap-1 mt-1">
-                {userRoles.length > 0 ? (
+                {Array.isArray(userRoles) && userRoles.length > 0 ? (
                   userRoles.map(role => (
                     <Badge key={role} variant="secondary" className="text-xs">
                       {role}
@@ -106,7 +108,7 @@ export const AdminDebugPanel = () => {
                     </Badge>
                   ) : (
                     <div className="flex gap-1 mt-1">
-                      {debugInfo.directRolesQuery?.data?.map((r: any, i: number) => (
+                      {(Array.isArray(debugInfo.directRolesQuery?.data) ? debugInfo.directRolesQuery.data : []).map((r: any, i: number) => (
                         <Badge key={i} variant="outline" className="text-xs">
                           {r.role}
                         </Badge>

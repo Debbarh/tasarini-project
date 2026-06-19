@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Clock, DollarSign, Users, Calendar, Star, Navigation } from "lucide-react";
+import { MapPin, Clock, DollarSign, Users, Calendar, Star, Navigation, Lightbulb } from "lucide-react";
 import MapViewer from "@/components/MapViewer";
 
 interface ItineraryDay {
@@ -100,10 +100,10 @@ export const ItineraryPreview = ({
       }
     ],
     highlights: [
-      "🏛️ Monuments historiques emblématiques",
-      "🍽️ Gastronomie locale authentique", 
-      "🌅 Points de vue panoramiques",
-      "🎨 Art et culture régionale"
+      "Monuments historiques emblématiques",
+      "Gastronomie locale authentique",
+      "Points de vue panoramiques",
+      "Art et culture régionale"
     ],
     tips: [
       "Réservez vos restaurants à l'avance",
@@ -266,7 +266,7 @@ export const ItineraryPreview = ({
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">🌟 Points forts</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2"><Star className="w-5 h-5" /> Points forts</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
@@ -282,7 +282,7 @@ export const ItineraryPreview = ({
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">💡 Conseils pratiques</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2"><Lightbulb className="w-5 h-5" /> Conseils pratiques</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">

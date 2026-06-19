@@ -9,11 +9,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Wallet, DollarSign, Percent, Globe } from "lucide-react";
+import { Plus, Edit, Trash2, Wallet, DollarSign, Percent, Globe, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { budgetService, BudgetLevel, BudgetCurrency, BudgetFlexibilityOption } from "@/services/budgetService";
 import { getLocalizedLabel, getLocalizedName } from "@/utils/multilingualHelpers";
 import { useTranslation } from "react-i18next";
+import IconPicker from "@/components/admin/IconPicker";
+import { TaxonomyIcon } from "@/lib/taxonomyIcon";
 
 type LanguageOption = { code: string; label: string; required?: boolean };
 
@@ -274,7 +276,7 @@ const BudgetManagement = () => {
       setEditingLevel(result.budget_level);
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await fetchData();
@@ -295,7 +297,7 @@ const BudgetManagement = () => {
       setEditingCurrency(result.budget_currency);
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await fetchData();
@@ -316,7 +318,7 @@ const BudgetManagement = () => {
       setEditingFlexibility(result.budget_flexibility_option);
 
       toast({
-        title: "✅ Traduction réussie",
+        title: <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Traduction réussie</span>,
         description: `${result.message} dans les langues: ${result.languages.join(", ")}`,
       });
       await fetchData();
@@ -402,6 +404,7 @@ const BudgetManagement = () => {
                   <TableRow>
                     <TableHead>Code</TableHead>
                     <TableHead>Label</TableHead>
+                    <TableHead>Icône</TableHead>
                     <TableHead>Emoji</TableHead>
                     <TableHead>Montant par défaut</TableHead>
                     <TableHead>Gamme</TableHead>
@@ -414,6 +417,9 @@ const BudgetManagement = () => {
                     <TableRow key={level.id}>
                       <TableCell className="font-mono">{level.code}</TableCell>
                       <TableCell>{getLocalizedLabel(level, i18n.language) || level.label_fr}</TableCell>
+                      <TableCell>
+                        <TaxonomyIcon iconName={level.icon_name} code={level.code} className="h-5 w-5" />
+                      </TableCell>
                       <TableCell className="text-lg">{level.icon_emoji}</TableCell>
                       <TableCell>{level.default_daily_amount}€</TableCell>
                       <TableCell>
@@ -729,6 +735,7 @@ const BudgetLevelForm = ({
     description_hi: level?.description_hi || '',
     description_ar: level?.description_ar || '',
     icon_emoji: level?.icon_emoji || '',
+    icon_name: level?.icon_name || '',
     min_daily_amount: level?.min_daily_amount ?? null,
     max_daily_amount: level?.max_daily_amount ?? null,
     default_daily_amount: level?.default_daily_amount ?? 100,
@@ -759,7 +766,7 @@ const BudgetLevelForm = ({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="icon_emoji">Emoji</Label>
+          <Label htmlFor="icon_emoji">Emoji (legacy)</Label>
           <Input
             id="icon_emoji"
             value={formData.icon_emoji}
@@ -768,7 +775,12 @@ const BudgetLevelForm = ({
           />
         </div>
       </div>
-      
+
+      <div className="space-y-2">
+        <Label>Icône SVG</Label>
+        <IconPicker value={formData.icon_name} onChange={(name) => updateField('icon_name', name)} />
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="label_fr">Label français</Label>

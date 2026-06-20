@@ -899,6 +899,26 @@ class TranslationRunLog(TimeStampedModel):
         return f"Run {self.source}/{self.mode} {self.status} ({self.poi_completed} POI)"
 
 
+class TranslationCache(models.Model):
+    """Mémoire de traduction : (texte, langue) → traduction. Évite de retraduire des chaînes
+    identiques (noms/adresses très répétés) et tout re-calcul lors des passes suivantes.
+    Limité aux chaînes courtes (noms/adresses)."""
+    text_hash = models.CharField(max_length=40)  # sha1 hex du texte source
+    target_lang = models.CharField(max_length=8)
+    source_text = models.CharField(max_length=255)
+    translated_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['text_hash', 'target_lang'], name='uniq_transcache_hash_lang'),
+        ]
+        indexes = [models.Index(fields=['text_hash', 'target_lang'], name='transcache_hash_lang_idx')]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"Cache[{self.target_lang}] {self.source_text[:30]}"
+
+
 class POIReport(TimeStampedModel):
     """Signalement d'un POI par un utilisateur connecté. Au 1er signalement le POI est
     gelé (is_active=False, status=under_review) jusqu'à décision admin (supprimer/garder)."""

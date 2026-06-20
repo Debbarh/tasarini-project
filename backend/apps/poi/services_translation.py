@@ -30,15 +30,14 @@ def process_batch(batch_size: int = 20) -> dict:
     for job in jobs:
         poi = job.tourist_point
         try:
-            out = {}
-            for field in ('name', 'description', 'address'):
-                val = (getattr(poi, field, '') or '').strip()
-                out[field] = (
-                    translate_text(val, source_lang='auto', target_lang=job.lang,
-                                   is_location=(field in _LOCATION_FIELDS))
-                    if val else ''
-                )
+            from .services_i18n import poi_lang_payload
+            from .lang_detect import detect_language
+            base = {f: (getattr(poi, f, '') or '').strip() for f in ('name', 'description', 'address')}
             meta = poi.metadata or {}
+            names_auth = meta.get('names') or {}
+            L0 = detect_language(base['description'] or base['name']) or 'en'
+            # Politique qualité : nom authentique/original, adresse originale, description = LLM.
+            out = poi_lang_payload(base, names_auth, L0, job.lang)
             translations = meta.get('translations') or {}
             translations[job.lang] = out
             meta['translations'] = translations

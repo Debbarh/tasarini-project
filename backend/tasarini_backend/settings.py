@@ -223,6 +223,12 @@ OLLAMA_API_BASE = env('OLLAMA_API_BASE', default='http://ollama:11434')
 # Traduction dynamique unifiée : un seul moteur = translategemma:4b (Ollama). Plus de DeepL.
 TRANSLATION_OLLAMA_MODEL = env('TRANSLATION_OLLAMA_MODEL', default='translategemma:4b')
 TRANSLATION_TIMEOUT = env.int('TRANSLATION_TIMEOUT', default=90)
+# Accélération du cron : réglages Ollama + traduction par lots (voir services_i18n).
+TRANSLATION_OLLAMA_NUM_CTX = env.int('TRANSLATION_OLLAMA_NUM_CTX', default=2048)
+TRANSLATION_OLLAMA_NUM_PREDICT = env.int('TRANSLATION_OLLAMA_NUM_PREDICT', default=512)
+TRANSLATION_OLLAMA_KEEP_ALIVE = env('TRANSLATION_OLLAMA_KEEP_ALIVE', default='30m')
+TRANSLATION_BATCH_TEXTS = env.int('TRANSLATION_BATCH_TEXTS', default=25)
+TRANSLATION_BATCH_ENABLED = env.bool('TRANSLATION_BATCH_ENABLED', default=True)
 
 # --- OAuth social (Google & Facebook) ---
 # Base d'URL du backend pour les redirect_uri OAuth (doit matcher EXACTEMENT la console).

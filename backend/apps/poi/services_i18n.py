@@ -16,10 +16,107 @@ import logging
 
 from django.utils import timezone
 
-from .admin import SUPPORTED_LANGUAGES, translate_text
+import hashlib
+
+from django.conf import settings as dj_settings
+
+from .admin import (
+    SUPPORTED_LANGUAGES, translate_text, translate_via_ollama,
+    translate_batch_via_ollama, _foreign_fraction, LOCATION_NAMES_DICT,
+)
 from .lang_detect import detect_language
 
 logger = logging.getLogger(__name__)
+
+_CACHE_MAXLEN = 200  # ne cacher que les chaînes courtes (noms/adresses)
+
+
+def _sha1(text: str) -> str:
+    return hashlib.sha1(text.encode('utf-8')).hexdigest()
+
+
+def translate_many(items, target_lang):
+    """Traduit une liste d'items `(texte, is_location)` vers `target_lang`, en RENVOYANT
+    la liste des traductions (même ordre). Pipeline d'accélération :
+      1) garde-fou script + dictionnaire de lieux → aucun appel ;
+      2) cache (TranslationCache) → réutilise l'existant ;
+      3) traduction par LOTS (translate_batch_via_ollama, fallback per-item) ;
+      4) écriture du cache (chaînes courtes).
+    """
+    from .models import TranslationCache
+    n = len(items)
+    results = [None] * n
+    need = []
+    for i, (text, is_loc) in enumerate(items):
+        t = (text or '').strip()
+        if not t:
+            results[i] = text
+            continue
+        if is_loc:
+            entry = LOCATION_NAMES_DICT.get(t.lower())
+            if entry and target_lang in entry:
+                results[i] = entry[target_lang]
+                continue
+            if _foreign_fraction(t, target_lang) < 0.25:
+                results[i] = t  # déjà dans le script cible
+                continue
+        need.append(i)
+    if not need:
+        return results
+    # 2) cache groupé
+    hash_by_i = {i: _sha1((items[i][0] or '').strip()) for i in need}
+    rows = TranslationCache.objects.filter(
+        target_lang=target_lang, text_hash__in=list(set(hash_by_i.values()))
+    ).values_list('text_hash', 'translated_text')
+    cache_map = dict(rows)
+    still = []
+    for i in need:
+        c = cache_map.get(hash_by_i[i])
+        if c is not None:
+            results[i] = c
+        else:
+            still.append(i)
+    if not still:
+        return results
+    # 3) dédup intra-lot
+    by_text = {}
+    order = []
+    for i in still:
+        t = (items[i][0] or '').strip()
+        if t not in by_text:
+            by_text[t] = []
+            order.append(t)
+        by_text[t].append(i)
+    # 4) traduction (batch ou per-item)
+    translated = {}
+    batch_on = getattr(dj_settings, 'TRANSLATION_BATCH_ENABLED', True)
+    if batch_on and len(order) > 1:
+        bs = max(1, getattr(dj_settings, 'TRANSLATION_BATCH_TEXTS', 25))
+        for k in range(0, len(order), bs):
+            chunk = order[k:k + bs]
+            out = translate_batch_via_ollama(chunk, target_lang)
+            if out is None:  # repli per-item → aucune corruption
+                out = [(translate_via_ollama(t, target_lang) or t) for t in chunk]
+            for t, tr in zip(chunk, out):
+                translated[t] = tr or t
+    else:
+        for t in order:
+            translated[t] = translate_via_ollama(t, target_lang) or t
+    # 5) recomposition + écriture cache
+    new_rows = []
+    for t in order:
+        tr = translated[t]
+        for i in by_text[t]:
+            results[i] = tr
+        if t and tr and len(t) <= _CACHE_MAXLEN:
+            new_rows.append(TranslationCache(
+                text_hash=_sha1(t), target_lang=target_lang, source_text=t[:255], translated_text=tr))
+    if new_rows:
+        try:
+            TranslationCache.objects.bulk_create(new_rows, ignore_conflicts=True)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("cache bulk_create: %s", exc)
+    return results
 
 # Registre des modèles de taxonomie localisés + leurs groupes de champs.
 # (name = nom propre → is_location ; label/description = libellé/prose.)
@@ -172,28 +269,40 @@ def poi_complete(poi) -> bool:
     return all(lang in tr for lang in SUPPORTED_LANGUAGES)
 
 
+def poi_lang_payload(base, names_auth, L0, lang):
+    """Construit {name, description, address} d'un POI pour `lang` selon la POLITIQUE QUALITÉ :
+      - name    : nom AUTHENTIQUE (open data, `metadata['names'][lang]`) si présent, SINON nom d'origine
+                  (jamais de translittération LLM inventée).
+      - address : conservée telle quelle (nom propre).
+      - description : prose → traduite par le LLM (rare : ~0 POI ont une description).
+    """
+    desc = base['description']
+    if desc:
+        desc = translate_text(desc, source_lang=L0, target_lang=lang, is_location=False) or desc
+    return {
+        'name': (names_auth.get(lang) or base['name']),
+        'description': desc or '',
+        'address': base['address'],
+    }
+
+
 def translate_poi_object(poi, *, mode='missing') -> dict:
     base = {f: (getattr(poi, f, '') or '').strip() for f in _POI_FIELDS}
     if not any(base.values()):
         return {'changed': False, 'L0': None, 'langs': []}
-    # Langue d'origine : détectée sur la description (plus fiable) sinon le nom ; défaut 'en'.
     L0 = detect_language(base['description'] or base['name']) or 'en'
     meta = poi.metadata or {}
+    names_auth = meta.get('names') or {}  # noms authentiques (open data) si enrichis
     translations = dict(meta.get('translations') or {})
     changed = False
     langs = []
-    # Le contenu de base EST la traduction de sa propre langue.
     if translations.get(L0) != base:
-        translations[L0] = dict(base)
+        translations[L0] = dict(base)  # le contenu de base = sa propre langue
         changed = True
     for lang in SUPPORTED_LANGUAGES:
         if lang == L0 or translations.get(lang):
-            continue  # langue d'origine, ou déjà traduite → on ne refait pas
-        translations[lang] = {
-            f: (translate_text(v, source_lang=L0, target_lang=lang,
-                               is_location=(f in _POI_LOCATION)) if v else '')
-            for f, v in base.items()
-        }
+            continue
+        translations[lang] = poi_lang_payload(base, names_auth, L0, lang)
         langs.append(lang)
         changed = True
     if changed:
@@ -205,7 +314,9 @@ def translate_poi_object(poi, *, mode='missing') -> dict:
 
 def backfill_pois(start_cursor='', *, mode='auto', batch=50, deadline=None) -> dict:
     """Traduit jusqu'à `batch` POI à partir du curseur (id UUID). Reprenable.
-    Renvoie {cursor, processed, completed, wrapped}. wrapped=True = fin de table atteinte."""
+    Politique qualité : noms/adresses = authentique (open data) ou original (aucune
+    translittération LLM) ; descriptions = LLM. → quasi sans appel Ollama (descriptions ~0).
+    Renvoie {cursor, processed, completed, wrapped}."""
     from .models import TouristPoint
     qs = TouristPoint.objects.order_by('id')
     if start_cursor:
@@ -216,22 +327,19 @@ def backfill_pois(start_cursor='', *, mode='auto', batch=50, deadline=None) -> d
     pois = list(qs.only('id', 'name', 'description', 'address', 'metadata')[:batch])
     if not pois:
         return {'cursor': '', 'processed': 0, 'completed': 0, 'wrapped': True}
-    processed = completed = 0
-    cursor = start_cursor
+    cursor = str(pois[-1].id)
+    completed = 0
     for poi in pois:
         if _expired(deadline):
             break
-        cursor = str(poi.id)
-        processed += 1
         if poi_complete(poi):
             continue
         try:
-            r = translate_poi_object(poi, mode=mode)
-            if r['changed']:
+            if translate_poi_object(poi, mode=mode)['changed']:
                 completed += 1
         except Exception as exc:  # noqa: BLE001 - on isole chaque POI
-            logger.warning("backfill POI %s échec: %s", poi.id, exc)
-    return {'cursor': cursor, 'processed': processed, 'completed': completed,
+            logger.warning("backfill POI %s: %s", poi.id, exc)
+    return {'cursor': cursor, 'processed': len(pois), 'completed': completed,
             'wrapped': len(pois) < batch}
 
 

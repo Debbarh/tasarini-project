@@ -121,6 +121,20 @@ def _clean_translation(out):
     return out or None
 
 
+def _ollama_options():
+    """Options d'inférence (réglables) : contexte réduit + cap de génération = plus rapide."""
+    return {
+        'temperature': 0,
+        'num_ctx': getattr(settings, 'TRANSLATION_OLLAMA_NUM_CTX', 2048),
+        'num_predict': getattr(settings, 'TRANSLATION_OLLAMA_NUM_PREDICT', 512),
+    }
+
+
+def _ollama_keep_alive():
+    # Garde le modèle chargé pendant la passe (évite de recharger 2,9 Go à chaque idle).
+    return getattr(settings, 'TRANSLATION_OLLAMA_KEEP_ALIVE', '30m')
+
+
 def translate_via_ollama(text, target_lang):
     """Traduit `text` vers `target_lang` via translategemma:4b (Ollama). None si échec."""
     lang_name = _LANG_NAME.get(target_lang, target_lang)
@@ -133,7 +147,8 @@ def translate_via_ollama(text, target_lang):
     try:
         resp = requests.post(
             f"{base}/api/generate",
-            json={'model': model, 'prompt': prompt, 'stream': False, 'options': {'temperature': 0}},
+            json={'model': model, 'prompt': prompt, 'stream': False,
+                  'options': _ollama_options(), 'keep_alive': _ollama_keep_alive()},
             timeout=getattr(settings, 'TRANSLATION_TIMEOUT', 90),
         )
         resp.raise_for_status()
@@ -142,6 +157,51 @@ def translate_via_ollama(text, target_lang):
         logger.warning("Ollama translate failed (%s): %s", target_lang, exc)
         return None
     return _clean_translation(out)
+
+
+_BATCH_LINE_RE = _re.compile(r'^\s*(\d+)\s*[.\):\-]\s*(.*)$')
+
+
+def translate_batch_via_ollama(texts, target_lang):
+    """Traduit une LISTE de textes COURTS vers `target_lang` en UN SEUL appel (liste numérotée).
+    Renvoie une liste de même ordre/longueur, ou **None** si la réponse ne se parse pas
+    exactement (l'appelant retombe alors en per-item → aucune corruption)."""
+    texts = [str(t) for t in texts]
+    if not texts:
+        return []
+    if any('\n' in t for t in texts):  # parsing par lignes ambigu → refuser le batch
+        return None
+    lang_name = _LANG_NAME.get(target_lang, target_lang)
+    base = getattr(settings, 'OLLAMA_API_BASE', 'http://ollama:11434')
+    model = getattr(settings, 'TRANSLATION_OLLAMA_MODEL', 'translategemma:4b')
+    numbered = "\n".join(f"{i + 1}. {t}" for i, t in enumerate(texts))
+    prompt = (
+        f"Translate each numbered item to {lang_name}. Reply with ONLY the translations, "
+        f"one per line, each prefixed by its number and a period, in the same order. "
+        f"No explanations, no extra lines.\n\n{numbered}"
+    )
+    opts = _ollama_options()
+    opts['num_predict'] = max(opts['num_predict'], len(texts) * 48)  # marge pour N lignes
+    try:
+        resp = requests.post(
+            f"{base}/api/generate",
+            json={'model': model, 'prompt': prompt, 'stream': False,
+                  'options': opts, 'keep_alive': _ollama_keep_alive()},
+            timeout=getattr(settings, 'TRANSLATION_TIMEOUT', 90),
+        )
+        resp.raise_for_status()
+        out = (resp.json().get('response') or '').strip()
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Ollama batch translate failed (%s): %s", target_lang, exc)
+        return None
+    parsed = {}
+    for line in out.splitlines():
+        m = _BATCH_LINE_RE.match(line)
+        if m:
+            parsed[int(m.group(1))] = _clean_translation(m.group(2))
+    if len(parsed) != len(texts) or any((i + 1) not in parsed for i in range(len(texts))):
+        return None  # format inattendu → fallback per-item
+    return [parsed[i + 1] or texts[i] for i in range(len(texts))]
 
 
 def translate_text(text, source_lang='en', target_lang='fr', is_location=False):

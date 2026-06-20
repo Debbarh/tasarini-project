@@ -1,16 +1,16 @@
 {
   "navigation": {
-    "createTrip": "Создать путешествие",
+    "createTrip": "Спланировать путешествие",
     "exploreWorld": "Исследовать мир",
     "travelStories": "Истории приключений",
-    "myTreasures": "Мои сокровища",
+    "myTreasures": "Мои открытия",
     "partnerSpace": "Партнерская зона",
     "administration": "Администрирование",
     "myProfile": "Мой профиль",
     "logout": "Выйти",
     "login": "Войти",
     "notifications": "Уведомления",
-    "savedItineraries": "Мои маршруты"
+    "savedItineraries": "Мои путешествия"
   },
   "notFound": {
     "title": "404",

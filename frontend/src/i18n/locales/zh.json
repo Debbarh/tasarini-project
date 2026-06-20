@@ -1,16 +1,16 @@
 {
   "navigation": {
-    "createTrip": "创建我的旅行",
+    "createTrip": "规划我的旅行",
     "exploreWorld": "探索世界",
     "travelStories": "冒险故事",
-    "myTreasures": "我的珍宝",
+    "myTreasures": "我的发现",
     "partnerSpace": "合作伙伴区域",
     "administration": "管理",
     "myProfile": "我的档案",
     "logout": "登出",
     "login": "登录",
     "notifications": "通知",
-    "savedItineraries": "我的行程"
+    "savedItineraries": "我的旅行"
   },
   "notFound": {
     "title": "404",

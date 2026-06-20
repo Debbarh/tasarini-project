@@ -1,16 +1,16 @@
 {
   "navigation": {
-    "createTrip": "Meine Reise erstellen",
+    "createTrip": "Meine Reise planen",
     "exploreWorld": "Die Welt erkunden",
     "travelStories": "Abenteuergeschichten",
-    "myTreasures": "Meine Schätze",
+    "myTreasures": "Meine Entdeckungen",
     "partnerSpace": "Partner-Bereich",
     "administration": "Verwaltung",
     "myProfile": "Mein Profil",
     "logout": "Abmelden",
     "login": "Anmelden",
     "notifications": "Benachrichtigungen",
-    "savedItineraries": "Meine Routen"
+    "savedItineraries": "Meine Reisen"
   },
   "notFound": {
     "title": "404",

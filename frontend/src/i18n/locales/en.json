@@ -3,14 +3,14 @@
     "createTrip": "Plan my trip",
     "exploreWorld": "Explore the world",
     "travelStories": "Adventure stories",
-    "myTreasures": "My treasures",
+    "myTreasures": "My discoveries",
     "partnerSpace": "Partner Space",
     "administration": "Administration",
     "myProfile": "My Profile",
     "notifications": "Notifications",
     "logout": "Logout",
     "login": "Login",
-    "savedItineraries": "My itineraries"
+    "savedItineraries": "My trips"
   },
   "notFound": {
     "title": "404",

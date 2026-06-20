@@ -1,16 +1,16 @@
 {
   "navigation": {
-    "createTrip": "إنشاء رحلتي",
+    "createTrip": "خطّط لرحلتي",
     "exploreWorld": "استكشاف العالم",
     "travelStories": "قصص المغامرة",
-    "myTreasures": "كنوزي",
+    "myTreasures": "اكتشافاتي",
     "partnerSpace": "منطقة الشركاء",
     "administration": "الإدارة",
     "myProfile": "ملفي الشخصي",
     "logout": "تسجيل الخروج",
     "login": "تسجيل الدخول",
     "notifications": "الإشعارات",
-    "savedItineraries": "مساراتي"
+    "savedItineraries": "رحلاتي"
   },
   "notFound": {
     "title": "404",

@@ -1,16 +1,16 @@
 {
   "navigation": {
-    "createTrip": "मेरी यात्रा बनाएं",
+    "createTrip": "मेरी यात्रा की योजना बनाएं",
     "exploreWorld": "दुनिया का अन्वेषण करें",
     "travelStories": "साहसिक कहानियां",
-    "myTreasures": "मेरे खजाने",
+    "myTreasures": "मेरी खोजें",
     "partnerSpace": "साझेदार क्षेत्र",
     "administration": "प्रशासन",
     "myProfile": "मेरी प्रोफ़ाइल",
     "logout": "लॉग आउट",
     "login": "लॉग इन",
     "notifications": "अधिसूचनाएं",
-    "savedItineraries": "मेरे मार्ग"
+    "savedItineraries": "मेरी यात्राएं"
   },
   "notFound": {
     "title": "404",

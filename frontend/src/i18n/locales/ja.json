@@ -1,16 +1,16 @@
 {
   "navigation": {
-    "createTrip": "旅行を作成",
+    "createTrip": "旅行を計画する",
     "exploreWorld": "世界を探索",
     "travelStories": "冒険の物語",
-    "myTreasures": "私の宝物",
+    "myTreasures": "私の発見",
     "partnerSpace": "パートナーエリア",
     "administration": "管理",
     "myProfile": "マイプロフィール",
     "logout": "ログアウト",
     "login": "ログイン",
     "notifications": "通知",
-    "savedItineraries": "私のルート"
+    "savedItineraries": "私の旅行"
   },
   "notFound": {
     "title": "404",

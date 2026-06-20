@@ -638,9 +638,16 @@ export const getTranslationCronStats = async () =>
 export const runTranslationCronNow = async (batchSize = 10) =>
   apiClient.post<any>('poi/translation-cron/', { batch_size: batchSize });
 
-// Lancement manuel de la passe i18n : 'missing' (incrémental) ou 'full' (passe complète bornée).
-export const runTranslationPass = async (mode: 'missing' | 'full') =>
-  apiClient.post<any>('poi/translation-cron/', { mode });
+// Passe manuelle CONTINUE (sans limite de temps) : démarrage / arrêt explicites.
+export const startTranslationPass = async (mode: 'missing' | 'full') =>
+  apiClient.post<any>('poi/translation-cron/', { action: 'start', mode });
+
+export const stopTranslationPass = async () =>
+  apiClient.post<any>('poi/translation-cron/', { action: 'stop' });
+
+// Purge l'historique + les entrées de file traitées (NE TOUCHE PAS aux traductions).
+export const clearTranslationLogs = async () =>
+  apiClient.post<any>('poi/translation-cron/', { action: 'clear_logs' });
 
 // Enrichissement OpenTripMap à la demande (description Wikipédia + image) pour un POI.
 export const getPOIEnrichment = async (

@@ -2273,21 +2273,28 @@ class POIReportViewSet(viewsets.ModelViewSet):
 
 class TranslationCronView(APIView):
     """Suivi & pilotage de la traduction (admin).
-    GET  = stats file + réglages/progression de la passe quotidienne.
-    POST = lance du travail maintenant selon `mode` :
-       - `queue`   (défaut) : draine la file on-demand (process_batch).
-       - `missing` : passe INCRÉMENTALE bornée (ne complète que le manquant, sans réaffectation).
-       - `full`    : passe COMPLÈTE bornée (taxonomies réaffectées + backfill POI, avance le curseur).
+    GET  = stats file + réglages quotidiens + état manuel + historique des exécutions.
+    POST `action` :
+       - `start`      : démarre la passe manuelle CONTINUE (sans limite de temps). `mode`=missing|full.
+       - `stop`       : arrête la passe manuelle.
+       - `clear_logs` : purge l'historique + les entrées de file traitées (done/failed). NE TOUCHE PAS aux traductions.
+       - `queue`      : draine un lot de la file on-demand (process_batch).
     """
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
         from . import services_i18n as i18n
+        from .models import TranslationRunLog
         qs = POITranslationQueue.objects
         recent = list(
             qs.filter(status=POITranslationQueue.Status.DONE).select_related('tourist_point')
             .order_by('-updated_at')[:10]
             .values('tourist_point__name', 'lang', 'updated_at')
+        )
+        runs = list(
+            TranslationRunLog.objects.order_by('-started_at')[:15].values(
+                'id', 'source', 'mode', 'status', 'started_at', 'finished_at',
+                'tax_changed', 'poi_completed', 'poi_processed', 'note')
         )
         return Response({
             'pending': qs.filter(status=POITranslationQueue.Status.PENDING).count(),
@@ -2302,20 +2309,38 @@ class TranslationCronView(APIView):
                 'poi_done': i18n.get_int_setting('translation_poi_done_count', 0),
                 'poi_total': TouristPoint.objects.count(),
             },
+            'manual': {
+                'running': i18n.get_bool_setting('translation_manual_enabled', False),
+                'mode': i18n.get_setting('translation_manual_mode', 'missing'),
+            },
+            'runs': runs,
         })
 
     def post(self, request):
         from .services_translation import process_batch
         from . import services_i18n as i18n
-        from datetime import timedelta
-        mode = (request.data.get('mode') or 'queue').strip()
-        if mode in ('missing', 'full'):
-            # Bornée à ~40 s pour que la requête HTTP réponde ; reprenable au clic suivant.
-            deadline = timezone.now() + timedelta(seconds=40)
-            pass_mode = 'missing' if mode == 'missing' else 'auto'
-            summary = i18n.run_pass(mode=pass_mode, deadline=deadline, poi_batch=10)
-            summary['mode'] = mode
-            return Response(summary)
+        action = (request.data.get('action') or '').strip()
+
+        if action == 'start':
+            mode = (request.data.get('mode') or 'missing').strip()
+            mode = mode if mode in ('missing', 'full') else 'missing'
+            i18n.set_setting('translation_manual_mode', mode)
+            i18n.set_setting('translation_manual_enabled', 'true')
+            return Response({'started': True, 'mode': mode})
+
+        if action == 'stop':
+            i18n.set_setting('translation_manual_enabled', 'false')
+            return Response({'stopped': True})
+
+        if action == 'clear_logs':
+            from .models import TranslationRunLog
+            runs_deleted = TranslationRunLog.objects.all().delete()[0]
+            jobs_deleted = POITranslationQueue.objects.filter(
+                status__in=[POITranslationQueue.Status.DONE, POITranslationQueue.Status.FAILED]
+            ).delete()[0]
+            return Response({'cleared': True, 'runs_deleted': runs_deleted, 'jobs_deleted': jobs_deleted})
+
+        # Défaut : vider un lot de la file on-demand.
         try:
             n = int(request.data.get('batch_size') or 10)
         except (TypeError, ValueError):

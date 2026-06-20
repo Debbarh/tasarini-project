@@ -273,6 +273,39 @@ def _incr_setting(key, delta):
     set_setting(key, get_int_setting(key, 0) + int(delta))
 
 
+# --- Historique des exécutions (TranslationRunLog) ---
+def start_run_log(source, mode):
+    from .models import TranslationRunLog
+    return TranslationRunLog.objects.create(
+        source=source, mode=mode, status=TranslationRunLog.Status.RUNNING)
+
+
+def update_run_log(log, summary):
+    if not log:
+        return
+    log.tax_changed += int(summary.get('tax', {}).get('changed', 0) or 0)
+    log.poi_completed += int(summary.get('poi_completed', 0) or 0)
+    log.poi_processed += int(summary.get('poi_processed', 0) or 0)
+    log.save(update_fields=['tax_changed', 'poi_completed', 'poi_processed', 'updated_at'])
+
+
+def finish_run_log(log, status, note=''):
+    if not log:
+        return
+    log.status = status
+    log.finished_at = timezone.now()
+    if note:
+        log.note = note[:255]
+    log.save(update_fields=['status', 'finished_at', 'note', 'updated_at'])
+
+
+def current_manual_log():
+    from .models import TranslationRunLog
+    return (TranslationRunLog.objects
+            .filter(source=TranslationRunLog.Source.MANUAL, status=TranslationRunLog.Status.RUNNING)
+            .order_by('-started_at').first())
+
+
 def run_pass(*, mode='auto', deadline=None, poi_batch=25, drain_queue=True) -> dict:
     """Passe complète (taxonomies puis backfill POI par curseur), bornée par `deadline`.
     Gère le curseur et le compteur de POI terminés. Utilisée par le cron nuit ET le bouton

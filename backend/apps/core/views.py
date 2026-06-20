@@ -38,6 +38,9 @@ DEFAULT_SETTINGS = [
     ('translation_bulk_cursor', '', 'text', 'Curseur de backfill des POI (interne)', 'translation'),
     ('translation_daily_last_run', '', 'text', 'Date du dernier déclenchement quotidien (interne)', 'translation'),
     ('translation_poi_done_count', '0', 'number', 'Nombre de POI entièrement traduits (compteur)', 'translation'),
+    # Lancement manuel continu (start/stop par l'admin, sans limite de temps).
+    ('translation_manual_enabled', 'false', 'boolean', 'Passe manuelle en cours (start/stop admin)', 'translation'),
+    ('translation_manual_mode', 'missing', 'text', "Mode de la passe manuelle ('missing' ou 'full')", 'translation'),
 ]
 
 

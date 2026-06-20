@@ -869,6 +869,36 @@ class POITranslationQueue(TimeStampedModel):
         return f"TranslationJob {self.tourist_point_id} {self.lang} ({self.status})"
 
 
+class TranslationRunLog(TimeStampedModel):
+    """Historique des exécutions du cron de traduction (manuelles ou quotidiennes), pour
+    l'« état de ce qui a été fait » et la purge des logs. N'affecte JAMAIS les traductions."""
+    class Source(models.TextChoices):
+        MANUAL = 'manual', 'Manuel'
+        DAILY = 'daily', 'Quotidien'
+
+    class Status(models.TextChoices):
+        RUNNING = 'running', 'En cours'
+        DONE = 'done', 'Terminé'
+        STOPPED = 'stopped', 'Arrêté'
+
+    source = models.CharField(max_length=12, choices=Source.choices)
+    mode = models.CharField(max_length=16, blank=True)  # missing / full / auto
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.RUNNING)
+    started_at = models.DateTimeField(default=timezone.now)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    tax_changed = models.PositiveIntegerField(default=0)
+    poi_completed = models.PositiveIntegerField(default=0)
+    poi_processed = models.PositiveIntegerField(default=0)
+    note = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ['-started_at']
+        indexes = [models.Index(fields=['source', 'status'], name='transrun_src_status_idx')]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"Run {self.source}/{self.mode} {self.status} ({self.poi_completed} POI)"
+
+
 class POIReport(TimeStampedModel):
     """Signalement d'un POI par un utilisateur connecté. Au 1er signalement le POI est
     gelé (is_active=False, status=under_review) jusqu'à décision admin (supprimer/garder)."""

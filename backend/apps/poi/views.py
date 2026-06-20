@@ -2072,6 +2072,12 @@ def _apply_suggestion(suggestion) -> list:
                     imgs.append(url)
             meta['images'] = imgs[:6]
             applied.append('media_images')
+    # Re-traduction : si un champ traduisible a changé, les traductions en cache deviennent
+    # périmées → on les purge et on ré-enfile les 11 langues (le worker régénère depuis le
+    # contenu VALIDÉ). Les attributs taxonomiques (codes) n'ont rien à retraduire.
+    translatable_changed = any(f in applied for f in ('name', 'description', 'address'))
+    if translatable_changed:
+        meta.pop('translations', None)
     # provenance
     history = meta.get('enrichment_history') or []
     history.append({
@@ -2084,6 +2090,20 @@ def _apply_suggestion(suggestion) -> list:
     poi.metadata = meta
     update_fields.add('metadata'); update_fields.add('updated_at')
     poi.save(update_fields=list(update_fields))
+    if translatable_changed:
+        from .admin import SUPPORTED_LANGUAGES
+        for lang in SUPPORTED_LANGUAGES:
+            try:
+                job, created = POITranslationQueue.objects.get_or_create(
+                    tourist_point=poi, lang=lang,
+                    defaults={'status': POITranslationQueue.Status.PENDING},
+                )
+                if not created and job.status != POITranslationQueue.Status.PENDING:
+                    job.status = POITranslationQueue.Status.PENDING
+                    job.attempts = 0
+                    job.save(update_fields=['status', 'attempts', 'updated_at'])
+            except Exception:  # noqa: BLE001
+                pass
     return applied
 
 
@@ -2252,10 +2272,17 @@ class POIReportViewSet(viewsets.ModelViewSet):
 
 
 class TranslationCronView(APIView):
-    """Suivi du cron de traduction (admin). GET = stats ; POST = lance un lot maintenant."""
+    """Suivi & pilotage de la traduction (admin).
+    GET  = stats file + réglages/progression de la passe quotidienne.
+    POST = lance du travail maintenant selon `mode` :
+       - `queue`   (défaut) : draine la file on-demand (process_batch).
+       - `missing` : passe INCRÉMENTALE bornée (ne complète que le manquant, sans réaffectation).
+       - `full`    : passe COMPLÈTE bornée (taxonomies réaffectées + backfill POI, avance le curseur).
+    """
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
+        from . import services_i18n as i18n
         qs = POITranslationQueue.objects
         recent = list(
             qs.filter(status=POITranslationQueue.Status.DONE).select_related('tourist_point')
@@ -2267,10 +2294,28 @@ class TranslationCronView(APIView):
             'done': qs.filter(status=POITranslationQueue.Status.DONE).count(),
             'failed': qs.filter(status=POITranslationQueue.Status.FAILED).count(),
             'recent': recent,
+            'daily': {
+                'enabled': i18n.get_bool_setting('translation_daily_enabled', False),
+                'hour': i18n.get_int_setting('translation_daily_hour', 0),
+                'duration_hours': i18n.get_float_setting('translation_daily_duration_hours', 6),
+                'last_run': i18n.get_setting('translation_daily_last_run', ''),
+                'poi_done': i18n.get_int_setting('translation_poi_done_count', 0),
+                'poi_total': TouristPoint.objects.count(),
+            },
         })
 
     def post(self, request):
         from .services_translation import process_batch
+        from . import services_i18n as i18n
+        from datetime import timedelta
+        mode = (request.data.get('mode') or 'queue').strip()
+        if mode in ('missing', 'full'):
+            # Bornée à ~40 s pour que la requête HTTP réponde ; reprenable au clic suivant.
+            deadline = timezone.now() + timedelta(seconds=40)
+            pass_mode = 'missing' if mode == 'missing' else 'auto'
+            summary = i18n.run_pass(mode=pass_mode, deadline=deadline, poi_batch=10)
+            summary['mode'] = mode
+            return Response(summary)
         try:
             n = int(request.data.get('batch_size') or 10)
         except (TypeError, ValueError):

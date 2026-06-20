@@ -31,6 +31,13 @@ DEFAULT_SETTINGS = [
     ('translation_cron_enabled', 'false', 'boolean', 'Active la traduction automatique des POI (cron)', 'translation'),
     ('translation_cron_interval_minutes', '5', 'number', 'Intervalle du cron de traduction (minutes)', 'translation'),
     ('translation_batch_size', '20', 'number', 'Nombre de POI traduits par cycle', 'translation'),
+    # Passe quotidienne itérative (taxonomies + backfill des POI), time-boxée.
+    ('translation_daily_enabled', 'false', 'boolean', 'Active la passe de traduction quotidienne (nuit)', 'translation'),
+    ('translation_daily_hour', '0', 'number', 'Heure de démarrage de la passe quotidienne (0-23, locale)', 'translation'),
+    ('translation_daily_duration_hours', '6', 'number', 'Durée max de la passe quotidienne (heures)', 'translation'),
+    ('translation_bulk_cursor', '', 'text', 'Curseur de backfill des POI (interne)', 'translation'),
+    ('translation_daily_last_run', '', 'text', 'Date du dernier déclenchement quotidien (interne)', 'translation'),
+    ('translation_poi_done_count', '0', 'number', 'Nombre de POI entièrement traduits (compteur)', 'translation'),
 ]
 
 

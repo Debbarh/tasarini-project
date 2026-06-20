@@ -199,6 +199,8 @@ export const POISuggestDialog = ({ children, poi, open: openProp, onOpenChange }
           </DialogTitle>
           <DialogDescription>
             {t("beInspired.suggest.desc", { name: poi.name, defaultValue: "Proposez des corrections pour « {{name}} ». Validées par notre équipe avant publication." })}
+            {" "}
+            {t("beInspired.suggest.originalLang", "Rédigez vos corrections dans la langue d'origine de la fiche : les traductions dans les autres langues sont régénérées automatiquement après validation.")}
           </DialogDescription>
         </DialogHeader>
 

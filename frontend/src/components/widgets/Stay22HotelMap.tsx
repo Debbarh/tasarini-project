@@ -20,6 +20,8 @@ let stay22Initialized = false;
 interface Props {
   className?: string;
   height?: number;
+  /** Hauteur responsive via classes Tailwind (ex. "h-[300px] sm:h-[440px]"). Prioritaire sur `height`. */
+  heightClass?: string;
   lat?: number;
   lng?: number;
   zoom?: number;
@@ -28,6 +30,7 @@ interface Props {
 export const Stay22HotelMap = ({
   className = "",
   height = 460,
+  heightClass = "",
   lat = 48.8566,
   lng = 2.3522,
   zoom = 13,
@@ -74,11 +77,11 @@ export const Stay22HotelMap = ({
         id="stay22-widget"
         title="Stay22 — hôtels & hébergements"
         width="100%"
-        height={height}
+        {...(heightClass ? {} : { height })}
         src={src}
         frameBorder="0"
         loading="lazy"
-        className="rounded-xl w-full"
+        className={`rounded-xl w-full ${heightClass}`}
       />
     </div>
   );

@@ -14,6 +14,7 @@ import { tripPlannerService } from "@/services/tripPlannerService";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import { apiClient } from "@/integrations/api/client";
 import { useStreamingItinerary } from "@/hooks/useStreamingItinerary";
+import { RegenerateDialog, RegenerateValues } from "@/components/trip/RegenerateDialog";
 
 interface GenerationProgress {
   step: string;
@@ -33,6 +34,7 @@ const PlanTrip = () => {
   const [isEnriching, setIsEnriching] = useState(false);
   const [progress, setProgress] = useState<GenerationProgress>({ step: '', progress: 0, message: '' });
   const [streamingContent, setStreamingContent] = useState('');
+  const [showRegenerate, setShowRegenerate] = useState(false);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const { streamingState, startStreaming, cancelStreaming } = useStreamingItinerary();
@@ -162,6 +164,35 @@ const PlanTrip = () => {
     startStreaming(tripData, sessionId, i18n.language);
   };
 
+  // « Donne-moi une autre proposition » : réutilise les préférences initiales (originalTripData)
+  // en y appliquant le rythme / nb d'activités / demandes ajustés, puis relance la génération.
+  const handleRegenerate = (v: RegenerateValues) => {
+    if (!originalTripData || isLoading || streamingState.isStreaming) return;
+    const sessionId = sessionStorage.getItem('travel_analytics_session');
+    if (!sessionId) {
+      toast({ title: "Erreur", description: "Session ID manquant pour le streaming", variant: "destructive" });
+      return;
+    }
+    const updated: NewTripFormData = {
+      ...originalTripData,
+      specialRequests: v.specialRequests,
+      activityPreferences: {
+        ...originalTripData.activityPreferences,
+        intensity: v.intensity,
+        activitiesPerDay: v.activitiesPerDay,
+      },
+    };
+    setShowRegenerate(false);
+    setGeneratedItinerary(null);
+    setEnrichmentData(null);
+    setIsEnriching(false);
+    setOriginalTripData(updated);
+    setIsLoading(true);
+    setShowAdvertisement(true);
+    setStreamingContent('');
+    startStreaming(updated, sessionId, i18n.language);
+  };
+
   const startItineraryEnrichment = async (itinerary: DetailedItinerary, tripData: NewTripFormData) => {
     setIsEnriching(true);
 
@@ -237,8 +268,18 @@ const PlanTrip = () => {
             enrichmentData={enrichmentData}
             isEnriching={isEnriching}
             isStreaming={false}
+            onItineraryChange={setGeneratedItinerary}
           />
-          <div className="text-center">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {originalTripData && (
+              <Button
+                onClick={() => setShowRegenerate(true)}
+                className="px-6 sm:px-8"
+                size="sm"
+              >
+                {t('planTrip.regenerate.button', 'Donne-moi une autre proposition')}
+              </Button>
+            )}
             <Button
               variant="outline"
               onClick={() => {
@@ -254,6 +295,18 @@ const PlanTrip = () => {
               <span className="sm:hidden">{t('planTrip.newTrip')}</span>
             </Button>
           </div>
+          {originalTripData && (
+            <RegenerateDialog
+              open={showRegenerate}
+              onOpenChange={setShowRegenerate}
+              initial={{
+                intensity: originalTripData.activityPreferences?.intensity || 'moderate',
+                activitiesPerDay: originalTripData.activityPreferences?.activitiesPerDay,
+                specialRequests: originalTripData.specialRequests || '',
+              }}
+              onSubmit={handleRegenerate}
+            />
+          )}
         </div>
       ) : (
         // Show TripWizard when no itinerary

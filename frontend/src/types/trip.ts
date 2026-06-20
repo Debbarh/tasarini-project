@@ -51,6 +51,8 @@ export interface AccommodationPreferences {
 export interface ActivityPreferences {
   categories: string[];
   intensity: string;
+  /** Nombre d'activités par jour souhaité (optionnel). Prioritaire sur l'intensité côté IA. */
+  activitiesPerDay?: number;
   interests: string[];
   avoidances: string[];
 }
@@ -79,11 +81,14 @@ export interface DailyActivity {
     address?: string;
     latitude?: number;
     longitude?: number;
+    poi_id?: string;            // renseigné à la persistance (POI existant ou créé)
   } | string;
   type: string;
   cost: number;
   difficulty?: 'easy' | 'moderate' | 'hard';
-  tips?: string;
+  tips?: string | string[];
+  custom?: boolean;             // activité ajoutée manuellement par l'utilisateur
+
   bookingAdvice?: string;
   alternatives?: string[];
   image?: ActivityImage;  // image Wikimedia (optionnelle)

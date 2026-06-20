@@ -131,6 +131,7 @@ from apps.content.views import (
 )
 from apps.bookings.views import BookingViewSet, RatePlanViewSet, RoomViewSet
 from apps.travel.views import (
+    ActivityDescribeView,
     EnhancedTripPlannerView,
     StreamingTripPlannerView,
     TripPlanningProgressView,
@@ -306,6 +307,7 @@ urlpatterns = [
     ),
     path('api/v1/travel/planner/', EnhancedTripPlannerView.as_view(), name='travel-planner'),
     path('api/v1/travel/planner/stream/', StreamingTripPlannerView.as_view(), name='travel-planner-stream'),
+    path('api/v1/travel/activity/describe/', ActivityDescribeView.as_view(), name='travel-activity-describe'),
     path('api/v1/travel/planner/progress/', TripPlanningProgressView.as_view(), name='travel-planner-progress'),
     path('api/v1/travel/destination-images/', DestinationImagesView.as_view(), name='travel-destination-images'),
     path('api/v1/travel/activity-images/', ActivityImagesView.as_view(), name='travel-activity-images'),

@@ -215,6 +215,40 @@ export const ActivitiesStep = ({ data, onUpdate, onValidate }: ActivitiesStepPro
         </CardContent>
       </Card>
 
+      {/* Nombre d'activités par jour (optionnel, prioritaire sur l'intensité côté IA) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Zap className="h-4 w-4 text-primary" />
+            {t('planTrip.activitiesStep.perDay', "Activités par jour")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground mb-3">
+            {t('planTrip.activitiesStep.perDayHint', "Laissez sur « Auto » pour suivre l'intensité choisie, ou fixez un nombre précis.")}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={!preferences.activitiesPerDay ? "default" : "outline"}
+              size="sm"
+              onClick={() => updatePreferences({ activitiesPerDay: undefined })}
+            >
+              {t('planTrip.activitiesStep.perDayAuto', "Auto")}
+            </Button>
+            {[2, 3, 4, 5, 6, 7, 8].map((n) => (
+              <Button
+                key={n}
+                variant={preferences.activitiesPerDay === n ? "default" : "outline"}
+                size="sm"
+                onClick={() => updatePreferences({ activitiesPerDay: n })}
+              >
+                {n}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* 3. Avoidances (À éviter) — déplacé en 3e position */}
       <Card>
         <CardHeader>

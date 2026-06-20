@@ -10,10 +10,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save, ShoppingCart, ChevronDown, ChevronUp, Euro, Sparkles, ChevronLeft, ChevronRight, Maximize2, X, Pencil, Lightbulb, AlertTriangle, Landmark, Siren, Camera, Sunrise, Moon, Car, PartyPopper, Globe, FileText, Languages, Cloud, HeartPulse, Drama } from "lucide-react";
+import { MapPin, Calendar, Users, Wallet, ArrowLeft, Download, Share2, Clock, Star, MessageCircle, Facebook, Twitter, Copy, Gift, Utensils, Backpack, Info, Sun, Shield, Save, ShoppingCart, ChevronDown, ChevronUp, Euro, Sparkles, ChevronLeft, ChevronRight, Maximize2, X, Pencil, Lightbulb, AlertTriangle, Landmark, Siren, Camera, Sunrise, Moon, Car, PartyPopper, Globe, FileText, Languages, Cloud, HeartPulse, Drama, Plus } from "lucide-react";
+import { AddActivityDialog } from "./AddActivityDialog";
 import { format } from "date-fns";
 import { getDateFnsLocale } from "@/utils/dateLocale";
-import { DetailedItinerary, UnsplashImage, ActivityImage } from "@/types/trip";
+import { DetailedItinerary, UnsplashImage, ActivityImage, DailyActivity } from "@/types/trip";
 import { exportItineraryToPDF, shareItinerary, copyItineraryLink } from "@/utils/itineraryExport";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -50,6 +51,7 @@ interface DetailedItineraryViewProps {
   isEnriching?: boolean;
   isStreaming?: boolean;  // NEW: Enables typing effects during streaming
   savedItineraryId?: string;  // si fourni : édition d'un itinéraire déjà sauvegardé (PATCH)
+  onItineraryChange?: (it: DetailedItinerary) => void;  // remonte les ajouts/éditions d'activités
 }
 
 type GalleryImage = UnsplashImage & { city?: string };
@@ -327,13 +329,30 @@ const TypedText: React.FC<{ text: string; isStreaming: boolean; delay?: number; 
   );
 };
 
-export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, enrichmentData, isEnriching = false, isStreaming = false, savedItineraryId }: DetailedItineraryViewProps) => {
+export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, enrichmentData, isEnriching = false, isStreaming = false, savedItineraryId, onItineraryChange }: DetailedItineraryViewProps) => {
   const { t, i18n } = useTranslation();
   const dfLocale = getDateFnsLocale(i18n.language);
   // Copie locale éditable : reflète les personnalisations sans dépendre du parent.
   const [localItinerary, setLocalItinerary] = useState(itineraryProp);
   useEffect(() => { setLocalItinerary(itineraryProp); }, [itineraryProp]);
   const itinerary = localItinerary;
+  // Ajout/édition manuelle d'activité (utilisateur authentifié). null = fermé.
+  const [activityDialog, setActivityDialog] = useState<{ dayIndex: number; actIndex: number | null } | null>(null);
+  const canEditActivities = Boolean(user) && !isStreaming;
+
+  const applyActivityChange = (dayIndex: number, actIndex: number | null, activity: DailyActivity) => {
+    if (!itinerary) return;
+    const days = itinerary.days.map((d, i) => {
+      if (i !== dayIndex) return d;
+      const activities = [...(d.activities || [])];
+      if (actIndex == null) activities.push(activity);
+      else activities[actIndex] = activity;
+      return { ...d, activities };
+    });
+    const next = { ...itinerary, days };
+    setLocalItinerary(next);
+    onItineraryChange?.(next);
+  };
   // Édition / persistance
   const [isEditing, setIsEditing] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(savedItineraryId ?? null);
@@ -1100,10 +1119,25 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                               <div className="flex items-start justify-between">
                                 <ActivityTitle title={activity.title} isStreaming={isStreaming} />
                                 <div className="flex items-center gap-2">
+                                  {activity.custom && (
+                                    <Badge variant="outline" className="text-xs border-primary/40 text-primary">
+                                      {t('itinerary.customActivity', 'Ajoutée')}
+                                    </Badge>
+                                  )}
                                   <Badge variant="secondary" className="text-xs">
                                     {activity.type}
                                   </Badge>
                                   <span className="text-sm font-medium">{activity.cost}€</span>
+                                  {canEditActivities && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setActivityDialog({ dayIndex: index, actIndex })}
+                                      className="text-muted-foreground hover:text-primary"
+                                      title={t('common.edit', 'Modifier')}
+                                    >
+                                      <Pencil className="h-3.5 w-3.5" />
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                               <p className="text-sm text-muted-foreground">
@@ -1116,14 +1150,14 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                                 </span>
                                 {typeof activity.location === 'object' && activity.location?.latitude != null && activity.location?.longitude != null && (
                                   <a
-                                    href={`https://www.google.com/maps/search/?api=1&query=${activity.location.latitude}%2C${activity.location.longitude}`}
+                                    href={`https://www.google.com/maps/dir/?api=1&destination=${activity.location.latitude}%2C${activity.location.longitude}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-1 text-primary hover:underline"
-                                    title={t('itinerary.viewOnMap', 'Voir sur la carte')}
+                                    title={t('itinerary.getDirections', "Voir l'itinéraire (Google Maps)")}
                                   >
                                     <MapPin className="h-3 w-3" />
-                                    {t('itinerary.viewOnMap', 'Voir sur la carte')}
+                                    {t('itinerary.getDirections', "Voir l'itinéraire")}
                                   </a>
                                 )}
                                 <span className="flex items-center gap-1">
@@ -1138,18 +1172,16 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                                 </Badge>
                               </div>
                               {activity.tips && activity.tips.length > 0 && (
-                                <div className="mt-2">
-                                  <details className="group">
-                                    <summary className="cursor-pointer text-xs text-primary hover:text-primary/80 flex items-center gap-1">
-                                      <Lightbulb className="h-3.5 w-3.5" />
-                                      {t('itinerary.tips', 'Conseils')}
-                                    </summary>
-                                    <ul className="mt-1 text-xs text-muted-foreground space-y-1 pl-4">
-                                      {(typeof activity.tips === 'string' ? [activity.tips] : activity.tips || []).map((tip, tipIndex) => (
-                                        <li key={tipIndex} className="list-disc">{tip}</li>
-                                      ))}
-                                    </ul>
-                                  </details>
+                                <div className="mt-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 p-2.5">
+                                  <div className="flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">
+                                    <Lightbulb className="h-3.5 w-3.5" />
+                                    {t('itinerary.tips', 'Conseils')}
+                                  </div>
+                                  <ul className="text-xs text-muted-foreground space-y-1 pl-4">
+                                    {(typeof activity.tips === 'string' ? [activity.tips] : activity.tips || []).map((tip, tipIndex) => (
+                                      <li key={tipIndex} className="list-disc">{tip}</li>
+                                    ))}
+                                  </ul>
                                 </div>
                               )}
 
@@ -1166,6 +1198,21 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Ajout manuel d'activité (utilisateur authentifié) */}
+                  {canEditActivities && (
+                    <div className="mt-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-dashed"
+                        onClick={() => setActivityDialog({ dayIndex: index, actIndex: null })}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        {t('itinerary.addActivity', 'Ajouter une activité')}
+                      </Button>
                     </div>
                   )}
 
@@ -1766,6 +1813,18 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
           } as any}
           onSave={handleEditSave}
           onClose={() => setIsEditing(false)}
+        />
+      )}
+
+      {activityDialog && itinerary && (
+        <AddActivityDialog
+          open={!!activityDialog}
+          onOpenChange={(o) => { if (!o) setActivityDialog(null); }}
+          initial={activityDialog.actIndex != null
+            ? itinerary.days[activityDialog.dayIndex]?.activities?.[activityDialog.actIndex] || null
+            : null}
+          destination={itinerary.days[activityDialog.dayIndex]?.destination}
+          onSave={(act) => applyActivityChange(activityDialog.dayIndex, activityDialog.actIndex, act)}
         />
       )}
     </div>

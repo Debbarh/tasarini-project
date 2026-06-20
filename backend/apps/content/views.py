@@ -848,6 +848,16 @@ class SavedItineraryViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):  # type: ignore[override]
+        # Persiste les POI géolocalisés du programme (dédup + non publics) et enrichit
+        # itinerary_data avec les poi_id, AVANT la sauvegarde. Best-effort : ne bloque
+        # jamais la sauvegarde de l'itinéraire si la persistance POI échoue.
+        data = serializer.validated_data.get('itinerary_data')
+        if isinstance(data, dict):
+            try:
+                from apps.poi.services_itinerary import persist_itinerary_pois
+                persist_itinerary_pois(data, self.request.user)
+            except Exception:  # noqa: BLE001
+                logger.exception("persist_itinerary_pois a échoué (sauvegarde poursuivie)")
         serializer.save(user=self.request.user)
 
 class StoryGenerationView(APIView):

@@ -631,10 +631,22 @@ class StreamingTripPlannerView(APIView):
                     'intense': '6 à 8', 'charge': '6 à 8',
                 }
                 _activity_count = _intensity_map.get(_norm_intensity)
-                intensity_instruction = (
-                    f"Chaque jour doit contenir environ {_activity_count} activités principales (hors repas), réparties harmonieusement sur la journée. "
-                    if _activity_count else ""
-                )
+                # Choix EXPLICITE du nombre d'activités/jour (prioritaire sur l'intensité).
+                try:
+                    _per_day = int((trip_data.get('activityPreferences') or {}).get('activitiesPerDay') or 0)
+                except (TypeError, ValueError):
+                    _per_day = 0
+                if _per_day > 0:
+                    intensity_instruction = (
+                        f"Chaque jour doit contenir EXACTEMENT {_per_day} activités principales (hors repas), "
+                        "réparties harmonieusement sur la journée. "
+                    )
+                elif _activity_count:
+                    intensity_instruction = (
+                        f"Chaque jour doit contenir environ {_activity_count} activités principales (hors repas), réparties harmonieusement sur la journée. "
+                    )
+                else:
+                    intensity_instruction = ""
 
                 # Prompt 1: header + days (planning)
                 prompt_days = (
@@ -1828,3 +1840,47 @@ class KayakProxyView(APIView):
             }
             for i in range(1, 4)
         ]
+
+
+class ActivityDescribeView(APIView):
+    """Génère UNIQUEMENT une description + des conseils pour une activité ajoutée manuellement
+    par l'utilisateur à son programme (authentifié). Renvoie {description, tips[]}."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        title = (request.data.get('title') or '').strip()
+        destination = (request.data.get('destination') or '').strip()
+        lang = (request.data.get('language') or 'fr').split('-')[0]
+        if not title:
+            return Response({'detail': 'title requis'}, status=status.HTTP_400_BAD_REQUEST)
+
+        provider = AIProviderConfig.objects.filter(is_enabled=True).first()
+        ollama = AIProviderConfig.objects.filter(provider='ollama').first()
+        if not provider:
+            return Response({'detail': 'Aucun fournisseur IA actif.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        prompt = (
+            f"Réponds dans la langue '{lang}'. "
+            f"Pour l'activité de voyage « {title} »"
+            + (f" située à {destination}" if destination else "")
+            + ", fournis UNIQUEMENT un JSON : {\"description\": string, \"tips\": [string, ...]}. "
+            "description = 2 à 3 phrases concrètes et utiles ; tips = 2 à 4 conseils pratiques courts. "
+            "Réponds STRICTEMENT en JSON valide, sans texte avant/après."
+        )
+        data = None
+        try:
+            data = call_provider_with_prompt(provider, prompt)
+        except AIProviderException:
+            if ollama and ollama.id != provider.id:
+                try:
+                    data = call_provider_with_prompt(ollama, prompt)
+                except AIProviderException:
+                    data = None
+        data = data or {}
+        tips = data.get('tips') or []
+        if isinstance(tips, str):
+            tips = [tips]
+        return Response({
+            'description': (data.get('description') or '').strip(),
+            'tips': [str(x).strip() for x in tips if str(x).strip()][:4],
+        })

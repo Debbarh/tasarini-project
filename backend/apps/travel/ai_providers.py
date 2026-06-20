@@ -34,8 +34,18 @@ def _build_prompt(trip_data: dict) -> str:
     # Extract destination info for better context
     destinations_str = ", ".join([d.get('city', d.get('country', 'destination')) for d in trip_data.get('destinations', [])])
 
+    # Nombre d'activités/jour : choix explicite prioritaire, sinon intensité.
+    try:
+        _per_day = int((trip_data.get('activityPreferences') or {}).get('activitiesPerDay') or 0)
+    except (TypeError, ValueError):
+        _per_day = 0
+    per_day_instruction = (
+        f"Chaque jour doit contenir EXACTEMENT {_per_day} activités principales (hors repas). " if _per_day > 0 else ""
+    )
+
     return (
         f"Tu es un expert en voyage. Génère un itinéraire complet en JSON pour {destinations_str}. "
+        + per_day_instruction +
         "TOUTES les sections suivantes sont OBLIGATOIRES :\n\n"
         "{\n"
         '  "title": "string",\n'

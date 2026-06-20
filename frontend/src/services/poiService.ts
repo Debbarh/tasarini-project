@@ -649,7 +649,7 @@ export const stopTranslationPass = async () =>
 export const clearTranslationLogs = async () =>
   apiClient.post<any>('poi/translation-cron/', { action: 'clear_logs' });
 
-// Enrichissement OpenTripMap à la demande (description Wikipédia + image) pour un POI.
+// Enrichissement OpenTripMap à la demande (description Wikipédia) pour un POI.
 export const getPOIEnrichment = async (
   q: string, lat: number, lng: number, lang?: string
 ): Promise<{ description: string; image: string | null }> => {
@@ -658,6 +658,16 @@ export const getPOIEnrichment = async (
     return { description: d?.description || '', image: d?.image || null };
   } catch {
     return { description: '', image: null };
+  }
+};
+
+// Be Inspired : récupère (et PERSISTE) jusqu'à 3 photos Openverse d'un POI s'il n'en a aucune.
+export const fetchPoiPhotos = async (id: string): Promise<string[]> => {
+  try {
+    const d = await apiClient.post<{ images: string[] }>(`poi/tourist-points/${id}/fetch-photos/`, {});
+    return Array.isArray(d?.images) ? d.images : [];
+  } catch {
+    return [];
   }
 };
 
@@ -672,15 +682,5 @@ export const translatePOI = async (
     );
   } catch {
     return {};
-  }
-};
-
-export const getPOIImage = async (query: string): Promise<string | null> => {
-  if (!query?.trim()) return null;
-  try {
-    const data = await apiClient.get<{ image?: string | null }>('poi/image/', { q: query });
-    return (data && data.image) || null;
-  } catch {
-    return null;
   }
 };

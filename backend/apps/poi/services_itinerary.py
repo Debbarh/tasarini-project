@@ -75,6 +75,16 @@ def persist_itinerary_pois(itinerary_data, user):
                     seen[key] = str(existing.id)
                     reused += 1
                     continue
+                # Jusqu'à 3 photos Openverse (si elles existent) persistées sur le POI.
+                try:
+                    from .external.openverse import search_images
+                    imgs = search_images(name, n=3)
+                except Exception:  # noqa: BLE001
+                    imgs = []
+                meta = {'source': 'ai_itinerary'}
+                if imgs:
+                    meta['images'] = imgs
+                    loc['images'] = imgs  # exposées aussi dans l'itinéraire
                 poi = TouristPoint.objects.create(
                     owner=user,
                     name=name[:255],
@@ -85,7 +95,7 @@ def persist_itinerary_pois(itinerary_data, user):
                     is_active=False,                       # NON public tant que non validé
                     status=TouristPoint.Status.PENDING,
                     is_activity=True,
-                    metadata={'source': 'ai_itinerary'},
+                    metadata=meta,
                 )
                 loc['poi_id'] = str(poi.id)
                 seen[key] = str(poi.id)

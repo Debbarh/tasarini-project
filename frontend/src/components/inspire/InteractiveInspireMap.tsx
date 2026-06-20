@@ -6,7 +6,7 @@ import { MapPin, Star, Phone, Globe, Navigation, Plus, Route, MessageCircle, Lig
 import { getOpenState, formatMinutes } from "@/utils/openingHours";
 import { renderToStaticMarkup } from "react-dom/server";
 import { getLucideIcon } from "@/lib/taxonomyIcon";
-import { POI, getPOIsInRadius, getExternalPOIs, importExternalPOI, getPOIImage, getPOIEnrichment, translatePOI, categorizePOI, getPOIIcon, getPOIColor, getPoiType, POIFilters } from "@/services/poiService";
+import { POI, getPOIsInRadius, getExternalPOIs, importExternalPOI, fetchPoiPhotos, getPOIEnrichment, translatePOI, categorizePOI, getPOIIcon, getPOIColor, getPoiType, POIFilters } from "@/services/poiService";
 import { getLocalizedLabel } from "@/utils/multilingualHelpers";
 
 // Génère le balisage SVG d'une icône lucide pour l'injecter dans un divIcon Leaflet
@@ -624,16 +624,17 @@ export const InteractiveInspireMap = ({
     const needImg = !poiImageUrl(selectedPOI);
     if (!needDesc && !needImg) return;
     (async () => {
-      let gotImage = false;
-      const enr = await getPOIEnrichment(
-        selectedPOI.name, Number(selectedPOI.latitude), Number(selectedPOI.longitude), i18n.language,
-      );
-      if (cancelled) return;
-      if (needDesc && enr.description) setDetailDescription(enr.description);
-      if (needImg && enr.image) { gotImage = true; setDetailImage(enr.image); }
-      if (needImg && !gotImage) {
-        const url = await getPOIImage([selectedPOI.name, selectedPOI.address].filter(Boolean).join(' '));
-        if (!cancelled && url) setDetailImage(url);
+      // Description : enrichissement (OpenTripMap/Wikipédia) si manquante.
+      if (needDesc) {
+        const enr = await getPOIEnrichment(
+          selectedPOI.name, Number(selectedPOI.latitude), Number(selectedPOI.longitude), i18n.language,
+        );
+        if (!cancelled && enr.description) setDetailDescription(enr.description);
+      }
+      // Image : Openverse (jusqu'à 3, persistées) si le POI n'a aucune photo.
+      if (needImg) {
+        const imgs = await fetchPoiPhotos(String(selectedPOI.id));
+        if (!cancelled && imgs[0]) setDetailImage(imgs[0]);
       }
     })();
     return () => { cancelled = true; };
@@ -647,13 +648,8 @@ export const InteractiveInspireMap = ({
     if (!imgError || !selectedPOI || detailImage) return;
     let cancelled = false;
     (async () => {
-      const enr = await getPOIEnrichment(
-        selectedPOI.name, Number(selectedPOI.latitude), Number(selectedPOI.longitude), i18n.language,
-      );
-      if (cancelled) return;
-      if (enr.image) { setDetailImage(enr.image); return; }
-      const url = await getPOIImage([selectedPOI.name, selectedPOI.address].filter(Boolean).join(' '));
-      if (!cancelled && url) setDetailImage(url);
+      const imgs = await fetchPoiPhotos(String(selectedPOI.id));
+      if (!cancelled && imgs[0]) setDetailImage(imgs[0]);
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps

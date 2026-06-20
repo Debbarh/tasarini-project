@@ -1354,6 +1354,29 @@ class TouristPointViewSet(viewsets.ModelViewSet):
         except Exception:  # noqa: BLE001 - rattachement best-effort
             pass
 
+    @action(detail=True, methods=['post'], permission_classes=[permissions.AllowAny], url_path='fetch-photos')
+    def fetch_photos(self, request, pk=None):
+        """Be Inspired : si le POI n'a AUCUNE photo, en récupère jusqu'à 3 via Openverse et les
+        PERSISTE dans metadata['images']. Idempotent (ne refait rien si des photos existent)."""
+        point = get_object_or_404(TouristPoint, pk=pk, is_active=True)
+        meta = point.metadata or {}
+        existing = [u for u in (meta.get('images') or []) if u]
+        media_urls = list(
+            POIMedia.objects.filter(tourist_point=point).exclude(external_url='')
+            .values_list('external_url', flat=True)
+        )
+        have = [u for u in (media_urls + existing) if u]
+        if have:
+            return Response({'images': have[:3], 'fetched': False})
+        from .external.openverse import search_images
+        city = str(meta.get('city') or '')
+        imgs = search_images(f"{point.name} {city}".strip(), n=3)
+        if imgs:
+            meta['images'] = imgs
+            point.metadata = meta
+            point.save(update_fields=['metadata', 'updated_at'])
+        return Response({'images': imgs, 'fetched': bool(imgs)})
+
     @action(detail=True, methods=['post'], permission_classes=[permissions.AllowAny], url_path='translate')
     def translate(self, request, pk=None):
         """Cache-or-enqueue : si la traduction est en cache (metadata.translations[lang]) on la

@@ -51,10 +51,9 @@ class ExternalPOIListView(APIView):
 
 
 class POIImageView(APIView):
-    """GET /api/v1/poi/image/?q=<nom du lieu> — 1 image Wikimedia Commons, cachée 7j.
+    """GET /api/v1/poi/image/?q=<nom du lieu> — 1 image Openverse, cachée 7j.
 
-    Enrichissement d'images à la demande pour les POI sans photo (les sources
-    Geoapify/OSM/Foursquare/LocationIQ n'en fournissent pas).
+    Enrichissement d'images à la demande pour les POI sans photo.
     """
     permission_classes = [permissions.AllowAny]
 
@@ -67,12 +66,12 @@ class POIImageView(APIView):
         if cached is not None:
             return Response(cached)
 
-        from apps.travel.wikimedia_service import fetch_activity_image
-        info = fetch_activity_image(q)
+        from .external.openverse import search_image_objects
+        objs = search_image_objects(q, n=1)
         result = {
-            'image': (info or {}).get('thumbnailUrl') or (info or {}).get('url'),
-            'attribution': (info or {}).get('attribution', ''),
-        } if info else {'image': None, 'attribution': ''}
+            'image': objs[0]['url'],
+            'attribution': objs[0].get('attribution', ''),
+        } if objs else {'image': None, 'attribution': ''}
         cache.set(key, result, 60 * 60 * 24 * 7)  # 7 jours
         return Response(result)
 

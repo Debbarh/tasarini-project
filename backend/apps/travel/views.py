@@ -30,8 +30,7 @@ from .ai_providers import (
 )
 from .models import AIProviderConfig
 from .serializers import AIProviderConfigSerializer
-from .unsplash_service import fetch_all_destination_images
-from .wikimedia_service import fetch_all_activity_images
+from .openverse_images import fetch_all_destination_images, fetch_all_activity_images
 from .amadeus_service import amadeus_api, find_airport_by_city
 from .hotelbeds_service import hotelbeds_api
 from .hotelbeds_activities_service import hotelbeds_activities_api

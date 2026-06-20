@@ -235,10 +235,7 @@ GOOGLE_OAUTH_CLIENT_SECRET = env('GOOGLE_OAUTH_CLIENT_SECRET', default='')
 FACEBOOK_OAUTH_CLIENT_ID = env('FACEBOOK_OAUTH_CLIENT_ID', default='')
 FACEBOOK_OAUTH_CLIENT_SECRET = env('FACEBOOK_OAUTH_CLIENT_SECRET', default='')
 
-# Unsplash API keys for destination images
-UNSPLASH_ACCESS_KEY = env('UNSPLASH_ACCESS_KEY', default='')
-UNSPLASH_SECRET_KEY = env('UNSPLASH_SECRET_KEY', default='')
-UNSPLASH_API_BASE = env('UNSPLASH_API_BASE', default='https://api.unsplash.com')
+# Images : Openverse (sans clé). Voir apps/poi/external/openverse.py.
 
 # External POI providers for "Be Inspired" (live-fetched + cached, merged with platform POIs)
 GEOAPIFY_API_KEY = env('GEOAPIFY_API_KEY', default='')

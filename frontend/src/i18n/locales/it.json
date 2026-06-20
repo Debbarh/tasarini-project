@@ -1445,29 +1445,37 @@
           "processing": "In elaborazione",
           "paymentOn": "Pagamento il",
           "thisMonth": "Questo mese",
-          "monthlyRevenue": "Entrate mensili",
-          "avgCommission": "Commissione media",
-          "avgRate": "Tasso medio"
+          "monthlyRevenue": "Commissioni generate",
+          "avgCommission": "Tasso di commissione",
+          "avgRate": "Stabilito dalla piattaforma",
+          "amountDue": "Da versare alla piattaforma",
+          "amountDueHint": "Fatture emesse da pagare con bonifico",
+          "toBeInvoiced": "Da fatturare",
+          "toBeInvoicedHint": "Commissioni del mese corrente"
         },
         "revenueChart": {
-          "title": "Evoluzione delle entrate",
-          "description": "Entrate mensili negli ultimi 12 mesi",
-          "revenue": "Entrate"
+          "title": "Commissioni per mese",
+          "description": "Andamento delle commissioni su 12 mesi",
+          "revenue": "Commissione"
         },
         "tabs": {
           "commissions": "Commissioni",
           "withdrawals": "Prelievi",
-          "paymentMethods": "Metodi di pagamento"
+          "paymentMethods": "Metodi di pagamento",
+          "invoices": "Le mie fatture",
+          "transfer": "Bonifico"
         },
         "commissions": {
-          "title": "Storico commissioni",
-          "description": "Dettagli di tutte le tue commissioni",
+          "title": "Commissioni",
+          "description": "Commissione dovuta alla piattaforma per ogni prenotazione completata.",
           "export": "Esporta",
           "client": "Cliente",
           "reference": "Riferimento",
           "commission": "Commissione",
           "rate": "Tasso",
-          "date": "Data"
+          "date": "Data",
+          "empty": "Nessuna commissione per ora.",
+          "poi": "Punto di interesse"
         },
         "withdrawals": {
           "title": "Richieste di prelievo",
@@ -1496,10 +1504,28 @@
           "paid": "Pagato",
           "completed": "Completato",
           "failed": "Fallito",
-          "rejected": "Rifiutato"
+          "rejected": "Rifiutato",
+          "invoiced": "Fatturata"
         },
         "errors": {
-          "loadError": "Errore nel caricamento dei dati finanziari"
+          "loadError": "Impossibile caricare i tuoi dati finanziari."
+        },
+        "invoices": {
+          "title": "Le mie fatture",
+          "description": "Commissioni fatturate mensilmente, da pagare con bonifico.",
+          "empty": "Nessuna fattura per ora.",
+          "amount": "Importo",
+          "dueDate": "Scadenza",
+          "reference": "Riferimento bonifico",
+          "payHint": "Pagare con bonifico indicando il riferimento sopra. Vedi la scheda «Bonifico»."
+        },
+        "transfer": {
+          "title": "Coordinate per il bonifico",
+          "description": "Paga le tue fatture con bonifico sul conto della piattaforma, indicando il numero di fattura come causale.",
+          "holder": "Beneficiario",
+          "note": "Indica il numero di fattura (es. INV-…) come causale del bonifico per accelerare la riconciliazione.",
+          "unavailable": "Le coordinate bancarie saranno comunicate a breve.",
+          "copied": "Copiato negli appunti."
         }
       },
       "subscription": {

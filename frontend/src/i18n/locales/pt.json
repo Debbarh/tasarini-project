@@ -1445,29 +1445,37 @@
           "processing": "Em processamento",
           "paymentOn": "Pagamento em",
           "thisMonth": "Este mês",
-          "monthlyRevenue": "Receita mensal",
-          "avgCommission": "Comissão média",
-          "avgRate": "Taxa média"
+          "monthlyRevenue": "Comissões geradas",
+          "avgCommission": "Taxa de comissão",
+          "avgRate": "Definida pela plataforma",
+          "amountDue": "A pagar à plataforma",
+          "amountDueHint": "Faturas emitidas a pagar por transferência",
+          "toBeInvoiced": "A faturar",
+          "toBeInvoicedHint": "Comissões do mês atual"
         },
         "revenueChart": {
-          "title": "Evolução da receita",
-          "description": "Receita mensal nos últimos 12 meses",
-          "revenue": "Receita"
+          "title": "Comissões por mês",
+          "description": "Evolução das comissões em 12 meses",
+          "revenue": "Comissão"
         },
         "tabs": {
           "commissions": "Comissões",
           "withdrawals": "Saques",
-          "paymentMethods": "Métodos de pagamento"
+          "paymentMethods": "Métodos de pagamento",
+          "invoices": "Minhas faturas",
+          "transfer": "Transferência"
         },
         "commissions": {
-          "title": "Histórico de comissões",
-          "description": "Detalhes de todas as suas comissões",
+          "title": "Comissões",
+          "description": "Comissão devida à plataforma em cada reserva concluída.",
           "export": "Exportar",
           "client": "Cliente",
           "reference": "Referência",
           "commission": "Comissão",
           "rate": "Taxa",
-          "date": "Data"
+          "date": "Data",
+          "empty": "Ainda não há comissões.",
+          "poi": "Ponto de interesse"
         },
         "withdrawals": {
           "title": "Solicitações de saque",
@@ -1496,10 +1504,28 @@
           "paid": "Pago",
           "completed": "Concluído",
           "failed": "Falhou",
-          "rejected": "Rejeitado"
+          "rejected": "Rejeitado",
+          "invoiced": "Faturada"
         },
         "errors": {
-          "loadError": "Erro ao carregar dados financeiros"
+          "loadError": "Não foi possível carregar seus dados financeiros."
+        },
+        "invoices": {
+          "title": "Minhas faturas",
+          "description": "Comissões faturadas mensalmente, a pagar por transferência.",
+          "empty": "Ainda não há faturas.",
+          "amount": "Valor",
+          "dueDate": "Vencimento",
+          "reference": "Referência da transferência",
+          "payHint": "Pague por transferência indicando a referência acima. Veja a aba «Transferência»."
+        },
+        "transfer": {
+          "title": "Dados para transferência",
+          "description": "Pague suas faturas por transferência para a conta da plataforma, informando o número da fatura como referência.",
+          "holder": "Beneficiário",
+          "note": "Informe o número da fatura (ex. INV-…) como referência da transferência para agilizar a conciliação.",
+          "unavailable": "Os dados bancários serão informados em breve.",
+          "copied": "Copiado para a área de transferência."
         }
       },
       "subscription": {

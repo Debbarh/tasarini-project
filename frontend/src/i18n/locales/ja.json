@@ -1445,29 +1445,38 @@
           "processing": "処理中",
           "paymentOn": "支払日",
           "thisMonth": "今月",
-          "monthlyRevenue": "月間収益",
-          "avgCommission": "平均手数料",
-          "avgRate": "平均率"
+          "monthlyRevenue": "発生した手数料",
+          "avgCommission": "手数料率",
+          "avgRate": "プラットフォームが設定",
+          "amountDue": "プラットフォームへの支払い",
+          "amountDueHint": "発行済み請求書（振込で支払い）",
+          "toBeInvoiced": "請求予定",
+          "toBeInvoiceHint": "今月の手数料",
+          "toBeInvoicedHint": "今月の手数料"
         },
         "revenueChart": {
-          "title": "収益の推移",
-          "description": "過去12ヶ月間の月間収益",
-          "revenue": "収益"
+          "title": "月別手数料",
+          "description": "12か月間の手数料推移",
+          "revenue": "手数料"
         },
         "tabs": {
           "commissions": "手数料",
           "withdrawals": "出金",
-          "paymentMethods": "支払い方法"
+          "paymentMethods": "支払い方法",
+          "invoices": "請求書",
+          "transfer": "振込"
         },
         "commissions": {
-          "title": "手数料履歴",
-          "description": "すべての手数料の詳細",
+          "title": "手数料",
+          "description": "完了した予約ごとにプラットフォームへ支払う手数料です。",
           "export": "エクスポート",
-          "client": "クライアント",
-          "reference": "参照",
+          "client": "お客様",
+          "reference": "参照番号",
           "commission": "手数料",
           "rate": "率",
-          "date": "日付"
+          "date": "日付",
+          "empty": "手数料はまだありません。",
+          "poi": "スポット"
         },
         "withdrawals": {
           "title": "出金リクエスト",
@@ -1496,10 +1505,28 @@
           "paid": "支払済み",
           "completed": "完了",
           "failed": "失敗",
-          "rejected": "拒否"
+          "rejected": "拒否",
+          "invoiced": "請求済み"
         },
         "errors": {
-          "loadError": "財務データの読み込みエラー"
+          "loadError": "財務データを読み込めませんでした。"
+        },
+        "invoices": {
+          "title": "請求書",
+          "description": "手数料は毎月請求され、振込でお支払いいただきます。",
+          "empty": "請求書はまだありません。",
+          "amount": "金額",
+          "dueDate": "支払期限",
+          "reference": "振込参照番号",
+          "payHint": "上記の参照番号を記載して振込でお支払いください。「振込」タブをご覧ください。"
+        },
+        "transfer": {
+          "title": "振込先情報",
+          "description": "請求書番号を参照として記載のうえ、プラットフォームの口座へ振込でお支払いください。",
+          "holder": "受取人",
+          "note": "消し込みを早めるため、振込の参照に請求書番号（例：INV-…）をご記入ください。",
+          "unavailable": "銀行情報は近日中にご案内します。",
+          "copied": "クリップボードにコピーしました。"
         }
       },
       "subscription": {

@@ -1445,29 +1445,37 @@
           "processing": "处理中",
           "paymentOn": "付款日期",
           "thisMonth": "本月",
-          "monthlyRevenue": "月收入",
-          "avgCommission": "平均佣金",
-          "avgRate": "平均费率"
+          "monthlyRevenue": "产生的佣金",
+          "avgCommission": "佣金费率",
+          "avgRate": "由平台设定",
+          "amountDue": "应付平台款项",
+          "amountDueHint": "已开具发票，需通过转账支付",
+          "toBeInvoiced": "待开票",
+          "toBeInvoicedHint": "本月佣金"
         },
         "revenueChart": {
-          "title": "收入趋势",
-          "description": "过去12个月的月度收入",
-          "revenue": "收入"
+          "title": "每月佣金",
+          "description": "近12个月佣金走势",
+          "revenue": "佣金"
         },
         "tabs": {
           "commissions": "佣金",
           "withdrawals": "提现",
-          "paymentMethods": "支付方式"
+          "paymentMethods": "支付方式",
+          "invoices": "我的发票",
+          "transfer": "银行转账"
         },
         "commissions": {
-          "title": "佣金历史",
-          "description": "所有佣金的详细信息",
+          "title": "佣金",
+          "description": "每笔已完成预订应向平台支付的佣金。",
           "export": "导出",
           "client": "客户",
-          "reference": "参考",
+          "reference": "编号",
           "commission": "佣金",
           "rate": "费率",
-          "date": "日期"
+          "date": "日期",
+          "empty": "暂无佣金。",
+          "poi": "景点"
         },
         "withdrawals": {
           "title": "提现请求",
@@ -1496,10 +1504,28 @@
           "paid": "已支付",
           "completed": "已完成",
           "failed": "失败",
-          "rejected": "已拒绝"
+          "rejected": "已拒绝",
+          "invoiced": "已开票"
         },
         "errors": {
-          "loadError": "加载财务数据时出错"
+          "loadError": "无法加载您的财务数据。"
+        },
+        "invoices": {
+          "title": "我的发票",
+          "description": "佣金按月开票，需通过银行转账支付。",
+          "empty": "暂无发票。",
+          "amount": "金额",
+          "dueDate": "到期日",
+          "reference": "转账备注",
+          "payHint": "请通过银行转账支付，并注明上述备注。详见“银行转账”选项卡。"
+        },
+        "transfer": {
+          "title": "转账信息",
+          "description": "请通过银行转账将发票款项支付至平台账户，并注明发票编号作为备注。",
+          "holder": "收款人",
+          "note": "请在转账备注中填写发票编号（如 INV-…），以加快对账。",
+          "unavailable": "银行信息即将提供。",
+          "copied": "已复制到剪贴板。"
         }
       },
       "subscription": {

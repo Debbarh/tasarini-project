@@ -1534,29 +1534,37 @@
           "processing": "Processing",
           "paymentOn": "Payment on",
           "thisMonth": "This month",
-          "monthlyRevenue": "Monthly revenue",
-          "avgCommission": "Avg. commission",
-          "avgRate": "Average rate"
+          "monthlyRevenue": "Commissions generated",
+          "avgCommission": "Commission rate",
+          "avgRate": "Set by the platform",
+          "amountDue": "Due to the platform",
+          "amountDueHint": "Issued invoices to pay by transfer",
+          "toBeInvoiced": "To be invoiced",
+          "toBeInvoicedHint": "Current month commissions"
         },
         "revenueChart": {
-          "title": "Revenue evolution",
-          "description": "Monthly revenue over the last 12 months",
-          "revenue": "Revenue"
+          "title": "Commissions per month",
+          "description": "Commissions trend over 12 months",
+          "revenue": "Commission"
         },
         "tabs": {
           "commissions": "Commissions",
           "withdrawals": "Withdrawals",
-          "paymentMethods": "Payment methods"
+          "paymentMethods": "Payment methods",
+          "invoices": "My invoices",
+          "transfer": "Bank transfer"
         },
         "commissions": {
-          "title": "Commission history",
-          "description": "Details of all your commissions",
+          "title": "Commissions",
+          "description": "Commission owed to the platform on each completed booking.",
           "export": "Export",
-          "client": "Client",
+          "client": "Customer",
           "reference": "Reference",
           "commission": "Commission",
           "rate": "Rate",
-          "date": "Date"
+          "date": "Date",
+          "empty": "No commissions yet.",
+          "poi": "Point of interest"
         },
         "withdrawals": {
           "title": "Withdrawal requests",
@@ -1585,10 +1593,28 @@
           "paid": "Paid",
           "completed": "Completed",
           "failed": "Failed",
-          "rejected": "Rejected"
+          "rejected": "Rejected",
+          "invoiced": "Invoiced"
         },
         "errors": {
-          "loadError": "Error loading financial data"
+          "loadError": "Unable to load your financial data."
+        },
+        "invoices": {
+          "title": "My invoices",
+          "description": "Commissions invoiced monthly, payable by bank transfer.",
+          "empty": "No invoices yet.",
+          "amount": "Amount",
+          "dueDate": "Due date",
+          "reference": "Transfer reference",
+          "payHint": "Pay by bank transfer using the reference above. See the “Bank transfer” tab."
+        },
+        "transfer": {
+          "title": "Bank transfer details",
+          "description": "Pay your invoices by bank transfer to the platform account, quoting the invoice number as reference.",
+          "holder": "Beneficiary",
+          "note": "Quote the invoice number (e.g. INV-…) as the transfer reference to speed up reconciliation.",
+          "unavailable": "Bank details will be provided shortly.",
+          "copied": "Copied to clipboard."
         }
       },
       "subscription": {

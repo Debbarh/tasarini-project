@@ -280,6 +280,24 @@ class PartnerInvoiceViewSet(viewsets.ModelViewSet):
                          'invoices': PartnerInvoiceSerializer(invoices, many=True).data})
 
 
+class PartnerBillingInfoView(APIView):
+    """Coordonnées bancaires de la PLATEFORME (pour que le partenaire règle ses factures par virement)."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        from apps.core.models import SystemSetting
+
+        def g(key):
+            obj = SystemSetting.objects.filter(setting_key=key).first()
+            return obj.setting_value if obj else ''
+
+        return Response({
+            'bank_holder': g('platform_bank_holder'),
+            'iban': g('platform_iban'),
+            'bic': g('platform_bic'),
+        })
+
+
 class PartnerSubscriptionCheckoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

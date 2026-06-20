@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminDebugPanel } from "@/components/debug/AdminDebugPanel";
-import { Users, MapPin, Building2, Settings, Plane, BarChart3, Compass, Shield, Hotel, BookOpen } from "lucide-react";
+import { Users, MapPin, Building2, Settings, Plane, BarChart3, Compass, Shield, Hotel, BookOpen, Receipt } from "lucide-react";
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import { AdminPerformanceMonitor } from "@/components/admin/AdminPerformanceMonitor";
 
 // Lazy load admin components for better performance
 const ComprehensivePartnerManagement = lazy(() => import("@/components/admin/ComprehensivePartnerManagement"));
+const PartnerBillingPanel = lazy(() => import("@/components/admin/PartnerBillingPanel"));
 const PartnerManagement = lazy(() => import("@/components/admin/PartnerManagement"));
 const UserManagement = lazy(() => import("@/components/admin/UserManagement"));
 const TouristPointsManagement = lazy(() => import("@/components/admin/TouristPointsManagement"));
@@ -172,6 +173,10 @@ const Admin = () => {
               <Building2 className="w-4 h-4" />
               Partenaires
             </TabsTrigger>
+          <TabsTrigger value="billing" className="flex items-center gap-2">
+            <Receipt className="w-4 h-4" />
+            Facturation
+          </TabsTrigger>
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Utilisateurs
@@ -215,6 +220,12 @@ const Admin = () => {
         <TabsContent value="partners">
           <Suspense fallback={<TabLoader />}>
             <ComprehensivePartnerManagement />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="billing">
+          <Suspense fallback={<TabLoader />}>
+            <PartnerBillingPanel />
           </Suspense>
         </TabsContent>
           

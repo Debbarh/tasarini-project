@@ -111,6 +111,7 @@ from apps.partners.views import (
     PartnerProfileViewSet,
     PartnerWithdrawalViewSet,
     PartnerSubscriptionCheckoutView,
+    PartnerBillingInfoView,
 )
 from apps.content.views import (
     AdvertisementSettingViewSet,
@@ -323,6 +324,7 @@ urlpatterns = [
     path('api/v1/travel/hotelbeds/', HotelBedsProxyView.as_view(), name='travel-hotelbeds'),
     path('api/v1/travel/kayak/<str:endpoint>/', KayakProxyView.as_view(), name='travel-kayak'),
     path('api/v1/partners/subscriptions/checkout/', PartnerSubscriptionCheckoutView.as_view(), name='partner-subscription-checkout'),
+    path('api/v1/partners/billing-info/', PartnerBillingInfoView.as_view(), name='partner-billing-info'),
     path('api/v1/content/check-spam/', SpamCheckView.as_view(), name='check-spam'),
 ]
 

@@ -2008,29 +2008,37 @@
           "processing": "En traitement",
           "paymentOn": "Paiement le",
           "thisMonth": "Ce mois-ci",
-          "monthlyRevenue": "Revenus du mois",
-          "avgCommission": "Commission moy.",
-          "avgRate": "Taux moyen"
+          "monthlyRevenue": "Commissions générées",
+          "avgCommission": "Taux de commission",
+          "avgRate": "Fixé par la plateforme",
+          "amountDue": "À régler à la plateforme",
+          "amountDueHint": "Factures émises à payer par virement",
+          "toBeInvoiced": "À facturer",
+          "toBeInvoicedHint": "Commissions du mois en cours"
         },
         "revenueChart": {
-          "title": "Évolution des revenus",
-          "description": "Revenus mensuels sur les 12 derniers mois",
-          "revenue": "Revenus"
+          "title": "Commissions par mois",
+          "description": "Évolution des commissions sur 12 mois",
+          "revenue": "Commission"
         },
         "tabs": {
           "commissions": "Commissions",
           "withdrawals": "Retraits",
-          "paymentMethods": "Moyens de paiement"
+          "paymentMethods": "Moyens de paiement",
+          "invoices": "Mes factures",
+          "transfer": "Virement"
         },
         "commissions": {
-          "title": "Historique des commissions",
-          "description": "Détail de toutes vos commissions",
+          "title": "Commissions",
+          "description": "Commission due à la plateforme sur chaque réservation terminée.",
           "export": "Exporter",
           "client": "Client",
           "reference": "Référence",
           "commission": "Commission",
           "rate": "Taux",
-          "date": "Date"
+          "date": "Date",
+          "empty": "Aucune commission pour le moment.",
+          "poi": "Point d’intérêt"
         },
         "withdrawals": {
           "title": "Demandes de retrait",
@@ -2059,10 +2067,28 @@
           "paid": "Payé",
           "completed": "Complété",
           "failed": "Échoué",
-          "rejected": "Rejeté"
+          "rejected": "Rejeté",
+          "invoiced": "Facturée"
         },
         "errors": {
-          "loadError": "Erreur lors du chargement des données financières"
+          "loadError": "Impossible de charger vos données financières."
+        },
+        "invoices": {
+          "title": "Mes factures",
+          "description": "Commissions facturées mensuellement, à régler par virement.",
+          "empty": "Aucune facture pour le moment.",
+          "amount": "Montant",
+          "dueDate": "Échéance",
+          "reference": "Référence virement",
+          "payHint": "À régler par virement en indiquant la référence ci-dessus. Voir l’onglet « Virement »."
+        },
+        "transfer": {
+          "title": "Coordonnées de virement",
+          "description": "Réglez vos factures par virement sur le compte de la plateforme, en rappelant le numéro de facture en référence.",
+          "holder": "Bénéficiaire",
+          "note": "Indiquez le numéro de facture (ex. INV-…) en référence du virement pour accélérer le rapprochement.",
+          "unavailable": "Les coordonnées bancaires seront communiquées prochainement.",
+          "copied": "Copié dans le presse-papier."
         }
       },
       "charts": {

@@ -4,243 +4,116 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  CreditCard, 
+import {
+  TrendingUp,
+  CreditCard,
   AlertCircle,
   CheckCircle,
   Clock,
-  Download,
-  Plus
+  FileText,
+  Banknote,
+  Copy,
+  Percent,
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  partnerService,
+  type PartnerCommission,
+  type PartnerInvoice,
+  type PlatformBillingInfo,
+} from '@/services/partnerService';
 
-interface Commission {
-  id: string;
-  amount: number;
-  commission_rate: number;
-  booking_date: string;
-  payment_status: 'pending' | 'processing' | 'paid' | 'failed';
-  tourist_point_name: string;
-  booking_reference: string;
-  customer_name: string;
-}
+const fmt = (amount: string | number, currency = 'EUR') =>
+  new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(Number(amount || 0));
 
-interface PaymentMethod {
-  id: string;
-  type: 'bank_transfer' | 'paypal' | 'stripe';
-  details: any;
-  is_default: boolean;
-  is_active: boolean;
-}
+const COMMISSION_STATUS: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+  pending: { label: 'À facturer', variant: 'secondary' },
+  invoiced: { label: 'Facturée', variant: 'default' },
+  paid: { label: 'Payée', variant: 'outline' },
+  cancelled: { label: 'Annulée', variant: 'outline' },
+  processing: { label: 'En cours', variant: 'secondary' },
+  failed: { label: 'Échec', variant: 'destructive' },
+};
 
-interface WithdrawalRequest {
-  id: string;
-  amount: number;
-  status: 'pending' | 'processing' | 'completed' | 'rejected';
-  payment_method_type: string;
-  created_at: string;
-  processed_at?: string;
-}
-
-interface FinancialStats {
-  availableBalance: number;
-  pendingBalance: number;
-  totalEarnings: number;
-  thisMonthEarnings: number;
-  averageCommissionRate: number;
-  totalWithdrawals: number;
-  nextPaymentDate: string;
-}
+const INVOICE_STATUS: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+  draft: { label: 'Brouillon', variant: 'outline' },
+  issued: { label: 'À régler', variant: 'default' },
+  paid: { label: 'Payée', variant: 'outline' },
+  overdue: { label: 'En retard', variant: 'destructive' },
+  cancelled: { label: 'Annulée', variant: 'outline' },
+};
 
 const DynamicFinancialDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [commissions, setCommissions] = useState<Commission[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
-  const [stats, setStats] = useState<FinancialStats>({
-    availableBalance: 0,
-    pendingBalance: 0,
-    totalEarnings: 0,
-    thisMonthEarnings: 0,
-    averageCommissionRate: 0,
-    totalWithdrawals: 0,
-    nextPaymentDate: ''
-  });
+  const [commissions, setCommissions] = useState<PartnerCommission[]>([]);
+  const [invoices, setInvoices] = useState<PartnerInvoice[]>([]);
+  const [billing, setBilling] = useState<PlatformBillingInfo | null>(null);
+  const [commissionRate, setCommissionRate] = useState<number>(10);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetchFinancialData();
-    }
+    if (user) fetchFinancialData();
   }, [user]);
 
   const fetchFinancialData = async () => {
     try {
       setLoading(true);
-
-      // Récupération des commissions via Django API
-      const commissionsData = extractArrayFromResponse<any>(await apiClient.get<any>('partners/commissions/'));
-
-      const formattedCommissions: Commission[] = commissionsData?.map(item => ({
-        id: item.id,
-        amount: Number(item.amount),
-        commission_rate: Number(item.commission_rate),
-        booking_date: item.booking_date,
-        payment_status: item.payment_status as Commission['payment_status'],
-        tourist_point_name: item.tourist_point_detail?.name || 'Point d\'intérêt',
-        booking_reference: item.booking_reference,
-        customer_name: item.customer_name
-      })) || [];
-
-      setCommissions(formattedCommissions);
-
-      // Récupération des moyens de paiement via Django API
-      const paymentMethodsData = extractArrayFromResponse<any>(await apiClient.get<any>('partners/payment-methods/'));
-
-      // Conversion des données DB vers l'interface TypeScript
-      const formattedPaymentMethods: PaymentMethod[] = (paymentMethodsData || []).map(method => ({
-        id: method.id,
-        type: method.method_type as 'bank_transfer' | 'paypal' | 'stripe',
-        details: method.details,
-        is_default: method.is_default,
-        is_active: true
-      }));
-
-      setPaymentMethods(formattedPaymentMethods);
-
-      // Récupération des demandes de retrait via Django API
-      const withdrawalsData = extractArrayFromResponse<any>(await apiClient.get<any>('partners/withdrawals/'));
-
-      // Conversion des données DB vers l'interface TypeScript
-      const formattedWithdrawals: WithdrawalRequest[] = (withdrawalsData || []).map(withdrawal => ({
-        id: withdrawal.id,
-        amount: withdrawal.amount,
-        status: withdrawal.status as 'pending' | 'processing' | 'completed' | 'rejected',
-        payment_method_type: withdrawal.payment_method_detail?.method_type || 'bank_transfer',
-        created_at: withdrawal.requested_at,
-        processed_at: withdrawal.processed_at
-      }));
-
-      setWithdrawals(formattedWithdrawals);
-
-      // Calcul des statistiques financières
-      const totalEarnings = formattedCommissions.reduce((sum, comm) => sum + comm.amount, 0);
-      const availableBalance = formattedCommissions
-        .filter(comm => comm.payment_status === 'pending')
-        .reduce((sum, comm) => sum + comm.amount, 0);
-      const pendingBalance = formattedCommissions
-        .filter(comm => comm.payment_status === 'processing')
-        .reduce((sum, comm) => sum + comm.amount, 0);
-
-      // Revenus du mois actuel
-      const currentMonth = new Date().getMonth();
-      const currentYear = new Date().getFullYear();
-      const thisMonthEarnings = formattedCommissions
-        .filter(comm => {
-          const commDate = new Date(comm.booking_date);
-          return commDate.getMonth() === currentMonth && commDate.getFullYear() === currentYear;
-        })
-        .reduce((sum, comm) => sum + comm.amount, 0);
-
-      // Taux de commission moyen
-      const averageCommissionRate = formattedCommissions.length > 0
-        ? formattedCommissions.reduce((sum, comm) => sum + comm.commission_rate, 0) / formattedCommissions.length
-        : 0;
-
-      // Total des retraits
-      const totalWithdrawals = withdrawalsData?.reduce((sum, withdrawal) => 
-        withdrawal.status === 'completed' ? sum + withdrawal.amount : sum, 0) || 0;
-
-      // Prochaine date de paiement (15 du mois prochain)
-      const nextPayment = new Date();
-      nextPayment.setMonth(nextPayment.getMonth() + 1);
-      nextPayment.setDate(15);
-
-      setStats({
-        availableBalance,
-        pendingBalance,
-        totalEarnings,
-        thisMonthEarnings,
-        averageCommissionRate: averageCommissionRate * 100,
-        totalWithdrawals,
-        nextPaymentDate: nextPayment.toLocaleDateString('fr-FR')
-      });
-
+      const [comm, inv, bank, profile] = await Promise.all([
+        partnerService.listCommissions(),
+        partnerService.listInvoices(),
+        partnerService.getPlatformBillingInfo().catch(() => null),
+        partnerService.getMyProfile().catch(() => null),
+      ]);
+      setCommissions(comm);
+      setInvoices(inv);
+      setBilling(bank);
+      if (profile?.commission_rate) setCommissionRate(Number(profile.commission_rate));
     } catch (error) {
       console.error('Erreur lors de la récupération des données financières:', error);
-      toast.error(t('partnerCenter.dashboard.finances.errors.loadError'));
+      toast.error(t('partnerCenter.dashboard.finances.errors.loadError', 'Impossible de charger vos données financières.'));
     } finally {
       setLoading(false);
     }
   };
 
-  const requestWithdrawal = async (amount: number, paymentMethodId: string) => {
-    try {
-      if (amount > stats.availableBalance) {
-        toast.error(t('partnerCenter.dashboard.finances.withdrawals.amountExceeds'));
-        return;
-      }
+  // Montant dû à la plateforme = factures émises / en retard, non réglées
+  const amountDue = invoices
+    .filter((i) => i.status === 'issued' || i.status === 'overdue')
+    .reduce((s, i) => s + Number(i.amount_due || 0), 0);
 
-      await apiClient.post('partners/withdrawals/', {
-        amount: amount,
-        payment_method: paymentMethodId
-      });
+  // Commissions pas encore facturées (seront regroupées sur la prochaine facture mensuelle)
+  const toBeInvoiced = commissions
+    .filter((c) => c.payment_status === 'pending')
+    .reduce((s, c) => s + Number(c.amount || 0), 0);
 
-      toast.success(t('partnerCenter.dashboard.finances.withdrawals.requestSuccess'));
-      fetchFinancialData(); // Rafraîchir les données
-    } catch (error) {
-      console.error('Erreur lors de la demande de retrait:', error);
-      toast.error(t('partnerCenter.dashboard.finances.withdrawals.requestError'));
-    }
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const thisMonth = commissions
+    .filter((c) => {
+      const d = new Date(c.booking_date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear && c.payment_status !== 'cancelled';
+    })
+    .reduce((s, c) => s + Number(c.amount || 0), 0);
+
+  const copy = (value: string) => {
+    navigator.clipboard?.writeText(value);
+    toast.success(t('partnerCenter.dashboard.finances.transfer.copied', 'Copié dans le presse-papier.'));
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'paid':
-      case 'completed':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'processing':
-        return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'failed':
-      case 'rejected':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-blue-500" />;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, any> = {
-      pending: 'secondary',
-      processing: 'default',
-      paid: 'outline',
-      completed: 'outline',
-      failed: 'destructive',
-      rejected: 'destructive'
-    };
-    return variants[status] || 'secondary';
-  };
-
-  // Préparation des données pour le graphique des revenus
-  const revenueChartData = commissions
-    .reduce((acc: Record<string, number>, comm) => {
-      const month = new Date(comm.booking_date).toLocaleDateString('fr-FR', { 
-        year: 'numeric', 
-        month: 'short' 
-      });
-      acc[month] = (acc[month] || 0) + comm.amount;
-      return acc;
-    }, {});
-
-  const chartData = Object.entries(revenueChartData)
+  const chartData = Object.entries(
+    commissions
+      .filter((c) => c.payment_status !== 'cancelled')
+      .reduce((acc: Record<string, number>, c) => {
+        const month = new Date(c.booking_date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' });
+        acc[month] = (acc[month] || 0) + Number(c.amount || 0);
+        return acc;
+      }, {}),
+  )
     .map(([month, amount]) => ({ month, amount }))
-    .slice(-12); // 12 derniers mois
+    .slice(-12);
 
   if (loading) {
     return (
@@ -249,8 +122,8 @@ const DynamicFinancialDashboard: React.FC = () => {
           {[...Array(4)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardContent className="p-6">
-                <div className="h-4 bg-muted rounded mb-2"></div>
-                <div className="h-8 bg-muted rounded"></div>
+                <div className="h-4 bg-muted rounded mb-2" />
+                <div className="h-8 bg-muted rounded" />
               </CardContent>
             </Card>
           ))}
@@ -261,74 +134,58 @@ const DynamicFinancialDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Statistiques financières */}
+      {/* Cartes de synthèse — le partenaire DOIT la commission à la plateforme */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.availableBalance')}</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-500" />
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.amountDue', 'À régler à la plateforme')}</CardTitle>
+            <AlertCircle className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {stats.availableBalance.toFixed(2)}€
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('partnerCenter.dashboard.finances.stats.readyForWithdrawal')}
-            </p>
+            <div className="text-2xl font-bold text-amber-600">{fmt(amountDue)}</div>
+            <p className="text-xs text-muted-foreground">{t('partnerCenter.dashboard.finances.stats.amountDueHint', 'Factures émises à payer par virement')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.processing')}</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-500" />
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.toBeInvoiced', 'À facturer')}</CardTitle>
+            <Clock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.pendingBalance.toFixed(2)}€
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('partnerCenter.dashboard.finances.stats.paymentOn')} {stats.nextPaymentDate}
-            </p>
+            <div className="text-2xl font-bold">{fmt(toBeInvoiced)}</div>
+            <p className="text-xs text-muted-foreground">{t('partnerCenter.dashboard.finances.stats.toBeInvoicedHint', 'Commissions du mois en cours')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.thisMonth')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.thisMonth', 'Ce mois-ci')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.thisMonthEarnings.toFixed(2)}€
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('partnerCenter.dashboard.finances.stats.monthlyRevenue')}
-            </p>
+            <div className="text-2xl font-bold">{fmt(thisMonth)}</div>
+            <p className="text-xs text-muted-foreground">{t('partnerCenter.dashboard.finances.stats.monthlyRevenue', 'Commissions générées')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.avgCommission')}</CardTitle>
-            <CreditCard className="h-4 w-4 text-purple-500" />
+            <CardTitle className="text-sm font-medium">{t('partnerCenter.dashboard.finances.stats.avgCommission', 'Taux de commission')}</CardTitle>
+            <Percent className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.averageCommissionRate.toFixed(1)}%
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('partnerCenter.dashboard.finances.stats.avgRate')}
-            </p>
+            <div className="text-2xl font-bold">{commissionRate.toFixed(1)}%</div>
+            <p className="text-xs text-muted-foreground">{t('partnerCenter.dashboard.finances.stats.avgRate', 'Fixé par la plateforme')}</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Graphique des revenus */}
+      {/* Graphique des commissions */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('partnerCenter.dashboard.finances.revenueChart.title')}</CardTitle>
-          <CardDescription>{t('partnerCenter.dashboard.finances.revenueChart.description')}</CardDescription>
+          <CardTitle>{t('partnerCenter.dashboard.finances.revenueChart.title', 'Commissions par mois')}</CardTitle>
+          <CardDescription>{t('partnerCenter.dashboard.finances.revenueChart.description', 'Évolution des commissions sur 12 mois')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -336,192 +193,165 @@ const DynamicFinancialDashboard: React.FC = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip 
-                formatter={(value: number) => [`${value.toFixed(2)}€`, t('partnerCenter.dashboard.finances.revenueChart.revenue')]}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="amount" 
-                stroke="hsl(var(--primary))" 
-                fill="hsl(var(--primary))" 
-                fillOpacity={0.3}
-              />
+              <Tooltip formatter={(value: number) => [fmt(value), t('partnerCenter.dashboard.finances.revenueChart.revenue', 'Commission')]} />
+              <Area type="monotone" dataKey="amount" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      {/* Onglets pour gérer les finances */}
-      <Tabs defaultValue="commissions" className="space-y-4">
+      <Tabs defaultValue="invoices" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="commissions">{t('partnerCenter.dashboard.finances.tabs.commissions')}</TabsTrigger>
-          <TabsTrigger value="withdrawals">{t('partnerCenter.dashboard.finances.tabs.withdrawals')}</TabsTrigger>
-          <TabsTrigger value="payment-methods">{t('partnerCenter.dashboard.finances.tabs.paymentMethods')}</TabsTrigger>
+          <TabsTrigger value="invoices">{t('partnerCenter.dashboard.finances.tabs.invoices', 'Mes factures')}</TabsTrigger>
+          <TabsTrigger value="commissions">{t('partnerCenter.dashboard.finances.tabs.commissions', 'Commissions')}</TabsTrigger>
+          <TabsTrigger value="transfer">{t('partnerCenter.dashboard.finances.tabs.transfer', 'Virement')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="commissions" className="space-y-4">
+        {/* Factures à régler */}
+        <TabsContent value="invoices" className="space-y-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>{t('partnerCenter.dashboard.finances.commissions.title')}</CardTitle>
-                <CardDescription>{t('partnerCenter.dashboard.finances.commissions.description')}</CardDescription>
-              </div>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                {t('partnerCenter.dashboard.finances.commissions.export')}
-              </Button>
+            <CardHeader>
+              <CardTitle>{t('partnerCenter.dashboard.finances.invoices.title', 'Mes factures')}</CardTitle>
+              <CardDescription>{t('partnerCenter.dashboard.finances.invoices.description', 'Commissions facturées mensuellement, à régler par virement.')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {commissions.slice(0, 10).map((commission) => (
-                  <div key={commission.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        {getStatusIcon(commission.payment_status)}
-                        <div>
-                          <p className="font-medium">{commission.tourist_point_name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {t('partnerCenter.dashboard.finances.commissions.client')}: {commission.customer_name}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant={getStatusBadge(commission.payment_status)}>
-                        {t(`partnerCenter.dashboard.finances.status.${commission.payment_status}`)}
-                      </Badge>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.reference')}</p>
-                        <p className="font-mono">{commission.booking_reference}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.commission')}</p>
-                        <p className="font-semibold text-green-600">
-                          {commission.amount.toFixed(2)}€
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.rate')}</p>
-                        <p>{(commission.commission_rate * 100).toFixed(1)}%</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.date')}</p>
-                        <p>{new Date(commission.booking_date).toLocaleDateString('fr-FR')}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="withdrawals" className="space-y-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>{t('partnerCenter.dashboard.finances.withdrawals.title')}</CardTitle>
-                <CardDescription>{t('partnerCenter.dashboard.finances.withdrawals.description')}</CardDescription>
-              </div>
-              <Button 
-                onClick={() => {
-                  // Ouvrir un dialogue pour demander un retrait
-                  if (paymentMethods.length === 0) {
-                    toast.error(t('partnerCenter.dashboard.finances.withdrawals.noPaymentMethod'));
-                    return;
-                  }
-                  // Logique pour demander un retrait
-                }}
-                disabled={stats.availableBalance <= 0}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {t('partnerCenter.dashboard.finances.withdrawals.request')}
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {withdrawals.length === 0 ? (
+              {invoices.length === 0 ? (
                 <div className="text-center py-8">
-                  <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.withdrawals.empty')}</p>
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.invoices.empty', 'Aucune facture pour le moment.')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {withdrawals.map((withdrawal) => (
-                    <div key={withdrawal.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {getStatusIcon(withdrawal.status)}
+                  {invoices.map((inv) => {
+                    const st = INVOICE_STATUS[inv.status] ?? INVOICE_STATUS.issued;
+                    return (
+                      <div key={inv.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            {inv.status === 'paid' ? <CheckCircle className="h-4 w-4 text-green-500" /> : <FileText className="h-4 w-4 text-blue-500" />}
+                            <div>
+                              <p className="font-medium font-mono text-sm">{inv.number}</p>
+                              <p className="text-sm text-muted-foreground">{inv.period_start} → {inv.period_end}</p>
+                            </div>
+                          </div>
+                          <Badge variant={st.variant}>{st.label}</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                           <div>
-                            <p className="font-medium">{withdrawal.amount.toFixed(2)}€</p>
-                            <p className="text-sm text-muted-foreground">
-                              {withdrawal.payment_method_type}
-                            </p>
+                            <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.invoices.amount', 'Montant')}</p>
+                            <p className="font-semibold">{fmt(inv.amount_due, inv.currency)}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.invoices.dueDate', 'Échéance')}</p>
+                            <p>{inv.due_date ?? '—'}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.invoices.reference', 'Référence virement')}</p>
+                            <p className="font-mono">{inv.number}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <Badge variant={getStatusBadge(withdrawal.status)}>
-                            {t(`partnerCenter.dashboard.finances.status.${withdrawal.status}`)}
-                          </Badge>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(withdrawal.created_at).toLocaleDateString('fr-FR')}
+                        {(inv.status === 'issued' || inv.status === 'overdue') && (
+                          <p className="text-xs text-amber-600 mt-3">
+                            {t('partnerCenter.dashboard.finances.invoices.payHint', 'À régler par virement en indiquant la référence ci-dessus. Voir l’onglet « Virement ».')}
                           </p>
-                        </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="payment-methods" className="space-y-4">
+        {/* Détail des commissions */}
+        <TabsContent value="commissions" className="space-y-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>{t('partnerCenter.dashboard.finances.paymentMethods.title')}</CardTitle>
-                <CardDescription>{t('partnerCenter.dashboard.finances.paymentMethods.description')}</CardDescription>
-              </div>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                {t('partnerCenter.dashboard.finances.paymentMethods.add')}
-              </Button>
+            <CardHeader>
+              <CardTitle>{t('partnerCenter.dashboard.finances.commissions.title', 'Commissions')}</CardTitle>
+              <CardDescription>{t('partnerCenter.dashboard.finances.commissions.description', 'Commission due à la plateforme sur chaque réservation terminée.')}</CardDescription>
             </CardHeader>
             <CardContent>
-              {paymentMethods.length === 0 ? (
+              {commissions.length === 0 ? (
                 <div className="text-center py-8">
                   <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.paymentMethods.empty')}</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {t('partnerCenter.dashboard.finances.paymentMethods.emptyDescription')}
-                  </p>
+                  <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.empty', 'Aucune commission pour le moment.')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {paymentMethods.map((method) => (
-                    <div key={method.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <CreditCard className="h-8 w-8 text-muted-foreground" />
+                  {commissions.slice(0, 20).map((c) => {
+                    const st = COMMISSION_STATUS[c.payment_status] ?? COMMISSION_STATUS.pending;
+                    return (
+                      <div key={c.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
                           <div>
-                            <p className="font-medium capitalize">{method.type.replace('_', ' ')}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {method.details?.account_name || t('partnerCenter.dashboard.finances.paymentMethods.accountConfigured')}
-                            </p>
+                            <p className="font-medium">{c.tourist_point_detail?.name || t('partnerCenter.dashboard.finances.commissions.poi', 'Point d’intérêt')}</p>
+                            {c.customer_name && (
+                              <p className="text-sm text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.client', 'Client')}: {c.customer_name}</p>
+                            )}
+                          </div>
+                          <Badge variant={st.variant}>{st.label}</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.reference', 'Référence')}</p>
+                            <p className="font-mono">{c.booking_reference || '—'}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.commission', 'Commission')}</p>
+                            <p className="font-semibold">{fmt(c.amount)}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.rate', 'Taux')}</p>
+                            <p>{Number(c.commission_rate).toFixed(1)}%</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.commissions.date', 'Date')}</p>
+                            <p>{new Date(c.booking_date).toLocaleDateString('fr-FR')}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {method.is_default && (
-                            <Badge variant="secondary">{t('partnerCenter.dashboard.finances.paymentMethods.default')}</Badge>
-                          )}
-                          <Badge variant={method.is_active ? 'outline' : 'secondary'}>
-                            {method.is_active ? t('partnerCenter.dashboard.finances.paymentMethods.active') : t('partnerCenter.dashboard.finances.paymentMethods.inactive')}
-                          </Badge>
-                        </div>
                       </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Instructions de virement (IBAN plateforme) */}
+        <TabsContent value="transfer" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Banknote className="h-5 w-5" /> {t('partnerCenter.dashboard.finances.transfer.title', 'Coordonnées de virement')}</CardTitle>
+              <CardDescription>{t('partnerCenter.dashboard.finances.transfer.description', 'Réglez vos factures par virement sur le compte de la plateforme, en rappelant le numéro de facture en référence.')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {billing && (billing.iban || billing.bank_holder) ? (
+                <>
+                  {[
+                    { label: t('partnerCenter.dashboard.finances.transfer.holder', 'Bénéficiaire'), value: billing.bank_holder },
+                    { label: 'IBAN', value: billing.iban },
+                    { label: 'BIC / SWIFT', value: billing.bic },
+                  ].filter((row) => row.value).map((row) => (
+                    <div key={row.label} className="flex items-center justify-between border rounded-lg px-4 py-3">
+                      <div>
+                        <p className="text-xs text-muted-foreground">{row.label}</p>
+                        <p className="font-mono">{row.value}</p>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => copy(row.value)}>
+                        <Copy className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
+                  <p className="text-xs text-muted-foreground pt-2">
+                    {t('partnerCenter.dashboard.finances.transfer.note', 'Indiquez le numéro de facture (ex. INV-…) en référence du virement pour accélérer le rapprochement.')}
+                  </p>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <Banknote className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">{t('partnerCenter.dashboard.finances.transfer.unavailable', 'Les coordonnées bancaires seront communiquées prochainement.')}</p>
                 </div>
               )}
             </CardContent>

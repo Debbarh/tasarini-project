@@ -1444,30 +1444,38 @@
           "readyForWithdrawal": "Bereit zur Auszahlung",
           "processing": "In Bearbeitung",
           "paymentOn": "Zahlung am",
-          "thisMonth": "Dieser Monat",
-          "monthlyRevenue": "Monatliche Einnahmen",
-          "avgCommission": "Durchschn. Provision",
-          "avgRate": "Durchschnittssatz"
+          "thisMonth": "Diesen Monat",
+          "monthlyRevenue": "Erzielte Provisionen",
+          "avgCommission": "Provisionssatz",
+          "avgRate": "Von der Plattform festgelegt",
+          "amountDue": "An die Plattform zu zahlen",
+          "amountDueHint": "Ausgestellte Rechnungen per Überweisung zu zahlen",
+          "toBeInvoiced": "Abzurechnen",
+          "toBeInvoicedHint": "Provisionen des laufenden Monats"
         },
         "revenueChart": {
-          "title": "Umsatzentwicklung",
-          "description": "Monatliche Einnahmen der letzten 12 Monate",
-          "revenue": "Umsatz"
+          "title": "Provisionen pro Monat",
+          "description": "Provisionsverlauf über 12 Monate",
+          "revenue": "Provision"
         },
         "tabs": {
           "commissions": "Provisionen",
           "withdrawals": "Auszahlungen",
-          "paymentMethods": "Zahlungsmethoden"
+          "paymentMethods": "Zahlungsmethoden",
+          "invoices": "Meine Rechnungen",
+          "transfer": "Überweisung"
         },
         "commissions": {
-          "title": "Provisionshistorie",
-          "description": "Details aller Ihrer Provisionen",
+          "title": "Provisionen",
+          "description": "Der Plattform geschuldete Provision für jede abgeschlossene Buchung.",
           "export": "Exportieren",
           "client": "Kunde",
           "reference": "Referenz",
           "commission": "Provision",
           "rate": "Satz",
-          "date": "Datum"
+          "date": "Datum",
+          "empty": "Noch keine Provisionen.",
+          "poi": "Sehenswürdigkeit"
         },
         "withdrawals": {
           "title": "Auszahlungsanträge",
@@ -1496,10 +1504,28 @@
           "paid": "Bezahlt",
           "completed": "Abgeschlossen",
           "failed": "Fehlgeschlagen",
-          "rejected": "Abgelehnt"
+          "rejected": "Abgelehnt",
+          "invoiced": "Abgerechnet"
         },
         "errors": {
-          "loadError": "Fehler beim Laden der Finanzdaten"
+          "loadError": "Ihre Finanzdaten konnten nicht geladen werden."
+        },
+        "invoices": {
+          "title": "Meine Rechnungen",
+          "description": "Monatlich abgerechnete Provisionen, per Überweisung zu zahlen.",
+          "empty": "Noch keine Rechnungen.",
+          "amount": "Betrag",
+          "dueDate": "Fälligkeit",
+          "reference": "Überweisungsreferenz",
+          "payHint": "Per Überweisung mit der obigen Referenz zahlen. Siehe Reiter „Überweisung“."
+        },
+        "transfer": {
+          "title": "Überweisungsdaten",
+          "description": "Begleichen Sie Ihre Rechnungen per Überweisung auf das Plattformkonto und geben Sie die Rechnungsnummer als Verwendungszweck an.",
+          "holder": "Begünstigter",
+          "note": "Geben Sie die Rechnungsnummer (z. B. INV-…) als Verwendungszweck an, um den Abgleich zu beschleunigen.",
+          "unavailable": "Die Bankdaten werden in Kürze mitgeteilt.",
+          "copied": "In die Zwischenablage kopiert."
         }
       },
       "subscription": {

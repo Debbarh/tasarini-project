@@ -19,6 +19,7 @@ export interface PartnerProfile {
   company_name: string;
   website?: string | null;
   status: string;
+  commission_rate?: string;
   api_key: string;
   metadata: Record<string, any>;
   managed_pois: PartnerTouristPointSummary[];
@@ -67,8 +68,34 @@ export interface PartnerCommission {
   booking_reference?: string;
   customer_name?: string;
   booking_date: string;
-  payment_status: 'pending' | 'processing' | 'paid' | 'failed';
+  payment_status: 'pending' | 'invoiced' | 'paid' | 'cancelled' | 'processing' | 'failed';
+  invoice?: number | null;
   created_at: string;
+}
+
+export interface PartnerInvoice {
+  id: number;
+  number: string;
+  partner: number;
+  partner_name?: string;
+  partner_email?: string;
+  period_start: string;
+  period_end: string;
+  amount_due: string;
+  currency: string;
+  status: 'draft' | 'issued' | 'paid' | 'overdue' | 'cancelled';
+  issued_at: string;
+  due_date?: string | null;
+  paid_at?: string | null;
+  payment_reference?: string;
+  commissions_count?: number;
+  notes?: string;
+}
+
+export interface PlatformBillingInfo {
+  bank_holder: string;
+  iban: string;
+  bic: string;
 }
 
 export interface PartnerPaymentMethod {
@@ -234,6 +261,27 @@ export const partnerService = {
 
   async listWithdrawals() {
     return extractArrayFromResponse<PartnerWithdrawal>(await apiClient.get<any>('partners/withdrawals/'));
+  },
+
+  // --- Facturation (commission après-vente : le partenaire doit la commission à la plateforme) ---
+  async listInvoices(params: { partner?: number | string; status?: string } = {}) {
+    return extractArrayFromResponse<PartnerInvoice>(await apiClient.get<any>('partners/invoices/', params));
+  },
+
+  async generateInvoices(payload: { year?: number; month?: number } = {}) {
+    return apiClient.post<{ created: number; invoices: PartnerInvoice[] }>('partners/invoices/generate/', payload);
+  },
+
+  async markInvoicePaid(id: number | string, payload: { payment_reference?: string } = {}) {
+    return apiClient.post<PartnerInvoice>(`partners/invoices/${id}/mark-paid/`, payload);
+  },
+
+  async setCommissionRate(profileId: number | string, commission_rate: number) {
+    return apiClient.post<PartnerProfile>(`partners/profiles/${profileId}/set-commission/`, { commission_rate });
+  },
+
+  async getPlatformBillingInfo() {
+    return apiClient.get<PlatformBillingInfo>('partners/billing-info/');
   },
 
   async requestWithdrawal(payload: { amount: number; payment_method: number | string }) {

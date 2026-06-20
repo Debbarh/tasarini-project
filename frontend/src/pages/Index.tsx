@@ -149,8 +149,8 @@ const Index = () => {
 
           {/* Recherche Vols (TravelPayouts) + Hôtels (Stay22) — forceMount : chargés une fois et
               conservés montés (corrige le widget TP qui ne se rechargeait pas au retour d'onglet). */}
-          <div className="mt-6 sm:mt-8 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '0.15s' }}>
-            <Tabs defaultValue="flights" className="bg-background/85 backdrop-blur-sm border rounded-2xl p-3 sm:p-4 shadow-lg">
+          <div className="mt-6 sm:mt-8 w-full animate-fade-in" style={{ animationDelay: '0.15s' }}>
+            <Tabs defaultValue="flights" className="bg-background/85 backdrop-blur-sm border rounded-2xl p-3 sm:p-4 lg:p-5 shadow-lg">
               <TabsList className="grid w-full grid-cols-2 mb-3 sm:max-w-md sm:mx-auto">
                 <TabsTrigger value="flights" className="gap-2">
                   <Plane className="h-4 w-4" /> {t('home.flightComparatorTitle', 'Comparez les vols')}

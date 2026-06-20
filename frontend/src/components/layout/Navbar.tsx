@@ -102,7 +102,7 @@ const Navbar = () => {
     </div>
   );
   return (
-    <header className="w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex items-center justify-between py-3 sm:py-4 px-4">
         <Link to="/" className="flex items-center">
           <img

@@ -15,7 +15,11 @@ export interface StoryAIProviderConfig {
 const baseUrl = 'content/story-ai-providers/';
 
 export const storyAIProviderService = {
-  list: () => apiClient.get<StoryAIProviderConfig[]>(baseUrl),
+  // Normalise la réponse : tableau OU objet paginé {results:[...]} → toujours un tableau.
+  list: async (): Promise<StoryAIProviderConfig[]> => {
+    const d = await apiClient.get<any>(baseUrl);
+    return Array.isArray(d) ? d : (d?.results ?? []);
+  },
   update: (id: string, payload: Partial<StoryAIProviderConfig>) =>
     apiClient.patch<StoryAIProviderConfig>(`${baseUrl}${id}/`, payload),
 };

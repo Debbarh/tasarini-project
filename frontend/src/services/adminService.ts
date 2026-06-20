@@ -1,4 +1,4 @@
-import { apiClient } from '@/integrations/api/client';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 import { ApiUser, ApiUserProfile } from '@/services/authService';
 
 export interface AdminDashboardStats {
@@ -116,24 +116,25 @@ export const adminService = {
     return apiClient.post<{ deactivated: number }>('admin/sessions/cleanup/', {});
   },
 
-  listAuditLogs() {
-    return apiClient.get<AdminAuditLog[]>('admin/audit-logs/');
+  // Les endpoints liste DRF sont paginés ({results:[...]}) → on renvoie toujours un tableau.
+  async listAuditLogs() {
+    return extractArrayFromResponse<AdminAuditLog>(await apiClient.get<any>('admin/audit-logs/'));
   },
 
-  listAdminSessions() {
-    return apiClient.get<AdminSession[]>('admin/sessions/');
+  async listAdminSessions() {
+    return extractArrayFromResponse<AdminSession>(await apiClient.get<any>('admin/sessions/'));
   },
 
-  listAdminPermissions() {
-    return apiClient.get<AdminPermissionEntry[]>('admin/permissions/');
+  async listAdminPermissions() {
+    return extractArrayFromResponse<AdminPermissionEntry>(await apiClient.get<any>('admin/permissions/'));
   },
 
   checkPermission(payload: { permission_type: string; action: string }) {
     return apiClient.post<{ has_permission: boolean }>('admin/permissions/check/', payload);
   },
 
-  listUsers() {
-    return apiClient.get<ApiUser[]>('users/');
+  async listUsers() {
+    return extractArrayFromResponse<ApiUser>(await apiClient.get<any>('users/'));
   },
 
   deleteUser(userId: number) {
@@ -152,9 +153,9 @@ export const adminService = {
     return apiClient.delete<void>(`accounts/user-roles/${roleAssignmentId}/`);
   },
 
-  listPermissionRules(adminId?: number) {
+  async listPermissionRules(adminId?: number) {
     const params = adminId ? { admin: adminId } : undefined;
-    return apiClient.get<AdminPermissionRule[]>('admin/permission-rules/', params);
+    return extractArrayFromResponse<AdminPermissionRule>(await apiClient.get<any>('admin/permission-rules/', params));
   },
 
   createPermissionRule(payload: { admin: number; permission_type: string; can_create?: boolean; can_read?: boolean; can_update?: boolean; can_delete?: boolean }) {

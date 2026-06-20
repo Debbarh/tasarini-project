@@ -48,6 +48,7 @@ def persist_itinerary_pois(itinerary_data, user):
     for day in (itinerary_data.get('days') or []):
         if not isinstance(day, dict):
             continue
+        day_dest = (day.get('destination') or '').strip()  # ville → améliore la recherche photo
         for act in (day.get('activities') or []):
             if not isinstance(act, dict):
                 continue
@@ -78,7 +79,7 @@ def persist_itinerary_pois(itinerary_data, user):
                 # Jusqu'à 3 photos Openverse (si elles existent) persistées sur le POI.
                 try:
                     from .external.openverse import search_images
-                    imgs = search_images(name, n=3)
+                    imgs = search_images(f"{name} {day_dest}".strip(), n=3)
                 except Exception:  # noqa: BLE001
                     imgs = []
                 meta = {'source': 'ai_itinerary'}

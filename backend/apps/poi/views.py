@@ -1369,8 +1369,13 @@ class TouristPointViewSet(viewsets.ModelViewSet):
         if have:
             return Response({'images': have[:3], 'fetched': False})
         from .external.openverse import search_images
-        city = str(meta.get('city') or '')
-        imgs = search_images(f"{point.name} {city}".strip(), n=3)
+        # Indice de ville pour affiner la recherche : corps de requête, sinon metadata,
+        # sinon extrait de l'adresse (avant-dernier segment = ville en général).
+        hint = str(request.data.get('city') or meta.get('city') or '').strip()
+        if not hint and point.address:
+            parts = [p.strip() for p in point.address.split(',') if p.strip()]
+            hint = parts[-2] if len(parts) >= 2 else (parts[-1] if parts else '')
+        imgs = search_images(f"{point.name} {hint}".strip(), n=3)
         if imgs:
             meta['images'] = imgs
             point.metadata = meta

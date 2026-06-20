@@ -11,10 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DestinationSuggestions } from "@/components/trip/DestinationSuggestions";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Trash2, MapPin, Clock, Calendar as CalendarIcon } from "lucide-react";
 import { Destination, TripFormData } from "@/types/trip";
-import LocationPicker from "@/components/LocationPicker";
 import LocationAutocomplete, { OsmPick } from "@/components/trip/LocationAutocomplete";
 import { apiClient } from "@/integrations/api/client";
 import { format, differenceInDays, addDays } from "date-fns";
@@ -75,7 +73,6 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
   );
   const [countries, setCountries] = useState<Country[]>([]);
   const [cities, setCities] = useState<City[]>([]);
-  const [showLocationPicker, setShowLocationPicker] = useState(false);
   // Code ISO2 du pays choisi par destination → biaise la recherche de ville OSM.
   const [countryCodes, setCountryCodes] = useState<Record<number, string>>({});
 
@@ -285,141 +282,6 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
       ? Number(value.toFixed(6))
       : undefined;
 
-  const handleLocationSelect = async (
-    latitude: number,
-    longitude: number,
-    address: string,
-    providedCity?: string,
-    providedCountry?: string
-  ) => {
-    const addressParts = address
-      ? address.split(',').map(part => part.trim()).filter(Boolean)
-      : [];
-    const fallbackCountry = providedCountry || addressParts[addressParts.length - 1] || '';
-    const fallbackCity = providedCity || addressParts[addressParts.length - 2] || '';
-
-    // Garde anti-données corrompues : ne jamais créer de pays/ville à partir de
-    // coordonnées GPS brutes ou d'une chaîne "Position sélectionnée: ...".
-    const looksLikeCoord = (s: string) =>
-      /^-?\d+(\.\d+)?$/.test((s || '').trim()) || /^position\b/i.test((s || '').trim());
-    if (looksLikeCoord(fallbackCountry) || looksLikeCoord(fallbackCity)) {
-      toast.error(
-        t(
-          'planTrip.destinationStep.geocodeFailed',
-          "Impossible de déterminer la ville pour ce point. Choisissez une autre position ou saisissez la ville manuellement."
-        )
-      );
-      return;
-    }
-
-    const safeLatitude = normalizeCoordinate(latitude);
-    const safeLongitude = normalizeCoordinate(longitude);
-
-    let finalCountryName = fallbackCountry;
-    let finalCityName = fallbackCity;
-    let finalLatitude = safeLatitude ?? latitude;
-    let finalLongitude = safeLongitude ?? longitude;
-
-    if (finalCountryName && finalCityName) {
-      try {
-        // Récupérer les traductions multilingues via Nominatim
-        toast.info(t('planTrip.destinationStep.fetchingTranslations') || 'Récupération des traductions...');
-
-        const { getMultilingualLocationNamesQuick } = await import('@/services/multilingualGeocodingService');
-        const multilingualData = await getMultilingualLocationNamesQuick(
-          latitude,
-          longitude,
-          fallbackCity,
-          fallbackCountry
-        );
-
-        // Préparer les traductions pour l'API
-        const countryTranslations: Record<string, string> = {};
-        const cityTranslations: Record<string, string> = {};
-
-        // Extraire les traductions du pays
-        Object.keys(multilingualData.country).forEach(key => {
-          if (key.startsWith('name_') && multilingualData.country[key as keyof typeof multilingualData.country]) {
-            countryTranslations[key] = multilingualData.country[key as keyof typeof multilingualData.country] as string;
-          }
-        });
-
-        // Extraire les traductions de la ville
-        Object.keys(multilingualData.city).forEach(key => {
-          if (key.startsWith('name_') && multilingualData.city[key as keyof typeof multilingualData.city]) {
-            cityTranslations[key] = multilingualData.city[key as keyof typeof multilingualData.city] as string;
-          }
-        });
-
-        const resolution = await locationService.resolveLocation({
-          country_name: finalCountryName,
-          city_name: finalCityName,
-          latitude: safeLatitude,
-          longitude: safeLongitude,
-          country_translations: countryTranslations,
-          city_translations: cityTranslations
-        });
-
-        const [refreshedCountries, refreshedCities] = await Promise.all([
-          fetchCountries(),
-          fetchCities()
-        ]);
-
-        const resolvedCountry = refreshedCountries.find(
-          country => country.id === resolution.country_id
-        );
-        const resolvedCity = refreshedCities.find(
-          city => city.id === resolution.city_id
-        );
-
-        finalCountryName = resolvedCountry?.name || resolution.country_name;
-        finalCityName = resolvedCity?.name || resolution.city_name;
-        finalLatitude = resolvedCity?.latitude ?? latitude;
-        finalLongitude = resolvedCity?.longitude ?? longitude;
-
-        toast.success(t('planTrip.destinationStep.locationSaved'));
-      } catch (error) {
-        console.error('Error resolving location:', error);
-        toast.error(t('planTrip.destinationStep.locationSaveError'));
-      }
-    }
-
-    if (!finalCountryName && !finalCityName) {
-      toast.error(t('planTrip.destinationStep.invalidAddress'));
-      return;
-    }
-
-    const updateLastDestination = () => {
-      const lastIndex = destinations.length - 1;
-      const updated = [...destinations];
-      updated[lastIndex] = {
-        ...updated[lastIndex],
-        country: finalCountryName || updated[lastIndex].country,
-        city: finalCityName || updated[lastIndex].city,
-        latitude: finalLatitude,
-        longitude: finalLongitude
-      };
-      setDestinations(updated);
-    };
-
-    if (destinations.length > 0) {
-      updateLastDestination();
-    } else {
-      setDestinations([{
-        country: finalCountryName,
-        city: finalCityName,
-        latitude: finalLatitude,
-        longitude: finalLongitude,
-        duration: 3,
-        dateMode: 'duration'
-      }]);
-    }
-
-    setTimeout(() => {
-      setShowLocationPicker(false);
-    }, 100);
-  };
-
   const totalDuration = destinations.reduce((sum, dest) => sum + dest.duration, 0);
 
   return (
@@ -604,57 +466,6 @@ export default function DestinationStep({ data, onUpdate, onValidate }: Destinat
           {t('planTrip.destinationStep.addDestination')}
         </Button>
       </div>
-
-      <Button
-        type="button"
-        variant="outline"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setShowLocationPicker(true);
-        }}
-        className="w-full border-dashed border-2 hover:border-primary"
-        disabled={destinations.length === 0}
-      >
-        <MapPin className="h-4 w-4 mr-2" />
-        {t('planTrip.destinationStep.chooseOnMap')}
-        {destinations.length === 0 && (
-          <span className="ml-2 text-xs text-muted-foreground">({t('planTrip.destinationStep.addFirstDestination')})</span>
-        )}
-      </Button>
-      {destinations.length > 0 && (
-        <p className="text-xs text-muted-foreground text-center -mt-2">
-          {t('planTrip.destinationStep.chooseOnMapHint', 'Ouvre une carte interactive pour placer précisément votre destination et récupérer ses coordonnées.')}
-        </p>
-      )}
-
-      <Dialog open={showLocationPicker} onOpenChange={setShowLocationPicker}>
-        <DialogContent
-          className="max-w-4xl w-[90vw] h-[85vh] p-0 overflow-hidden flex flex-col"
-          aria-describedby="map-description"
-        >
-          <div className="p-6 pb-0">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                {t('planTrip.destinationStep.selectOnMap')}
-              </DialogTitle>
-            </DialogHeader>
-            <div id="map-description" className="sr-only">
-              {t('planTrip.destinationStep.mapDescription')}
-            </div>
-          </div>
-          <div className="flex-1 px-6 pb-6 overflow-hidden">
-            {showLocationPicker && (
-              <LocationPicker
-                onLocationSelect={(lat, lng, address, city, country) => {
-                  handleLocationSelect(lat, lng, address, city, country);
-                }}
-              />
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Summary */}
       <Card className="bg-secondary/50">

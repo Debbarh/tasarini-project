@@ -275,7 +275,39 @@
       "moderate": "中程度",
       "others": "その他",
       "refineMore": "希望条件や特別な要望を追加する",
-      "refineLess": "追加オプションを非表示にする"
+      "refineLess": "追加オプションを非表示にする",
+      "perDay": "1日のアクティビティ数",
+      "perDayAuto": "自動",
+      "perDayHint": "選んだ強度に合わせるには「自動」のまま、または具体的な数を指定してください。"
+    },
+    "regenerate": {
+      "title": "別の提案",
+      "desc": "ペースを調整して再生成します。",
+      "rhythm": "ペース",
+      "lighter": "軽め",
+      "standard": "標準",
+      "intense": "より集中的",
+      "special": "特別な要望",
+      "specialPlaceholder": "例：もっと文化、長い徒歩は避ける…",
+      "cta": "再生成",
+      "button": "別の提案をもらう"
+    },
+    "addActivity": {
+      "addTitle": "アクティビティを追加",
+      "editTitle": "アクティビティを編集",
+      "desc": "アクティビティを入力すると、AIが説明とヒントを生成できます。",
+      "name": "タイトル",
+      "time": "時刻",
+      "place": "場所",
+      "address": "住所",
+      "lat": "緯度",
+      "lng": "経度",
+      "description": "説明",
+      "tips": "ヒント（1行に1つ）",
+      "generate": "説明とヒント（AI）",
+      "generated": "説明とヒントを生成しました。",
+      "generateError": "生成に失敗しました。",
+      "titleRequired": "先にアクティビティのタイトルを入力してください。"
     }
   },
   "beInspired": {
@@ -2346,7 +2378,10 @@
     "bookServices": "予約する",
     "skipAd": "次へ",
     "enableSound": "音声をオンにする",
-    "muteSound": "音を消す"
+    "muteSound": "音を消す",
+    "getDirections": "ルートを表示",
+    "addActivity": "アクティビティを追加",
+    "customActivity": "追加済み"
   },
   "editor": {
     "editActivity": "アクティビティを編集する",

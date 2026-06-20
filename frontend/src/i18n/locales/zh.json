@@ -275,7 +275,39 @@
       "moderate": "中等",
       "others": "其他",
       "refineMore": "添加兴趣点和特殊要求",
-      "refineLess": "隐藏其他选项"
+      "refineLess": "隐藏其他选项",
+      "perDay": "每天活动数",
+      "perDayAuto": "自动",
+      "perDayHint": "保持“自动”以遵循所选强度，或设置具体数量。"
+    },
+    "regenerate": {
+      "title": "换一个方案",
+      "desc": "调整节奏后重新生成。",
+      "rhythm": "节奏",
+      "lighter": "更轻松",
+      "standard": "标准",
+      "intense": "更紧凑",
+      "special": "特殊要求",
+      "specialPlaceholder": "例如：更多文化，避免长时间步行……",
+      "cta": "重新生成",
+      "button": "换一个方案"
+    },
+    "addActivity": {
+      "addTitle": "添加活动",
+      "editTitle": "编辑活动",
+      "desc": "填写活动；AI 可生成描述和建议。",
+      "name": "标题",
+      "time": "时间",
+      "place": "地点",
+      "address": "地址",
+      "lat": "纬度",
+      "lng": "经度",
+      "description": "描述",
+      "tips": "建议（每行一条）",
+      "generate": "描述和建议（AI）",
+      "generated": "已生成描述和建议。",
+      "generateError": "生成失败。",
+      "titleRequired": "请先填写活动标题。"
     }
   },
   "beInspired": {
@@ -2346,7 +2378,10 @@
     "bookServices": "预订",
     "skipAd": "跳过",
     "enableSound": "打开声音",
-    "muteSound": "关闭声音"
+    "muteSound": "关闭声音",
+    "getDirections": "查看路线",
+    "addActivity": "添加活动",
+    "customActivity": "已添加"
   },
   "editor": {
     "editActivity": "编辑活动",

@@ -140,7 +140,7 @@ class BudgetLevelViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a budget level using DeepL"""
+        """Translate missing label and description fields for a budget level via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         budget_level = self.get_object()
@@ -222,7 +222,7 @@ class BudgetFlexibilityOptionViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a budget flexibility option using DeepL"""
+        """Translate missing label and description fields for a budget flexibility option via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         budget_flexibility = self.get_object()
@@ -544,7 +544,7 @@ class AccommodationTypeViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for an accommodation type using DeepL"""
+        """Translate missing label and description fields for an accommodation type via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         accommodation_type = self.get_object()
@@ -593,7 +593,7 @@ class AccommodationAmenityViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for an accommodation amenity using DeepL"""
+        """Translate missing label and description fields for an accommodation amenity via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         accommodation_amenity = self.get_object()
@@ -641,7 +641,7 @@ class AccommodationLocationViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for an accommodation location using DeepL"""
+        """Translate missing label and description fields for an accommodation location via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         accommodation_location = self.get_object()
@@ -689,7 +689,7 @@ class AccommodationAccessibilityViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for an accommodation accessibility feature using DeepL"""
+        """Translate missing label and description fields for an accommodation accessibility feature via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         accommodation_accessibility = self.get_object()
@@ -737,7 +737,7 @@ class AccommodationSecurityViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for an accommodation security feature using DeepL"""
+        """Translate missing label and description fields for an accommodation security feature via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         accommodation_security = self.get_object()
@@ -785,7 +785,7 @@ class AccommodationAmbianceViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for an accommodation ambiance using DeepL"""
+        """Translate missing label and description fields for an accommodation ambiance via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         accommodation_ambiance = self.get_object()
@@ -969,7 +969,7 @@ class DietaryRestrictionViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a dietary restriction using DeepL"""
+        """Translate missing label and description fields for a dietary restriction via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         dietary_restriction = self.get_object()
@@ -1013,7 +1013,7 @@ class CuisineTypeViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a cuisine type using DeepL"""
+        """Translate missing label and description fields for a cuisine type via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         cuisine_type = self.get_object()
@@ -1057,7 +1057,7 @@ class CulinaryAdventureLevelViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a culinary adventure level using DeepL"""
+        """Translate missing label and description fields for a culinary adventure level via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         culinary_adventure_level = self.get_object()
@@ -1101,7 +1101,7 @@ class RestaurantCategoryViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a restaurant category using DeepL"""
+        """Translate missing label and description fields for a restaurant category via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         restaurant_category = self.get_object()
@@ -1145,7 +1145,7 @@ class TravelGroupTypeViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a travel group type using DeepL"""
+        """Translate missing label and description fields for a travel group type via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         travel_group_type = self.get_object()
@@ -1194,7 +1194,7 @@ class TravelGroupSubtypeViewSet(AdminManageableViewSet):
 
     @action(detail=True, methods=['post'], url_path='translate')
     def translate(self, request, pk=None):
-        """Translate missing label and description fields for a travel group subtype using DeepL"""
+        """Translate missing label and description fields for a travel group subtype via translategemma:4b"""
         from .admin import fill_missing_field_translations
 
         travel_group_subtype = self.get_object()

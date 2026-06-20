@@ -275,7 +275,39 @@
       "moderate": "Moderado",
       "others": "outros",
       "refineMore": "Adicionar interesses e pedidos especiais",
-      "refineLess": "Ocultar as opções adicionais"
+      "refineLess": "Ocultar as opções adicionais",
+      "perDay": "Atividades por dia",
+      "perDayAuto": "Auto",
+      "perDayHint": "Deixe em «Auto» para seguir a intensidade escolhida, ou defina um número exato."
+    },
+    "regenerate": {
+      "title": "Outra proposta",
+      "desc": "Ajuste o ritmo e gere novamente.",
+      "rhythm": "Ritmo",
+      "lighter": "Mais leve",
+      "standard": "Padrão",
+      "intense": "Mais intenso",
+      "special": "Pedidos especiais",
+      "specialPlaceholder": "Ex. mais cultura, evitar longas caminhadas…",
+      "cta": "Gerar novamente",
+      "button": "Dê-me outra proposta"
+    },
+    "addActivity": {
+      "addTitle": "Adicionar uma atividade",
+      "editTitle": "Editar atividade",
+      "desc": "Informe a atividade; a IA pode gerar uma descrição e dicas.",
+      "name": "Título",
+      "time": "Hora",
+      "place": "Local",
+      "address": "Endereço",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "description": "Descrição",
+      "tips": "Dicas (uma por linha)",
+      "generate": "Descrição e dicas (IA)",
+      "generated": "Descrição e dicas geradas.",
+      "generateError": "Falha na geração.",
+      "titleRequired": "Informe primeiro o título da atividade."
     }
   },
   "beInspired": {
@@ -2346,7 +2378,10 @@
     "bookServices": "Reservar",
     "skipAd": "Ignorar",
     "enableSound": "Ativar o som",
-    "muteSound": "Silenciar o som"
+    "muteSound": "Silenciar o som",
+    "getDirections": "Como chegar",
+    "addActivity": "Adicionar uma atividade",
+    "customActivity": "Adicionada"
   },
   "editor": {
     "editActivity": "Editar a atividade",

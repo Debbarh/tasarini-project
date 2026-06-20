@@ -275,7 +275,39 @@
       "moderate": "Moderado",
       "others": "otros",
       "refineMore": "Añadir intereses y peticiones especiales",
-      "refineLess": "Ocultar las opciones adicionales"
+      "refineLess": "Ocultar las opciones adicionales",
+      "perDay": "Actividades por día",
+      "perDayAuto": "Auto",
+      "perDayHint": "Deje en «Auto» para seguir la intensidad elegida, o fije un número concreto."
+    },
+    "regenerate": {
+      "title": "Otra propuesta",
+      "desc": "Ajuste el ritmo y vuelva a generar.",
+      "rhythm": "Ritmo",
+      "lighter": "Más ligero",
+      "standard": "Estándar",
+      "intense": "Más intenso",
+      "special": "Peticiones especiales",
+      "specialPlaceholder": "Ej. más cultura, evitar caminatas largas…",
+      "cta": "Regenerar",
+      "button": "Dame otra propuesta"
+    },
+    "addActivity": {
+      "addTitle": "Añadir una actividad",
+      "editTitle": "Editar actividad",
+      "desc": "Indique la actividad; la IA puede generar una descripción y consejos.",
+      "name": "Título",
+      "time": "Hora",
+      "place": "Lugar",
+      "address": "Dirección",
+      "lat": "Latitud",
+      "lng": "Longitud",
+      "description": "Descripción",
+      "tips": "Consejos (uno por línea)",
+      "generate": "Descripción y consejos (IA)",
+      "generated": "Descripción y consejos generados.",
+      "generateError": "Error al generar.",
+      "titleRequired": "Primero indique el título de la actividad."
     }
   },
   "beInspired": {
@@ -2346,7 +2378,10 @@
     "bookServices": "Reservar",
     "skipAd": "Saltar",
     "enableSound": "Activar el sonido",
-    "muteSound": "Silenciar el sonido"
+    "muteSound": "Silenciar el sonido",
+    "getDirections": "Cómo llegar",
+    "addActivity": "Añadir una actividad",
+    "customActivity": "Añadida"
   },
   "editor": {
     "editActivity": "Modificar la actividad",

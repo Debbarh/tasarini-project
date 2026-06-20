@@ -206,9 +206,6 @@ FRONTEND_URL = env('FRONTEND_URL', default='http://localhost:5173')
 # LibreTranslate service URL for translations
 LIBRETRANSLATE_URL = env('LIBRETRANSLATE_URL', default='http://libretranslate:5000')
 
-# DeepL API configuration
-DEEPL_API_KEY = env('DEEPL_API_KEY', default='')
-
 # AI provider API keys (stored only in environment, jamais côté frontend)
 OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
 OPENAI_API_BASE = env('OPENAI_API_BASE', default='https://api.openai.com/v1')
@@ -220,7 +217,7 @@ PERPLEXITY_API_BASE = env('PERPLEXITY_API_BASE', default='https://api.perplexity
 # Ollama local LLM server (pas de clé API : modèle hébergé localement)
 OLLAMA_API_BASE = env('OLLAMA_API_BASE', default='http://ollama:11434')
 
-# Traduction dynamique unifiée : un seul moteur = translategemma:4b (Ollama). Plus de DeepL.
+# Traduction dynamique unifiée : un seul moteur = translategemma:4b (Ollama), sans clé externe.
 TRANSLATION_OLLAMA_MODEL = env('TRANSLATION_OLLAMA_MODEL', default='translategemma:4b')
 TRANSLATION_TIMEOUT = env.int('TRANSLATION_TIMEOUT', default=90)
 # Accélération du cron : réglages Ollama + traduction par lots (voir services_i18n).

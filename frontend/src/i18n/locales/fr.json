@@ -275,7 +275,39 @@
       "moderate": "Modéré",
       "others": "autres",
       "refineMore": "Ajouter des centres d'intérêt et demandes spéciales",
-      "refineLess": "Masquer les options supplémentaires"
+      "refineLess": "Masquer les options supplémentaires",
+      "perDay": "Activités par jour",
+      "perDayAuto": "Auto",
+      "perDayHint": "Laissez sur « Auto » pour suivre l'intensité choisie, ou fixez un nombre précis."
+    },
+    "regenerate": {
+      "title": "Une autre proposition",
+      "desc": "Ajustez le rythme puis relancez la génération.",
+      "rhythm": "Rythme",
+      "lighter": "Plus léger",
+      "standard": "Standard",
+      "intense": "Plus intense",
+      "special": "Demandes spéciales",
+      "specialPlaceholder": "Ex. plus de culture, éviter les longues marches…",
+      "cta": "Régénérer",
+      "button": "Donne-moi une autre proposition"
+    },
+    "addActivity": {
+      "addTitle": "Ajouter une activité",
+      "editTitle": "Modifier l'activité",
+      "desc": "Renseignez l'activité ; l'IA peut générer une description et des conseils.",
+      "name": "Titre",
+      "time": "Heure",
+      "place": "Lieu",
+      "address": "Adresse",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "description": "Description",
+      "tips": "Conseils (un par ligne)",
+      "generate": "Description & conseils (IA)",
+      "generated": "Description et conseils générés.",
+      "generateError": "Échec de la génération.",
+      "titleRequired": "Renseignez d'abord le titre de l'activité."
     }
   },
   "beInspired": {
@@ -2346,7 +2378,10 @@
     "bookServices": "Réserver",
     "skipAd": "Passer",
     "enableSound": "Activer le son",
-    "muteSound": "Couper le son"
+    "muteSound": "Couper le son",
+    "getDirections": "Voir l'itinéraire",
+    "addActivity": "Ajouter une activité",
+    "customActivity": "Ajoutée"
   },
   "editor": {
     "editActivity": "Modifier l'activité",

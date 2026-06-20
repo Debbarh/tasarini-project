@@ -275,7 +275,39 @@
       "moderate": "Moderate",
       "others": "others",
       "refineMore": "Add specific interests and special requests",
-      "refineLess": "Hide additional options"
+      "refineLess": "Hide additional options",
+      "perDay": "Activities per day",
+      "perDayAuto": "Auto",
+      "perDayHint": "Leave on “Auto” to follow the chosen intensity, or set a specific number."
+    },
+    "regenerate": {
+      "title": "Another suggestion",
+      "desc": "Adjust the pace and regenerate.",
+      "rhythm": "Pace",
+      "lighter": "Lighter",
+      "standard": "Standard",
+      "intense": "More intense",
+      "special": "Special requests",
+      "specialPlaceholder": "E.g. more culture, avoid long walks…",
+      "cta": "Regenerate",
+      "button": "Give me another suggestion"
+    },
+    "addActivity": {
+      "addTitle": "Add an activity",
+      "editTitle": "Edit activity",
+      "desc": "Enter the activity; AI can generate a description and tips.",
+      "name": "Title",
+      "time": "Time",
+      "place": "Place",
+      "address": "Address",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "description": "Description",
+      "tips": "Tips (one per line)",
+      "generate": "Description & tips (AI)",
+      "generated": "Description and tips generated.",
+      "generateError": "Generation failed.",
+      "titleRequired": "Enter the activity title first."
     }
   },
   "beInspired": {
@@ -2346,7 +2378,10 @@
     "bookServices": "Book",
     "skipAd": "Skip",
     "enableSound": "Enable sound",
-    "muteSound": "Mute"
+    "muteSound": "Mute",
+    "getDirections": "Get directions",
+    "addActivity": "Add an activity",
+    "customActivity": "Added"
   },
   "editor": {
     "editActivity": "Edit activity",

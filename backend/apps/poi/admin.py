@@ -67,7 +67,7 @@ LOCATION_NAMES_DICT = {
 }
 
 
-# --- Moteur de traduction unifié : translategemma:4b via Ollama (remplace DeepL) ---
+# --- Moteur de traduction unifié : translategemma:4b via Ollama (sans clé externe) ---
 import re as _re
 
 _LANG_NAME = {

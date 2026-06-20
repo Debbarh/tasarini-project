@@ -275,7 +275,39 @@
       "moderate": "Mäßig",
       "others": "weitere",
       "refineMore": "Interessen und Sonderwünsche hinzufügen",
-      "refineLess": "Zusätzliche Optionen ausblenden"
+      "refineLess": "Zusätzliche Optionen ausblenden",
+      "perDay": "Aktivitäten pro Tag",
+      "perDayAuto": "Auto",
+      "perDayHint": "Auf „Auto“ lassen, um der gewählten Intensität zu folgen, oder eine genaue Zahl festlegen."
+    },
+    "regenerate": {
+      "title": "Ein anderer Vorschlag",
+      "desc": "Passen Sie das Tempo an und generieren Sie neu.",
+      "rhythm": "Tempo",
+      "lighter": "Lockerer",
+      "standard": "Standard",
+      "intense": "Intensiver",
+      "special": "Besondere Wünsche",
+      "specialPlaceholder": "z. B. mehr Kultur, lange Fußwege vermeiden…",
+      "cta": "Neu generieren",
+      "button": "Mach mir einen anderen Vorschlag"
+    },
+    "addActivity": {
+      "addTitle": "Aktivität hinzufügen",
+      "editTitle": "Aktivität bearbeiten",
+      "desc": "Geben Sie die Aktivität ein; die KI kann Beschreibung und Tipps erstellen.",
+      "name": "Titel",
+      "time": "Uhrzeit",
+      "place": "Ort",
+      "address": "Adresse",
+      "lat": "Breitengrad",
+      "lng": "Längengrad",
+      "description": "Beschreibung",
+      "tips": "Tipps (einer pro Zeile)",
+      "generate": "Beschreibung & Tipps (KI)",
+      "generated": "Beschreibung und Tipps erstellt.",
+      "generateError": "Generierung fehlgeschlagen.",
+      "titleRequired": "Geben Sie zuerst den Titel der Aktivität ein."
     }
   },
   "beInspired": {
@@ -2346,7 +2378,10 @@
     "bookServices": "Buchen",
     "skipAd": "Weiter",
     "enableSound": "Ton einschalten",
-    "muteSound": "Ton ausschalten"
+    "muteSound": "Ton ausschalten",
+    "getDirections": "Route anzeigen",
+    "addActivity": "Aktivität hinzufügen",
+    "customActivity": "Hinzugefügt"
   },
   "editor": {
     "editActivity": "Aktivität bearbeiten",

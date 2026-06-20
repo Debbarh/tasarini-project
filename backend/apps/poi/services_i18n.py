@@ -17,6 +17,7 @@ import logging
 from django.utils import timezone
 
 import hashlib
+import re
 
 from django.conf import settings as dj_settings
 
@@ -269,19 +270,36 @@ def poi_complete(poi) -> bool:
     return all(lang in tr for lang in SUPPORTED_LANGUAGES)
 
 
+_NAME_SENTINEL = '{{0}}'  # placeholder i18n : préservé tel quel par le modèle
+
+
+def _translate_description(desc, name, L0, lang):
+    """Traduit la description en PROTÉGEANT le nom du lieu : on ne le traduit pas, on le
+    laisse tel quel entre guillemets « … ». Si le nom n'apparaît pas, traduction normale."""
+    desc = (desc or '').strip()
+    if not desc:
+        return ''
+    name = (name or '').strip()
+    if name and name.lower() in desc.lower():
+        pat = re.compile(re.escape(name), re.IGNORECASE)
+        protected = pat.sub(_NAME_SENTINEL, desc)  # remplace le nom par un repère neutre
+        out = translate_via_ollama(protected, lang) or protected
+        if _NAME_SENTINEL in out:  # le repère a survécu → on restaure le nom entre guillemets
+            return out.replace(_NAME_SENTINEL, f'« {name} »')
+        # repli rare (repère perdu) : traduction simple
+    return translate_text(desc, source_lang=L0, target_lang=lang, is_location=False) or desc
+
+
 def poi_lang_payload(base, names_auth, L0, lang):
     """Construit {name, description, address} d'un POI pour `lang` selon la POLITIQUE QUALITÉ :
       - name    : nom AUTHENTIQUE (open data, `metadata['names'][lang]`) si présent, SINON nom d'origine
                   (jamais de translittération LLM inventée).
       - address : conservée telle quelle (nom propre).
-      - description : prose → traduite par le LLM (rare : ~0 POI ont une description).
+      - description : prose traduite par le LLM, MAIS le nom du lieu reste non traduit, entre « … ».
     """
-    desc = base['description']
-    if desc:
-        desc = translate_text(desc, source_lang=L0, target_lang=lang, is_location=False) or desc
     return {
         'name': (names_auth.get(lang) or base['name']),
-        'description': desc or '',
+        'description': _translate_description(base['description'], base['name'], L0, lang),
         'address': base['address'],
     }
 

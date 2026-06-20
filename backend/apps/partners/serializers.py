@@ -6,6 +6,7 @@ from apps.accounts.serializers import UserSerializer
 from apps.poi.models import TouristPoint
 from apps.poi.serializers import TouristPointSerializer
 from .models import (
+    PartnerInvoice,
     PartnerApplication,
     PartnerBookingConfig,
     PartnerCommission,
@@ -37,6 +38,7 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'company_name',
             'website',
             'status',
+            'commission_rate',
             'api_key',
             'metadata',
             'managed_pois',
@@ -44,7 +46,9 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
         ]
-        read_only_fields = ('id', 'owner', 'owner_detail', 'api_key', 'created_at', 'updated_at')
+        # commission_rate : lecture seule via le serializer → seul l'admin la change via l'action
+        # `set-commission`/`moderate` (empêche un partenaire de modifier son propre taux).
+        read_only_fields = ('id', 'owner', 'owner_detail', 'api_key', 'commission_rate', 'created_at', 'updated_at')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -171,6 +175,7 @@ class PartnerCommissionSerializer(serializers.ModelSerializer):
             'tourist_point_detail',
             'tourist_point_name',
             'booking',
+            'invoice',
             'amount',
             'commission_rate',
             'booking_reference',
@@ -181,6 +186,25 @@ class PartnerCommissionSerializer(serializers.ModelSerializer):
             'created_at',
         ]
         read_only_fields = ('id', 'partner', 'created_at')
+
+
+class PartnerInvoiceSerializer(serializers.ModelSerializer):
+    partner_name = serializers.CharField(source='partner.display_name', read_only=True)
+    partner_email = serializers.EmailField(source='partner.email', read_only=True)
+    commissions_count = serializers.IntegerField(source='commissions.count', read_only=True)
+
+    class Meta:
+        model = PartnerInvoice
+        fields = [
+            'id', 'partner', 'partner_name', 'partner_email', 'number',
+            'period_start', 'period_end', 'amount_due', 'currency', 'status',
+            'issued_at', 'due_date', 'paid_at', 'payment_reference', 'notes',
+            'commissions_count', 'created_at', 'updated_at',
+        ]
+        read_only_fields = (
+            'id', 'partner', 'number', 'period_start', 'period_end', 'amount_due',
+            'issued_at', 'paid_at', 'commissions_count', 'created_at', 'updated_at',
+        )
 
 
 class PartnerWithdrawalSerializer(serializers.ModelSerializer):

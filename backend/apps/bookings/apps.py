@@ -5,3 +5,6 @@ class BookingsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.bookings'
     verbose_name = 'Bookings'
+
+    def ready(self):
+        from . import signals  # noqa: F401 - branche la génération des commissions partenaire

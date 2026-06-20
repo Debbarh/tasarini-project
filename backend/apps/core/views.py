@@ -41,6 +41,10 @@ DEFAULT_SETTINGS = [
     # Lancement manuel continu (start/stop par l'admin, sans limite de temps).
     ('translation_manual_enabled', 'false', 'boolean', 'Passe manuelle en cours (start/stop admin)', 'translation'),
     ('translation_manual_mode', 'missing', 'text', "Mode de la passe manuelle ('missing' ou 'full')", 'translation'),
+    # Coordonnées bancaires de la PLATEFORME (affichées au partenaire pour régler ses factures par virement).
+    ('platform_bank_holder', '', 'text', 'Bénéficiaire du virement (titulaire du compte plateforme)', 'billing'),
+    ('platform_iban', '', 'text', 'IBAN de la plateforme (paiement des commissions partenaires)', 'billing'),
+    ('platform_bic', '', 'text', 'BIC/SWIFT de la plateforme', 'billing'),
 ]
 
 

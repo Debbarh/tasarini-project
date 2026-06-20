@@ -17,6 +17,7 @@ from apps.poi.models import TouristPoint
 from apps.analytics.models import TouristPointAnalytics
 
 from .models import (
+    PartnerInvoice,
     PartnerApplication,
     PartnerBookingConfig,
     PartnerCommission,
@@ -27,6 +28,7 @@ from .models import (
     PartnerWithdrawal,
 )
 from .serializers import (
+    PartnerInvoiceSerializer,
     PartnerAnalyticsSerializer,
     PartnerApplicationSerializer,
     PartnerBookingConfigSerializer,
@@ -97,14 +99,39 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         if action not in status_map:
             return Response({'detail': 'Action invalide'}, status=status.HTTP_400_BAD_REQUEST)
         profile.status = status_map[action]
-        profile.save(update_fields=['status', 'updated_at'])
+        fields = ['status', 'updated_at']
+        # À l'approbation (ou à tout moment) l'admin peut fixer le taux de commission.
+        rate = request.data.get('commission_rate')
+        if rate not in (None, ''):
+            from decimal import Decimal
+            try:
+                profile.commission_rate = Decimal(str(rate))
+                fields.append('commission_rate')
+            except Exception:  # noqa: BLE001
+                pass
+        profile.save(update_fields=fields)
         PartnerNotification.objects.create(
             partner=profile.owner,
             title=f'Statut partenaire mis à jour ({profile.status})',
             body=request.data.get('admin_message', ''),
             category='moderation',
         )
-        return Response({'status': profile.status})
+        return Response({'status': profile.status, 'commission_rate': str(profile.commission_rate)})
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser], url_path='set-commission')
+    def set_commission(self, request, pk=None):
+        """Admin : fixe le taux de commission (%) du partenaire."""
+        from decimal import Decimal
+        profile = self.get_object()
+        try:
+            rate = Decimal(str(request.data.get('commission_rate')))
+            if rate < 0 or rate > 100:
+                raise ValueError
+        except Exception:  # noqa: BLE001
+            return Response({'detail': 'commission_rate invalide (0–100).'}, status=status.HTTP_400_BAD_REQUEST)
+        profile.commission_rate = rate
+        profile.save(update_fields=['commission_rate', 'updated_at'])
+        return Response({'commission_rate': str(profile.commission_rate)})
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
     def send_message(self, request, pk=None):
@@ -202,6 +229,55 @@ class PartnerCommissionViewSet(viewsets.ReadOnlyModelViewSet):
         if self.request.user.is_staff:
             return qs
         return qs.filter(partner=self.request.user)
+
+
+class PartnerInvoiceViewSet(viewsets.ModelViewSet):
+    """Factures de commission. Admin : toutes (+ mark-paid, generate). Partenaire : les siennes."""
+    serializer_class = PartnerInvoiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'post', 'patch', 'head', 'options']
+    filterset_fields = ['status']
+
+    def get_queryset(self):  # type: ignore[override]
+        qs = PartnerInvoice.objects.select_related('partner').prefetch_related('commissions')
+        u = self.request.user
+        if u.is_staff:
+            partner_f = self.request.query_params.get('partner')
+            return qs.filter(partner_id=partner_f) if partner_f else qs
+        return qs.filter(partner=u)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser], url_path='mark-paid')
+    def mark_paid(self, request, pk=None):
+        invoice = self.get_object()
+        invoice.status = 'paid'
+        invoice.paid_at = timezone.now()
+        invoice.payment_reference = (request.data.get('payment_reference') or '')[:120]
+        invoice.save(update_fields=['status', 'paid_at', 'payment_reference', 'updated_at'])
+        invoice.commissions.update(payment_status='paid')  # commissions soldées
+        return Response(PartnerInvoiceSerializer(invoice).data)
+
+    @action(detail=False, methods=['post'], permission_classes=[permissions.IsAdminUser], url_path='generate')
+    def generate(self, request):
+        from datetime import date
+        from django.contrib.auth import get_user_model
+        from .billing import (generate_invoices_for_period, generate_invoice_for_partner,
+                              previous_month_bounds, mark_overdue)
+        y, m = request.data.get('year'), request.data.get('month')
+        if y and m:
+            start = date(int(y), int(m), 1)
+            nxt = date(start.year + (start.month // 12), (start.month % 12) + 1, 1)
+            end = date.fromordinal(nxt.toordinal() - 1)
+        else:
+            start, end = previous_month_bounds()
+        partner_id = request.data.get('partner')
+        if partner_id:
+            p = get_user_model().objects.filter(pk=partner_id).first()
+            invoices = [i for i in [generate_invoice_for_partner(p, start, end)] if i] if p else []
+        else:
+            invoices = generate_invoices_for_period(start, end)
+        mark_overdue()
+        return Response({'created': len(invoices),
+                         'invoices': PartnerInvoiceSerializer(invoices, many=True).data})
 
 
 class PartnerSubscriptionCheckoutView(APIView):

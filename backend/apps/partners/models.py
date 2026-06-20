@@ -22,6 +22,9 @@ class PartnerProfile(models.Model):
         default='pending',
     )
     api_key = models.CharField(max_length=64, default='', blank=True)
+    # Taux de commission après-vente que la plateforme facture à CE partenaire (%). Fixé par
+    # l'admin à l'approbation ; défaut 10 %. Sert au calcul des commissions sur ses réservations.
+    commission_rate = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('10.00'))
     managed_pois = models.ManyToManyField(TouristPoint, blank=True, related_name='partner_profiles')
     metadata = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -141,11 +144,48 @@ class PartnerPaymentMethod(models.Model):
             )
 
 
+class PartnerInvoice(models.Model):
+    """Facture mensuelle émise PAR la plateforme AU partenaire pour les commissions dues
+    (modèle : commission après-vente, réglée par virement du partenaire vers la plateforme)."""
+    STATUS_CHOICES = [
+        ('draft', 'Brouillon'),
+        ('issued', 'Émise'),
+        ('paid', 'Payée'),
+        ('overdue', 'En retard'),
+        ('cancelled', 'Annulée'),
+    ]
+
+    partner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partner_invoices')
+    number = models.CharField(max_length=40, unique=True)
+    period_start = models.DateField()
+    period_end = models.DateField()
+    amount_due = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
+    currency = models.CharField(max_length=8, default='EUR')
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default='issued')
+    issued_at = models.DateTimeField(default=timezone.now)
+    due_date = models.DateField(null=True, blank=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
+    payment_reference = models.CharField(max_length=120, blank=True)  # réf du virement
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-issued_at']
+        indexes = [models.Index(fields=['partner', 'status'], name='partinv_partner_status_idx')]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.number} ({self.amount_due} {self.currency}, {self.status})"
+
+
 class PartnerCommission(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
+        ('pending', 'À facturer'),
+        ('invoiced', 'Facturée'),
+        ('paid', 'Payée'),
+        ('cancelled', 'Annulée'),
+        # (legacy, conservés pour compat)
         ('processing', 'Processing'),
-        ('paid', 'Paid'),
         ('failed', 'Failed'),
     ]
 
@@ -154,8 +194,11 @@ class PartnerCommission(models.Model):
         'bookings.Booking', null=True, blank=True, related_name='partner_commissions', on_delete=models.SET_NULL
     )
     tourist_point = models.ForeignKey(TouristPoint, on_delete=models.CASCADE, related_name='partner_commissions')
+    invoice = models.ForeignKey(
+        PartnerInvoice, null=True, blank=True, related_name='commissions', on_delete=models.SET_NULL
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    commission_rate = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('15.0'))
+    commission_rate = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('10.0'))
     booking_reference = models.CharField(max_length=64, blank=True)
     customer_name = models.CharField(max_length=255, blank=True)
     booking_date = models.DateField()

@@ -103,6 +103,7 @@ from apps.partners.views import (
     PartnerBookingConfigViewSet,
     PartnerBulkPOIStatusView,
     PartnerCommissionViewSet,
+    PartnerInvoiceViewSet,
     PartnerDashboardMetricsView,
     PartnerEndpointHealthViewSet,
     PartnerNotificationViewSet,
@@ -195,6 +196,7 @@ router.register('partners/notifications', PartnerNotificationViewSet , basename=
 router.register('partners/booking-configs', PartnerBookingConfigViewSet, basename='partnerbookingconfig')
 router.register('partners/payment-methods', PartnerPaymentMethodViewSet, basename='partnerpaymentmethod')
 router.register('partners/commissions', PartnerCommissionViewSet, basename='partnercommission')
+router.register('partners/invoices', PartnerInvoiceViewSet, basename='partnerinvoice')
 router.register('partners/withdrawals', PartnerWithdrawalViewSet, basename='partnerwithdrawal')
 router.register('partners/endpoints', PartnerEndpointHealthViewSet, basename='partnerendpointhealth')
 router.register('stories', StoryViewSet, basename='story')

@@ -338,7 +338,6 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
   const itinerary = localItinerary;
   // Ajout/édition manuelle d'activité (utilisateur authentifié). null = fermé.
   const [activityDialog, setActivityDialog] = useState<{ dayIndex: number; actIndex: number | null } | null>(null);
-  const canEditActivities = Boolean(user) && !isStreaming;
 
   const applyActivityChange = (dayIndex: number, actIndex: number | null, activity: DailyActivity) => {
     if (!itinerary) return;
@@ -462,6 +461,7 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
   });
   const { toast } = useToast();
   const { user } = useAuth();
+  const canEditActivities = Boolean(user) && !isStreaming;  // ajout/édition réservés aux connectés
   const { saveItinerary, updateItinerary } = useSavedItineraries();
   const { settings } = useSystemSettings();
   const navigate = useNavigate();

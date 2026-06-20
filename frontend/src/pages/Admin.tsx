@@ -20,7 +20,6 @@ const WidgetManagement = lazy(() => import("@/components/admin/WidgetManagement"
 const TravelAnalytics = lazy(() => import("@/components/admin/TravelAnalytics").then(module => ({ default: module.TravelAnalytics })));
 const BeInspiredManagement = lazy(() => import("@/components/admin/BeInspiredManagement").then(module => ({ default: module.BeInspiredManagement })));
 const AdminSecurityDashboard = lazy(() => import("@/components/admin/AdminSecurityDashboard").then(module => ({ default: module.AdminSecurityDashboard })));
-const RLSSecurityDashboard = lazy(() => import("@/components/admin/RLSSecurityDashboard"));
 const BookingCenterManagement = lazy(() => import("@/components/admin/BookingCenterManagement"));
 const StoryAIProviderManagement = lazy(() => import("@/components/admin/StoryAIProviderManagement"));
 
@@ -209,7 +208,7 @@ const Admin = () => {
 
         <TabsContent value="security">
           <Suspense fallback={<TabLoader />}>
-            <RLSSecurityDashboard />
+            <AdminSecurityDashboard />
           </Suspense>
         </TabsContent>
 

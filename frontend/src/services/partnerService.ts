@@ -1,4 +1,4 @@
-import { apiClient } from '@/integrations/api/client';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 
 export interface PartnerOwnerDetail {
   id: number;
@@ -152,7 +152,7 @@ export interface PartnerAnalyticsSeriesPoint {
 
 export const partnerService = {
   async listProfiles(params?: { search?: string; status?: string; subscription_type?: string }) {
-    return apiClient.get<PartnerProfile[]>('partners/profiles/', params);
+    return extractArrayFromResponse<PartnerProfile>(await apiClient.get<any>('partners/profiles/', params));
   },
 
   async getMyProfile() {
@@ -178,7 +178,7 @@ export const partnerService = {
 
   async listNotifications(params: { limit?: number } = {}) {
     const searchParams = params.limit ? { limit: params.limit } : undefined;
-    return apiClient.get<PartnerNotificationDTO[]>('partners/notifications/', searchParams);
+    return extractArrayFromResponse<PartnerNotificationDTO>(await apiClient.get<any>('partners/notifications/', searchParams));
   },
 
   async markNotificationRead(id: number | string) {
@@ -206,13 +206,13 @@ export const partnerService = {
   },
 
   async listManagedTouristPoints() {
-    return apiClient.get<PartnerTouristPointSummary[]>('poi/tourist-points/', { owner: 'me' });
+    return extractArrayFromResponse<PartnerTouristPointSummary>(
+      await apiClient.get<any>('poi/tourist-points/', { owner: 'me' }));
   },
 
   async getBookingConfigByPoint(touristPointId: string) {
-    const configs = await apiClient.get<PartnerBookingConfig[]>('partners/booking-configs/', {
-      tourist_point: touristPointId,
-    });
+    const configs = extractArrayFromResponse<PartnerBookingConfig>(
+      await apiClient.get<any>('partners/booking-configs/', { tourist_point: touristPointId }));
     return configs[0] ?? null;
   },
 
@@ -229,11 +229,11 @@ export const partnerService = {
   },
 
   async listCommissions(params: { payment_status?: string } = {}) {
-    return apiClient.get<PartnerCommission[]>('partners/commissions/', params);
+    return extractArrayFromResponse<PartnerCommission>(await apiClient.get<any>('partners/commissions/', params));
   },
 
   async listWithdrawals() {
-    return apiClient.get<PartnerWithdrawal[]>('partners/withdrawals/');
+    return extractArrayFromResponse<PartnerWithdrawal>(await apiClient.get<any>('partners/withdrawals/'));
   },
 
   async requestWithdrawal(payload: { amount: number; payment_method: number | string }) {
@@ -241,7 +241,7 @@ export const partnerService = {
   },
 
   async listPaymentMethods() {
-    return apiClient.get<PartnerPaymentMethod[]>('partners/payment-methods/');
+    return extractArrayFromResponse<PartnerPaymentMethod>(await apiClient.get<any>('partners/payment-methods/'));
   },
 
   async addPaymentMethod(payload: { method_type: string; label?: string; details: Record<string, any>; is_default?: boolean }) {

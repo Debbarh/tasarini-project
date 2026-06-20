@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { apiClient } from '@/integrations/api/client';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -85,7 +85,7 @@ const DynamicFinancialDashboard: React.FC = () => {
       setLoading(true);
 
       // Récupération des commissions via Django API
-      const commissionsData = await apiClient.get<any[]>('partners/commissions/');
+      const commissionsData = extractArrayFromResponse<any>(await apiClient.get<any>('partners/commissions/'));
 
       const formattedCommissions: Commission[] = commissionsData?.map(item => ({
         id: item.id,
@@ -101,7 +101,7 @@ const DynamicFinancialDashboard: React.FC = () => {
       setCommissions(formattedCommissions);
 
       // Récupération des moyens de paiement via Django API
-      const paymentMethodsData = await apiClient.get<any[]>('partners/payment-methods/');
+      const paymentMethodsData = extractArrayFromResponse<any>(await apiClient.get<any>('partners/payment-methods/'));
 
       // Conversion des données DB vers l'interface TypeScript
       const formattedPaymentMethods: PaymentMethod[] = (paymentMethodsData || []).map(method => ({
@@ -115,7 +115,7 @@ const DynamicFinancialDashboard: React.FC = () => {
       setPaymentMethods(formattedPaymentMethods);
 
       // Récupération des demandes de retrait via Django API
-      const withdrawalsData = await apiClient.get<any[]>('partners/withdrawals/');
+      const withdrawalsData = extractArrayFromResponse<any>(await apiClient.get<any>('partners/withdrawals/'));
 
       // Conversion des données DB vers l'interface TypeScript
       const formattedWithdrawals: WithdrawalRequest[] = (withdrawalsData || []).map(withdrawal => ({

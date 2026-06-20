@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { apiClient } from '@/integrations/api/client';
+import { apiClient, extractArrayFromResponse } from '@/integrations/api/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +67,7 @@ const POIManagement: React.FC = () => {
 
     setLoading(true);
     try {
-      const data = await apiClient.get<any[]>('poi/tourist-points/', { owner: 'me' });
+      const data = extractArrayFromResponse<any>(await apiClient.get<any>('poi/tourist-points/', { owner: 'me' }));
 
       const withPreview = (data || []).map((poi: any) => {
         const images: string[] = Array.isArray(poi.media_images) ? poi.media_images : [];

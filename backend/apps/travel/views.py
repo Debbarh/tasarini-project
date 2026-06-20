@@ -644,6 +644,8 @@ class StreamingTripPlannerView(APIView):
                     '{"title": string, "description": string, "days": [ ... ], "totalCost": number, "budgetBreakdown": {...}}. '
                     "Les days doivent contenir dayNumber, date, destination, theme, activities (id,time,title,description,duration,type,cost,location,tips,difficulty), "
                     "meals (breakfast/lunch/dinner), transportation, totalCost, walkingDistance. "
+                    'Le champ "location" de chaque activité doit être un OBJET {"name": string, "address": string, "latitude": number|null, "longitude": number|null} : '
+                    "renseigne latitude et longitude UNIQUEMENT si tu connais les coordonnées réelles du lieu, sinon mets-les à null (n'invente jamais de coordonnées). "
                     "Réponds STRICTEMENT en JSON valide, sans texte avant/après. "
                     f"Données: {json.dumps(trip_data, ensure_ascii=False)}"
                     + lang_reminder
@@ -691,8 +693,9 @@ class StreamingTripPlannerView(APIView):
                                 "Propose des activités et des lieux DIFFÉRENTS et variés. " +
                                 'Réponds STRICTEMENT en JSON pour CE SEUL jour : '
                                 '{"dayNumber": number, "date": string, "destination": string, "theme": string, '
-                                '"activities": [{"id": string, "time": string, "title": string, "description": string, "duration": string, "type": string, "cost": number, "location": string, "tips": string, "difficulty": string}], '
+                                '"activities": [{"id": string, "time": string, "title": string, "description": string, "duration": string, "type": string, "cost": number, "location": {"name": string, "address": string, "latitude": number|null, "longitude": number|null}, "tips": string, "difficulty": string}], '
                                 '"meals": {"breakfast": string, "lunch": string, "dinner": string}, "transportation": string, "totalCost": number, "walkingDistance": number}. '
+                                "Pour location.latitude/longitude : seulement si tu connais les vraies coordonnées, sinon null (jamais inventées). "
                                 "Sans texte avant/après. "
                                 f"Données voyageur: {json.dumps(trip_data, ensure_ascii=False)}" + lang_reminder
                             )

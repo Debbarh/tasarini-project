@@ -1114,6 +1114,18 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                                   <MapPin className="h-3 w-3" />
                                   {typeof activity.location === 'string' ? activity.location : activity.location?.name || t('itinerary.locationUnspecified', 'Lieu non spécifié')}
                                 </span>
+                                {typeof activity.location === 'object' && activity.location?.latitude != null && activity.location?.longitude != null && (
+                                  <a
+                                    href={`https://www.google.com/maps/search/?api=1&query=${activity.location.latitude}%2C${activity.location.longitude}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 text-primary hover:underline"
+                                    title={t('itinerary.viewOnMap', 'Voir sur la carte')}
+                                  >
+                                    <MapPin className="h-3 w-3" />
+                                    {t('itinerary.viewOnMap', 'Voir sur la carte')}
+                                  </a>
+                                )}
                                 <span className="flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
                                   {typeof activity.duration === 'string' ? activity.duration : `${Math.floor(Number(activity.duration) / 60)}h${Number(activity.duration) % 60 > 0 ? ` ${Number(activity.duration) % 60}min` : ''}`}

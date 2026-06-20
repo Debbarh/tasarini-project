@@ -55,9 +55,10 @@ def _build_prompt(trip_data: dict) -> str:
         '  "packingList": ["string"],\n'
         '  "sustainabilityTips": ["string"],\n'
         '  "localEvents": [{"name": "string", "date": "string", "description": "string", "location": "string"}],\n'
-        '  "days": [{"dayNumber": number, "date": "YYYY-MM-DD", "destination": "string", "theme": "string", "activities": [{"id": "string", "time": "HH:MM", "title": "string", "description": "string", "duration": "string", "type": "string", "cost": number, "location": "string", "tips": "string", "difficulty": "easy/moderate/hard"}], "dailyBudget": number, "transportation": "string", "meals": {"breakfast": {"title": "string", "location": "string", "cost": number}, "lunch": {"title": "string", "location": "string", "cost": number}, "dinner": {"title": "string", "location": "string", "cost": number}}, "totalCost": number, "walkingDistance": number}]\n'
+        '  "days": [{"dayNumber": number, "date": "YYYY-MM-DD", "destination": "string", "theme": "string", "activities": [{"id": "string", "time": "HH:MM", "title": "string", "description": "string", "duration": "string", "type": "string", "cost": number, "location": {"name": "string", "address": "string", "latitude": number|null, "longitude": number|null}, "tips": "string", "difficulty": "easy/moderate/hard"}], "dailyBudget": number, "transportation": "string", "meals": {"breakfast": {"title": "string", "location": "string", "cost": number}, "lunch": {"title": "string", "location": "string", "cost": number}, "dinner": {"title": "string", "location": "string", "cost": number}}, "totalCost": number, "walkingDistance": number}]\n'
         "}\n\n"
         "CRUCIAL : Génère TOUTES les sections ci-dessus (whyVisit, bestTimeToVisit, visaAndEntry, healthAndSafety, mustTryDishes, giftIdeas, etc). "
+        "Pour location.latitude/longitude de chaque activité : renseigne-les seulement si tu connais les vraies coordonnées du lieu, sinon null (jamais inventées). "
         "Réponds UNIQUEMENT avec du JSON valide, sans texte avant/après. "
         f"Utilise des vrais noms de lieux pour {destinations_str}. Prix réalistes en euros.\n\n"
         f"Données: {json.dumps(trip_data, ensure_ascii=False, indent=2)}"

@@ -40,6 +40,15 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
     }
   );
 
+  // Valeur texte du champ « Budget quotidien » : permet d'effacer librement et de saisir
+  // (le champ contrôlé par un nombre empêchait de vider tous les chiffres).
+  const [dailyBudgetInput, setDailyBudgetInput] = useState<string>(String(budget.dailyBudget ?? ''));
+
+  // Resynchronise le texte quand le montant change ailleurs (ex. choix d'un niveau de budget).
+  useEffect(() => {
+    setDailyBudgetInput(String(budget.dailyBudget ?? ''));
+  }, [budget.dailyBudget]);
+
   // Mettre à jour le budget avec les valeurs par défaut une fois les données chargées
   useEffect(() => {
     if (!loading && !data.budget) {
@@ -163,9 +172,26 @@ export const BudgetStep = ({ data, onUpdate, onValidate }: BudgetStepProps) => {
                 <Input
                   id="daily-budget"
                   type="number"
-                  min="10"
-                  value={budget.dailyBudget}
-                  onChange={(e) => updateBudget({ dailyBudget: parseInt(e.target.value) || 10 })}
+                  min="1"
+                  inputMode="numeric"
+                  value={dailyBudgetInput}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    setDailyBudgetInput(raw); // autorise le champ vide / la saisie en cours
+                    const n = parseInt(raw, 10);
+                    if (raw !== '' && !Number.isNaN(n) && n > 0) {
+                      updateBudget({ dailyBudget: n });
+                    }
+                  }}
+                  onBlur={() => {
+                    // À la sortie du champ : si vide/invalide, on revient au défaut du niveau (ou 10).
+                    const n = parseInt(dailyBudgetInput, 10);
+                    if (dailyBudgetInput === '' || Number.isNaN(n) || n <= 0) {
+                      const fallback = budgetLevels.find(l => l.code === budget.level)?.default_daily_amount || 10;
+                      setDailyBudgetInput(String(fallback));
+                      updateBudget({ dailyBudget: fallback });
+                    }
+                  }}
                   className="flex-1"
                 />
                 <span className="text-sm text-muted-foreground">{selectedCurrency?.symbol}/{t('planTrip.budgetStep.perDay')}</span>

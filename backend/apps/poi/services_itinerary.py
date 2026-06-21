@@ -4,7 +4,8 @@
   - DÉDUP contre la base existante (nom similaire + proximité ~150 m) → on RÉUTILISE, jamais de doublon.
   - Sinon création d'un POI NON PUBLIC (status=pending, is_active=False) appartenant à l'utilisateur,
     avec la description fournie par l'IA. Validable ensuite via la modération admin existante.
-On renseigne `activity.location.poi_id` (existant ou créé). On ne modifie jamais un POI existant.
+On renseigne `activity.location.poi_id` (existant ou créé). Un POI existant n'est enrichi que
+de photos Openverse s'il n'en possède aucune (aucune autre donnée n'est modifiée).
 """
 from __future__ import annotations
 
@@ -75,6 +76,25 @@ def persist_itinerary_pois(itinerary_data, user):
                     loc['poi_id'] = str(existing.id)
                     seen[key] = str(existing.id)
                     reused += 1
+                    # POI déjà en base : on l'enrichit a minima de photos Openverse s'il n'en a
+                    # pas encore (et on les expose dans l'itinéraire). Aucune autre donnée touchée.
+                    ex_meta = existing.metadata or {}
+                    ex_imgs = ex_meta.get('images') or []
+                    if not ex_imgs:
+                        try:
+                            from .external.openverse import search_images
+                            ex_imgs = search_images(f"{name} {day_dest}".strip(), n=3)
+                        except Exception:  # noqa: BLE001
+                            ex_imgs = []
+                        if ex_imgs:
+                            ex_meta['images'] = ex_imgs
+                            existing.metadata = ex_meta
+                            try:
+                                existing.save(update_fields=['metadata', 'updated_at'])
+                            except Exception:  # noqa: BLE001
+                                pass
+                    if ex_imgs:
+                        loc['images'] = ex_imgs
                     continue
                 # Jusqu'à 3 photos Openverse (si elles existent) persistées sur le POI.
                 try:

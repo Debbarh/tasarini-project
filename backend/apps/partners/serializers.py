@@ -64,6 +64,11 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
     city_name = serializers.CharField(source='city.name', read_only=True)
     kyc_status = serializers.CharField(source='kyc.status', read_only=True, default='not_submitted')
+    # URLField backend = blank autorisé mais NON nul. On tolère null venant du client → ''.
+    website = serializers.URLField(required=False, allow_blank=True, allow_null=True)
+
+    def validate_website(self, value):
+        return value or ''
 
     class Meta:
         model = PartnerProfile

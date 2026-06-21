@@ -129,13 +129,18 @@ const CompletePartnerProfile: React.FC = () => {
         address: form.address,
         postal_code: form.postal_code,
         contact_phone: form.contact_phone,
-        website: form.website || null,
+        // website est un URLField(blank=True) côté backend : null interdit → envoyer '' si vide.
+        website: form.website || '',
         metadata: { ...(profile.metadata || {}), social_media: { facebook: form.facebook, instagram: form.instagram } },
       });
       setProfile(updated);
       return true;
-    } catch {
-      toast.error(t('partnerOnboarding.errors.saveError', 'Échec de l’enregistrement.'));
+    } catch (err: any) {
+      const payload = err?.payload;
+      const detail = payload && typeof payload === 'object'
+        ? Object.entries(payload).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(' ') : v}`).join(' · ')
+        : null;
+      toast.error(detail || t('partnerOnboarding.errors.saveError', 'Échec de l’enregistrement.'));
       return false;
     } finally {
       setSaving(false);

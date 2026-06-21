@@ -320,6 +320,26 @@ export const partnerService = {
     return apiClient.post(`partners/profiles/${profileId}/moderate/`, payload);
   },
 
+  // Suppression douce (réversible) d'un partenaire.
+  async softDeletePartner(profileId: number | string, adminMessage?: string) {
+    return apiClient.post(`partners/profiles/${profileId}/soft-delete/`, { admin_message: adminMessage });
+  },
+
+  // Restaure un partenaire supprimé en douceur.
+  async restorePartner(profileId: number | string) {
+    return apiClient.post(`partners/profiles/${profileId}/restore/`, {});
+  },
+
+  // Suppression DÉFINITIVE (irréversible) — exige la confirmation littérale "SUPPRIMER".
+  async hardDeletePartner(profileId: number | string) {
+    return apiClient.post(`partners/profiles/${profileId}/hard-delete/`, { confirm: 'SUPPRIMER' });
+  },
+
+  // Liste des partenaires supprimés (corbeille).
+  async listDeletedProfiles() {
+    return extractArrayFromResponse<PartnerProfile>(await apiClient.get<any>('partners/profiles/', { deleted: 'true' }));
+  },
+
   async sendAdminMessage(
     profileId: number | string,
     payload: { message: string; type?: string },

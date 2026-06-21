@@ -89,6 +89,7 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'managed_pois',
             'managed_poi_ids',
             'kyc_status',
+            'deleted_at',
             'created_at',
             'updated_at',
         ]
@@ -96,7 +97,7 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
         # `submit` (draft→pending) et `moderate` (admin). `commission_rate` : lecture seule (admin only).
         read_only_fields = (
             'id', 'owner', 'owner_detail', 'status', 'api_key', 'commission_rate',
-            'country_name', 'city_name', 'kyc_status', 'created_at', 'updated_at',
+            'country_name', 'city_name', 'kyc_status', 'deleted_at', 'created_at', 'updated_at',
         )
 
     def __init__(self, *args, **kwargs):

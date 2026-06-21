@@ -102,6 +102,15 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         subscription_filter = params.get('subscription_type')
         search = params.get('search')
 
+        # Soft delete : par défaut on masque les partenaires supprimés. `?deleted=true`
+        # n'affiche QUE la corbeille ; `?include_deleted=true` affiche tout.
+        deleted = (params.get('deleted') or '').lower()
+        include_deleted = (params.get('include_deleted') or '').lower()
+        if deleted in ('1', 'true', 'yes'):
+            qs = qs.filter(deleted_at__isnull=False)
+        elif include_deleted not in ('1', 'true', 'yes'):
+            qs = qs.filter(deleted_at__isnull=True)
+
         if status_filter:
             qs = qs.filter(status=status_filter)
 
@@ -214,6 +223,65 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         profile.commission_rate = rate
         profile.save(update_fields=['commission_rate', 'updated_at'])
         return Response({'commission_rate': str(profile.commission_rate)})
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser], url_path='soft-delete')
+    def soft_delete(self, request, pk=None):
+        """Suppression douce (réversible) : marque le partenaire supprimé + désactive le compte.
+        Les données sont conservées et restaurables."""
+        from django.utils import timezone
+        profile = self.get_object()
+        profile.deleted_at = timezone.now()
+        profile.status = 'suspended'
+        profile.save(update_fields=['deleted_at', 'status', 'updated_at'])
+        owner = profile.owner
+        if owner and owner.is_active:
+            owner.is_active = False
+            owner.save(update_fields=['is_active'])
+        PartnerNotification.objects.create(
+            partner=profile.owner, title='Compte partenaire suspendu',
+            body=request.data.get('admin_message', 'Votre compte partenaire a été suspendu.'),
+            category='moderation',
+        )
+        return Response({'deleted_at': profile.deleted_at.isoformat(), 'status': profile.status})
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def restore(self, request, pk=None):
+        """Restaure un partenaire supprimé en douceur (réactive le compte)."""
+        profile = self.get_object()
+        profile.deleted_at = None
+        profile.status = 'approved'
+        profile.save(update_fields=['deleted_at', 'status', 'updated_at'])
+        owner = profile.owner
+        if owner and not owner.is_active:
+            owner.is_active = True
+            owner.save(update_fields=['is_active'])
+        return Response({'restored': True, 'status': profile.status})
+
+    @action(detail=True, methods=['post', 'delete'], permission_classes=[permissions.IsAdminUser], url_path='hard-delete')
+    def hard_delete(self, request, pk=None):
+        """Suppression DÉFINITIVE : supprime le profil partenaire ET le compte utilisateur
+        (cascade : KYC, commissions, factures, POI possédés). Irréversible.
+        Exige `confirm: "SUPPRIMER"` dans le corps pour éviter les accidents."""
+        profile = self.get_object()
+        if (request.data.get('confirm') or '').strip().upper() != 'SUPPRIMER':
+            return Response(
+                {'detail': 'Confirmation requise : envoyez {"confirm": "SUPPRIMER"}.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        owner = profile.owner
+        try:
+            from django.db import transaction
+            with transaction.atomic():
+                profile.delete()
+                if owner is not None:
+                    owner.delete()  # cascade vers les données liées
+        except Exception as exc:  # noqa: BLE001
+            logger.exception('hard_delete partenaire %s a échoué: %s', pk, exc)
+            return Response(
+                {'detail': "Suppression impossible (données liées protégées). Utilisez la suppression douce."},
+                status=status.HTTP_409_CONFLICT,
+            )
+        return Response({'deleted': True}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
     def send_message(self, request, pk=None):

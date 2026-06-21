@@ -62,6 +62,8 @@ class PartnerProfile(models.Model):
     commission_rate = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('10.00'))
     managed_pois = models.ManyToManyField(TouristPoint, blank=True, related_name='partner_profiles')
     metadata = models.JSONField(default=dict, blank=True)
+    # Soft delete (réversible) : non nul => partenaire « supprimé » mais conservé en base.
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

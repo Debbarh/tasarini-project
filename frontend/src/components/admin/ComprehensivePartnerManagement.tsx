@@ -13,7 +13,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import {
   Building2, Search, Filter, Mail, Phone, MapPin, CheckCircle, XCircle,
   CreditCard, RefreshCw, Edit, UserCheck, Clock, AlertTriangle,
-  Key, Globe, Pause, Check, X, ShieldCheck, FileText
+  Key, Globe, Pause, Check, X, ShieldCheck, FileText, Trash2
 } from 'lucide-react';
 import { useOptimizedPartners, OptimizedPartner } from '@/hooks/useOptimizedPartners';
 import { toast } from 'sonner';
@@ -598,6 +598,90 @@ const PartnerPOIDialog = ({ partner }: { partner: OptimizedPartner }) => {
   );
 };
 
+// Suppression d'un partenaire : douce (réversible) ou définitive (irréversible, confirmation).
+const PartnerDeleteDialog = ({ partner, onChanged }: { partner: OptimizedPartner; onChanged: () => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const softDelete = async () => {
+    setLoading(true);
+    try {
+      await partnerService.softDeletePartner(partner.profile_id);
+      toast.success(`${partner.company_name} suspendu (suppression douce, réversible).`);
+      setIsOpen(false);
+      onChanged();
+    } catch {
+      toast.error('Échec de la suppression douce.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const hardDelete = async () => {
+    setLoading(true);
+    try {
+      await partnerService.hardDeletePartner(partner.profile_id);
+      toast.success(`${partner.company_name} supprimé définitivement.`);
+      setIsOpen(false);
+      onChanged();
+    } catch (e: any) {
+      toast.error(e?.payload?.detail || 'Échec de la suppression définitive.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(o) => { setIsOpen(o); if (!o) setConfirmText(''); }}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="text-destructive border-destructive/40">
+          <Trash2 className="w-4 h-4 mr-1" /> Supprimer
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Supprimer le partenaire</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="rounded-lg border p-3">
+            <p className="font-medium text-sm">Suppression douce</p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Désactive le compte et masque le partenaire. Données conservées, <strong>réversible</strong>.
+            </p>
+            <Button variant="secondary" size="sm" onClick={softDelete} disabled={loading}>
+              Suspendre / supprimer (réversible)
+            </Button>
+          </div>
+          <div className="rounded-lg border border-destructive/40 p-3">
+            <p className="font-medium text-sm text-destructive flex items-center gap-1">
+              <AlertTriangle className="w-4 h-4" /> Suppression définitive
+            </p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Supprime <strong>définitivement</strong> le partenaire et toutes ses données (KYC, commissions,
+              factures, POI). <strong>Irréversible.</strong> Tapez <code>SUPPRIMER</code> pour confirmer.
+            </p>
+            <Input
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="SUPPRIMER"
+              className="mb-2"
+            />
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={loading || confirmText.trim().toUpperCase() !== 'SUPPRIMER'}
+              onClick={hardDelete}
+            >
+              <Trash2 className="w-4 h-4 mr-1" /> Supprimer définitivement
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const ComprehensivePartnerManagement: React.FC = () => {
   const {
     partners,
@@ -849,6 +933,9 @@ const ComprehensivePartnerManagement: React.FC = () => {
                             
                             {/* POI management */}
                             <PartnerPOIDialog partner={partner} />
+
+                            {/* Suppression (douce / définitive) */}
+                            <PartnerDeleteDialog partner={partner} onChanged={invalidateCache} />
                           </div>
                         </TableCell>
                       </TableRow>

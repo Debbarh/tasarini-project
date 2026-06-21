@@ -930,6 +930,34 @@ class StreamingTripPlannerView(APIView):
         threading.Thread(target=_async_save, daemon=True).start()
 
 
+class TranslateItineraryView(APIView):
+    """Traduit à la demande TOUT le contenu texte d'un programme « Plan your trip » vers une
+    langue cible (cache par chaîne). Appelé par le front quand l'utilisateur change de langue."""
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        from .itinerary_translation import translate_itinerary
+        itinerary = request.data.get('itinerary')
+        if not isinstance(itinerary, dict):
+            return Response({'detail': 'itinerary requis'}, status=status.HTTP_400_BAD_REQUEST)
+        lang_code = (request.data.get('language') or 'fr').split('-')[0].lower()
+        LANG_NAMES = {
+            'fr': 'français', 'en': 'anglais', 'es': 'espagnol', 'de': 'allemand',
+            'it': 'italien', 'pt': 'portugais', 'ru': 'russe', 'ja': 'japonais',
+            'zh': 'chinois', 'hi': 'hindi', 'ar': 'arabe',
+        }
+        lang_name = LANG_NAMES.get(lang_code, 'anglais')
+        provider = AIProviderConfig.objects.filter(is_enabled=True).first()
+        if provider is None:
+            return Response({'itinerary': itinerary, 'language': lang_code, 'translated': False})
+        try:
+            translated = translate_itinerary(itinerary, lang_code, lang_name, provider)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("translate_itinerary a échoué: %s", exc)
+            return Response({'itinerary': itinerary, 'language': lang_code, 'translated': False})
+        return Response({'itinerary': translated, 'language': lang_code, 'translated': True})
+
+
 class TravelAIAssistantView(APIView):
     """
     Provides quick travel tips without relying on external AI services.

@@ -17,6 +17,7 @@ import { getDateFnsLocale } from "@/utils/dateLocale";
 import { DetailedItinerary, UnsplashImage, ActivityImage, DailyActivity } from "@/types/trip";
 import { exportItineraryToPDF, shareItinerary, copyItineraryLink } from "@/utils/itineraryExport";
 import { savedItineraryService } from "@/services/savedItineraryService";
+import { tripPlannerService } from "@/services/tripPlannerService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedItineraries } from "@/hooks/useSavedItineraries";
@@ -346,7 +347,36 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
   // Copie locale éditable : reflète les personnalisations sans dépendre du parent.
   const [localItinerary, setLocalItinerary] = useState(itineraryProp);
   useEffect(() => { setLocalItinerary(itineraryProp); }, [itineraryProp]);
-  const itinerary = localItinerary;
+
+  // --- Traduction à la demande du contenu IA quand on change de langue ---
+  // Langue de génération du programme (figée au 1er rendu) ; on ne traduit que si différente.
+  const sourceLangRef = useRef<string | null>(null);
+  if (sourceLangRef.current === null) {
+    sourceLangRef.current = (((itineraryProp as any)?.language) || i18n.language || 'fr').split('-')[0];
+  }
+  const curLang = (i18n.language || 'fr').split('-')[0];
+  const [translatedCache, setTranslatedCache] = useState<Record<string, typeof itineraryProp>>({});
+  const [translating, setTranslating] = useState(false);
+
+  useEffect(() => {
+    const src = sourceLangRef.current;
+    if (!localItinerary || isStreaming) return;
+    if (curLang === src || translatedCache[curLang]) return;
+    let cancelled = false;
+    setTranslating(true);
+    tripPlannerService.translateItinerary(localItinerary as any, curLang)
+      .then((res) => {
+        if (!cancelled && res?.itinerary) {
+          setTranslatedCache((prev) => ({ ...prev, [curLang]: res.itinerary as any }));
+        }
+      })
+      .catch(() => { /* best-effort : on garde la langue d'origine */ })
+      .finally(() => { if (!cancelled) setTranslating(false); });
+    return () => { cancelled = true; };
+  }, [curLang, localItinerary, isStreaming, translatedCache]);
+
+  // Itinéraire affiché : version traduite si dispo pour la langue courante, sinon l'original.
+  const itinerary = (curLang !== sourceLangRef.current && translatedCache[curLang]) ? translatedCache[curLang] : localItinerary;
   // Ajout/édition manuelle d'activité (utilisateur authentifié). null = fermé.
   const [activityDialog, setActivityDialog] = useState<{ dayIndex: number; actIndex: number | null } | null>(null);
 
@@ -892,6 +922,11 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                 {t('itinerary.loginToEdit', 'Se connecter pour modifier')}
               </Button>
             )
+          )}
+          {translating && (
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground self-center">
+              <Languages className="h-3.5 w-3.5 animate-pulse" /> {t('itinerary.translating', 'Traduction en cours…')}
+            </span>
           )}
           <Button variant="outline" onClick={onStartOver}>
             <ArrowLeft className="h-4 w-4 mr-2" />

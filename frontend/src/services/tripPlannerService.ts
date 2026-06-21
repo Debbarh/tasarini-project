@@ -33,4 +33,12 @@ export const tripPlannerService = {
       sessionId,
     });
   },
+
+  // Traduit à la demande tout le contenu texte d'un programme vers `language` (cache serveur).
+  translateItinerary(itinerary: DetailedItinerary, language: string) {
+    return apiClient.post<{ itinerary: DetailedItinerary; language: string; translated: boolean }>(
+      'travel/translate-itinerary/',
+      { itinerary, language },
+    );
+  },
 };

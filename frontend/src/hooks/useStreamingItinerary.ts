@@ -224,6 +224,11 @@ export const useStreamingItinerary = (): UseStreamingItineraryReturn => {
                   if (!merged.trip) {
                     merged.trip = tripData;
                   }
+                  // Mémorise la langue de génération → permet la retraduction à la demande
+                  // si l'utilisateur change de langue plus tard (cf. DetailedItineraryView).
+                  if (language && !merged.language) {
+                    merged.language = language.split('-')[0];
+                  }
 
                   return {
                     ...prev,

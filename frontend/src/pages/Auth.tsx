@@ -320,6 +320,7 @@ const Auth = () => {
                           value={signUpFirstName}
                           onChange={(e) => setSignUpFirstName(e.target.value)}
                           className="pl-10"
+                          required
                         />
                       </div>
                     </div>
@@ -333,6 +334,7 @@ const Auth = () => {
                         placeholder={t('auth.lastNamePlaceholder')}
                         value={signUpLastName}
                         onChange={(e) => setSignUpLastName(e.target.value)}
+                        required
                       />
                     </div>
                   </div>

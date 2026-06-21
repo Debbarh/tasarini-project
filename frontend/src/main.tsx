@@ -23,6 +23,7 @@ const Admin = lazy(() => import("./pages/Admin"));
 const PartnerCenter = lazy(() => import("./pages/PartnerCenter"));
 const PlanTrip = lazy(() => import("./pages/PlanTrip"));
 const SharedItinerary = lazy(() => import("./pages/SharedItinerary"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Booking = lazy(() => import("./pages/Booking"));
 const Recommendations = lazy(() => import("./pages/Recommendations"));
 const BeInspired = lazy(() => import("./pages/BeInspired"));
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
       {
         path: "itinerary/:token",
         element: <SharedItinerary />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
       },
       {
         path: "booking",

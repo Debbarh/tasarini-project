@@ -232,6 +232,9 @@ TRANSLATION_BATCH_ENABLED = env.bool('TRANSLATION_BATCH_ENABLED', default=True)
 OAUTH_CALLBACK_BASE_URL = env('OAUTH_CALLBACK_BASE_URL', default='https://tasarini.com/api/v1')
 GOOGLE_OAUTH_CLIENT_ID = env('GOOGLE_OAUTH_CLIENT_ID', default='')
 GOOGLE_OAUTH_CLIENT_SECRET = env('GOOGLE_OAUTH_CLIENT_SECRET', default='')
+# Clients OAuth Google natifs mobile (audience acceptée des id_token côté GoogleMobileAuthView).
+GOOGLE_OAUTH_ANDROID_CLIENT_ID = env('GOOGLE_OAUTH_ANDROID_CLIENT_ID', default='')
+GOOGLE_OAUTH_IOS_CLIENT_ID = env('GOOGLE_OAUTH_IOS_CLIENT_ID', default='')
 FACEBOOK_OAUTH_CLIENT_ID = env('FACEBOOK_OAUTH_CLIENT_ID', default='')
 FACEBOOK_OAUTH_CLIENT_SECRET = env('FACEBOOK_OAUTH_CLIENT_SECRET', default='')
 

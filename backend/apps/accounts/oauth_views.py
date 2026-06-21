@@ -95,6 +95,66 @@ def _get_or_create_user(email, first, last, name):
     return user, True
 
 
+class GoogleMobileAuthView(APIView):
+    """Connexion Google NATIVE (mobile) : le client envoie un `id_token` Google,
+    on le vérifie et on émet le JWT. Réutilise `_get_or_create_user` (même logique que le
+    flux web redirect). Aucune régression du flux web."""
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        from rest_framework.response import Response
+        from rest_framework import status as drf_status
+        from .serializers import UserSerializer
+
+        id_token = request.data.get('id_token')
+        if not id_token:
+            return Response({'detail': 'id_token requis.'}, status=drf_status.HTTP_400_BAD_REQUEST)
+
+        # Vérification du jeton auprès de Google (sans dépendance supplémentaire).
+        try:
+            resp = requests.get(
+                'https://oauth2.googleapis.com/tokeninfo',
+                params={'id_token': id_token}, timeout=10,
+            )
+            info = resp.json() if resp.status_code == 200 else {}
+        except Exception as exc:  # noqa: BLE001
+            logger.warning('Google tokeninfo a échoué: %s', exc)
+            return Response({'detail': 'Vérification Google impossible.'}, status=drf_status.HTTP_502_BAD_GATEWAY)
+
+        if not info or 'email' not in info:
+            return Response({'detail': 'id_token invalide.'}, status=drf_status.HTTP_401_UNAUTHORIZED)
+
+        # L'audience (aud) doit correspondre à un de NOS clients OAuth Google.
+        allowed_aud = {
+            getattr(settings, 'GOOGLE_OAUTH_CLIENT_ID', ''),
+            getattr(settings, 'GOOGLE_OAUTH_ANDROID_CLIENT_ID', ''),
+            getattr(settings, 'GOOGLE_OAUTH_IOS_CLIENT_ID', ''),
+        } - {''}
+        if allowed_aud and info.get('aud') not in allowed_aud:
+            return Response({'detail': 'Audience du jeton non autorisée.'}, status=drf_status.HTTP_401_UNAUTHORIZED)
+
+        if str(info.get('email_verified')).lower() != 'true':
+            return Response({'detail': 'Email Google non vérifié.'}, status=drf_status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            user, _created = _get_or_create_user(
+                info.get('email'), info.get('given_name', ''),
+                info.get('family_name', ''), info.get('name', ''),
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.exception('Google mobile : création utilisateur échouée: %s', exc)
+            return Response({'detail': 'Erreur de compte.'}, status=drf_status.HTTP_400_BAD_REQUEST)
+
+        if not user.is_active:
+            return Response({'detail': 'Compte désactivé.'}, status=drf_status.HTTP_403_FORBIDDEN)
+
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'user': UserSerializer(user).data,
+            'tokens': {'access': str(refresh.access_token), 'refresh': str(refresh)},
+        })
+
+
 class OAuthLoginView(APIView):
     permission_classes = [permissions.AllowAny]
 

@@ -233,7 +233,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetPassword: AuthContextType['resetPassword'] = async (email) => {
-    toast.info('La réinitialisation du mot de passe sera bientôt disponible.');
+    try {
+      await authService.requestPasswordReset(email);
+    } catch (error) {
+      // On ignore l'erreur côté UI : message générique (anti-énumération).
+    }
+    toast.success('Si un compte existe, un email de réinitialisation a été envoyé.');
     return { error: null };
   };
 

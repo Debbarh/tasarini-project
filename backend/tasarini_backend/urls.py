@@ -8,7 +8,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from apps.accounts.oauth_views import OAuthLoginView, OAuthCallbackView
+from apps.accounts.oauth_views import OAuthLoginView, OAuthCallbackView, GoogleMobileAuthView
 from apps.accounts.views import (
     AdminAuditLogViewSet,
     AdminDashboardView,
@@ -323,6 +323,7 @@ urlpatterns = [
     path('api/v1/travel/smart-recommendations/', SmartRecommendationsView.as_view(), name='travel-smart-recommendations'),
     path('api/v1/poi/translation-cron/', TranslationCronView.as_view(), name='poi-translation-cron'),
     # OAuth social (Google / Facebook) — login redirige vers le fournisseur, callback émet le JWT.
+    path('api/v1/auth/google/mobile/', GoogleMobileAuthView.as_view(), name='oauth-google-mobile'),
     path('api/v1/auth/<str:provider>/login/', OAuthLoginView.as_view(), name='oauth-login'),
     path('api/v1/auth/<str:provider>/callback/', OAuthCallbackView.as_view(), name='oauth-callback'),
     path('api/v1/travel/amadeus/', AmadeusProxyView.as_view(), name='travel-amadeus'),

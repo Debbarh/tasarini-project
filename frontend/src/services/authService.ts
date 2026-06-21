@@ -87,6 +87,14 @@ export const authService = {
   register(payload: RegisterPayload) {
     return authFetch<{ user: ApiUser; tokens: TokenPair }>('auth/register/', payload as unknown as Record<string, unknown>);
   },
+  // Mot de passe oublié — demande (réponse générique anti-énumération).
+  requestPasswordReset(email: string) {
+    return authFetch<{ detail: string }>('auth/request-password-reset/', { email: email.toLowerCase() });
+  },
+  // Mot de passe oublié — finalisation avec le jeton reçu par email.
+  resetPassword(token: string, newPassword: string) {
+    return authFetch<{ detail: string }>('auth/reset-password/', { token, new_password: newPassword });
+  },
   async getCurrentUser() {
     return apiClient.get<ApiUser>('users/me/');
   },

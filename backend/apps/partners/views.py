@@ -224,12 +224,28 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         profile.save(update_fields=['commission_rate', 'updated_at'])
         return Response({'commission_rate': str(profile.commission_rate)})
 
+    @staticmethod
+    def _protected_owner_response(profile):
+        """Refuse la suppression si le propriétaire est un compte admin/staff (évite de se
+        verrouiller soi-même). Renvoie une Response 400 si protégé, sinon None."""
+        owner = profile.owner
+        if owner and (owner.is_staff or owner.is_superuser):
+            return Response(
+                {'detail': "Refusé : ce partenaire est lié à un compte administrateur/staff. "
+                           "Retirez d'abord ce compte de la liste des partenaires."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return None
+
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser], url_path='soft-delete')
     def soft_delete(self, request, pk=None):
         """Suppression douce (réversible) : marque le partenaire supprimé + désactive le compte.
         Les données sont conservées et restaurables."""
         from django.utils import timezone
         profile = self.get_object()
+        guard = self._protected_owner_response(profile)
+        if guard is not None:
+            return guard
         profile.deleted_at = timezone.now()
         profile.status = 'suspended'
         profile.save(update_fields=['deleted_at', 'status', 'updated_at'])
@@ -270,6 +286,9 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         from django.core.cache import cache
 
         profile = self.get_object()
+        guard = self._protected_owner_response(profile)
+        if guard is not None:
+            return guard
         if (request.data.get('confirm') or '').strip().upper() != 'SUPPRIMER':
             return Response(
                 {'detail': 'Confirmation requise : envoyez {"confirm": "SUPPRIMER"}.'},
@@ -289,8 +308,11 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         # 2) Purge définitive en arrière-plan, une seule à la fois par utilisateur.
         if uid and cache.add(f'partner_purge_{uid}', '1', timeout=3600):
             def _purge(uid=uid):
+                # Thread hors cycle de requête Django : on gère explicitement la connexion DB
+                # (sinon « idle in transaction » qui garde des verrous).
                 from django.contrib.auth import get_user_model
-                from django.db import transaction
+                from django.db import transaction, connection, close_old_connections
+                close_old_connections()
                 try:
                     u = get_user_model().objects.filter(pk=uid).first()
                     if u is not None:
@@ -300,6 +322,7 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
                     logger.exception('Purge partenaire %s échouée: %s', uid, exc)
                 finally:
                     cache.delete(f'partner_purge_{uid}')
+                    connection.close()  # libère la connexion + tout verrou résiduel
             threading.Thread(target=_purge, daemon=True).start()
 
         return Response(

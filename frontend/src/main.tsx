@@ -37,6 +37,7 @@ const VerifyEmailRequired = lazy(() => import("./pages/VerifyEmailRequired"));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 const Terms = lazy(() => import("./pages/legal").then((m) => ({ default: m.Terms })));
 const Privacy = lazy(() => import("./pages/legal").then((m) => ({ default: m.Privacy })));
+const DataDeletion = lazy(() => import("./pages/legal").then((m) => ({ default: m.DataDeletion })));
 
 const router = createBrowserRouter([
   {
@@ -158,6 +159,10 @@ const router = createBrowserRouter([
       {
         path: "legal/privacy",
         element: <Privacy />,
+      },
+      {
+        path: "legal/data-deletion",
+        element: <DataDeletion />,
       },
       {
         path: "*",

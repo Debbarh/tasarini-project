@@ -34,7 +34,6 @@ const Auth = () => {
   const [signUpLastName, setSignUpLastName] = useState("");
 
   // RGPD fields
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
@@ -118,7 +117,7 @@ const Auth = () => {
         signUpFirstName,
         signUpLastName,
         'user',
-        dateOfBirth,
+        undefined,
         termsAccepted,
         privacyAccepted,
         '1.0',
@@ -421,26 +420,6 @@ const Auth = () => {
                         {t('auth.gdpr.passwordsDontMatch')}
                       </p>
                     )}
-                  </div>
-
-                  {/* Date de naissance */}
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-dob">
-                      {t('auth.gdpr.dateOfBirth')} <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="signup-dob"
-                      type="date"
-                      autoComplete="bday"
-                      value={dateOfBirth}
-                      onChange={(e) => setDateOfBirth(e.target.value)}
-                      max={new Date(new Date().setFullYear(new Date().getFullYear() - 13))
-                        .toISOString().split('T')[0]}
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      {t('auth.gdpr.dateOfBirthHelp')}
-                    </p>
                   </div>
 
                   {/* Consentements RGPD */}

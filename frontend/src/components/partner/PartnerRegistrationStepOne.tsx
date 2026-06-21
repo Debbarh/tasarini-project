@@ -26,7 +26,6 @@ const PartnerRegistrationStepOne: React.FC = () => {
     confirmPassword: '',
     firstName: '',
     lastName: '',
-    dateOfBirth: '',
     companyName: '',
     contactPhone: '',
     businessType: '',
@@ -61,7 +60,6 @@ const PartnerRegistrationStepOne: React.FC = () => {
     if (!formData.contactPhone.trim()) errors.push('Le téléphone est requis.');
     if (!formData.businessType.trim()) errors.push('Le type d’activité est requis.');
     if (!formData.email.trim()) errors.push('L’email est requis.');
-    if (!formData.dateOfBirth) errors.push('La date de naissance est requise.');
     if (!formData.acceptTerms) errors.push('Vous devez accepter les conditions.');
 
     if (formData.password !== formData.confirmPassword) {
@@ -107,7 +105,7 @@ const PartnerRegistrationStepOne: React.FC = () => {
         formData.firstName,
         formData.lastName,
         'partner',
-        formData.dateOfBirth,
+        undefined,
         formData.acceptTerms, // termsAccepted
         formData.acceptTerms, // privacyAccepted
         '1.0', // privacyPolicyVersion
@@ -147,7 +145,6 @@ const PartnerRegistrationStepOne: React.FC = () => {
            formData.confirmPassword &&
            formData.firstName &&
            formData.lastName &&
-           formData.dateOfBirth &&
            formData.companyName &&
            formData.contactPhone &&
            formData.businessType &&
@@ -255,18 +252,6 @@ const PartnerRegistrationStepOne: React.FC = () => {
                   placeholder="Dupont"
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">Date de naissance *</Label>
-              <Input
-                id="dateOfBirth"
-                type="date"
-                value={formData.dateOfBirth}
-                onChange={(e) => updateFormData('dateOfBirth', e.target.value)}
-                required
-                max={new Date().toISOString().split('T')[0]}
-              />
             </div>
 
             <div className="space-y-2">

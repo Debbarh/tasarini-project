@@ -97,7 +97,8 @@ class RegisterSerializer(serializers.Serializer):
 
     # === RGPD Required Fields ===
     date_of_birth = serializers.DateField(
-        help_text="Date de naissance (âge minimum 13 ans)"
+        required=False, allow_null=True,
+        help_text="Date de naissance (optionnelle ; âge minimum 13 ans si fournie)"
     )
     terms_accepted = serializers.BooleanField()
     privacy_policy_accepted = serializers.BooleanField()
@@ -118,9 +119,12 @@ class RegisterSerializer(serializers.Serializer):
 
     def validate_date_of_birth(self, value):
         """
-        Validation âge minimum 13 ans (RGPD Article 8).
+        Validation âge minimum 13 ans (RGPD Article 8). Champ optionnel : si absent, pas de contrôle.
         """
         from datetime import date
+
+        if value is None:
+            return value
 
         today = date.today()
         age = today.year - value.year - (
@@ -195,7 +199,7 @@ class RegisterSerializer(serializers.Serializer):
         email = validated_data.get('email')
 
         # RGPD fields
-        date_of_birth = validated_data.pop('date_of_birth')
+        date_of_birth = validated_data.pop('date_of_birth', None)
         terms_accepted = validated_data.pop('terms_accepted')
         privacy_policy_accepted = validated_data.pop('privacy_policy_accepted')
         privacy_policy_version = validated_data.pop('privacy_policy_version')
@@ -214,7 +218,7 @@ class RegisterSerializer(serializers.Serializer):
             privacy_policy_version=privacy_policy_version,
             marketing_consent=marketing_consent,
             marketing_consent_at=timezone.now() if marketing_consent else None,
-            is_age_verified=True,  # Vérifié par validation du serializer
+            is_age_verified=date_of_birth is not None,  # Vérifié uniquement si la date est fournie
             **validated_data,
         )
         if not user.display_name:

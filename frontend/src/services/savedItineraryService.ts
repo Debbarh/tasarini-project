@@ -10,6 +10,8 @@ export interface SavedItinerary {
   trip_duration?: number;
   travel_dates?: Record<string, unknown>;
   is_favorite: boolean;
+  share_token?: string;
+  is_public?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -41,5 +43,15 @@ export const savedItineraryService = {
 
   delete(id: string) {
     return apiClient.delete<void>(`${ENDPOINT}${id}/`);
+  },
+
+  // Rend l'itinéraire partageable et renvoie son jeton public.
+  share(id: string) {
+    return apiClient.post<{ share_token: string; is_public: boolean }>(`${ENDPOINT}${id}/share/`, {});
+  },
+
+  // Lecture publique d'un itinéraire partagé (sans authentification).
+  getShared(token: string) {
+    return apiClient.get<SavedItinerary>(`${ENDPOINT}shared/${token}/`);
   },
 };

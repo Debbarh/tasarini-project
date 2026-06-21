@@ -138,6 +138,9 @@ class SavedItinerary(models.Model):
     trip_duration = models.PositiveIntegerField(default=0)
     travel_dates = models.JSONField(default=dict, blank=True)
     is_favorite = models.BooleanField(default=False)
+    # Partage public via lien : jeton non devinable (la PK est un entier séquentiel) + drapeau.
+    share_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
+    is_public = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

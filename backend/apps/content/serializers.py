@@ -387,10 +387,12 @@ class SavedItinerarySerializer(serializers.ModelSerializer):
             'trip_duration',
             'travel_dates',
             'is_favorite',
+            'share_token',
+            'is_public',
             'created_at',
             'updated_at',
         ]
-        read_only_fields = ('id', 'user', 'user_display_name', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'user', 'user_display_name', 'share_token', 'is_public', 'created_at', 'updated_at')
 
 
 class StoryAIProviderConfigSerializer(serializers.ModelSerializer):

@@ -16,6 +16,7 @@ import { format } from "date-fns";
 import { getDateFnsLocale } from "@/utils/dateLocale";
 import { DetailedItinerary, UnsplashImage, ActivityImage, DailyActivity } from "@/types/trip";
 import { exportItineraryToPDF, shareItinerary, copyItineraryLink } from "@/utils/itineraryExport";
+import { savedItineraryService } from "@/services/savedItineraryService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedItineraries } from "@/hooks/useSavedItineraries";
@@ -601,21 +602,58 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
     }
   };
 
+  // Garantit une URL publique partageable : enregistre l'itinéraire si besoin (utilisateur
+  // connecté), le rend public, et renvoie le lien /itinerary/<jeton>. Renvoie null sinon.
+  const [isPreparingShare, setIsPreparingShare] = useState(false);
+  const ensureShareUrl = async (): Promise<string | null> => {
+    if (!itinerary) return null;
+    let id = savedId;
+    if (!id) {
+      if (!user) {
+        toast({
+          title: t('itinerary.shareNeedsSaveTitle', 'Enregistrement requis'),
+          description: t('itinerary.shareNeedsSaveDescription', 'Connectez-vous et enregistrez votre itinéraire pour le partager par lien.'),
+          variant: 'destructive',
+        });
+        return null;
+      }
+      const title = itinerary.title
+        || itinerary.trip?.destinations?.map((d) => d.city).filter(Boolean).join(', ')
+        || t('itinerary.defaultTitle', 'Mon itinéraire');
+      const saved = await saveItinerary(title, withAllImages(itinerary));
+      if (saved && typeof saved === 'object') {
+        id = saved.id;
+        setSavedId(saved.id);
+      }
+    }
+    if (!id) return null;
+    const res = await savedItineraryService.share(id); // marque is_public=true + renvoie le jeton
+    return `${window.location.origin}/itinerary/${res.share_token}`;
+  };
+
   const handleShare = async (platform: 'whatsapp' | 'facebook' | 'twitter') => {
     try {
-      await shareItinerary(itinerary, platform);
+      setIsPreparingShare(true);
+      const url = await ensureShareUrl();
+      if (!url) return;
+      await shareItinerary(itinerary, platform, url);
     } catch (error) {
       toast({
         title: t('itinerary.shareErrorTitle', 'Erreur de partage'),
         description: t('itinerary.shareErrorDescription', 'Impossible de partager. Veuillez réessayer.'),
         variant: "destructive",
       });
+    } finally {
+      setIsPreparingShare(false);
     }
   };
 
   const handleCopyLink = async () => {
     try {
-      await copyItineraryLink();
+      setIsPreparingShare(true);
+      const url = await ensureShareUrl();
+      if (!url) return;
+      await copyItineraryLink(url);
       toast({
         title: t('itinerary.linkCopiedTitle', 'Lien copié'),
         description: t('itinerary.linkCopiedDescription', 'Le lien de votre itinéraire a été copié dans le presse-papiers.'),
@@ -626,6 +664,8 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
         description: t('itinerary.copyLinkError', 'Impossible de copier le lien.'),
         variant: "destructive",
       });
+    } finally {
+      setIsPreparingShare(false);
     }
   };
 

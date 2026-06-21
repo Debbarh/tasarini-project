@@ -860,6 +860,33 @@ class SavedItineraryViewSet(viewsets.ModelViewSet):
                 logger.exception("persist_itinerary_pois a échoué (sauvegarde poursuivie)")
         serializer.save(user=self.request.user)
 
+    @action(detail=True, methods=['post'])
+    def share(self, request, pk=None):
+        """Rend l'itinéraire partageable par lien public et renvoie son jeton."""
+        itinerary = self.get_object()  # déjà filtré sur le propriétaire
+        if not itinerary.is_public:
+            itinerary.is_public = True
+            itinerary.save(update_fields=['is_public', 'updated_at'])
+        return Response({'share_token': str(itinerary.share_token), 'is_public': itinerary.is_public})
+
+    @action(detail=True, methods=['post'])
+    def unshare(self, request, pk=None):
+        """Désactive le partage public."""
+        itinerary = self.get_object()
+        if itinerary.is_public:
+            itinerary.is_public = False
+            itinerary.save(update_fields=['is_public', 'updated_at'])
+        return Response({'is_public': itinerary.is_public})
+
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny],
+            url_path=r'shared/(?P<token>[0-9a-f-]+)')
+    def shared(self, request, token=None):
+        """Lecture publique d'un itinéraire partagé (par jeton non devinable)."""
+        itinerary = SavedItinerary.objects.filter(share_token=token, is_public=True).first()
+        if not itinerary:
+            return Response({'detail': 'Itinéraire introuvable ou non partagé.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(SavedItinerarySerializer(itinerary).data)
+
 class StoryGenerationView(APIView):
     """
     Generate travel stories using AI providers.

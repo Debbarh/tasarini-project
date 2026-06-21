@@ -867,14 +867,15 @@ export const exportItineraryToPDF = async (itinerary: DetailedItinerary): Promis
   pdf.save(fileName);
 };
 
-export const shareItinerary = async (itinerary: DetailedItinerary, platform: 'whatsapp' | 'facebook' | 'twitter'): Promise<void> => {
+export const shareItinerary = async (itinerary: DetailedItinerary, platform: 'whatsapp' | 'facebook' | 'twitter', shareUrl?: string): Promise<void> => {
   const destinations = itinerary.trip.destinations.map(d => `${d.city}, ${d.country}`).join(', ');
   const startDate = itinerary.trip.startDate ? new Date(itinerary.trip.startDate).toLocaleDateString('fr-FR') : '';
   const endDate = itinerary.trip.endDate ? new Date(itinerary.trip.endDate).toLocaleDateString('fr-FR') : '';
   const dates = `${startDate} - ${endDate}`;
 
   const shareText = `Mon itineraire de voyage vers ${destinations} du ${dates}! Organise avec TASARINI`;
-  const url = window.location.href;
+  // URL publique de l'itinéraire si fournie ; sinon repli sur l'URL courante.
+  const url = shareUrl || window.location.href;
 
   switch (platform) {
     case 'whatsapp':
@@ -889,13 +890,14 @@ export const shareItinerary = async (itinerary: DetailedItinerary, platform: 'wh
   }
 };
 
-export const copyItineraryLink = async (): Promise<void> => {
+export const copyItineraryLink = async (shareUrl?: string): Promise<void> => {
+  const link = shareUrl || window.location.href;
   try {
-    await navigator.clipboard.writeText(window.location.href);
+    await navigator.clipboard.writeText(link);
   } catch (err) {
     // Fallback pour les navigateurs qui ne supportent pas l'API clipboard
     const textArea = document.createElement('textarea');
-    textArea.value = window.location.href;
+    textArea.value = link;
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand('copy');

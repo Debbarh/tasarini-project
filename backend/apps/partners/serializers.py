@@ -11,11 +11,44 @@ from .models import (
     PartnerBookingConfig,
     PartnerCommission,
     PartnerEndpointHealth,
+    PartnerKYC,
+    PartnerKYCDocument,
     PartnerNotification,
     PartnerPaymentMethod,
     PartnerProfile,
     PartnerWithdrawal,
 )
+
+
+class PartnerKYCDocumentSerializer(serializers.ModelSerializer):
+    doc_type_display = serializers.CharField(source='get_doc_type_display', read_only=True)
+    download_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PartnerKYCDocument
+        fields = ['id', 'doc_type', 'doc_type_display', 'original_name', 'uploaded_at', 'download_url']
+        read_only_fields = ('id', 'original_name', 'uploaded_at', 'download_url')
+
+    def get_download_url(self, obj):
+        # URL d'un endpoint protégé (admin + propriétaire), jamais le chemin média public.
+        return f'/api/v1/partners/kyc/documents/{obj.id}/download/'
+
+
+class PartnerKYCSerializer(serializers.ModelSerializer):
+    documents = PartnerKYCDocumentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = PartnerKYC
+        fields = [
+            'id', 'profile',
+            'legal_name', 'legal_form', 'registration_number', 'vat_number', 'tax_id',
+            'registered_address', 'registration_country',
+            'rep_full_name', 'rep_date_of_birth', 'rep_nationality',
+            'status', 'rejection_reason', 'reviewed_at',
+            'documents', 'created_at', 'updated_at',
+        ]
+        # Le partenaire renseigne les champs ; le workflow de vérification est piloté par l'admin.
+        read_only_fields = ('id', 'profile', 'status', 'rejection_reason', 'reviewed_at', 'created_at', 'updated_at')
 
 
 class PartnerProfileSerializer(serializers.ModelSerializer):
@@ -28,6 +61,9 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
+    country_name = serializers.CharField(source='country.name', read_only=True)
+    city_name = serializers.CharField(source='city.name', read_only=True)
+    kyc_status = serializers.CharField(source='kyc.status', read_only=True, default='not_submitted')
 
     class Meta:
         model = PartnerProfile
@@ -38,17 +74,30 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'company_name',
             'website',
             'status',
+            'business_category',
+            'country',
+            'country_name',
+            'city',
+            'city_name',
+            'address',
+            'postal_code',
+            'contact_phone',
+            'description',
             'commission_rate',
             'api_key',
             'metadata',
             'managed_pois',
             'managed_poi_ids',
+            'kyc_status',
             'created_at',
             'updated_at',
         ]
-        # commission_rate : lecture seule via le serializer → seul l'admin la change via l'action
-        # `set-commission`/`moderate` (empêche un partenaire de modifier son propre taux).
-        read_only_fields = ('id', 'owner', 'owner_detail', 'api_key', 'commission_rate', 'created_at', 'updated_at')
+        # `status` : lecture seule → le partenaire ne peut PAS s'auto-approuver ; transition via l'action
+        # `submit` (draft→pending) et `moderate` (admin). `commission_rate` : lecture seule (admin only).
+        read_only_fields = (
+            'id', 'owner', 'owner_detail', 'status', 'api_key', 'commission_rate',
+            'country_name', 'city_name', 'kyc_status', 'created_at', 'updated_at',
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

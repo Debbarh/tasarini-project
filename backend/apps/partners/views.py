@@ -22,6 +22,8 @@ from .models import (
     PartnerBookingConfig,
     PartnerCommission,
     PartnerEndpointHealth,
+    PartnerKYC,
+    PartnerKYCDocument,
     PartnerNotification,
     PartnerPaymentMethod,
     PartnerProfile,
@@ -35,11 +37,39 @@ from .serializers import (
     PartnerBulkPOIStatusSerializer,
     PartnerCommissionSerializer,
     PartnerEndpointHealthSerializer,
+    PartnerKYCSerializer,
+    PartnerKYCDocumentSerializer,
     PartnerNotificationSerializer,
     PartnerPaymentMethodSerializer,
     PartnerProfileSerializer,
     PartnerWithdrawalSerializer,
 )
+
+
+def seed_tourist_point_from_profile(profile):
+    """Crée (une fois) une fiche TouristPoint brouillon depuis le profil partenaire et la lie
+    à `managed_pois`. Idempotent : ne fait rien si le partenaire possède déjà une fiche liée."""
+    if profile.managed_pois.exists():
+        return None
+    flags = dict.fromkeys(('is_accommodation', 'is_restaurant', 'is_activity'), False)
+    for flag in PartnerProfile.POI_FLAGS_BY_CATEGORY.get(profile.business_category, ()):
+        flags[flag] = True
+    city = profile.city
+    tp = TouristPoint.objects.create(
+        owner=profile.owner,
+        name=profile.company_name or (profile.owner.get_full_name() or 'Mon établissement'),
+        description=profile.description or '',
+        address=profile.address or '',
+        contact_phone=profile.contact_phone or '',
+        contact_email=getattr(profile.owner, 'email', '') or '',
+        website_url=profile.website or '',
+        latitude=getattr(city, 'latitude', None),
+        longitude=getattr(city, 'longitude', None),
+        status=TouristPoint.Status.DRAFT,
+        **flags,
+    )
+    profile.managed_pois.add(tp)
+    return tp
 
 
 class IsAdminOrOwner(permissions.BasePermission):
@@ -89,7 +119,43 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):  # type: ignore[override]
+        # Idempotent : un partenaire a au plus UN profil (owner OneToOne). Évite le 500 IntegrityError
+        # si l'assistant resoumet. Le profil est normalement déjà créé en 'draft' à l'inscription.
+        existing = PartnerProfile.objects.filter(owner=self.request.user).first()
+        if existing:
+            serializer.instance = existing
+            serializer.update(existing, serializer.validated_data)
+            return
         serializer.save(owner=self.request.user)
+
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        """Profil du partenaire connecté (créé à la volée en 'draft' s'il n'existe pas)."""
+        profile, _ = PartnerProfile.objects.get_or_create(owner=request.user)
+        return Response(self.get_serializer(profile).data)
+
+    @action(detail=True, methods=['post'])
+    def submit(self, request, pk=None):
+        """Le partenaire soumet son profil pour revue : draft → pending.
+        Exige les infos essentielles + un KYC soumis (documents fournis)."""
+        profile = self.get_object()
+        if profile.owner != request.user and not request.user.is_staff:
+            raise PermissionDenied("Profil non autorisé.")
+        missing = [f for f in ('company_name', 'business_category', 'city', 'contact_phone') if not getattr(profile, f)]
+        if missing:
+            return Response(
+                {'detail': 'Profil incomplet.', 'missing': missing},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        kyc = getattr(profile, 'kyc', None)
+        if not kyc or kyc.status == 'not_submitted' or not kyc.documents.exists():
+            return Response(
+                {'detail': "Le dossier KYC (informations légales + documents) doit être complété avant la soumission."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        profile.status = 'pending'
+        profile.save(update_fields=['status', 'updated_at'])
+        return Response({'status': profile.status})
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
     def moderate(self, request, pk=None):
@@ -98,6 +164,14 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
         status_map = {'approve': 'approved', 'reject': 'rejected', 'suspend': 'suspended'}
         if action not in status_map:
             return Response({'detail': 'Action invalide'}, status=status.HTTP_400_BAD_REQUEST)
+        # Gate KYC : impossible d'approuver tant que l'identité légale n'est pas vérifiée.
+        if action == 'approve':
+            kyc = getattr(profile, 'kyc', None)
+            if not kyc or kyc.status != 'verified':
+                return Response(
+                    {'detail': "KYC non vérifié : vérifiez le dossier d'identité avant d'approuver."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         profile.status = status_map[action]
         fields = ['status', 'updated_at']
         # À l'approbation (ou à tout moment) l'admin peut fixer le taux de commission.
@@ -110,13 +184,21 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
             except Exception:  # noqa: BLE001
                 pass
         profile.save(update_fields=fields)
+        # À l'approbation : créer la fiche établissement réservable (brouillon) si absente.
+        seeded = None
+        if action == 'approve':
+            seeded = seed_tourist_point_from_profile(profile)
         PartnerNotification.objects.create(
             partner=profile.owner,
             title=f'Statut partenaire mis à jour ({profile.status})',
             body=request.data.get('admin_message', ''),
             category='moderation',
         )
-        return Response({'status': profile.status, 'commission_rate': str(profile.commission_rate)})
+        return Response({
+            'status': profile.status,
+            'commission_rate': str(profile.commission_rate),
+            'tourist_point_created': str(seeded.id) if seeded else None,
+        })
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser], url_path='set-commission')
     def set_commission(self, request, pk=None):
@@ -278,6 +360,119 @@ class PartnerInvoiceViewSet(viewsets.ModelViewSet):
         mark_overdue()
         return Response({'created': len(invoices),
                          'invoices': PartnerInvoiceSerializer(invoices, many=True).data})
+
+
+class PartnerKYCViewSet(viewsets.ModelViewSet):
+    """Dossier KYC/KYB. Le partenaire lit/édite SON dossier + upload des documents.
+    L'admin vérifie/refuse. Vérification manuelle (gate d'approbation du profil)."""
+    serializer_class = PartnerKYCSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'post', 'patch', 'head', 'options']
+
+    def get_queryset(self):  # type: ignore[override]
+        qs = PartnerKYC.objects.select_related('profile', 'profile__owner').prefetch_related('documents')
+        u = self.request.user
+        if not u.is_staff:
+            return qs.filter(profile__owner=u)
+        profile_id = self.request.query_params.get('profile')
+        return qs.filter(profile_id=profile_id) if profile_id else qs
+
+    def _own_profile(self):
+        profile, _ = PartnerProfile.objects.get_or_create(owner=self.request.user)
+        return profile
+
+    @action(detail=False, methods=['get', 'patch'])
+    def me(self, request):
+        """Dossier KYC du partenaire connecté (créé à la volée)."""
+        profile = self._own_profile()
+        kyc, _ = PartnerKYC.objects.get_or_create(profile=profile)
+        if request.method == 'PATCH':
+            serializer = self.get_serializer(kyc, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            # Toute modification ramène un dossier refusé/non soumis en 'pending' (re-revue).
+            if kyc.status in ('not_submitted', 'rejected'):
+                kyc.status = 'pending'
+                kyc.save(update_fields=['status', 'updated_at'])
+            return Response(self.get_serializer(kyc).data)
+        return Response(self.get_serializer(kyc).data)
+
+    @action(detail=False, methods=['post'], url_path='upload-document')
+    def upload_document(self, request):
+        """Upload d'un document KYC (multipart : doc_type + file). Réservé au propriétaire."""
+        profile = self._own_profile()
+        kyc, _ = PartnerKYC.objects.get_or_create(profile=profile)
+        doc_type = request.data.get('doc_type')
+        file = request.FILES.get('file')
+        valid_types = {c[0] for c in PartnerKYCDocument.DOC_TYPE_CHOICES}
+        if doc_type not in valid_types:
+            return Response({'detail': 'doc_type invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not file:
+            return Response({'detail': 'Fichier manquant.'}, status=status.HTTP_400_BAD_REQUEST)
+        if file.size > 10 * 1024 * 1024:
+            return Response({'detail': 'Fichier trop volumineux (max 10 Mo).'}, status=status.HTTP_400_BAD_REQUEST)
+        allowed_ext = ('.pdf', '.jpg', '.jpeg', '.png', '.webp')
+        if not file.name.lower().endswith(allowed_ext):
+            return Response({'detail': 'Format non supporté (PDF ou image).'}, status=status.HTTP_400_BAD_REQUEST)
+        # Un seul document par type : on remplace l'éventuel précédent.
+        kyc.documents.filter(doc_type=doc_type).delete()
+        doc = PartnerKYCDocument.objects.create(kyc=kyc, doc_type=doc_type, file=file, original_name=file.name[:255])
+        if kyc.status in ('not_submitted', 'rejected'):
+            kyc.status = 'pending'
+            kyc.save(update_fields=['status', 'updated_at'])
+        return Response(PartnerKYCDocumentSerializer(doc, context=self.get_serializer_context()).data,
+                        status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def verify(self, request, pk=None):
+        kyc = self.get_object()
+        kyc.status = 'verified'
+        kyc.reviewed_by = request.user
+        kyc.reviewed_at = timezone.now()
+        kyc.rejection_reason = ''
+        kyc.save(update_fields=['status', 'reviewed_by', 'reviewed_at', 'rejection_reason', 'updated_at'])
+        PartnerNotification.objects.create(
+            partner=kyc.profile.owner,
+            title='Dossier KYC vérifié',
+            body="Votre identité a été vérifiée. Votre profil peut désormais être approuvé.",
+            category='kyc',
+        )
+        return Response({'status': kyc.status})
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def reject(self, request, pk=None):
+        kyc = self.get_object()
+        kyc.status = 'rejected'
+        kyc.reviewed_by = request.user
+        kyc.reviewed_at = timezone.now()
+        kyc.rejection_reason = (request.data.get('reason') or '')[:2000]
+        kyc.save(update_fields=['status', 'reviewed_by', 'reviewed_at', 'rejection_reason', 'updated_at'])
+        PartnerNotification.objects.create(
+            partner=kyc.profile.owner,
+            title='Dossier KYC à corriger',
+            body=kyc.rejection_reason or "Votre dossier KYC nécessite des corrections.",
+            category='kyc',
+        )
+        return Response({'status': kyc.status})
+
+
+class PartnerKYCDocumentDownloadView(APIView):
+    """Téléchargement protégé d'un document KYC : admin OU propriétaire uniquement."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, pk):
+        from django.http import FileResponse, Http404
+        doc = PartnerKYCDocument.objects.select_related('kyc__profile__owner').filter(pk=pk).first()
+        if not doc:
+            raise Http404
+        owner = doc.kyc.profile.owner
+        if not (request.user.is_staff or request.user == owner):
+            raise PermissionDenied("Accès refusé.")
+        try:
+            return FileResponse(doc.file.open('rb'), as_attachment=True,
+                                filename=doc.original_name or doc.file.name.rsplit('/', 1)[-1])
+        except FileNotFoundError:
+            raise Http404
 
 
 class PartnerBillingInfoView(APIView):

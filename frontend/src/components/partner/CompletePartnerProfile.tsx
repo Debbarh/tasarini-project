@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,701 +8,454 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CountrySelect } from '@/components/ui/country-select';
+import { CitySelect } from '@/components/ui/city-select';
 import { toast } from 'sonner';
-import { 
-  Building2, 
-  MapPin, 
-  Globe, 
-  Camera, 
-  FileText, 
-  CreditCard,
-  ChevronRight,
-  ChevronLeft,
-  SkipForward,
-  CheckCircle,
-  AlertCircle,
-  Info
+import {
+  Building2, MapPin, Phone, ShieldCheck, ClipboardCheck,
+  ChevronRight, ChevronLeft, CheckCircle, AlertCircle, Loader2, Upload, FileCheck2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
-import { partnerService } from '@/services/partnerService';
-import { partnerOnboardingStorage } from '@/services/partnerOnboardingStorage';
+import {
+  partnerService,
+  type PartnerProfile,
+  type PartnerKYC,
+  type PartnerKYCDocType,
+} from '@/services/partnerService';
 
-const BUSINESS_TYPES = [
-  { value: 'restaurant', label: 'Restaurant' },
-  { value: 'hotel', label: 'Hôtel' },
-  { value: 'cafe', label: 'Café' },
-  { value: 'bar', label: 'Bar / Pub' },
-  { value: 'museum', label: 'Musée / Galerie' },
-  { value: 'activity', label: 'Activité / Loisir' },
-  { value: 'shop', label: 'Boutique / Commerce' },
-  { value: 'transport', label: 'Transport / Logistique' },
-  { value: 'service', label: 'Service touristique' },
-  { value: 'autre', label: 'Autre' }
+const CATEGORIES = [
+  'accommodation', 'restaurant', 'cafe', 'bar', 'activity', 'museum', 'shop', 'transport', 'service', 'other',
 ];
 
-interface Step {
-  id: number;
-  title: string;
-  required: boolean;
-  icon: React.ReactNode;
-}
+const KYC_DOCS: { type: PartnerKYCDocType; required: boolean }[] = [
+  { type: 'business_registration', required: true },
+  { type: 'representative_id', required: true },
+  { type: 'bank_rib', required: true },
+  { type: 'proof_of_address', required: false },
+];
 
 const CompletePartnerProfile: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [skipMode, setSkipMode] = useState(false);
-  const [formErrors, setFormErrors] = useState<string[]>([]);
-  const [submissionMessage, setSubmissionMessage] = useState<string | null>(null);
-  
-  // Données du profil partenaire
-  const [profileData, setProfileData] = useState({
-    // Données récupérées du localStorage
-    companyName: '',
-    contactPhone: '',
-    businessType: '',
-    
-    // Étape 1 - Informations générales
-    description: '',
-    website: '',
-    socialMedia: {
-      facebook: '',
-      instagram: '',
-      twitter: ''
-    },
-    
-    // Étape 2 - Localisation  
-    address: '',
-    city: '',
-    postalCode: '',
-    country: 'France',
-    
-    // Étape 3 - Détails business
-    businessHours: {
-      monday: { open: '09:00', close: '18:00', closed: false },
-      tuesday: { open: '09:00', close: '18:00', closed: false },
-      wednesday: { open: '09:00', close: '18:00', closed: false },
-      thursday: { open: '09:00', close: '18:00', closed: false },
-      friday: { open: '09:00', close: '18:00', closed: false },
-      saturday: { open: '09:00', close: '18:00', closed: false },
-      sunday: { open: '09:00', close: '18:00', closed: true }
-    },
-    specialties: [] as string[],
-    priceRange: 'medium',
-    
-    // Étape 4 - Documents (optionnel)
-    businessLicense: null as File | null,
-    logo: null as File | null,
-    photos: [] as File[],
-    
-    // Informations bancaires (optionnel)
-    bankDetails: {
-      iban: '',
-      bic: '',
-      accountHolder: ''
-    }
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [profile, setProfile] = useState<PartnerProfile | null>(null);
+  const [kyc, setKyc] = useState<PartnerKYC | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
+
+  // Form state (établissement / localisation / contact)
+  const [form, setForm] = useState({
+    company_name: '', business_category: '', description: '',
+    country: '', country_name: '', city: '', city_name: '',
+    address: '', postal_code: '', contact_phone: '', website: '',
+    facebook: '', instagram: '',
+  });
+  // KYC form state
+  const [kycForm, setKycForm] = useState({
+    legal_name: '', legal_form: '', registration_number: '', vat_number: '', tax_id: '',
+    registered_address: '', rep_full_name: '', rep_date_of_birth: '', rep_nationality: '',
   });
 
-  const steps: Step[] = [
-    { 
-      id: 1, 
-      title: "Informations générales", 
-      required: true,
-      icon: <Building2 className="w-5 h-5" />
-    },
-    { 
-      id: 2, 
-      title: "Localisation", 
-      required: true,
-      icon: <MapPin className="w-5 h-5" />
-    },
-    { 
-      id: 3, 
-      title: "Détails business", 
-      required: false,
-      icon: <FileText className="w-5 h-5" />
-    },
-    { 
-      id: 4, 
-      title: "Documents & Photos", 
-      required: false,
-      icon: <Camera className="w-5 h-5" />
-    }
-  ];
+  const TOTAL_STEPS = 5;
 
-  useEffect(() => {
-    const draft = partnerOnboardingStorage.load();
-    if (Object.keys(draft).length) {
-      setProfileData((prev) => ({
-        ...prev,
-        companyName: draft.companyName || prev.companyName,
-        contactPhone: draft.contactPhone || prev.contactPhone,
-        businessType: draft.businessType || prev.businessType,
-        description: draft.description || prev.description,
-        website: draft.website || prev.website,
-        socialMedia: {
-          facebook: draft.socialMedia?.facebook || prev.socialMedia.facebook,
-          instagram: draft.socialMedia?.instagram || prev.socialMedia.instagram,
-          twitter: draft.socialMedia?.twitter || prev.socialMedia.twitter,
-        },
-        address: draft.address || prev.address,
-        city: draft.city || prev.city,
-        postalCode: draft.postalCode || prev.postalCode,
-        country: draft.country || prev.country,
-      }));
-    }
-  }, []);
-
-  const persistDraftField = (field: string, value: any) => {
-    const patch: Record<string, any> = {};
-    switch (field) {
-      case 'companyName':
-        patch.companyName = value;
-        break;
-      case 'contactPhone':
-        patch.contactPhone = value;
-        break;
-      case 'businessType':
-        patch.businessType = value;
-        break;
-      case 'description':
-        patch.description = value;
-        break;
-      case 'website':
-        patch.website = value;
-        break;
-      case 'address':
-        patch.address = value;
-        break;
-      case 'city':
-        patch.city = value;
-        break;
-      case 'postalCode':
-        patch.postalCode = value;
-        break;
-      case 'country':
-        patch.country = value;
-        break;
-      default:
-        if (field.startsWith('socialMedia.')) {
-          const [, key] = field.split('.');
-          patch.socialMedia = { [key]: value };
-        }
-        break;
-    }
-    if (Object.keys(patch).length > 0) {
-      partnerOnboardingStorage.save(patch);
-    }
-  };
-
-  const updateProfileData = (field: string, value: any) => {
-    if (field.includes('.')) {
-      const [parent, child] = field.split('.');
-      setProfileData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof prev],
-          [child]: value
-        }
-      }));
-    } else {
-      setProfileData(prev => ({ ...prev, [field]: value }));
-    }
-    persistDraftField(field, value);
-  };
-
-  const validateBeforeSubmit = (allowPartial = false) => {
-    const errors: string[] = [];
-    if (!profileData.companyName.trim()) errors.push("Le nom de l'entreprise est requis.");
-    if (!profileData.contactPhone.trim()) errors.push('Le numéro de téléphone est requis.');
-    if (!profileData.businessType.trim()) errors.push("Le type d'activité est requis.");
-    if (!allowPartial) {
-      if (!profileData.description.trim()) errors.push('La description est obligatoire.');
-      if (!profileData.address.trim()) errors.push("L'adresse est obligatoire.");
-      if (!profileData.city.trim()) errors.push('La ville est obligatoire.');
-      if (!profileData.postalCode.trim()) errors.push('Le code postal est obligatoire.');
-    }
-    return errors;
-  };
-
-  const getCompletionPercentage = () => {
-    const requiredFields = [
-      'companyName', 'businessType', 'contactPhone', // Déjà remplis
-      'description', // Étape 1
-      'address', 'city', 'postalCode' // Étape 2
-    ];
-    
-    let completed = 3; // companyName, businessType, contactPhone déjà remplis
-    
-    if (profileData.description) completed++;
-    if (profileData.address) completed++;
-    if (profileData.city) completed++;
-    if (profileData.postalCode) completed++;
-    
-    // Bonus pour les champs optionnels
-    if (profileData.website) completed += 0.5;
-    if (profileData.socialMedia.facebook || profileData.socialMedia.instagram) completed += 0.5;
-    
-    return Math.round((completed / requiredFields.length) * 100);
-  };
-
-  const canProceedToNextStep = () => {
-    switch (currentStep) {
-      case 1:
-        return profileData.description.trim().length > 0;
-      case 2:
-        return profileData.address && profileData.city && profileData.postalCode;
-      case 3:
-        return true; // Optionnel
-      case 4:
-        return true; // Optionnel
-      default:
-        return true;
-    }
-  };
-
-  const handleNextStep = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handlePrevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSkipForNow = async () => {
-    setSkipMode(true);
-    await handleFinalSubmit(true);
-  };
-
-  const handleFinalSubmit = async (isSkipping = false) => {
+  const load = useCallback(async () => {
     setLoading(true);
-
     try {
-      const errors = validateBeforeSubmit(isSkipping);
-      if (errors.length > 0) {
-        setFormErrors(errors);
-        setLoading(false);
-        return;
+      const [p, k] = await Promise.all([
+        partnerService.getMyProfile(),
+        partnerService.getMyKyc().catch(() => null),
+      ]);
+      setProfile(p);
+      setKyc(k);
+      if (p) {
+        const md: any = p.metadata || {};
+        setForm({
+          company_name: p.company_name || '',
+          business_category: (p as any).business_category || '',
+          description: (p as any).description || md.description || '',
+          country: (p as any).country || '',
+          country_name: (p as any).country_name || '',
+          city: (p as any).city || '',
+          city_name: (p as any).city_name || '',
+          address: (p as any).address || '',
+          postal_code: (p as any).postal_code || '',
+          contact_phone: (p as any).contact_phone || '',
+          website: p.website || '',
+          facebook: md.social_media?.facebook || '',
+          instagram: md.social_media?.instagram || '',
+        });
+        // Si déjà soumis/approuvé, rediriger vers l'espace partenaire.
+        if (p.status && !['draft', 'rejected'].includes(p.status)) {
+          navigate('/partner-center');
+          return;
+        }
       }
-      setFormErrors([]);
-      setSubmissionMessage(null);
-
-      const metadata = {
-        description: profileData.description,
-        contact_phone: profileData.contactPhone,
-        website_url: profileData.website,
-        business_type: profileData.businessType,
-        address: profileData.address,
-        city: profileData.city,
-        postal_code: profileData.postalCode,
-        country: profileData.country,
-        social_media: profileData.socialMedia,
-        business_hours: profileData.businessHours,
-        specialties: profileData.specialties,
-        price_range: profileData.priceRange,
-        bank_details: profileData.bankDetails,
-        profile_completed_at: isSkipping ? null : new Date().toISOString(),
-        completion_percentage: getCompletionPercentage()
-      };
-
-      // Créer le profil partenaire
-      await partnerService.createProfile({
-        company_name: profileData.companyName,
-        website: profileData.website || undefined,
-        metadata
-      });
-
-      // Nettoyer le localStorage
-      partnerOnboardingStorage.clear();
-
-      if (isSkipping) {
-        toast.success('Profil sauvegardé ! Vous pourrez le compléter depuis votre dashboard.');
-        setSubmissionMessage(
-          'Profil sauvegardé partiellement. Vous pourrez le compléter depuis votre dashboard.'
-        );
-      } else {
-        toast.success('Profil partenaire complété avec succès !');
-        setSubmissionMessage('Votre profil est soumis et en attente de validation par notre équipe.');
+      if (k) {
+        setKycForm({
+          legal_name: k.legal_name || '', legal_form: k.legal_form || '',
+          registration_number: k.registration_number || '', vat_number: k.vat_number || '',
+          tax_id: k.tax_id || '', registered_address: k.registered_address || '',
+          rep_full_name: k.rep_full_name || '', rep_date_of_birth: k.rep_date_of_birth || '',
+          rep_nationality: k.rep_nationality || '',
+        });
       }
-
-      // Redirection vers le centre partenaire
-      navigate('/partner-center');
-
-    } catch (error: any) {
-      console.error('Erreur lors de la finalisation du profil:', error);
-      const errorDetail =
-        error?.payload?.detail ||
-        error?.payload?.company_name?.[0] ||
-        error?.payload?.metadata?.[0] ||
-        error?.message;
-      toast.error(errorDetail || 'Erreur lors de la sauvegarde du profil');
-      if (errorDetail) {
-        setFormErrors([errorDetail]);
-      }
+    } catch (e) {
+      toast.error(t('partnerOnboarding.errors.loadError', 'Impossible de charger votre profil.'));
     } finally {
       setLoading(false);
-      setSkipMode(false);
+    }
+  }, [navigate, t]);
+
+  useEffect(() => { if (user) load(); }, [user, load]);
+
+  const setF = (k: string, v: string) => setForm((s) => ({ ...s, [k]: v }));
+  const setK = (k: string, v: string) => setKycForm((s) => ({ ...s, [k]: v }));
+
+  // Persiste l'étape courante côté serveur (brouillon).
+  const saveProfileStep = async () => {
+    if (!profile) return false;
+    setSaving(true);
+    try {
+      const updated = await partnerService.updateProfile(profile.id, {
+        company_name: form.company_name,
+        business_category: form.business_category,
+        description: form.description,
+        country: form.country || null,
+        city: form.city || null,
+        address: form.address,
+        postal_code: form.postal_code,
+        contact_phone: form.contact_phone,
+        website: form.website || null,
+        metadata: { ...(profile.metadata || {}), social_media: { facebook: form.facebook, instagram: form.instagram } },
+      });
+      setProfile(updated);
+      return true;
+    } catch {
+      toast.error(t('partnerOnboarding.errors.saveError', 'Échec de l’enregistrement.'));
+      return false;
+    } finally {
+      setSaving(false);
     }
   };
 
-  const renderStep1 = () => (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="companyName">Nom de l'entreprise *</Label>
-          <Input
-            id="companyName"
-            value={profileData.companyName}
-            onChange={(e) => updateProfileData('companyName', e.target.value)}
-            placeholder="Restaurant Le Gourmet"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="contactPhone">Téléphone *</Label>
-          <Input
-            id="contactPhone"
-            value={profileData.contactPhone}
-            onChange={(e) => updateProfileData('contactPhone', e.target.value)}
-            placeholder="+33 1 23 45 67 89"
-            required
-          />
-        </div>
-      </div>
+  const saveKyc = async () => {
+    setSaving(true);
+    try {
+      const updated = await partnerService.updateMyKyc({
+        legal_name: kycForm.legal_name, legal_form: kycForm.legal_form,
+        registration_number: kycForm.registration_number, vat_number: kycForm.vat_number,
+        tax_id: kycForm.tax_id, registered_address: kycForm.registered_address,
+        rep_full_name: kycForm.rep_full_name,
+        rep_date_of_birth: kycForm.rep_date_of_birth || null,
+        rep_nationality: kycForm.rep_nationality,
+        registration_country: form.country || null,
+      });
+      setKyc(updated);
+      return true;
+    } catch {
+      toast.error(t('partnerOnboarding.errors.saveError', 'Échec de l’enregistrement.'));
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
 
-      <div className="space-y-2">
-        <Label htmlFor="businessType">Type d'activité *</Label>
-        <Select 
-          value={profileData.businessType}
-          onValueChange={(value) => updateProfileData('businessType', value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionnez une activité" />
-          </SelectTrigger>
-          <SelectContent>
-            {BUSINESS_TYPES.map((type) => (
-              <SelectItem key={type.value} value={type.value}>
-                {type.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+  const validateStep = (s: number): string[] => {
+    const e: string[] = [];
+    if (s === 1) {
+      if (!form.company_name.trim()) e.push(t('partnerOnboarding.errors.companyRequired', 'Le nom de l’établissement est requis.'));
+      if (!form.business_category) e.push(t('partnerOnboarding.errors.categoryRequired', 'La catégorie est requise.'));
+    }
+    if (s === 2) {
+      if (!form.country) e.push(t('partnerOnboarding.errors.countryRequired', 'Le pays est requis.'));
+      if (!form.city) e.push(t('partnerOnboarding.errors.cityRequired', 'La ville est requise.'));
+    }
+    if (s === 3) {
+      if (!form.contact_phone.trim()) e.push(t('partnerOnboarding.errors.phoneRequired', 'Le téléphone est requis.'));
+    }
+    if (s === 4) {
+      if (!kycForm.legal_name.trim()) e.push(t('partnerOnboarding.errors.legalNameRequired', 'La raison sociale est requise.'));
+      if (!kycForm.registration_number.trim()) e.push(t('partnerOnboarding.errors.regNumRequired', 'Le numéro d’immatriculation est requis.'));
+      if (!kycForm.rep_full_name.trim()) e.push(t('partnerOnboarding.errors.repRequired', 'Le représentant légal est requis.'));
+      const have = new Set((kyc?.documents || []).map((d) => d.doc_type));
+      for (const d of KYC_DOCS.filter((x) => x.required)) {
+        if (!have.has(d.type)) e.push(t('partnerOnboarding.errors.docRequired', 'Document requis manquant : {{doc}}', { doc: t(`partnerOnboarding.docs.${d.type}`, d.type) }));
+      }
+    }
+    return e;
+  };
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Description de votre établissement *</Label>
-        <Textarea
-          id="description"
-          value={profileData.description}
-          onChange={(e) => updateProfileData('description', e.target.value)}
-          placeholder="Décrivez votre établissement, vos spécialités, ce qui vous rend unique..."
-          rows={4}
-          className="resize-none"
-        />
-        <p className="text-xs text-muted-foreground">
-          Cette description sera visible par les utilisateurs sur votre profil.
-        </p>
-      </div>
+  const next = async () => {
+    const e = validateStep(step);
+    if (e.length) { setErrors(e); return; }
+    setErrors([]);
+    const ok = step === 4 ? await saveKyc() : await saveProfileStep();
+    if (!ok) return;
+    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
+  };
 
-      <div className="space-y-2">
-        <Label htmlFor="website">Site web</Label>
-        <div className="relative">
-          <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            id="website"
-            type="url"
-            value={profileData.website}
-            onChange={(e) => updateProfileData('website', e.target.value)}
-            placeholder="https://www.monsite.com"
-            className="pl-10"
-          />
-        </div>
-      </div>
+  const prev = () => { setErrors([]); setStep((s) => Math.max(s - 1, 1)); };
 
-      <div className="space-y-4">
-        <Label>Réseaux sociaux (optionnel)</Label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            placeholder="Page Facebook"
-            value={profileData.socialMedia.facebook}
-            onChange={(e) => updateProfileData('socialMedia.facebook', e.target.value)}
-          />
-          <Input
-            placeholder="Compte Instagram"
-            value={profileData.socialMedia.instagram}
-            onChange={(e) => updateProfileData('socialMedia.instagram', e.target.value)}
-          />
-        </div>
-      </div>
-    </div>
-  );
+  const handleUpload = async (docType: PartnerKYCDocType, file: File) => {
+    setSaving(true);
+    try {
+      await partnerService.uploadKycDocument(docType, file);
+      const refreshed = await partnerService.getMyKyc();
+      setKyc(refreshed);
+      toast.success(t('partnerOnboarding.kyc.uploaded', 'Document téléversé.'));
+    } catch (err: any) {
+      toast.error(err?.payload?.detail || t('partnerOnboarding.errors.uploadError', 'Échec du téléversement.'));
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  const renderStep2 = () => (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="address">Adresse complète *</Label>
-        <Input
-          id="address"
-          value={profileData.address}
-          onChange={(e) => updateProfileData('address', e.target.value)}
-          placeholder="123 Rue de la République"
-          required
-        />
-      </div>
+  const submit = async () => {
+    if (!profile) return;
+    // valide toutes les étapes
+    const allErr = [1, 2, 3, 4].flatMap(validateStep);
+    if (allErr.length) { setErrors(allErr); setStep(1); return; }
+    setSaving(true);
+    try {
+      await partnerService.submitProfile(profile.id);
+      toast.success(t('partnerOnboarding.submitted', 'Profil soumis ! Notre équipe va vérifier votre dossier.'));
+      navigate('/partner-center');
+    } catch (err: any) {
+      toast.error(err?.payload?.detail || t('partnerOnboarding.errors.submitError', 'Échec de la soumission.'));
+    } finally {
+      setSaving(false);
+    }
+  };
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="city">Ville *</Label>
-          <Input
-            id="city"
-            value={profileData.city}
-            onChange={(e) => updateProfileData('city', e.target.value)}
-            placeholder="Paris"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="postalCode">Code postal *</Label>
-          <Input
-            id="postalCode"
-            value={profileData.postalCode}
-            onChange={(e) => updateProfileData('postalCode', e.target.value)}
-            placeholder="75001"
-            required
-          />
-        </div>
-      </div>
+  if (loading) {
+    return <div className="flex items-center justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
+  }
 
-      <div className="space-y-2">
-        <Label htmlFor="country">Pays</Label>
-        <Select
-          value={profileData.country}
-          onValueChange={(value) => updateProfileData('country', value)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="France">France</SelectItem>
-            <SelectItem value="Belgique">Belgique</SelectItem>
-            <SelectItem value="Suisse">Suisse</SelectItem>
-            <SelectItem value="Canada">Canada</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  );
-
-  const renderStep3 = () => (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <Label>Gamme de prix</Label>
-        <Select
-          value={profileData.priceRange}
-          onValueChange={(value) => updateProfileData('priceRange', value)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="budget">Budget (€)</SelectItem>
-            <SelectItem value="medium">Moyen (€€)</SelectItem>
-            <SelectItem value="premium">Premium (€€€)</SelectItem>
-            <SelectItem value="luxury">Luxe (€€€€)</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Alert>
-        <Info className="h-4 w-4" />
-        <AlertDescription>
-          Ces informations sont optionnelles mais aident les utilisateurs à mieux comprendre votre offre.
-        </AlertDescription>
-      </Alert>
-    </div>
-  );
-
-  const renderStep4 = () => (
-    <div className="space-y-6">
-      <Alert className="bg-blue-50 border-blue-200">
-        <Camera className="h-4 w-4 text-blue-600" />
-        <AlertDescription className="text-blue-800">
-          <strong>Photos et documents :</strong><br />
-          Vous pourrez ajouter photos, logo et documents directement depuis votre dashboard après validation.
-        </AlertDescription>
-      </Alert>
-
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Informations bancaires (optionnel)</Label>
-          <p className="text-sm text-muted-foreground">
-            Pour les paiements et commissions futures
-          </p>
-          <Input
-            placeholder="Titulaire du compte"
-            value={profileData.bankDetails.accountHolder}
-            onChange={(e) => updateProfileData('bankDetails.accountHolder', e.target.value)}
-          />
-        </div>
-      </div>
-    </div>
-  );
+  const stepMeta = [
+    { n: 1, label: t('partnerOnboarding.stepTitles.establishment', 'Établissement'), icon: <Building2 className="w-4 h-4" /> },
+    { n: 2, label: t('partnerOnboarding.stepTitles.location', 'Localisation'), icon: <MapPin className="w-4 h-4" /> },
+    { n: 3, label: t('partnerOnboarding.stepTitles.contact', 'Contact'), icon: <Phone className="w-4 h-4" /> },
+    { n: 4, label: t('partnerOnboarding.stepTitles.kyc', 'Vérification (KYC)'), icon: <ShieldCheck className="w-4 h-4" /> },
+    { n: 5, label: t('partnerOnboarding.stepTitles.review', 'Récapitulatif'), icon: <ClipboardCheck className="w-4 h-4" /> },
+  ];
 
   return (
-    <div className="space-y-4">
-      {submissionMessage && (
-        <Alert className="max-w-4xl mx-auto">
-          <AlertDescription>{submissionMessage}</AlertDescription>
-        </Alert>
-      )}
-      {formErrors.length > 0 && (
-        <Alert variant="destructive" className="max-w-4xl mx-auto">
-          <AlertDescription>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              {formErrors.map((error) => (
-                <li key={error}>{error}</li>
-              ))}
-            </ul>
-          </AlertDescription>
-        </Alert>
-      )}
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Building2 className="w-6 h-6 text-primary" />
-            Complétez votre profil partenaire
-          </CardTitle>
-          <Badge variant="secondary">
-            {getCompletionPercentage()}% complété
-          </Badge>
+          <CardTitle>{t('partnerOnboarding.wizard.title', 'Complétez votre profil partenaire')}</CardTitle>
+          <Badge variant="outline">{t('partnerOnboarding.wizard.stepOf', 'Étape {{n}}/{{total}}', { n: step, total: TOTAL_STEPS })}</Badge>
         </div>
-        <Progress value={getCompletionPercentage()} className="mt-2" />
+        <Progress value={(step / TOTAL_STEPS) * 100} className="mt-3" />
+        <div className="flex flex-wrap gap-2 mt-3">
+          {stepMeta.map((s) => (
+            <div key={s.n} className={`flex items-center gap-1 text-xs ${step === s.n ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              {s.icon}{s.label}
+            </div>
+          ))}
+        </div>
       </CardHeader>
+      <CardContent className="space-y-5">
+        {kyc?.status === 'rejected' && kyc.rejection_reason && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <strong>{t('partnerOnboarding.kyc.rejected', 'Dossier KYC à corriger :')}</strong> {kyc.rejection_reason}
+            </AlertDescription>
+          </Alert>
+        )}
+        {errors.length > 0 && (
+          <Alert variant="destructive">
+            <AlertDescription>
+              <ul className="list-disc list-inside space-y-1 text-sm">{errors.map((e) => <li key={e}>{e}</li>)}</ul>
+            </AlertDescription>
+          </Alert>
+        )}
 
-      <CardContent>
-        {/* Indicateur d'étapes */}
-        <div className="flex items-center justify-center mb-8 overflow-x-auto">
-          <div className="flex items-center space-x-4">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <div className={`flex items-center space-x-2 ${
-                  currentStep === step.id ? 'text-primary' : 
-                  currentStep > step.id ? 'text-green-600' : 'text-gray-400'
-                }`}>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                    currentStep === step.id ? 'bg-primary text-primary-foreground' :
-                    currentStep > step.id ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
-                  }`}>
-                    {currentStep > step.id ? <CheckCircle className="w-5 h-5" /> : step.id}
-                  </div>
-                  <div className="hidden sm:block">
-                    <p className="text-xs font-medium">{step.title}</p>
-                    {!step.required && (
-                      <p className="text-xs text-muted-foreground">Optionnel</p>
-                    )}
-                  </div>
-                </div>
-                {index < steps.length - 1 && (
-                  <div className="w-8 h-px bg-gray-300 mx-4"></div>
-                )}
-              </div>
-            ))}
+        {/* Étape 1 — Établissement */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t('partnerOnboarding.fields.companyName', 'Nom de l’établissement')} *</Label>
+              <Input value={form.company_name} onChange={(e) => setF('company_name', e.target.value)} placeholder="Hôtel des Roses…" />
+            </div>
+            <div className="space-y-2">
+              <Label>{t('partnerOnboarding.fields.category', 'Catégorie')} *</Label>
+              <Select value={form.business_category} onValueChange={(v) => setF('business_category', v)}>
+                <SelectTrigger><SelectValue placeholder={t('partnerOnboarding.fields.categoryPlaceholder', 'Sélectionnez une catégorie')} /></SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{t(`partnerOnboarding.categories.${c}`, c)}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>{t('partnerOnboarding.fields.description', 'Description')}</Label>
+              <Textarea value={form.description} onChange={(e) => setF('description', e.target.value)} rows={4}
+                placeholder={t('partnerOnboarding.fields.descriptionPlaceholder', 'Présentez votre établissement…')} />
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Contenu de l'étape courante */}
-        <div className="min-h-[300px]">
-          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            {steps[currentStep - 1].icon}
-            {steps[currentStep - 1].title}
-            {!steps[currentStep - 1].required && (
-              <Badge variant="outline">Optionnel</Badge>
-            )}
-          </h3>
+        {/* Étape 2 — Localisation */}
+        {step === 2 && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t('partnerOnboarding.fields.country', 'Pays')} *</Label>
+              <CountrySelect className="w-full" value={form.country_name}
+                onValueChange={(name, id) => setForm((s) => ({ ...s, country_name: name, country: id || '', city: '', city_name: '' }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>{t('partnerOnboarding.fields.city', 'Ville')} *</Label>
+              <CitySelect className="w-full" value={form.city_name} countryId={form.country} countryName={form.country_name}
+                onValueChange={(name, id) => setForm((s) => ({ ...s, city_name: name, city: id || '' }))} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2 md:col-span-2">
+                <Label>{t('partnerOnboarding.fields.address', 'Adresse')}</Label>
+                <Input value={form.address} onChange={(e) => setF('address', e.target.value)} placeholder="12 rue…" />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.postalCode', 'Code postal')}</Label>
+                <Input value={form.postal_code} onChange={(e) => setF('postal_code', e.target.value)} />
+              </div>
+            </div>
+          </div>
+        )}
 
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
+        {/* Étape 3 — Contact */}
+        {step === 3 && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t('partnerOnboarding.fields.phone', 'Téléphone de contact')} *</Label>
+              <Input value={form.contact_phone} onChange={(e) => setF('contact_phone', e.target.value)} placeholder="+33 1 23 45 67 89" />
+            </div>
+            <div className="space-y-2">
+              <Label>{t('partnerOnboarding.fields.website', 'Site web')}</Label>
+              <Input value={form.website} onChange={(e) => setF('website', e.target.value)} placeholder="https://…" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Facebook</Label>
+                <Input value={form.facebook} onChange={(e) => setF('facebook', e.target.value)} placeholder="https://facebook.com/…" />
+              </div>
+              <div className="space-y-2">
+                <Label>Instagram</Label>
+                <Input value={form.instagram} onChange={(e) => setF('instagram', e.target.value)} placeholder="https://instagram.com/…" />
+              </div>
+            </div>
+          </div>
+        )}
 
-          {/* Validation de l'étape */}
-          {steps[currentStep - 1].required && !canProceedToNextStep() && (
-            <Alert className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Veuillez remplir les champs obligatoires pour continuer.
+        {/* Étape 4 — KYC / KYB */}
+        {step === 4 && (
+          <div className="space-y-5">
+            <Alert className="bg-blue-50 border-blue-200">
+              <ShieldCheck className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800 text-sm">
+                {t('partnerOnboarding.kyc.intro', 'Pour des raisons légales et de facturation, nous vérifions l’identité de votre entreprise. Ces informations restent confidentielles.')}
               </AlertDescription>
             </Alert>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.legalName', 'Raison sociale')} *</Label>
+                <Input value={kycForm.legal_name} onChange={(e) => setK('legal_name', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.legalForm', 'Forme juridique')}</Label>
+                <Input value={kycForm.legal_form} onChange={(e) => setK('legal_form', e.target.value)} placeholder="SARL, SA, auto-entrepreneur…" />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.registrationNumber', 'N° d’immatriculation')} *</Label>
+                <Input value={kycForm.registration_number} onChange={(e) => setK('registration_number', e.target.value)} placeholder="SIREN/SIRET, ICE/RC…" />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.vatNumber', 'N° TVA')}</Label>
+                <Input value={kycForm.vat_number} onChange={(e) => setK('vat_number', e.target.value)} />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label>{t('partnerOnboarding.fields.registeredAddress', 'Adresse du siège')}</Label>
+                <Input value={kycForm.registered_address} onChange={(e) => setK('registered_address', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.repName', 'Représentant légal')} *</Label>
+                <Input value={kycForm.rep_full_name} onChange={(e) => setK('rep_full_name', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.repDob', 'Date de naissance du représentant')}</Label>
+                <Input type="date" value={kycForm.rep_date_of_birth} onChange={(e) => setK('rep_date_of_birth', e.target.value)} max={new Date().toISOString().split('T')[0]} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('partnerOnboarding.fields.repNationality', 'Nationalité du représentant')}</Label>
+                <Input value={kycForm.rep_nationality} onChange={(e) => setK('rep_nationality', e.target.value)} />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Label className="text-base">{t('partnerOnboarding.kyc.documents', 'Documents justificatifs')}</Label>
+              {KYC_DOCS.map((d) => {
+                const uploaded = (kyc?.documents || []).find((x) => x.doc_type === d.type);
+                return (
+                  <div key={d.type} className="flex items-center justify-between border rounded-lg px-4 py-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      {uploaded ? <FileCheck2 className="w-4 h-4 text-green-600" /> : <Upload className="w-4 h-4 text-muted-foreground" />}
+                      <span>{t(`partnerOnboarding.docs.${d.type}`, d.type)}{d.required ? ' *' : ''}</span>
+                      {uploaded && <span className="text-xs text-muted-foreground truncate max-w-[160px]">— {uploaded.original_name}</span>}
+                    </div>
+                    <label className="cursor-pointer">
+                      <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden"
+                        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(d.type, f); e.currentTarget.value = ''; }} />
+                      <span className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
+                        <Upload className="w-3.5 h-3.5" /> {uploaded ? t('partnerOnboarding.kyc.replace', 'Remplacer') : t('partnerOnboarding.kyc.upload', 'Téléverser')}
+                      </span>
+                    </label>
+                  </div>
+                );
+              })}
+              <p className="text-xs text-muted-foreground">{t('partnerOnboarding.kyc.formats', 'Formats acceptés : PDF ou image, 10 Mo max.')}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Étape 5 — Récapitulatif */}
+        {step === 5 && (
+          <div className="space-y-4">
+            <Alert className="bg-green-50 border-green-200">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800 text-sm">
+                {t('partnerOnboarding.review.intro', 'Vérifiez vos informations puis soumettez votre dossier. Après validation par notre équipe, votre fiche établissement sera créée et vous pourrez la configurer.')}
+              </AlertDescription>
+            </Alert>
+            <div className="text-sm space-y-1.5 border rounded-lg p-4">
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('partnerOnboarding.fields.companyName', 'Établissement')}</span><span className="font-medium">{form.company_name}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('partnerOnboarding.fields.category', 'Catégorie')}</span><span>{t(`partnerOnboarding.categories.${form.business_category}`, form.business_category)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('partnerOnboarding.fields.city', 'Ville')}</span><span>{form.city_name}, {form.country_name}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('partnerOnboarding.fields.phone', 'Téléphone')}</span><span>{form.contact_phone}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('partnerOnboarding.fields.legalName', 'Raison sociale')}</span><span>{kycForm.legal_name}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">KYC</span><span>{t('partnerOnboarding.kyc.docsCount', '{{n}} document(s)', { n: kyc?.documents?.length || 0 })}</span></div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between pt-2">
+          <Button variant="ghost" onClick={prev} disabled={step === 1 || saving}>
+            <ChevronLeft className="w-4 h-4 mr-1" /> {t('partnerOnboarding.wizard.back', 'Retour')}
+          </Button>
+          {step < TOTAL_STEPS ? (
+            <Button onClick={next} disabled={saving}>
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{t('partnerOnboarding.wizard.next', 'Continuer')} <ChevronRight className="w-4 h-4 ml-1" /></>}
+            </Button>
+          ) : (
+            <Button onClick={submit} disabled={saving}>
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{t('partnerOnboarding.wizard.submit', 'Soumettre mon dossier')} <CheckCircle className="w-4 h-4 ml-1" /></>}
+            </Button>
           )}
         </div>
-
-        {/* Actions */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t">
-          <div className="flex items-center space-x-2">
-            {currentStep > 1 && (
-              <Button variant="outline" onClick={handlePrevStep}>
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Précédent
-              </Button>
-            )}
-          </div>
-
-          <div className="flex items-center space-x-2">
-            {!steps[currentStep - 1].required && (
-              <Button variant="ghost" onClick={handleSkipForNow} disabled={loading}>
-                <SkipForward className="w-4 h-4 mr-2" />
-                {skipMode ? 'Sauvegarde...' : 'Compléter plus tard'}
-              </Button>
-            )}
-            
-            {currentStep < steps.length ? (
-              <Button 
-                onClick={handleNextStep}
-                disabled={steps[currentStep - 1].required && !canProceedToNextStep()}
-              >
-                Suivant
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            ) : (
-              <Button 
-                onClick={() => handleFinalSubmit(false)}
-                disabled={loading}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Finalisation...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Finaliser mon profil
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Information de bas */}
-        <Alert className="mt-4 bg-green-50 border-green-200">
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">
-            <strong>Votre profil sera examiné par notre équipe sous 24-48h.</strong><br />
-            Vous recevrez un email de confirmation une fois votre compte validé.
-          </AlertDescription>
-        </Alert>
       </CardContent>
     </Card>
-    </div>
   );
 };
 

@@ -148,6 +148,40 @@ export class ApiClient {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
 
+  /** Envoi multipart (upload de fichier). Ne fixe PAS Content-Type pour laisser le navigateur
+   * définir la frontière multipart. Gère le refresh de token une fois (comme request). */
+  async upload<T>(endpoint: string, formData: FormData, method: 'POST' | 'PATCH' = 'POST', attempt = 0): Promise<T> {
+    const url = buildUrl(endpoint);
+    const response = await fetch(url, {
+      method,
+      headers: { ...getAuthHeaders() },
+      body: formData,
+    });
+    const responseBody = await this.parseBody(response);
+    if (!response.ok) {
+      if (response.status === 401 && attempt === 0) {
+        await this.tryRefreshToken();
+        return this.upload<T>(endpoint, formData, method, attempt + 1);
+      }
+      throw new ApiError(response.statusText || 'API Error', response.status, responseBody);
+    }
+    return responseBody as T;
+  }
+
+  /** Récupère un fichier protégé (avec en-tête d'auth) sous forme de Blob. */
+  async download(endpoint: string, attempt = 0): Promise<Blob> {
+    const url = buildUrl(endpoint);
+    const response = await fetch(url, { method: 'GET', headers: { ...getAuthHeaders() } });
+    if (!response.ok) {
+      if (response.status === 401 && attempt === 0) {
+        await this.tryRefreshToken();
+        return this.download(endpoint, attempt + 1);
+      }
+      throw new ApiError(response.statusText || 'Download error', response.status);
+    }
+    return response.blob();
+  }
+
   private async tryRefreshToken(): Promise<boolean> {
     if (!tokenRefreshPromise) {
       tokenRefreshPromise = requestNewTokens().finally(() => {

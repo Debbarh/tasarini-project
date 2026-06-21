@@ -4,6 +4,8 @@ from .models import (
     PartnerApplication,
     PartnerCommission,
     PartnerInvoice,
+    PartnerKYC,
+    PartnerKYCDocument,
     PartnerNotification,
     PartnerProfile,
 )
@@ -11,10 +13,24 @@ from .models import (
 
 @admin.register(PartnerProfile)
 class PartnerProfileAdmin(admin.ModelAdmin):
-    list_display = ('company_name', 'owner', 'status', 'commission_rate', 'created_at')
-    list_filter = ('status',)
+    list_display = ('company_name', 'owner', 'status', 'business_category', 'city', 'commission_rate', 'created_at')
+    list_filter = ('status', 'business_category')
     search_fields = ('company_name', 'owner__username')
     filter_horizontal = ('managed_pois',)
+
+
+class PartnerKYCDocumentInline(admin.TabularInline):
+    model = PartnerKYCDocument
+    extra = 0
+    readonly_fields = ('uploaded_at',)
+
+
+@admin.register(PartnerKYC)
+class PartnerKYCAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'legal_name', 'registration_number', 'status', 'reviewed_by', 'reviewed_at')
+    list_filter = ('status',)
+    search_fields = ('legal_name', 'registration_number', 'vat_number', 'profile__company_name')
+    inlines = [PartnerKYCDocumentInline]
 
 
 @admin.register(PartnerInvoice)

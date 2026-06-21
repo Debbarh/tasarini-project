@@ -112,6 +112,8 @@ from apps.partners.views import (
     PartnerWithdrawalViewSet,
     PartnerSubscriptionCheckoutView,
     PartnerBillingInfoView,
+    PartnerKYCViewSet,
+    PartnerKYCDocumentDownloadView,
 )
 from apps.content.views import (
     AdvertisementSettingViewSet,
@@ -198,6 +200,7 @@ router.register('partners/booking-configs', PartnerBookingConfigViewSet, basenam
 router.register('partners/payment-methods', PartnerPaymentMethodViewSet, basename='partnerpaymentmethod')
 router.register('partners/commissions', PartnerCommissionViewSet, basename='partnercommission')
 router.register('partners/invoices', PartnerInvoiceViewSet, basename='partnerinvoice')
+router.register('partners/kyc', PartnerKYCViewSet, basename='partnerkyc')
 router.register('partners/withdrawals', PartnerWithdrawalViewSet, basename='partnerwithdrawal')
 router.register('partners/endpoints', PartnerEndpointHealthViewSet, basename='partnerendpointhealth')
 router.register('stories', StoryViewSet, basename='story')
@@ -325,6 +328,7 @@ urlpatterns = [
     path('api/v1/travel/kayak/<str:endpoint>/', KayakProxyView.as_view(), name='travel-kayak'),
     path('api/v1/partners/subscriptions/checkout/', PartnerSubscriptionCheckoutView.as_view(), name='partner-subscription-checkout'),
     path('api/v1/partners/billing-info/', PartnerBillingInfoView.as_view(), name='partner-billing-info'),
+    path('api/v1/partners/kyc/documents/<int:pk>/download/', PartnerKYCDocumentDownloadView.as_view(), name='partner-kyc-doc-download'),
     path('api/v1/content/check-spam/', SpamCheckView.as_view(), name='check-spam'),
 ]
 

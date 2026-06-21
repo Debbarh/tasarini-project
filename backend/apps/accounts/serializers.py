@@ -225,6 +225,11 @@ class RegisterSerializer(serializers.Serializer):
             user.display_name = f"{user.first_name} {user.last_name}".strip() or user.username
         user.save()
         UserRoleAssignment.objects.get_or_create(user=user, role=role)
+        # Partenaire : créer un profil 'draft' dès l'inscription pour que l'assistant
+        # d'onboarding persiste ses données côté serveur (et non en localStorage).
+        if role == UserRole.PARTNER:
+            from apps.partners.models import PartnerProfile
+            PartnerProfile.objects.get_or_create(owner=user, defaults={'status': 'draft'})
         return user
 
 

@@ -34,6 +34,59 @@ export interface PartnerProfilePayload {
   managed_poi_ids?: string[];
 }
 
+// Champs éditables du profil partenaire pendant l'assistant d'onboarding (taxonomie structurée).
+export interface PartnerProfileDraft {
+  company_name: string;
+  business_category: string;
+  description: string;
+  website: string | null;
+  country: string | null;       // UUID Country
+  city: string | null;          // UUID City
+  address: string;
+  postal_code: string;
+  contact_phone: string;
+  metadata: Record<string, unknown>;
+}
+
+export type PartnerKYCDocType =
+  | 'business_registration'
+  | 'representative_id'
+  | 'bank_rib'
+  | 'proof_of_address';
+
+export interface PartnerKYCDocument {
+  id: number;
+  doc_type: PartnerKYCDocType;
+  doc_type_display: string;
+  original_name: string;
+  uploaded_at: string;
+  download_url: string;
+}
+
+export interface PartnerKYCPayload {
+  legal_name: string;
+  legal_form: string;
+  registration_number: string;
+  vat_number: string;
+  tax_id: string;
+  registered_address: string;
+  registration_country: string | null;
+  rep_full_name: string;
+  rep_date_of_birth: string | null;
+  rep_nationality: string;
+}
+
+export interface PartnerKYC extends PartnerKYCPayload {
+  id: number;
+  profile: string | number;
+  status: 'not_submitted' | 'pending' | 'verified' | 'rejected';
+  rejection_reason: string;
+  reviewed_at: string | null;
+  documents: PartnerKYCDocument[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface PartnerTouristPointSummary {
   id: string;
   name: string;
@@ -183,16 +236,58 @@ export const partnerService = {
   },
 
   async getMyProfile() {
-    const profiles = await this.listProfiles();
-    return profiles[0] ?? null;
+    // Endpoint dédié : crée à la volée un profil 'draft' s'il n'existe pas (brouillon serveur).
+    return apiClient.get<PartnerProfile>('partners/profiles/me/');
   },
 
   async createProfile(payload: PartnerProfilePayload) {
     return apiClient.post<PartnerProfile>('partners/profiles/', payload);
   },
 
-  async updateProfile(id: string | number, payload: Partial<PartnerProfilePayload>) {
+  async updateProfile(id: string | number, payload: Partial<PartnerProfileDraft>) {
     return apiClient.patch<PartnerProfile>(`partners/profiles/${id}/`, payload);
+  },
+
+  async submitProfile(id: string | number) {
+    return apiClient.post<{ status: string }>(`partners/profiles/${id}/submit/`, {});
+  },
+
+  // --- KYC / KYB (dossier d'identité légale du partenaire) ---
+  async getMyKyc() {
+    return apiClient.get<PartnerKYC>('partners/kyc/me/');
+  },
+
+  async updateMyKyc(payload: Partial<PartnerKYCPayload>) {
+    return apiClient.patch<PartnerKYC>('partners/kyc/me/', payload);
+  },
+
+  async uploadKycDocument(docType: PartnerKYCDocType, file: File) {
+    const fd = new FormData();
+    fd.append('doc_type', docType);
+    fd.append('file', file);
+    return apiClient.upload<PartnerKYCDocument>('partners/kyc/upload-document/', fd);
+  },
+
+  // Admin : revue KYC d'un partenaire
+  async getKycByProfile(profileId: string | number) {
+    const data = await apiClient.get<any>('partners/kyc/', { profile: String(profileId) });
+    return extractArrayFromResponse<PartnerKYC>(data)[0] ?? null;
+  },
+
+  async verifyKyc(kycId: number | string) {
+    return apiClient.post<{ status: string }>(`partners/kyc/${kycId}/verify/`, {});
+  },
+
+  async rejectKyc(kycId: number | string, reason: string) {
+    return apiClient.post<{ status: string }>(`partners/kyc/${kycId}/reject/`, { reason });
+  },
+
+  // Télécharge un document KYC (endpoint protégé) et l'ouvre dans un nouvel onglet.
+  async openKycDocument(docId: number | string) {
+    const blob = await apiClient.download(`partners/kyc/documents/${docId}/download/`);
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   },
 
   async submitApplication(motivation: string) {

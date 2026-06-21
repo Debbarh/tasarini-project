@@ -13,14 +13,49 @@ from apps.poi.models import TouristPoint
 
 
 class PartnerProfile(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Brouillon'),          # créé à l'inscription, le partenaire complète son profil
+        ('pending', 'En attente'),       # soumis, en attente de revue admin (profil + KYC)
+        ('approved', 'Approuvé'),
+        ('rejected', 'Refusé'),
+        ('suspended', 'Suspendu'),
+    ]
+
+    # Catégories alignées sur la plateforme. Le mapping vers les booléens du TouristPoint
+    # (is_accommodation / is_restaurant / is_activity) est défini dans POI_FLAGS_BY_CATEGORY.
+    CATEGORY_CHOICES = [
+        ('accommodation', 'Hébergement'),
+        ('restaurant', 'Restaurant'),
+        ('cafe', 'Café'),
+        ('bar', 'Bar'),
+        ('activity', 'Activité / Loisir'),
+        ('museum', 'Musée / Culture'),
+        ('shop', 'Boutique'),
+        ('transport', 'Transport'),
+        ('service', 'Service'),
+        ('other', 'Autre'),
+    ]
+    POI_FLAGS_BY_CATEGORY = {
+        'accommodation': ('is_accommodation',),
+        'restaurant': ('is_restaurant',),
+        'cafe': ('is_restaurant',),
+        'bar': ('is_restaurant',),
+        'activity': ('is_activity',),
+        'museum': ('is_activity',),
+    }
+
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partner_profile')
-    company_name = models.CharField(max_length=255)
+    company_name = models.CharField(max_length=255, blank=True)
     website = models.URLField(blank=True)
-    status = models.CharField(
-        max_length=32,
-        choices=[('pending', 'Pending'), ('approved', 'Approved'), ('suspended', 'Suspended')],
-        default='pending',
-    )
+    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default='draft')
+    # Taxonomie structurée de l'établissement (remplace le blob metadata).
+    business_category = models.CharField(max_length=32, choices=CATEGORY_CHOICES, blank=True)
+    country = models.ForeignKey('poi.Country', null=True, blank=True, on_delete=models.SET_NULL, related_name='partner_profiles')
+    city = models.ForeignKey('poi.City', null=True, blank=True, on_delete=models.SET_NULL, related_name='partner_profiles')
+    address = models.CharField(max_length=255, blank=True)
+    postal_code = models.CharField(max_length=32, blank=True)
+    contact_phone = models.CharField(max_length=64, blank=True)
+    description = models.TextField(blank=True)
     api_key = models.CharField(max_length=64, default='', blank=True)
     # Taux de commission après-vente que la plateforme facture à CE partenaire (%). Fixé par
     # l'admin à l'approbation ; défaut 10 %. Sert au calcul des commissions sur ses réservations.
@@ -36,7 +71,67 @@ class PartnerProfile(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:  # pragma: no cover
-        return self.company_name
+        return self.company_name or f'Partenaire #{self.pk}'
+
+
+class PartnerKYC(models.Model):
+    """Vérification d'identité légale du partenaire (KYB). Revue manuelle par l'admin ;
+    condition d'approbation du profil (pas de vente / commission tant que non `verified`)."""
+    STATUS_CHOICES = [
+        ('not_submitted', 'Non soumis'),
+        ('pending', 'En attente de vérification'),
+        ('verified', 'Vérifié'),
+        ('rejected', 'Refusé'),
+    ]
+
+    profile = models.OneToOneField(PartnerProfile, on_delete=models.CASCADE, related_name='kyc')
+    # Entité légale
+    legal_name = models.CharField(max_length=255, blank=True)
+    legal_form = models.CharField(max_length=120, blank=True)          # SARL, SA, auto-entrepreneur…
+    registration_number = models.CharField(max_length=120, blank=True)  # SIREN/SIRET, ICE/RC…
+    vat_number = models.CharField(max_length=120, blank=True)
+    tax_id = models.CharField(max_length=120, blank=True)
+    registered_address = models.CharField(max_length=255, blank=True)
+    registration_country = models.ForeignKey('poi.Country', null=True, blank=True, on_delete=models.SET_NULL, related_name='partner_kycs')
+    # Représentant légal (la date de naissance ne concerne QUE le représentant, pas le compte user)
+    rep_full_name = models.CharField(max_length=255, blank=True)
+    rep_date_of_birth = models.DateField(null=True, blank=True)
+    rep_nationality = models.CharField(max_length=120, blank=True)
+    # Workflow de vérification
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not_submitted')
+    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='reviewed_kycs')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f'KYC {self.profile.company_name or self.profile_id} ({self.status})'
+
+
+def kyc_document_upload_path(instance, filename):  # pragma: no cover - deterministic
+    return f'partner_kyc/{instance.kyc_id}/{instance.doc_type}/{filename}'
+
+
+class PartnerKYCDocument(models.Model):
+    DOC_TYPE_CHOICES = [
+        ('business_registration', "Extrait de registre / immatriculation"),
+        ('representative_id', "Pièce d'identité du représentant"),
+        ('bank_rib', 'RIB / coordonnées bancaires'),
+        ('proof_of_address', 'Justificatif de domicile'),
+    ]
+
+    kyc = models.ForeignKey(PartnerKYC, on_delete=models.CASCADE, related_name='documents')
+    doc_type = models.CharField(max_length=40, choices=DOC_TYPE_CHOICES)
+    file = models.FileField(upload_to=kyc_document_upload_path)
+    original_name = models.CharField(max_length=255, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-uploaded_at']
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f'{self.get_doc_type_display()} ({self.kyc_id})'
 
 
 class PartnerApplication(models.Model):

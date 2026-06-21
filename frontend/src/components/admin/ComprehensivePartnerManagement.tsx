@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,13 +13,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import {
   Building2, Search, Filter, Mail, Phone, MapPin, CheckCircle, XCircle,
   CreditCard, RefreshCw, Edit, UserCheck, Clock, AlertTriangle,
-  Key, Globe, Pause, Check, X
+  Key, Globe, Pause, Check, X, ShieldCheck, FileText
 } from 'lucide-react';
 import { useOptimizedPartners, OptimizedPartner } from '@/hooks/useOptimizedPartners';
 import { toast } from 'sonner';
 import { usePagination } from '@/hooks/usePagination';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { partnerService } from '@/services/partnerService';
+import { partnerService, type PartnerKYC } from '@/services/partnerService';
 import { adminPoiService, AdminPoi, POIStatus } from '@/services/adminPoiService';
 import { adminService } from '@/services/adminService';
 
@@ -103,6 +103,44 @@ const PartnerValidationDialog = ({ partner, onValidated }: { partner: OptimizedP
   const [reason, setReason] = useState('');
   const [adminMessage, setAdminMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [kyc, setKyc] = useState<PartnerKYC | null>(null);
+  const [kycLoading, setKycLoading] = useState(false);
+  const [kycReason, setKycReason] = useState('');
+
+  const loadKyc = async () => {
+    setKycLoading(true);
+    try {
+      setKyc(await partnerService.getKycByProfile(partner.profile_id));
+    } catch {
+      setKyc(null);
+    } finally {
+      setKycLoading(false);
+    }
+  };
+
+  useEffect(() => { if (isOpen) loadKyc(); /* eslint-disable-next-line */ }, [isOpen]);
+
+  const handleKycDecision = async (decision: 'verify' | 'reject') => {
+    if (!kyc) return;
+    setKycLoading(true);
+    try {
+      if (decision === 'verify') {
+        await partnerService.verifyKyc(kyc.id);
+        toast.success('KYC vérifié');
+      } else {
+        if (!kycReason.trim()) { toast.error('Indiquez la raison du refus KYC.'); setKycLoading(false); return; }
+        await partnerService.rejectKyc(kyc.id, kycReason);
+        toast.success('KYC refusé');
+      }
+      await loadKyc();
+    } catch {
+      toast.error('Erreur lors de la décision KYC');
+    } finally {
+      setKycLoading(false);
+    }
+  };
+
+  const kycVerified = kyc?.status === 'verified';
 
   const handleValidation = async () => {
     if (!validationType) return;
@@ -138,11 +176,50 @@ const PartnerValidationDialog = ({ partner, onValidated }: { partner: OptimizedP
           Valider
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Valider le partenaire</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          {/* Revue KYC / KYB */}
+          <div className="border rounded-lg p-3 space-y-3 bg-muted/30">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-sm flex items-center gap-1"><ShieldCheck className="w-4 h-4" /> Dossier KYC</span>
+              {kyc ? (
+                <Badge variant={kyc.status === 'verified' ? 'default' : kyc.status === 'rejected' ? 'destructive' : 'secondary'}>
+                  {kyc.status === 'verified' ? 'Vérifié' : kyc.status === 'rejected' ? 'Refusé' : kyc.status === 'pending' ? 'À vérifier' : 'Non soumis'}
+                </Badge>
+              ) : <Badge variant="outline">Aucun</Badge>}
+            </div>
+            {kycLoading && <p className="text-xs text-muted-foreground">Chargement…</p>}
+            {kyc && (
+              <div className="text-xs space-y-1">
+                <div><span className="text-muted-foreground">Raison sociale :</span> {kyc.legal_name || '—'} {kyc.legal_form && `(${kyc.legal_form})`}</div>
+                <div><span className="text-muted-foreground">N° immat. :</span> {kyc.registration_number || '—'} · <span className="text-muted-foreground">TVA :</span> {kyc.vat_number || '—'}</div>
+                <div><span className="text-muted-foreground">Représentant :</span> {kyc.rep_full_name || '—'} {kyc.rep_nationality && `· ${kyc.rep_nationality}`}</div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {(kyc.documents || []).map((d) => (
+                    <Button key={d.id} type="button" variant="outline" size="sm" className="h-7 gap-1"
+                      onClick={() => partnerService.openKycDocument(d.id)}>
+                      <FileText className="w-3 h-3" /> {d.doc_type_display}
+                    </Button>
+                  ))}
+                  {(!kyc.documents || kyc.documents.length === 0) && <span className="text-muted-foreground">Aucun document.</span>}
+                </div>
+                {kyc.status !== 'verified' && (
+                  <div className="flex items-center gap-2 pt-2">
+                    <Input value={kycReason} onChange={(e) => setKycReason(e.target.value)} placeholder="Raison du refus (si refus)" className="h-8 text-xs" />
+                    <Button type="button" size="sm" variant="destructive" className="h-8" disabled={kycLoading} onClick={() => handleKycDecision('reject')}>Refuser</Button>
+                    <Button type="button" size="sm" className="h-8" disabled={kycLoading} onClick={() => handleKycDecision('verify')}>Vérifier</Button>
+                  </div>
+                )}
+              </div>
+            )}
+            {!kycVerified && (
+              <p className="text-xs text-amber-600">⚠️ L'approbation est bloquée tant que le KYC n'est pas vérifié.</p>
+            )}
+          </div>
+
           <div>
             <Label>Action de validation</Label>
             <Select value={validationType || ''} onValueChange={(value: any) => setValidationType(value)}>
@@ -150,7 +227,7 @@ const PartnerValidationDialog = ({ partner, onValidated }: { partner: OptimizedP
                 <SelectValue placeholder="Choisir une action" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="approve"><span className="flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Approuver</span></SelectItem>
+                <SelectItem value="approve" disabled={!kycVerified}><span className="flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Approuver{!kycVerified ? ' (KYC requis)' : ''}</span></SelectItem>
                 <SelectItem value="reject"><span className="flex items-center gap-1"><XCircle className="w-4 h-4" /> Refuser</span></SelectItem>
                 <SelectItem value="suspend"><span className="flex items-center gap-1"><Pause className="w-4 h-4" /> Suspendre</span></SelectItem>
               </SelectContent>

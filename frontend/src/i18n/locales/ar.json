@@ -878,15 +878,15 @@
       "title": "كيف تصبح شريكاً؟",
       "step1": {
         "title": "أنشئ حسابك",
-        "description": "سجل على منصتنا بنقرات قليلة"
+        "description": "التسجيل في دقيقة: الاسم والبريد وكلمة المرور."
       },
       "step2": {
-        "title": "قدم طلبك",
-        "description": "املأ نموذج الشريك بمعلوماتك"
+        "title": "تحقق من بريدك وأكمل ملفك",
+        "description": "فعّل حسابك ثم أضف منشأتك وملف KYC."
       },
       "step3": {
-        "title": "التحقق والتفعيل",
-        "description": "يراجع فريقنا طلبك خلال 48 ساعة"
+        "title": "المصادقة والنشر",
+        "description": "يراجع فريقنا ملفك (24–48 ساعة)، ثم يتم إنشاء منشأتك."
       }
     }
   },
@@ -2490,6 +2490,132 @@
     },
     "poiSuggestions": {
       "title": "اقتراحات للتطوير"
+    }
+  },
+  "partnerOnboarding": {
+    "steps": {
+      "signup": "التسجيل",
+      "email": "البريد",
+      "profile": "الملف"
+    },
+    "stepTitles": {
+      "establishment": "المنشأة",
+      "location": "الموقع",
+      "contact": "التواصل",
+      "kyc": "التحقق (KYC)",
+      "review": "الملخص"
+    },
+    "fields": {
+      "firstName": "الاسم",
+      "lastName": "اللقب",
+      "email": "البريد المهني",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "companyName": "اسم المنشأة",
+      "category": "الفئة",
+      "categoryPlaceholder": "اختر فئة",
+      "description": "الوصف",
+      "descriptionPlaceholder": "قدّم منشأتك…",
+      "country": "البلد",
+      "city": "المدينة",
+      "address": "العنوان",
+      "postalCode": "الرمز البريدي",
+      "phone": "هاتف التواصل",
+      "website": "الموقع الإلكتروني",
+      "legalName": "الاسم القانوني",
+      "legalForm": "الشكل القانوني",
+      "registrationNumber": "رقم التسجيل",
+      "vatNumber": "رقم الضريبة على القيمة المضافة",
+      "registeredAddress": "العنوان المسجل",
+      "repName": "الممثل القانوني",
+      "repDob": "تاريخ ميلاد الممثل",
+      "repNationality": "جنسية الممثل"
+    },
+    "categories": {
+      "accommodation": "إقامة",
+      "restaurant": "مطعم",
+      "cafe": "مقهى",
+      "bar": "بار",
+      "activity": "نشاط / ترفيه",
+      "museum": "متحف / ثقافة",
+      "shop": "متجر",
+      "transport": "نقل",
+      "service": "خدمة",
+      "other": "أخرى"
+    },
+    "docs": {
+      "business_registration": "مستخرج السجل التجاري",
+      "representative_id": "بطاقة هوية الممثل",
+      "bank_rib": "بيانات الحساب البنكي",
+      "proof_of_address": "إثبات العنوان"
+    },
+    "signup": {
+      "title": "انضم إلى Tasarini كشريك",
+      "subtitle": "التسجيل في دقيقة — أكمل ملفك بعد التحقق من البريد",
+      "successHtml": "تم إرسال بريد التحقق إلى <strong>{{email}}</strong>. انقر على الرابط لتفعيل حساب الشريك.",
+      "successHint": "بعد التحقق، سنرشدك لإكمال ملفك خطوة بخطوة.",
+      "needNewLink": "تحتاج رابطًا جديدًا؟",
+      "basicInfo": "المعلومات الأساسية",
+      "acceptPrefix": "أوافق على",
+      "terms": "شروط الاستخدام",
+      "and": "و",
+      "privacy": "سياسة الخصوصية",
+      "nextSteps": "الخطوات التالية:",
+      "next1": "تحقق من بريدك (دقيقتان)",
+      "next2": "أكمل ملفك وملف KYC",
+      "next3": "مراجعة من فريقنا (24–48 ساعة)",
+      "next4": "الوصول إلى مساحة الشريك",
+      "creating": "جارٍ إنشاء الحساب...",
+      "submit": "إنشاء حساب الشريك",
+      "footer": "ستكمل ملفك التفصيلي بعد التحقق من بريدك"
+    },
+    "wizard": {
+      "title": "أكمل ملف الشريك",
+      "stepOf": "الخطوة {{n}}/{{total}}",
+      "back": "رجوع",
+      "next": "متابعة",
+      "submit": "إرسال ملفي"
+    },
+    "kyc": {
+      "intro": "لأسباب قانونية وتتعلق بالفوترة، نتحقق من هوية شركتك. تبقى هذه المعلومات سرية.",
+      "documents": "المستندات الداعمة",
+      "rejected": "ملف KYC يحتاج تصحيحًا:",
+      "uploaded": "تم رفع المستند.",
+      "replace": "استبدال",
+      "upload": "رفع",
+      "formats": "الصيغ المقبولة: PDF أو صورة، 10 ميغابايت كحد أقصى.",
+      "docsCount": "{{n}} مستند"
+    },
+    "review": {
+      "intro": "تحقق من معلوماتك ثم أرسل ملفك. بعد مصادقة فريقنا، سيتم إنشاء بطاقة منشأتك ويمكنك تهيئتها."
+    },
+    "submitted": "تم إرسال الملف! سيقوم فريقنا بمراجعة ملفك.",
+    "errors": {
+      "firstNameRequired": "الاسم مطلوب.",
+      "lastNameRequired": "اللقب مطلوب.",
+      "emailRequired": "البريد مطلوب.",
+      "termsRequired": "يجب قبول الشروط.",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين.",
+      "passwordLength": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
+      "passwordUpper": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل.",
+      "passwordLower": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل.",
+      "passwordDigit": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل.",
+      "passwordSpecial": "يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل.",
+      "signupError": "خطأ في تسجيل الشريك",
+      "generic": "خطأ",
+      "loadError": "تعذّر تحميل ملفك.",
+      "saveError": "فشل الحفظ.",
+      "companyRequired": "اسم المنشأة مطلوب.",
+      "categoryRequired": "الفئة مطلوبة.",
+      "countryRequired": "البلد مطلوب.",
+      "cityRequired": "المدينة مطلوبة.",
+      "phoneRequired": "الهاتف مطلوب.",
+      "legalNameRequired": "الاسم القانوني مطلوب.",
+      "regNumRequired": "رقم التسجيل مطلوب.",
+      "repRequired": "الممثل القانوني مطلوب.",
+      "docRequired": "مستند مطلوب مفقود: {{doc}}",
+      "uploadError": "فشل الرفع.",
+      "submitError": "فشل الإرسال."
     }
   }
 }

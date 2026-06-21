@@ -878,15 +878,15 @@
       "title": "Comment devenir partenaire ?",
       "step1": {
         "title": "Créez votre compte",
-        "description": "Inscrivez-vous sur notre plateforme en quelques clics"
+        "description": "Inscription en 1 minute : nom, email et mot de passe."
       },
       "step2": {
-        "title": "Soumettez votre candidature",
-        "description": "Remplissez le formulaire partenaire avec vos informations"
+        "title": "Vérifiez votre email & complétez votre profil",
+        "description": "Activez votre compte, puis renseignez votre établissement et votre dossier KYC."
       },
       "step3": {
-        "title": "Validation & Activation",
-        "description": "Notre équipe examine votre candidature sous 48h"
+        "title": "Validation & mise en ligne",
+        "description": "Notre équipe vérifie votre dossier (24–48h), puis votre établissement est créé."
       }
     }
   },
@@ -2490,6 +2490,132 @@
     },
     "poiSuggestions": {
       "title": "Suggestions d'enrichissement"
+    }
+  },
+  "partnerOnboarding": {
+    "steps": {
+      "signup": "Inscription",
+      "email": "Email",
+      "profile": "Profil"
+    },
+    "stepTitles": {
+      "establishment": "Établissement",
+      "location": "Localisation",
+      "contact": "Contact",
+      "kyc": "Vérification (KYC)",
+      "review": "Récapitulatif"
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email professionnel",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "companyName": "Nom de l’établissement",
+      "category": "Catégorie",
+      "categoryPlaceholder": "Sélectionnez une catégorie",
+      "description": "Description",
+      "descriptionPlaceholder": "Présentez votre établissement…",
+      "country": "Pays",
+      "city": "Ville",
+      "address": "Adresse",
+      "postalCode": "Code postal",
+      "phone": "Téléphone de contact",
+      "website": "Site web",
+      "legalName": "Raison sociale",
+      "legalForm": "Forme juridique",
+      "registrationNumber": "N° d’immatriculation",
+      "vatNumber": "N° TVA",
+      "registeredAddress": "Adresse du siège",
+      "repName": "Représentant légal",
+      "repDob": "Date de naissance du représentant",
+      "repNationality": "Nationalité du représentant"
+    },
+    "categories": {
+      "accommodation": "Hébergement",
+      "restaurant": "Restaurant",
+      "cafe": "Café",
+      "bar": "Bar",
+      "activity": "Activité / Loisir",
+      "museum": "Musée / Culture",
+      "shop": "Boutique",
+      "transport": "Transport",
+      "service": "Service",
+      "other": "Autre"
+    },
+    "docs": {
+      "business_registration": "Extrait de registre / immatriculation",
+      "representative_id": "Pièce d’identité du représentant",
+      "bank_rib": "RIB / coordonnées bancaires",
+      "proof_of_address": "Justificatif de domicile"
+    },
+    "signup": {
+      "title": "Rejoignez Tasarini en tant que Partenaire",
+      "subtitle": "Inscription en 1 minute — vous complétez votre profil après vérification de l’email",
+      "successHtml": "Un email de vérification a été envoyé à <strong>{{email}}</strong>. Cliquez sur le lien reçu pour activer votre compte partenaire.",
+      "successHint": "Une fois vérifié, vous serez guidé pour compléter votre profil étape par étape.",
+      "needNewLink": "Besoin d’un nouveau lien ?",
+      "basicInfo": "Informations de base",
+      "acceptPrefix": "J’accepte les",
+      "terms": "conditions d’utilisation",
+      "and": "et la",
+      "privacy": "politique de confidentialité",
+      "nextSteps": "Prochaines étapes :",
+      "next1": "Vérifiez votre email (2 min)",
+      "next2": "Complétez votre profil et votre dossier KYC",
+      "next3": "Validation par notre équipe (24–48h)",
+      "next4": "Accès à votre espace partenaire",
+      "creating": "Création du compte...",
+      "submit": "Créer mon compte partenaire",
+      "footer": "Vous compléterez votre profil détaillé après vérification de votre email"
+    },
+    "wizard": {
+      "title": "Complétez votre profil partenaire",
+      "stepOf": "Étape {{n}}/{{total}}",
+      "back": "Retour",
+      "next": "Continuer",
+      "submit": "Soumettre mon dossier"
+    },
+    "kyc": {
+      "intro": "Pour des raisons légales et de facturation, nous vérifions l’identité de votre entreprise. Ces informations restent confidentielles.",
+      "documents": "Documents justificatifs",
+      "rejected": "Dossier KYC à corriger :",
+      "uploaded": "Document téléversé.",
+      "replace": "Remplacer",
+      "upload": "Téléverser",
+      "formats": "Formats acceptés : PDF ou image, 10 Mo max.",
+      "docsCount": "{{n}} document(s)"
+    },
+    "review": {
+      "intro": "Vérifiez vos informations puis soumettez votre dossier. Après validation par notre équipe, votre fiche établissement sera créée et vous pourrez la configurer."
+    },
+    "submitted": "Profil soumis ! Notre équipe va vérifier votre dossier.",
+    "errors": {
+      "firstNameRequired": "Le prénom est requis.",
+      "lastNameRequired": "Le nom est requis.",
+      "emailRequired": "L’email est requis.",
+      "termsRequired": "Vous devez accepter les conditions.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "passwordLength": "Le mot de passe doit contenir au moins 8 caractères.",
+      "passwordUpper": "Le mot de passe doit contenir au moins une majuscule.",
+      "passwordLower": "Le mot de passe doit contenir au moins une minuscule.",
+      "passwordDigit": "Le mot de passe doit contenir au moins un chiffre.",
+      "passwordSpecial": "Le mot de passe doit contenir au moins un caractère spécial.",
+      "signupError": "Erreur lors de l’inscription partenaire",
+      "generic": "Erreur",
+      "loadError": "Impossible de charger votre profil.",
+      "saveError": "Échec de l’enregistrement.",
+      "companyRequired": "Le nom de l’établissement est requis.",
+      "categoryRequired": "La catégorie est requise.",
+      "countryRequired": "Le pays est requis.",
+      "cityRequired": "La ville est requise.",
+      "phoneRequired": "Le téléphone est requis.",
+      "legalNameRequired": "La raison sociale est requise.",
+      "regNumRequired": "Le numéro d’immatriculation est requis.",
+      "repRequired": "Le représentant légal est requis.",
+      "docRequired": "Document requis manquant : {{doc}}",
+      "uploadError": "Échec du téléversement.",
+      "submitError": "Échec de la soumission."
     }
   }
 }

@@ -878,15 +878,15 @@
       "title": "¿Cómo convertirse en socio?",
       "step1": {
         "title": "Crea tu cuenta",
-        "description": "Regístrate en nuestra plataforma con solo unos clics"
+        "description": "Regístrate en 1 minuto: nombre, email y contraseña."
       },
       "step2": {
-        "title": "Envía tu solicitud",
-        "description": "Completa el formulario de socio con tu información"
+        "title": "Verifica tu email y completa tu perfil",
+        "description": "Activa tu cuenta y añade tu establecimiento y expediente KYC."
       },
       "step3": {
-        "title": "Validación y Activación",
-        "description": "Nuestro equipo revisa tu solicitud en 48 horas"
+        "title": "Validación y publicación",
+        "description": "Nuestro equipo revisa tu expediente (24–48h) y se crea tu establecimiento."
       }
     }
   },
@@ -2490,6 +2490,132 @@
     },
     "poiSuggestions": {
       "title": "Sugerencias para ampliar conocimientos"
+    }
+  },
+  "partnerOnboarding": {
+    "steps": {
+      "signup": "Registro",
+      "email": "Email",
+      "profile": "Perfil"
+    },
+    "stepTitles": {
+      "establishment": "Establecimiento",
+      "location": "Ubicación",
+      "contact": "Contacto",
+      "kyc": "Verificación (KYC)",
+      "review": "Resumen"
+    },
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Email profesional",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "companyName": "Nombre del establecimiento",
+      "category": "Categoría",
+      "categoryPlaceholder": "Seleccione una categoría",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Presente su establecimiento…",
+      "country": "País",
+      "city": "Ciudad",
+      "address": "Dirección",
+      "postalCode": "Código postal",
+      "phone": "Teléfono de contacto",
+      "website": "Sitio web",
+      "legalName": "Razón social",
+      "legalForm": "Forma jurídica",
+      "registrationNumber": "Número de registro",
+      "vatNumber": "Número de IVA",
+      "registeredAddress": "Domicilio social",
+      "repName": "Representante legal",
+      "repDob": "Fecha de nacimiento del representante",
+      "repNationality": "Nacionalidad del representante"
+    },
+    "categories": {
+      "accommodation": "Alojamiento",
+      "restaurant": "Restaurante",
+      "cafe": "Cafetería",
+      "bar": "Bar",
+      "activity": "Actividad / Ocio",
+      "museum": "Museo / Cultura",
+      "shop": "Tienda",
+      "transport": "Transporte",
+      "service": "Servicio",
+      "other": "Otro"
+    },
+    "docs": {
+      "business_registration": "Extracto del registro mercantil",
+      "representative_id": "Documento de identidad del representante",
+      "bank_rib": "Datos bancarios",
+      "proof_of_address": "Justificante de domicilio"
+    },
+    "signup": {
+      "title": "Únete a Tasarini como Partner",
+      "subtitle": "Regístrate en 1 minuto — completa tu perfil tras verificar el email",
+      "successHtml": "Se ha enviado un email de verificación a <strong>{{email}}</strong>. Haz clic en el enlace para activar tu cuenta de partner.",
+      "successHint": "Una vez verificado, te guiaremos para completar tu perfil paso a paso.",
+      "needNewLink": "¿Necesitas un nuevo enlace?",
+      "basicInfo": "Información básica",
+      "acceptPrefix": "Acepto las",
+      "terms": "condiciones de uso",
+      "and": "y la",
+      "privacy": "política de privacidad",
+      "nextSteps": "Próximos pasos:",
+      "next1": "Verifica tu email (2 min)",
+      "next2": "Completa tu perfil y tu expediente KYC",
+      "next3": "Validación por nuestro equipo (24–48h)",
+      "next4": "Acceso a tu espacio de partner",
+      "creating": "Creando cuenta...",
+      "submit": "Crear mi cuenta de partner",
+      "footer": "Completarás tu perfil detallado tras verificar tu email"
+    },
+    "wizard": {
+      "title": "Completa tu perfil de partner",
+      "stepOf": "Paso {{n}}/{{total}}",
+      "back": "Atrás",
+      "next": "Continuar",
+      "submit": "Enviar mi expediente"
+    },
+    "kyc": {
+      "intro": "Por motivos legales y de facturación, verificamos la identidad de tu empresa. Esta información es confidencial.",
+      "documents": "Documentos justificativos",
+      "rejected": "Expediente KYC a corregir:",
+      "uploaded": "Documento subido.",
+      "replace": "Reemplazar",
+      "upload": "Subir",
+      "formats": "Formatos aceptados: PDF o imagen, 10 MB máx.",
+      "docsCount": "{{n}} documento(s)"
+    },
+    "review": {
+      "intro": "Revisa tu información y envía tu expediente. Tras la validación de nuestro equipo, se creará la ficha de tu establecimiento y podrás configurarla."
+    },
+    "submitted": "¡Perfil enviado! Nuestro equipo revisará tu expediente.",
+    "errors": {
+      "firstNameRequired": "El nombre es obligatorio.",
+      "lastNameRequired": "El apellido es obligatorio.",
+      "emailRequired": "El email es obligatorio.",
+      "termsRequired": "Debes aceptar las condiciones.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "passwordLength": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordUpper": "La contraseña debe contener al menos una mayúscula.",
+      "passwordLower": "La contraseña debe contener al menos una minúscula.",
+      "passwordDigit": "La contraseña debe contener al menos un dígito.",
+      "passwordSpecial": "La contraseña debe contener al menos un carácter especial.",
+      "signupError": "Error en el registro de partner",
+      "generic": "Error",
+      "loadError": "No se pudo cargar tu perfil.",
+      "saveError": "Error al guardar.",
+      "companyRequired": "El nombre del establecimiento es obligatorio.",
+      "categoryRequired": "La categoría es obligatoria.",
+      "countryRequired": "El país es obligatorio.",
+      "cityRequired": "La ciudad es obligatoria.",
+      "phoneRequired": "El teléfono es obligatorio.",
+      "legalNameRequired": "La razón social es obligatoria.",
+      "regNumRequired": "El número de registro es obligatorio.",
+      "repRequired": "El representante legal es obligatorio.",
+      "docRequired": "Falta un documento obligatorio: {{doc}}",
+      "uploadError": "Error al subir.",
+      "submitError": "Error al enviar."
     }
   }
 }

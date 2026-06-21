@@ -878,15 +878,15 @@
       "title": "パートナーになるには？",
       "step1": {
         "title": "アカウントを作成",
-        "description": "数回のクリックで私たちのプラットフォームにサインアップ"
+        "description": "1分で登録：氏名、メール、パスワード。"
       },
       "step2": {
-        "title": "申請を提出",
-        "description": "あなたの情報でパートナーフォームを記入"
+        "title": "メール確認とプロフィール完成",
+        "description": "アカウントを有効化し、施設情報とKYC書類を追加します。"
       },
       "step3": {
-        "title": "検証と有効化",
-        "description": "私たちのチームは48時間以内にあなたの申請を審査します"
+        "title": "審査と公開",
+        "description": "当社チームが書類を審査し（24〜48時間）、施設が作成されます。"
       }
     }
   },
@@ -2491,6 +2491,132 @@
     },
     "poiSuggestions": {
       "title": "学習の深化に向けた提案"
+    }
+  },
+  "partnerOnboarding": {
+    "steps": {
+      "signup": "登録",
+      "email": "メール",
+      "profile": "プロフィール"
+    },
+    "stepTitles": {
+      "establishment": "施設",
+      "location": "所在地",
+      "contact": "連絡先",
+      "kyc": "本人確認 (KYC)",
+      "review": "確認"
+    },
+    "fields": {
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "業務用メール",
+      "password": "パスワード",
+      "confirmPassword": "パスワード（確認）",
+      "companyName": "施設名",
+      "category": "カテゴリー",
+      "categoryPlaceholder": "カテゴリーを選択",
+      "description": "説明",
+      "descriptionPlaceholder": "施設をご紹介ください…",
+      "country": "国",
+      "city": "都市",
+      "address": "住所",
+      "postalCode": "郵便番号",
+      "phone": "連絡先電話番号",
+      "website": "ウェブサイト",
+      "legalName": "法人名",
+      "legalForm": "法人形態",
+      "registrationNumber": "登録番号",
+      "vatNumber": "VAT番号",
+      "registeredAddress": "登記住所",
+      "repName": "法定代表者",
+      "repDob": "代表者の生年月日",
+      "repNationality": "代表者の国籍"
+    },
+    "categories": {
+      "accommodation": "宿泊",
+      "restaurant": "レストラン",
+      "cafe": "カフェ",
+      "bar": "バー",
+      "activity": "アクティビティ / レジャー",
+      "museum": "美術館 / 文化",
+      "shop": "ショップ",
+      "transport": "交通",
+      "service": "サービス",
+      "other": "その他"
+    },
+    "docs": {
+      "business_registration": "登記簿謄本 / 登録証明",
+      "representative_id": "代表者の身分証明書",
+      "bank_rib": "銀行口座情報",
+      "proof_of_address": "住所証明"
+    },
+    "signup": {
+      "title": "Tasarini のパートナーになる",
+      "subtitle": "1分で登録 — メール確認後にプロフィールを完成",
+      "successHtml": "<strong>{{email}}</strong> に確認メールを送信しました。リンクをクリックしてパートナーアカウントを有効化してください。",
+      "successHint": "確認後、ステップごとにプロフィール作成をご案内します。",
+      "needNewLink": "新しいリンクが必要ですか？",
+      "basicInfo": "基本情報",
+      "acceptPrefix": "私は",
+      "terms": "利用規約",
+      "and": "と",
+      "privacy": "プライバシーポリシー",
+      "nextSteps": "次のステップ：",
+      "next1": "メールを確認（2分）",
+      "next2": "プロフィールとKYC書類を完成",
+      "next3": "当社チームによる審査（24〜48時間）",
+      "next4": "パートナー画面へアクセス",
+      "creating": "アカウント作成中...",
+      "submit": "パートナーアカウントを作成",
+      "footer": "メール確認後に詳細プロフィールを完成します"
+    },
+    "wizard": {
+      "title": "パートナープロフィールを完成",
+      "stepOf": "ステップ {{n}}/{{total}}",
+      "back": "戻る",
+      "next": "続ける",
+      "submit": "書類を提出"
+    },
+    "kyc": {
+      "intro": "法的および請求上の理由から、企業の身元を確認します。この情報は機密として扱われます。",
+      "documents": "証明書類",
+      "rejected": "修正が必要なKYC書類：",
+      "uploaded": "書類をアップロードしました。",
+      "replace": "差し替え",
+      "upload": "アップロード",
+      "formats": "対応形式：PDFまたは画像、最大10MB。",
+      "docsCount": "{{n}} 件の書類"
+    },
+    "review": {
+      "intro": "情報を確認して書類を提出してください。当社チームの承認後、施設ページが作成され、設定できるようになります。"
+    },
+    "submitted": "プロフィールを提出しました！当社チームが書類を確認します。",
+    "errors": {
+      "firstNameRequired": "名は必須です。",
+      "lastNameRequired": "姓は必須です。",
+      "emailRequired": "メールは必須です。",
+      "termsRequired": "規約に同意する必要があります。",
+      "passwordMismatch": "パスワードが一致しません。",
+      "passwordLength": "パスワードは8文字以上必要です。",
+      "passwordUpper": "パスワードには大文字を1つ以上含めてください。",
+      "passwordLower": "パスワードには小文字を1つ以上含めてください。",
+      "passwordDigit": "パスワードには数字を1つ以上含めてください。",
+      "passwordSpecial": "パスワードには特殊文字を1つ以上含めてください。",
+      "signupError": "パートナー登録エラー",
+      "generic": "エラー",
+      "loadError": "プロフィールを読み込めませんでした。",
+      "saveError": "保存に失敗しました。",
+      "companyRequired": "施設名は必須です。",
+      "categoryRequired": "カテゴリーは必須です。",
+      "countryRequired": "国は必須です。",
+      "cityRequired": "都市は必須です。",
+      "phoneRequired": "電話番号は必須です。",
+      "legalNameRequired": "法人名は必須です。",
+      "regNumRequired": "登録番号は必須です。",
+      "repRequired": "法定代表者は必須です。",
+      "docRequired": "必須書類が不足しています：{{doc}}",
+      "uploadError": "アップロードに失敗しました。",
+      "submitError": "提出に失敗しました。"
     }
   }
 }

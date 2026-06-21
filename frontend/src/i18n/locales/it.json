@@ -878,15 +878,15 @@
       "title": "Come diventare partner?",
       "step1": {
         "title": "Crea il tuo account",
-        "description": "Registrati sulla nostra piattaforma con pochi clic"
+        "description": "Registrati in 1 minuto: nome, email e password."
       },
       "step2": {
-        "title": "Invia la tua candidatura",
-        "description": "Compila il modulo partner con le tue informazioni"
+        "title": "Verifica l’email e completa il profilo",
+        "description": "Attiva l’account, poi aggiungi la struttura e il fascicolo KYC."
       },
       "step3": {
-        "title": "Validazione e Attivazione",
-        "description": "Il nostro team esamina la tua candidatura entro 48 ore"
+        "title": "Validazione e pubblicazione",
+        "description": "Il nostro team esamina il fascicolo (24–48h), poi la tua struttura viene creata."
       }
     }
   },
@@ -2490,6 +2490,132 @@
     },
     "poiSuggestions": {
       "title": "Suggerimenti per l'arricchimento"
+    }
+  },
+  "partnerOnboarding": {
+    "steps": {
+      "signup": "Registrazione",
+      "email": "Email",
+      "profile": "Profilo"
+    },
+    "stepTitles": {
+      "establishment": "Struttura",
+      "location": "Posizione",
+      "contact": "Contatto",
+      "kyc": "Verifica (KYC)",
+      "review": "Riepilogo"
+    },
+    "fields": {
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "email": "Email professionale",
+      "password": "Password",
+      "confirmPassword": "Conferma password",
+      "companyName": "Nome della struttura",
+      "category": "Categoria",
+      "categoryPlaceholder": "Seleziona una categoria",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Presenta la tua struttura…",
+      "country": "Paese",
+      "city": "Città",
+      "address": "Indirizzo",
+      "postalCode": "Codice postale",
+      "phone": "Telefono di contatto",
+      "website": "Sito web",
+      "legalName": "Ragione sociale",
+      "legalForm": "Forma giuridica",
+      "registrationNumber": "Numero di registrazione",
+      "vatNumber": "Partita IVA",
+      "registeredAddress": "Sede legale",
+      "repName": "Rappresentante legale",
+      "repDob": "Data di nascita del rappresentante",
+      "repNationality": "Nazionalità del rappresentante"
+    },
+    "categories": {
+      "accommodation": "Alloggio",
+      "restaurant": "Ristorante",
+      "cafe": "Caffè",
+      "bar": "Bar",
+      "activity": "Attività / Tempo libero",
+      "museum": "Museo / Cultura",
+      "shop": "Negozio",
+      "transport": "Trasporto",
+      "service": "Servizio",
+      "other": "Altro"
+    },
+    "docs": {
+      "business_registration": "Visura camerale",
+      "representative_id": "Documento d’identità del rappresentante",
+      "bank_rib": "Coordinate bancarie",
+      "proof_of_address": "Prova di residenza"
+    },
+    "signup": {
+      "title": "Unisciti a Tasarini come Partner",
+      "subtitle": "Registrati in 1 minuto — completa il profilo dopo la verifica dell’email",
+      "successHtml": "È stata inviata un’email di verifica a <strong>{{email}}</strong>. Clicca sul link per attivare il tuo account partner.",
+      "successHint": "Una volta verificato, sarai guidato a completare il profilo passo dopo passo.",
+      "needNewLink": "Ti serve un nuovo link?",
+      "basicInfo": "Informazioni di base",
+      "acceptPrefix": "Accetto le",
+      "terms": "condizioni d’uso",
+      "and": "e la",
+      "privacy": "informativa sulla privacy",
+      "nextSteps": "Prossimi passi:",
+      "next1": "Verifica la tua email (2 min)",
+      "next2": "Completa il profilo e il fascicolo KYC",
+      "next3": "Validazione dal nostro team (24–48h)",
+      "next4": "Accesso alla tua area partner",
+      "creating": "Creazione account...",
+      "submit": "Crea il mio account partner",
+      "footer": "Completerai il tuo profilo dettagliato dopo aver verificato l’email"
+    },
+    "wizard": {
+      "title": "Completa il tuo profilo partner",
+      "stepOf": "Passo {{n}}/{{total}}",
+      "back": "Indietro",
+      "next": "Continua",
+      "submit": "Invia il mio fascicolo"
+    },
+    "kyc": {
+      "intro": "Per motivi legali e di fatturazione, verifichiamo l’identità della tua azienda. Queste informazioni restano riservate.",
+      "documents": "Documenti giustificativi",
+      "rejected": "Fascicolo KYC da correggere:",
+      "uploaded": "Documento caricato.",
+      "replace": "Sostituisci",
+      "upload": "Carica",
+      "formats": "Formati accettati: PDF o immagine, max 10 MB.",
+      "docsCount": "{{n}} documento/i"
+    },
+    "review": {
+      "intro": "Controlla le tue informazioni e invia il fascicolo. Dopo la convalida del nostro team, la scheda della tua struttura sarà creata e potrai configurarla."
+    },
+    "submitted": "Profilo inviato! Il nostro team esaminerà il tuo fascicolo.",
+    "errors": {
+      "firstNameRequired": "Il nome è obbligatorio.",
+      "lastNameRequired": "Il cognome è obbligatorio.",
+      "emailRequired": "L’email è obbligatoria.",
+      "termsRequired": "Devi accettare le condizioni.",
+      "passwordMismatch": "Le password non coincidono.",
+      "passwordLength": "La password deve contenere almeno 8 caratteri.",
+      "passwordUpper": "La password deve contenere almeno una maiuscola.",
+      "passwordLower": "La password deve contenere almeno una minuscola.",
+      "passwordDigit": "La password deve contenere almeno una cifra.",
+      "passwordSpecial": "La password deve contenere almeno un carattere speciale.",
+      "signupError": "Errore durante la registrazione partner",
+      "generic": "Errore",
+      "loadError": "Impossibile caricare il tuo profilo.",
+      "saveError": "Salvataggio non riuscito.",
+      "companyRequired": "Il nome della struttura è obbligatorio.",
+      "categoryRequired": "La categoria è obbligatoria.",
+      "countryRequired": "Il paese è obbligatorio.",
+      "cityRequired": "La città è obbligatoria.",
+      "phoneRequired": "Il telefono è obbligatorio.",
+      "legalNameRequired": "La ragione sociale è obbligatoria.",
+      "regNumRequired": "Il numero di registrazione è obbligatorio.",
+      "repRequired": "Il rappresentante legale è obbligatorio.",
+      "docRequired": "Documento obbligatorio mancante: {{doc}}",
+      "uploadError": "Caricamento non riuscito.",
+      "submitError": "Invio non riuscito."
     }
   }
 }

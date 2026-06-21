@@ -877,16 +877,16 @@
     "process": {
       "title": "Como se tornar parceiro?",
       "step1": {
-        "title": "Crie sua conta",
-        "description": "Registre-se em nossa plataforma com apenas alguns cliques"
+        "title": "Crie a sua conta",
+        "description": "Registe-se em 1 minuto: nome, email e palavra-passe."
       },
       "step2": {
-        "title": "Envie sua candidatura",
-        "description": "Preencha o formulário de parceiro com suas informações"
+        "title": "Verifique o email e complete o perfil",
+        "description": "Ative a conta e adicione o estabelecimento e o processo KYC."
       },
       "step3": {
-        "title": "Validação e Ativação",
-        "description": "Nossa equipe analisa sua candidatura em 48 horas"
+        "title": "Validação e publicação",
+        "description": "A nossa equipa analisa o processo (24–48h) e o seu estabelecimento é criado."
       }
     }
   },
@@ -2490,6 +2490,132 @@
     },
     "poiSuggestions": {
       "title": "Sugestões de aprofundamento"
+    }
+  },
+  "partnerOnboarding": {
+    "steps": {
+      "signup": "Registo",
+      "email": "Email",
+      "profile": "Perfil"
+    },
+    "stepTitles": {
+      "establishment": "Estabelecimento",
+      "location": "Localização",
+      "contact": "Contacto",
+      "kyc": "Verificação (KYC)",
+      "review": "Resumo"
+    },
+    "fields": {
+      "firstName": "Nome",
+      "lastName": "Apelido",
+      "email": "Email profissional",
+      "password": "Palavra-passe",
+      "confirmPassword": "Confirmar palavra-passe",
+      "companyName": "Nome do estabelecimento",
+      "category": "Categoria",
+      "categoryPlaceholder": "Selecione uma categoria",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Apresente o seu estabelecimento…",
+      "country": "País",
+      "city": "Cidade",
+      "address": "Morada",
+      "postalCode": "Código postal",
+      "phone": "Telefone de contacto",
+      "website": "Site",
+      "legalName": "Denominação social",
+      "legalForm": "Forma jurídica",
+      "registrationNumber": "Número de registo",
+      "vatNumber": "Número de IVA",
+      "registeredAddress": "Sede social",
+      "repName": "Representante legal",
+      "repDob": "Data de nascimento do representante",
+      "repNationality": "Nacionalidade do representante"
+    },
+    "categories": {
+      "accommodation": "Alojamento",
+      "restaurant": "Restaurante",
+      "cafe": "Café",
+      "bar": "Bar",
+      "activity": "Atividade / Lazer",
+      "museum": "Museu / Cultura",
+      "shop": "Loja",
+      "transport": "Transporte",
+      "service": "Serviço",
+      "other": "Outro"
+    },
+    "docs": {
+      "business_registration": "Certidão de registo comercial",
+      "representative_id": "Documento de identidade do representante",
+      "bank_rib": "Dados bancários",
+      "proof_of_address": "Comprovativo de morada"
+    },
+    "signup": {
+      "title": "Junte-se à Tasarini como Parceiro",
+      "subtitle": "Registe-se em 1 minuto — complete o perfil após verificar o email",
+      "successHtml": "Foi enviado um email de verificação para <strong>{{email}}</strong>. Clique no link para ativar a sua conta de parceiro.",
+      "successHint": "Após a verificação, será guiado para completar o perfil passo a passo.",
+      "needNewLink": "Precisa de um novo link?",
+      "basicInfo": "Informações básicas",
+      "acceptPrefix": "Aceito os",
+      "terms": "termos de utilização",
+      "and": "e a",
+      "privacy": "política de privacidade",
+      "nextSteps": "Próximos passos:",
+      "next1": "Verifique o seu email (2 min)",
+      "next2": "Complete o perfil e o processo KYC",
+      "next3": "Validação pela nossa equipa (24–48h)",
+      "next4": "Acesso à sua área de parceiro",
+      "creating": "A criar conta...",
+      "submit": "Criar a minha conta de parceiro",
+      "footer": "Irá completar o seu perfil detalhado após verificar o email"
+    },
+    "wizard": {
+      "title": "Complete o seu perfil de parceiro",
+      "stepOf": "Passo {{n}}/{{total}}",
+      "back": "Voltar",
+      "next": "Continuar",
+      "submit": "Submeter o meu processo"
+    },
+    "kyc": {
+      "intro": "Por razões legais e de faturação, verificamos a identidade da sua empresa. Estas informações são confidenciais.",
+      "documents": "Documentos comprovativos",
+      "rejected": "Processo KYC a corrigir:",
+      "uploaded": "Documento carregado.",
+      "replace": "Substituir",
+      "upload": "Carregar",
+      "formats": "Formatos aceites: PDF ou imagem, máx. 10 MB.",
+      "docsCount": "{{n}} documento(s)"
+    },
+    "review": {
+      "intro": "Verifique as suas informações e submeta o processo. Após validação da nossa equipa, a ficha do seu estabelecimento será criada e poderá configurá-la."
+    },
+    "submitted": "Perfil submetido! A nossa equipa irá analisar o seu processo.",
+    "errors": {
+      "firstNameRequired": "O nome é obrigatório.",
+      "lastNameRequired": "O apelido é obrigatório.",
+      "emailRequired": "O email é obrigatório.",
+      "termsRequired": "Tem de aceitar os termos.",
+      "passwordMismatch": "As palavras-passe não coincidem.",
+      "passwordLength": "A palavra-passe deve ter pelo menos 8 caracteres.",
+      "passwordUpper": "A palavra-passe deve conter pelo menos uma maiúscula.",
+      "passwordLower": "A palavra-passe deve conter pelo menos uma minúscula.",
+      "passwordDigit": "A palavra-passe deve conter pelo menos um dígito.",
+      "passwordSpecial": "A palavra-passe deve conter pelo menos um caractere especial.",
+      "signupError": "Erro no registo de parceiro",
+      "generic": "Erro",
+      "loadError": "Não foi possível carregar o seu perfil.",
+      "saveError": "Falha ao guardar.",
+      "companyRequired": "O nome do estabelecimento é obrigatório.",
+      "categoryRequired": "A categoria é obrigatória.",
+      "countryRequired": "O país é obrigatório.",
+      "cityRequired": "A cidade é obrigatória.",
+      "phoneRequired": "O telefone é obrigatório.",
+      "legalNameRequired": "A denominação social é obrigatória.",
+      "regNumRequired": "O número de registo é obrigatório.",
+      "repRequired": "O representante legal é obrigatório.",
+      "docRequired": "Documento obrigatório em falta: {{doc}}",
+      "uploadError": "Falha no carregamento.",
+      "submitError": "Falha na submissão."
     }
   }
 }

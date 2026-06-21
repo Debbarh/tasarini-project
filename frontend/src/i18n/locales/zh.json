@@ -877,16 +877,16 @@
     "process": {
       "title": "如何成为合作伙伴？",
       "step1": {
-        "title": "创建您的账户",
-        "description": "只需几次点击即可在我们的平台上注册"
+        "title": "创建账户",
+        "description": "1 分钟注册：姓名、邮箱和密码。"
       },
       "step2": {
-        "title": "提交您的申请",
-        "description": "填写包含您信息的合作伙伴表格"
+        "title": "验证邮箱并完善资料",
+        "description": "激活账户，然后添加您的场所和 KYC 文件。"
       },
       "step3": {
-        "title": "验证和激活",
-        "description": "我们的团队在48小时内审核您的申请"
+        "title": "审核并上线",
+        "description": "我们的团队审核您的资料（24–48 小时），随后创建您的场所。"
       }
     }
   },
@@ -2490,6 +2490,132 @@
     },
     "poiSuggestions": {
       "title": "拓展建议"
+    }
+  },
+  "partnerOnboarding": {
+    "steps": {
+      "signup": "注册",
+      "email": "邮箱",
+      "profile": "资料"
+    },
+    "stepTitles": {
+      "establishment": "场所",
+      "location": "位置",
+      "contact": "联系方式",
+      "kyc": "身份验证 (KYC)",
+      "review": "摘要"
+    },
+    "fields": {
+      "firstName": "名字",
+      "lastName": "姓氏",
+      "email": "商务邮箱",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "companyName": "场所名称",
+      "category": "类别",
+      "categoryPlaceholder": "选择类别",
+      "description": "描述",
+      "descriptionPlaceholder": "介绍您的场所…",
+      "country": "国家",
+      "city": "城市",
+      "address": "地址",
+      "postalCode": "邮政编码",
+      "phone": "联系电话",
+      "website": "网站",
+      "legalName": "法定名称",
+      "legalForm": "法律形式",
+      "registrationNumber": "注册号",
+      "vatNumber": "增值税号",
+      "registeredAddress": "注册地址",
+      "repName": "法定代表人",
+      "repDob": "代表人出生日期",
+      "repNationality": "代表人国籍"
+    },
+    "categories": {
+      "accommodation": "住宿",
+      "restaurant": "餐厅",
+      "cafe": "咖啡馆",
+      "bar": "酒吧",
+      "activity": "活动 / 休闲",
+      "museum": "博物馆 / 文化",
+      "shop": "商店",
+      "transport": "交通",
+      "service": "服务",
+      "other": "其他"
+    },
+    "docs": {
+      "business_registration": "营业执照 / 登记证明",
+      "representative_id": "代表人身份证件",
+      "bank_rib": "银行账户信息",
+      "proof_of_address": "地址证明"
+    },
+    "signup": {
+      "title": "成为 Tasarini 合作伙伴",
+      "subtitle": "1 分钟注册 — 验证邮箱后完善资料",
+      "successHtml": "验证邮件已发送至 <strong>{{email}}</strong>。请点击链接激活您的合作伙伴账户。",
+      "successHint": "验证后，我们将引导您逐步完善资料。",
+      "needNewLink": "需要新链接？",
+      "basicInfo": "基本信息",
+      "acceptPrefix": "我接受",
+      "terms": "使用条款",
+      "and": "和",
+      "privacy": "隐私政策",
+      "nextSteps": "后续步骤：",
+      "next1": "验证邮箱（2 分钟）",
+      "next2": "完善资料和 KYC 文件",
+      "next3": "我们团队审核（24–48 小时）",
+      "next4": "进入合作伙伴空间",
+      "creating": "正在创建账户...",
+      "submit": "创建合作伙伴账户",
+      "footer": "验证邮箱后您将完善详细资料"
+    },
+    "wizard": {
+      "title": "完善您的合作伙伴资料",
+      "stepOf": "第 {{n}}/{{total}} 步",
+      "back": "返回",
+      "next": "继续",
+      "submit": "提交我的资料"
+    },
+    "kyc": {
+      "intro": "出于法律和开票需要，我们会核实您公司的身份。这些信息将保密。",
+      "documents": "证明文件",
+      "rejected": "需更正的 KYC 文件：",
+      "uploaded": "文件已上传。",
+      "replace": "替换",
+      "upload": "上传",
+      "formats": "支持格式：PDF 或图片，最大 10 MB。",
+      "docsCount": "{{n}} 个文件"
+    },
+    "review": {
+      "intro": "核对您的信息并提交资料。经我们团队审核后，将创建您的场所信息，您即可进行配置。"
+    },
+    "submitted": "资料已提交！我们的团队将审核您的资料。",
+    "errors": {
+      "firstNameRequired": "请填写名字。",
+      "lastNameRequired": "请填写姓氏。",
+      "emailRequired": "请填写邮箱。",
+      "termsRequired": "您必须接受条款。",
+      "passwordMismatch": "两次密码不一致。",
+      "passwordLength": "密码至少需 8 个字符。",
+      "passwordUpper": "密码至少需包含一个大写字母。",
+      "passwordLower": "密码至少需包含一个小写字母。",
+      "passwordDigit": "密码至少需包含一个数字。",
+      "passwordSpecial": "密码至少需包含一个特殊字符。",
+      "signupError": "合作伙伴注册出错",
+      "generic": "错误",
+      "loadError": "无法加载您的资料。",
+      "saveError": "保存失败。",
+      "companyRequired": "请填写场所名称。",
+      "categoryRequired": "请选择类别。",
+      "countryRequired": "请选择国家。",
+      "cityRequired": "请选择城市。",
+      "phoneRequired": "请填写电话。",
+      "legalNameRequired": "请填写法定名称。",
+      "regNumRequired": "请填写注册号。",
+      "repRequired": "请填写法定代表人。",
+      "docRequired": "缺少必需文件：{{doc}}",
+      "uploadError": "上传失败。",
+      "submitError": "提交失败。"
     }
   }
 }

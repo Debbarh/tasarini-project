@@ -259,9 +259,16 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post', 'delete'], permission_classes=[permissions.IsAdminUser], url_path='hard-delete')
     def hard_delete(self, request, pk=None):
-        """Suppression DÉFINITIVE : supprime le profil partenaire ET le compte utilisateur
-        (cascade : KYC, commissions, factures, POI possédés). Irréversible.
-        Exige `confirm: "SUPPRIMER"` dans le corps pour éviter les accidents."""
+        """Suppression DÉFINITIVE du partenaire + compte (cascade : KYC, commissions, factures,
+        POI possédés et leurs sous-objets). Irréversible. Exige `confirm: "SUPPRIMER"`.
+
+        Non bloquant : on marque le partenaire supprimé IMMÉDIATEMENT (il disparaît de la liste,
+        le compte est désactivé) puis la purge lourde s'exécute en TÂCHE DE FOND, protégée par un
+        verrou anti-doublon (évite l'empilement des réessais qui bloquait la base)."""
+        import threading
+        from django.utils import timezone
+        from django.core.cache import cache
+
         profile = self.get_object()
         if (request.data.get('confirm') or '').strip().upper() != 'SUPPRIMER':
             return Response(
@@ -269,19 +276,37 @@ class PartnerProfileViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         owner = profile.owner
-        try:
-            from django.db import transaction
-            with transaction.atomic():
-                profile.delete()
-                if owner is not None:
-                    owner.delete()  # cascade vers les données liées
-        except Exception as exc:  # noqa: BLE001
-            logger.exception('hard_delete partenaire %s a échoué: %s', pk, exc)
-            return Response(
-                {'detail': "Suppression impossible (données liées protégées). Utilisez la suppression douce."},
-                status=status.HTTP_409_CONFLICT,
-            )
-        return Response({'deleted': True}, status=status.HTTP_200_OK)
+        uid = owner.id if owner else None
+
+        # 1) Marquage immédiat : disparaît de la liste + compte désactivé (réponse instantanée).
+        profile.deleted_at = timezone.now()
+        profile.status = 'suspended'
+        profile.save(update_fields=['deleted_at', 'status', 'updated_at'])
+        if owner and owner.is_active:
+            owner.is_active = False
+            owner.save(update_fields=['is_active'])
+
+        # 2) Purge définitive en arrière-plan, une seule à la fois par utilisateur.
+        if uid and cache.add(f'partner_purge_{uid}', '1', timeout=3600):
+            def _purge(uid=uid):
+                from django.contrib.auth import get_user_model
+                from django.db import transaction
+                try:
+                    u = get_user_model().objects.filter(pk=uid).first()
+                    if u is not None:
+                        with transaction.atomic():
+                            u.delete()  # cascade vers toutes les données liées
+                except Exception as exc:  # noqa: BLE001
+                    logger.exception('Purge partenaire %s échouée: %s', uid, exc)
+                finally:
+                    cache.delete(f'partner_purge_{uid}')
+            threading.Thread(target=_purge, daemon=True).start()
+
+        return Response(
+            {'deleted': True, 'async': True,
+             'detail': 'Partenaire supprimé. La purge définitive des données se termine en arrière-plan.'},
+            status=status.HTTP_202_ACCEPTED,
+        )
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
     def send_message(self, request, pk=None):

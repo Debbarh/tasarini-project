@@ -45,6 +45,16 @@ import {
   MustSeeSection,
 } from "@/components/itinerary/EnrichedSections";
 
+// L'IA renvoie parfois la difficulté traduite (« facile/modéré/difficile ») au lieu de
+// easy/moderate/hard, ce qui faisait basculer l'affichage sur « Difficile » par défaut.
+// On normalise FR + EN ; toute valeur inconnue/absente → 'moderate' (neutre), jamais 'hard'.
+const normalizeDifficulty = (raw?: string): 'easy' | 'moderate' | 'hard' => {
+  const v = (raw ?? '').toString().toLowerCase().trim();
+  if (['easy', 'facile', 'fácil', 'facil', 'low', 'légère', 'legere', 'léger', 'leger'].includes(v)) return 'easy';
+  if (['hard', 'difficile', 'difficult', 'difícil', 'dificil', 'high', 'élevé', 'eleve', 'élevée'].includes(v)) return 'hard';
+  return 'moderate';
+};
+
 interface DetailedItineraryViewProps {
   itinerary: DetailedItinerary | null;  // Now nullable for partial streaming data
   onStartOver: () => void;
@@ -965,7 +975,9 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                 <TypedText text={(itinerary as any).whyThisTrip} isStreaming={isStreaming} delay={20} speed={2} />
               </p>
             )}
-            {Array.isArray((itinerary as any).destinationScores) && (itinerary as any).destinationScores.length > 0 && (
+            {/* Détail par destination : utile uniquement pour un voyage MULTI-destinations.
+                Pour une seule destination, le score global ci-dessus suffit (évite deux % différents). */}
+            {Array.isArray((itinerary as any).destinationScores) && (itinerary as any).destinationScores.length > 1 && (
               <div className="grid gap-2 sm:grid-cols-2">
                 {(itinerary as any).destinationScores.map((d: any, i: number) => (
                   <div key={i} className="flex items-center justify-between gap-2 rounded-lg border bg-card p-2">
@@ -1204,12 +1216,17 @@ export const DetailedItineraryView = ({ itinerary: itineraryProp, onStartOver, e
                                   <Clock className="h-3 w-3" />
                                   {typeof activity.duration === 'string' ? activity.duration : `${Math.floor(Number(activity.duration) / 60)}h${Number(activity.duration) % 60 > 0 ? ` ${Number(activity.duration) % 60}min` : ''}`}
                                 </span>
-                                <Badge 
-                                  variant={activity.difficulty === 'easy' ? 'secondary' : activity.difficulty === 'moderate' ? 'default' : 'destructive'}
-                                  className="text-xs"
-                                >
-                                  {activity.difficulty === 'easy' ? t('itinerary.difficultyEasy', 'Facile') : activity.difficulty === 'moderate' ? t('itinerary.difficultyModerate', 'Modéré') : t('itinerary.difficultyHard', 'Difficile')}
-                                </Badge>
+                                {(() => {
+                                  const diff = normalizeDifficulty(activity.difficulty);
+                                  return (
+                                    <Badge
+                                      variant={diff === 'easy' ? 'secondary' : diff === 'moderate' ? 'default' : 'destructive'}
+                                      className="text-xs"
+                                    >
+                                      {diff === 'easy' ? t('itinerary.difficultyEasy', 'Facile') : diff === 'moderate' ? t('itinerary.difficultyModerate', 'Modéré') : t('itinerary.difficultyHard', 'Difficile')}
+                                    </Badge>
+                                  );
+                                })()}
                               </div>
                               {activity.tips && activity.tips.length > 0 && (
                                 <div className="mt-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 p-2.5">

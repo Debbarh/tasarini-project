@@ -336,9 +336,9 @@ export const HealthAndSafetySection = ({ healthAndSafety }: HealthAndSafetySecti
             <p className="font-semibold text-sm text-red-900 dark:text-red-100 mb-3 flex items-center gap-1.5"><Siren className="h-3.5 w-3.5" /> {t('itinerary.enriched.emergencyNumbers', "Numéros d'urgence :")}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {Object.entries(healthAndSafety.emergencyNumbers).map(([type, number]) => (
-                <div key={type} className="flex justify-between items-center">
-                  <span className="text-sm">{emergencyLabel(type)} :</span>
-                  <span className="font-mono font-semibold text-sm">{number}</span>
+                <div key={type} className="rounded-md bg-white/60 dark:bg-white/5 px-3 py-2">
+                  <p className="text-xs font-medium text-red-700/80 dark:text-red-300/80 mb-0.5">{emergencyLabel(type)}</p>
+                  <p className="text-sm font-semibold text-red-900 dark:text-red-100 break-words leading-snug">{number}</p>
                 </div>
               ))}
             </div>

@@ -768,6 +768,21 @@ class StreamingTripPlannerView(APIView):
                             logger.error(f"Error fetching activity images: {exc}")
                     threading.Thread(target=fetch_activity_images_async, daemon=True).start()
 
+                # Persistance des POI du programme DÈS LA GÉNÉRATION (sans attendre que
+                # l'utilisateur enregistre l'itinéraire). Best-effort, en tâche de fond :
+                # crée les POI manquants (status=pending, is_active=False, owner=user) avec
+                # leurs photos Openverse, et déduplique contre l'existant. Réservé aux
+                # utilisateurs connectés (un POI doit avoir un propriétaire).
+                _persist_user = request.user if (request.user and request.user.is_authenticated) else None
+                if _persist_user and itinerary.get('days'):
+                    def persist_pois_async(user=_persist_user, data=itinerary):
+                        try:
+                            from apps.poi.services_itinerary import persist_itinerary_pois
+                            persist_itinerary_pois(data, user)
+                        except Exception as exc:
+                            logger.error(f"persist_itinerary_pois (génération) a échoué: {exc}")
+                    threading.Thread(target=persist_pois_async, daemon=True).start()
+
                 trip_json = json.dumps(trip_data, ensure_ascii=False)
 
                 # Provider pour TOUTES les sections texte restantes (adéquation,
